@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { ref, unref, watch, onMounted, nextTick } from "vue";
+import { nextTick, onMounted, ref, unref, watch } from "vue";
 
 defineOptions({
   name: "LayFrame"

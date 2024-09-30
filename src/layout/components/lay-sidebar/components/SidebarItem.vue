@@ -8,11 +8,11 @@ import SidebarLinkItem from "./SidebarLinkItem.vue";
 import SidebarExtraIcon from "./SidebarExtraIcon.vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import {
-  type PropType,
+  computed,
   type CSSProperties,
+  type PropType,
   ref,
   toRaw,
-  computed,
   useAttrs
 } from "vue";
 

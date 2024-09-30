@@ -5,15 +5,15 @@ import { useTags } from "../../hooks/useTag";
 import { routerArrays } from "@/layout/types";
 import { onClickOutside } from "@vueuse/core";
 import TagChrome from "./components/TagChrome.vue";
-import { handleAliveRoute, getTopMenu } from "@/router/utils";
+import { getTopMenu, handleAliveRoute } from "@/router/utils";
 import { useSettingStoreHook } from "@/store/modules/settings";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
-import { ref, watch, unref, toRaw, nextTick, onBeforeUnmount } from "vue";
+import { nextTick, onBeforeUnmount, ref, toRaw, unref, watch } from "vue";
 import {
   delay,
-  isEqual,
   isAllEmpty,
+  isEqual,
   useResizeObserver
 } from "@pureadmin/utils";
 

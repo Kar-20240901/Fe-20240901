@@ -8,25 +8,24 @@ import { useAppStoreHook } from "@/store/modules/app";
 import { useSettingStoreHook } from "@/store/modules/settings";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
 import {
-  h,
-  ref,
-  reactive,
   computed,
-  onMounted,
+  defineComponent,
+  h,
   onBeforeMount,
-  defineComponent
+  onMounted,
+  reactive,
+  ref
 } from "vue";
 import {
+  deviceDetection,
   useDark,
   useGlobal,
-  deviceDetection,
   useResizeObserver
 } from "@pureadmin/utils";
 
 import LayTag from "./components/lay-tag/index.vue";
 import LayNavbar from "./components/lay-navbar/index.vue";
 import LayContent from "./components/lay-content/index.vue";
-import LaySetting from "./components/lay-setting/index.vue";
 import NavVertical from "./components/lay-sidebar/NavVertical.vue";
 import NavHorizontal from "./components/lay-sidebar/NavHorizontal.vue";
 import BackTopIcon from "@/assets/svg/back_top.svg?component";
@@ -197,7 +196,7 @@ const LayHeader = defineComponent({
       </el-scrollbar>
     </div>
     <!-- 系统设置 -->
-    <LaySetting />
+    <!--    <LaySetting />-->
   </div>
 </template>
 

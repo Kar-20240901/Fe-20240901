@@ -35,7 +35,7 @@ export function getPluginsList(
       enableBuild: false
     }),
     // 按下Command(⌘)+Shift(⇧)，然后点击页面元素会自动打开本地IDE并跳转到对应的代码位置
-    Inspector(),
+    Inspector({ launchEditor: "idea" }),
     viteBuildInfo(),
     /**
      * 开发环境下移除非必要的vue-router动态路由警告No match found for location with path

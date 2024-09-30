@@ -1,33 +1,37 @@
 import {
-  type RouterHistory,
-  type RouteRecordRaw,
-  type RouteComponent,
+  createWebHashHistory,
   createWebHistory,
-  createWebHashHistory
+  type RouteComponent,
+  type RouteRecordRaw,
+  type RouterHistory
 } from "vue-router";
 import { router } from "./index";
 import { isProxy, toRaw } from "vue";
 import { useTimeoutFn } from "@vueuse/core";
 import {
-  isString,
   cloneDeep,
-  isAllEmpty,
   intersection,
-  storageLocal,
-  isIncludeAllChildren
+  isAllEmpty,
+  isIncludeAllChildren,
+  isString,
+  storageLocal
 } from "@pureadmin/utils";
 import { getConfig } from "@/config";
 import { buildHierarchyTree } from "@/utils/tree";
-import { userKey, type DataInfo } from "@/utils/auth";
+import { type DataInfo, userKey } from "@/utils/auth";
 import { type menuType, routerArrays } from "@/layout/types";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
+import { baseMenuUserSelfMenuList } from "@/api/http/base/BaseMenuController";
+import { ListToTree } from "@/utils/TreeUtil";
+import { baseUserManageSignInFlag } from "@/api/http/base/BaseUserController";
+import { useUserStoreHook } from "@/store/modules/user";
+import { ToastError } from "@/utils/ToastUtil";
+
 const IFrame = () => import("@/layout/frame.vue");
+
 // https://cn.vitejs.dev/guide/features.html#glob-import
 const modulesRoutes = import.meta.glob("/src/views/**/*.{vue,tsx}");
-
-// 动态路由
-import { getAsyncRoutes } from "@/api/routes";
 
 function handRank(routeInfo: any) {
   const { name, path, parentId, meta } = routeInfo;
@@ -83,8 +87,7 @@ function isOneOfArray(a: Array<string>, b: Array<string>) {
 
 /** 从localStorage里取出当前登录用户的角色roles，过滤无权限的菜单 */
 function filterNoPermissionTree(data: RouteComponent[]) {
-  const currentRoles =
-    storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [];
+  const currentRoles = storageLocal().getItem<DataInfo>(userKey)?.roles ?? [];
   const newTree = cloneDeep(data).filter((v: any) =>
     isOneOfArray(v.meta?.roles, currentRoles)
   );
@@ -201,22 +204,78 @@ function initRouter() {
         resolve(router);
       });
     } else {
-      return new Promise(resolve => {
-        getAsyncRoutes().then(({ data }) => {
-          handleAsyncRoutes(cloneDeep(data));
-          storageLocal().setItem(key, data);
-          resolve(router);
-        });
+      return new Promise((resolve, reject) => {
+        getDynamicRoutes(reject)
+          .then(data => {
+            handleAsyncRoutes(cloneDeep(data));
+            storageLocal().setItem(key, data);
+            resolve(router);
+          })
+          .catch(() => {});
       });
     }
   } else {
-    return new Promise(resolve => {
-      getAsyncRoutes().then(({ data }) => {
-        handleAsyncRoutes(cloneDeep(data));
-        resolve(router);
-      });
+    return new Promise((resolve, reject) => {
+      getDynamicRoutes(reject)
+        .then(data => {
+          handleAsyncRoutes(cloneDeep(data));
+          resolve(router);
+        })
+        .catch(() => {});
     });
   }
+}
+
+interface MyRouteConfigsTable extends RouteChildrenConfigsTable {
+  id?: string;
+  pid?: string;
+  orderNo?: number;
+}
+
+/** 获取：动态路由 */
+function getDynamicRoutes(
+  reject: (reason?: any) => void
+): Promise<MyRouteConfigsTable[]> {
+  const resArr: MyRouteConfigsTable[] = [];
+
+  return new Promise<MyRouteConfigsTable[]>(async (res, rej) => {
+    const manageSignInFlag = await baseUserManageSignInFlag();
+
+    if (!manageSignInFlag.data) {
+      useUserStoreHook().logOut(); // 退出登录
+      ToastError("不允许登录后台，请联系管理员");
+      rej();
+      reject();
+      return;
+    }
+
+    const data = await baseMenuUserSelfMenuList();
+
+    if (!data) {
+      rej();
+      reject();
+      return;
+    }
+
+    data.data.forEach(item => {
+      resArr.push({
+        id: item.id,
+        pid: item.pid,
+        path: item.path,
+        name: item.uuid,
+        redirect: item.redirect,
+        component: item.router as unknown as RouteComponent,
+        meta: {
+          title: item.name,
+          showLink: item.showFlag,
+          icon: item.icon,
+          showParent: true
+        }
+      });
+    });
+
+    res(ListToTree(resArr));
+  });
 }
 
 /**
@@ -301,7 +360,6 @@ function handleAliveRoute({ name }: ToRouteType, mode?: string) {
 /** 过滤后端传来的动态路由 重新生成规范路由 */
 function addAsyncRoutes(arrRoutes: Array<RouteRecordRaw>) {
   if (!arrRoutes || !arrRoutes.length) return;
-  const modulesRoutesKeys = Object.keys(modulesRoutes);
   arrRoutes.forEach((v: RouteRecordRaw) => {
     // 将backstage属性加入meta，标识此路由为后端返回路由
     v.meta.backstage = true;
@@ -315,10 +373,13 @@ function addAsyncRoutes(arrRoutes: Array<RouteRecordRaw>) {
       v.component = IFrame;
     } else {
       // 对后端传component组件路径和不传做兼容（如果后端传component组件路径，那么path可以随便写，如果不传，component组件路径会跟path保持一致）
-      const index = v?.component
-        ? modulesRoutesKeys.findIndex(ev => ev.includes(v.component as any))
-        : modulesRoutesKeys.findIndex(ev => ev.includes(v.path));
-      v.component = modulesRoutes[modulesRoutesKeys[index]];
+      const realPath = v?.component || v.path;
+
+      const vuePath = `/src/views${realPath}/index.vue`;
+
+      const tsxPath = `/src/views${realPath}/index.tsx`;
+
+      v.component = modulesRoutes[vuePath] || modulesRoutes[tsxPath];
     }
     if (v?.children && v.children.length) {
       addAsyncRoutes(v.children);

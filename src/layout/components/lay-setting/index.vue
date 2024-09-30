@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {
-  ref,
-  unref,
-  watch,
-  reactive,
   computed,
   nextTick,
+  onBeforeMount,
   onUnmounted,
-  onBeforeMount
+  reactive,
+  ref,
+  unref,
+  watch
 } from "vue";
 import { emitter } from "@/utils/mitt";
 import LayPanel from "../lay-panel/index.vue";
@@ -17,7 +17,7 @@ import { toggleTheme } from "@pureadmin/theme/dist/browser-utils";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import Segmented, { type OptionsType } from "@/components/ReSegmented";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
-import { useDark, useGlobal, debounce, isNumber } from "@pureadmin/utils";
+import { debounce, isNumber, useDark, useGlobal } from "@pureadmin/utils";
 
 import Check from "@iconify-icons/ep/check";
 import LeftArrow from "@iconify-icons/ri/arrow-left-s-line";

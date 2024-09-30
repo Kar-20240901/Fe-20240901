@@ -2,20 +2,20 @@ import "./index.css";
 import type { OptionsType } from "./type";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import {
-  useDark,
-  isNumber,
   isFunction,
+  isNumber,
+  useDark,
   useResizeObserver
 } from "@pureadmin/utils";
 import {
-  type PropType,
+  defineComponent,
+  getCurrentInstance,
   h,
+  nextTick,
+  type PropType,
   ref,
   toRef,
-  watch,
-  nextTick,
-  defineComponent,
-  getCurrentInstance
+  watch
 } from "vue";
 
 const props = {

@@ -2,8 +2,8 @@
 import { getConfig } from "@/config";
 import { useMultiFrame } from "@/layout/hooks/useMultiFrame";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
-import { type Component, shallowRef, watch, computed } from "vue";
-import { type RouteRecordRaw, RouteLocationNormalizedLoaded } from "vue-router";
+import { type Component, computed, shallowRef, watch } from "vue";
+import { RouteLocationNormalizedLoaded, type RouteRecordRaw } from "vue-router";
 
 const props = defineProps<{
   currRoute: RouteLocationNormalizedLoaded;

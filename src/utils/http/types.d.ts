@@ -1,8 +1,8 @@
 import type {
-  Method,
   AxiosError,
+  AxiosRequestConfig,
   AxiosResponse,
-  AxiosRequestConfig
+  Method
 } from "axios";
 
 export type resultType = {

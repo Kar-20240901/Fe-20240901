@@ -1,32 +1,32 @@
 import { defineStore } from "pinia";
 import {
-  type userType,
-  store,
-  router,
   resetRouter,
+  router,
   routerArrays,
-  storageLocal
+  storageLocal,
+  store,
+  type userType
 } from "../utils";
-import {
-  type UserResult,
-  type RefreshTokenResult,
-  getLogin,
-  refreshTokenApi
-} from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
-import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
+import { type DataInfo, removeToken, setToken, userKey } from "@/utils/auth";
+import { signPath } from "@/router";
+import {
+  type SignInVO,
+  signUserNameJwtRefreshToken,
+  signUserNameSignInPassword
+} from "@/api/http/base/SignUserNameController";
 
 export const useUserStore = defineStore({
   id: "pure-user",
   state: (): userType => ({
     // 头像
-    avatar: storageLocal().getItem<DataInfo<number>>(userKey)?.avatar ?? "",
+    avatar: storageLocal().getItem<DataInfo>(userKey)?.avatar ?? "",
     // 用户名
-    username: storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "",
+    username: storageLocal().getItem<DataInfo>(userKey)?.username ?? "",
     // 昵称
-    nickname: storageLocal().getItem<DataInfo<number>>(userKey)?.nickname ?? "",
+    nickname: storageLocal().getItem<DataInfo>(userKey)?.nickname ?? "",
     // 页面级别权限
-    roles: storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [],
+    roles: storageLocal().getItem<DataInfo>(userKey)?.roles ?? [],
     // 按钮级别权限
     permissions:
       storageLocal().getItem<DataInfo<number>>(userKey)?.permissions ?? [],
@@ -66,11 +66,11 @@ export const useUserStore = defineStore({
     },
     /** 登入 */
     async loginByUsername(data) {
-      return new Promise<UserResult>((resolve, reject) => {
-        getLogin(data)
+      return new Promise<SignInVO>((resolve, reject) => {
+        signUserNameSignInPassword(data)
           .then(data => {
-            if (data?.success) setToken(data.data);
-            resolve(data);
+            if (data?.data) setToken(data.data);
+            resolve(data.data);
           })
           .catch(error => {
             reject(error);
@@ -85,16 +85,18 @@ export const useUserStore = defineStore({
       removeToken();
       useMultiTagsStoreHook().handleTags("equal", [...routerArrays]);
       resetRouter();
-      router.push("/login");
+      router.push(signPath);
     },
     /** 刷新`token` */
-    async handRefreshToken(data) {
-      return new Promise<RefreshTokenResult>((resolve, reject) => {
-        refreshTokenApi(data)
+    async handRefreshToken(body) {
+      return new Promise<SignInVO>((resolve, reject) => {
+        signUserNameJwtRefreshToken(body)
           .then(data => {
-            if (data) {
+            if (data?.data) {
               setToken(data.data);
-              resolve(data);
+              resolve(data.data);
+            } else {
+              reject(new Error("刷新token异常"));
             }
           })
           .catch(error => {

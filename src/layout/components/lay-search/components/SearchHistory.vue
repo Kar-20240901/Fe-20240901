@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Sortable from "sortablejs";
 import SearchHistoryItem from "./SearchHistoryItem.vue";
-import type { optionsItem, dragItem, Props } from "../types";
+import type { dragItem, optionsItem, Props } from "../types";
 import { useEpThemeStoreHook } from "@/store/modules/epTheme";
-import { useResizeObserver, isArray, delay } from "@pureadmin/utils";
-import { ref, watch, nextTick, computed, getCurrentInstance } from "vue";
+import { delay, isArray, useResizeObserver } from "@pureadmin/utils";
+import { computed, getCurrentInstance, nextTick, ref, watch } from "vue";
 
 interface Emits {
   (e: "update:value", val: string): void;

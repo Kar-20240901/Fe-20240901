@@ -8,7 +8,6 @@ import LaySidebarBreadCrumb from "../lay-sidebar/components/SidebarBreadCrumb.vu
 import LaySidebarTopCollapse from "../lay-sidebar/components/SidebarTopCollapse.vue";
 
 import LogoutCircleRLine from "@iconify-icons/ri/logout-circle-r-line";
-import Setting from "@iconify-icons/ri/settings-3-line";
 
 const {
   layout,
@@ -64,13 +63,13 @@ const {
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span
-        class="set-icon navbar-bg-hover"
-        title="打开系统配置"
-        @click="onPanel"
-      >
-        <IconifyIconOffline :icon="Setting" />
-      </span>
+      <!--      <span-->
+      <!--        class="set-icon navbar-bg-hover"-->
+      <!--        title="打开系统配置"-->
+      <!--        @click="onPanel"-->
+      <!--      >-->
+      <!--        <IconifyIconOffline :icon="Setting" />-->
+      <!--      </span>-->
     </div>
   </div>
 </template>

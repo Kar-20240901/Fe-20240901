@@ -5,24 +5,28 @@ import Axios, {
 } from "axios";
 import type {
   PureHttpError,
-  RequestMethods,
+  PureHttpRequestConfig,
   PureHttpResponse,
-  PureHttpRequestConfig
+  RequestMethods
 } from "./types.d";
 import { stringify } from "qs";
 import NProgress from "../progress";
-import { getToken, formatToken } from "@/utils/auth";
+import { formatToken, getToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
+import { ToastError } from "@/utils/ToastUtil";
+import type { R } from "@/model/vo/R";
+import CommonConstant from "@/model/constant/CommonConstant";
+import { router } from "@/store/utils";
+import { signPath } from "@/router";
+import { GetBrowserCategory } from "@/utils/BrowserCategoryUtil";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
-  // 请求超时时间
-  timeout: 10000,
+  timeout: 30 * 60 * 1000, // 默认 30分钟
   headers: {
-    Accept: "application/json, text/plain, */*",
-    "Content-Type": "application/json",
-    "X-Requested-With": "XMLHttpRequest"
+    "Content-Type": "application/json"
   },
+  responseType: "json",
   // 数组格式参数序列化（https://github.com/axios/axios/issues/5142）
   paramsSerializer: {
     serialize: stringify as unknown as CustomParamsSerializer
@@ -72,23 +76,25 @@ class PureHttp {
           PureHttp.initConfig.beforeRequestCallback(config);
           return config;
         }
-        /** 请求白名单，放置一些不需要`token`的接口（通过设置请求白名单，防止`token`过期后再请求造成的死循环问题） */
-        const whiteList = ["/refresh-token", "/login"];
-        return whiteList.some(url => config.url.endsWith(url))
+
+        return config.url.endsWith("/jwtRefreshToken")
           ? config
           : new Promise(resolve => {
               const data = getToken();
+              config.headers["category"] = GetBrowserCategory(); // 请求类别
               if (data) {
                 const now = new Date().getTime();
-                const expired = parseInt(data.expires) - now <= 0;
+                const expired = parseInt(data.jwtExpireTs) - now <= 0;
                 if (expired) {
                   if (!PureHttp.isRefreshing) {
                     PureHttp.isRefreshing = true;
                     // token过期刷新
                     useUserStoreHook()
-                      .handRefreshToken({ refreshToken: data.refreshToken })
+                      .handRefreshToken({
+                        jwtRefreshToken: data.jwtRefreshToken
+                      })
                       .then(res => {
-                        const token = res.data.accessToken;
+                        const token = res.jwt;
                         config.headers["Authorization"] = formatToken(token);
                         PureHttp.requests.forEach(cb => cb(token));
                         PureHttp.requests = [];
@@ -99,9 +105,7 @@ class PureHttp {
                   }
                   resolve(PureHttp.retryOriginalRequest(config));
                 } else {
-                  config.headers["Authorization"] = formatToken(
-                    data.accessToken
-                  );
+                  config.headers["Authorization"] = formatToken(data.jwt);
                   resolve(config);
                 }
               } else {
@@ -146,48 +150,101 @@ class PureHttp {
   }
 
   /** 通用请求工具函数 */
-  public request<T>(
+  public request<T, P = any>(
     method: RequestMethods,
     url: string,
-    param?: AxiosRequestConfig,
+    param?: P,
     axiosConfig?: PureHttpRequestConfig
-  ): Promise<T> {
+  ): Promise<R<T>> {
     const config = {
+      ...axiosConfig,
       method,
       url,
-      ...param,
-      ...axiosConfig
-    } as PureHttpRequestConfig;
+      data: param
+    };
 
     // 单独处理自定义请求/响应回调
     return new Promise((resolve, reject) => {
       PureHttp.axiosInstance
         .request(config)
-        .then((response: undefined) => {
-          resolve(response);
+        .then((response: any) => {
+          const hiddenErrorMsgFlag = config.headers?.hiddenErrorMsg; // 是否隐藏错误提示
+          let res = response as R<T>;
+          if (res.code !== CommonConstant.API_OK_CODE || !res.receive) {
+            if (res.code === 100111) {
+              // 这个代码需要跳转到：登录页面
+              if (!hiddenErrorMsgFlag) {
+                const fullPath = router.currentRoute.value.fullPath;
+
+                if (fullPath === signPath || getToken()?.jwt) {
+                  ToastError(res.msg); // 存在 jwt才提示错误消息
+                }
+              }
+
+              reject(new Error("登录过期"));
+              useUserStoreHook().logOut(); // 退出登录
+            } else {
+              if (!hiddenErrorMsgFlag) {
+                ToastError(res.msg || "请求失败：服务器未启动");
+              }
+
+              reject(new Error("请求错误：" + JSON.stringify(config)));
+            }
+          } else {
+            resolve(res);
+          }
         })
         .catch(error => {
-          reject(error);
+          reject(this.responseInterceptorsError(error, config));
         });
     });
   }
 
+  /** 响应拦截器-错误 */
+  private responseInterceptorsError(
+    err: PureHttpError,
+    config: PureHttpRequestConfig
+  ): PureHttpError {
+    const hiddenErrorMsgFlag = config.headers?.hiddenErrorMsg; // 是否隐藏错误提示
+
+    if (hiddenErrorMsgFlag) {
+      return err; // 这里会触发 catch，备注：如果没有 catch，则会报错
+    }
+
+    // 所有的请求错误，例如 500 404 错误，超出 2xx 范围的状态码都会触发该函数。
+    let msg: string = err.message;
+
+    if (msg === "Network Error") {
+      msg = "连接异常，请重试";
+    } else if (msg.includes("timeout")) {
+      msg = "请求超时，请重试";
+    } else if (msg.includes("Request failed with status code")) {
+      const substring = msg.substring(msg.length - 3);
+
+      msg = "接口【" + substring + "】异常，请联系管理员";
+    }
+
+    ToastError(msg || "请求错误：" + err.message);
+
+    return err; // 这里会触发 catch，备注：如果没有 catch，则会报错
+  }
+
   /** 单独抽离的`post`工具函数 */
-  public post<T, P>(
+  public post<T, P = any>(
     url: string,
-    params?: AxiosRequestConfig<P>,
+    params?: P,
     config?: PureHttpRequestConfig
-  ): Promise<T> {
-    return this.request<T>("post", url, params, config);
+  ): Promise<R<T>> {
+    return this.request<T, P>("post", url, params, config);
   }
 
   /** 单独抽离的`get`工具函数 */
-  public get<T, P>(
+  public get<T, P = any>(
     url: string,
-    params?: AxiosRequestConfig<P>,
+    params?: P,
     config?: PureHttpRequestConfig
-  ): Promise<T> {
-    return this.request<T>("get", url, params, config);
+  ): Promise<R<T>> {
+    return this.request<T, P>("get", url, params, config);
   }
 }
 
