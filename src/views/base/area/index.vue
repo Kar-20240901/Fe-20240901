@@ -19,15 +19,11 @@ import MenuAddFill from "@iconify-icons/ri/menu-add-fill";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
 import ExpandIcon from "@/assets/table-bar/expand.svg?component";
-import {
-  ICON_CLASS,
-  RendTippyProps,
-  ToggleRowExpansionAll
-} from "@/components/RePureTableBar/src/bar";
 import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
 import { DictVO } from "@/api/http/base/BaseRoleController";
 import { CalcOrderNo } from "@/utils/TreeUtil";
 import { baseUserDictList } from "@/api/http/base/BaseUserController";
+import { ICON_CLASS, RendTippyProps, ToggleRowExpansionAll } from "@/utils/TableUtil";
 
 defineOptions({
   name: "BaseArea"
