@@ -23,7 +23,11 @@ import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
 import { DictVO } from "@/api/http/base/BaseRoleController";
 import { CalcOrderNo } from "@/utils/TreeUtil";
 import { baseUserDictList } from "@/api/http/base/BaseUserController";
-import { ICON_CLASS, RendTippyProps, ToggleRowExpansionAll } from "@/utils/TableUtil";
+import {
+  ICON_CLASS,
+  RendTippyProps,
+  ToggleRowExpansionAll
+} from "@/utils/TableUtil";
 
 defineOptions({
   name: "BaseArea"
