@@ -76,7 +76,7 @@ export interface BaseDictPageDTO {
   order?: MyOrderDTO; // 排序字段
 }
 
-export interface TempDictDO {
+export interface BaseDictDO {
   orderNo?: number; // 排序号（值越大越前面，默认为 0），format：int32
   updateTime?: string; // 修改时间，format：date-time
   remark?: string; // 备注
@@ -85,7 +85,7 @@ export interface TempDictDO {
   uuid?: string; // 该字典的 uuid
   updateId?: string; // 修改人id，format：int64
   createTime?: string; // 创建时间，format：date-time
-  children?: TempDictDO[]; // 字典的子节点
+  children?: BaseDictDO[]; // 字典的子节点
   createId?: string; // 创建人id，format：int64
   name?: string; // 字典/字典项 名
   id?: string; // 主键 id，format：int64
@@ -98,7 +98,7 @@ export function baseDictPage(
   form: BaseDictPageDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<Page<TempDictDO>>(
+  return http.request<Page<BaseDictDO>>(
     "post",
     baseApi("/base/dict/page"),
     form,
@@ -150,7 +150,7 @@ export function baseDictInfoById(
   form: NotNullId,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<TempDictDO>(
+  return http.request<BaseDictDO>(
     "post",
     baseApi("/base/dict/infoById"),
     form,
@@ -163,7 +163,7 @@ export function baseDictTree(
   form: BaseDictPageDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<TempDictDO[]>(
+  return http.request<BaseDictDO[]>(
     "post",
     baseApi("/base/dict/tree"),
     form,

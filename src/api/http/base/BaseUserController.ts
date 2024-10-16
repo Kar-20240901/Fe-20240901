@@ -230,7 +230,7 @@ export interface NotNullId {
   id?: string; // 主键 id，required：true，format：int64
 }
 
-export interface BaseUserInfoByIdVO {
+export interface TempUserInfoByIdVO {
   postIdSet?: string[]; // 岗位 idSet，format：int64
   wxOpenId?: string; // 微信 openId，可以为空，wxAppId + wxOpenId 唯一
   avatarFileId?: string; // 头像 fileId（文件主键 id），format：int64
@@ -261,7 +261,7 @@ export function baseUserInfoById(
   form: NotNullId,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<BaseUserInfoByIdVO>(
+  return http.request<TempUserInfoByIdVO>(
     "post",
     baseApi("/base/user/infoById"),
     form,

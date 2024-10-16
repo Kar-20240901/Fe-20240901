@@ -3,12 +3,12 @@ import { onMounted, ref } from "vue";
 import {
   baseDictAddOrderNo,
   baseDictDeleteByIdSet,
+  BaseDictDO,
   baseDictInfoById,
   baseDictInsertOrUpdate,
   BaseDictPageDTO,
   baseDictTree,
-  baseDictUpdateOrderNo,
-  TempDictDO
+  baseDictUpdateOrderNo
 } from "@/api/http/base/BaseDictController";
 import formEdit from "@/views/base/dict/formEdit.vue";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
@@ -36,7 +36,7 @@ const search = ref<BaseDictPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<TempDictDO[]>([]);
+const dataList = ref<BaseDictDO[]>([]);
 
 const formRef = ref();
 const title = ref<string>("");
@@ -68,7 +68,7 @@ function resetSearch() {
   onSearch();
 }
 
-function editClick(row: TempDictDO) {
+function editClick(row: BaseDictDO) {
   if (dictTypeOptions[0].value === row.type) {
     title.value = "修改字典";
   } else {
@@ -77,7 +77,7 @@ function editClick(row: TempDictDO) {
   formRef.value.editOpen(baseDictInfoById({ id: row.id }));
 }
 
-function addClick(row: TempDictDO, record?: TempDictDO) {
+function addClick(row: BaseDictDO, record?: BaseDictDO) {
   if (row.dictKey) {
     row.type = dictTypeOptions[1].value;
     title.value = "新增字典项";
@@ -101,7 +101,7 @@ function confirmAfterFun(res, done) {
   onSearch();
 }
 
-function deleteClick(row: TempDictDO) {
+function deleteClick(row: BaseDictDO) {
   ExecConfirm(
     async () => {
       await baseDictDeleteByIdSet({ idSet: [row.id] }).then(res => {
@@ -136,7 +136,7 @@ function onExpand() {
   ToggleRowExpansionAll(dataList.value, isExpandAll.value, tableRef.value);
 }
 
-function orderNoChange(row: TempDictDO) {
+function orderNoChange(row: BaseDictDO) {
   baseDictUpdateOrderNo({ idSet: [row.id], number: String(row.orderNo) }).then(
     res => {
       ToastSuccess(res.msg);
@@ -153,7 +153,7 @@ function addOrderNoBySelectIdArr() {
   addOrderNoFormRef.value.open();
 }
 
-function onSelectChange(rowArr?: TempDictDO[]) {
+function onSelectChange(rowArr?: BaseDictDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 }
 

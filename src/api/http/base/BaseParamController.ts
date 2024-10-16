@@ -8,7 +8,7 @@ export interface NotNullId {
   id?: string; // 主键 id，required：true，format：int64
 }
 
-export interface TempParamDO {
+export interface BaseParamDO {
   updateId?: string; // 修改人id，format：int64
   createTime?: string; // 创建时间，format：date-time
   createId?: string; // 创建人id，format：int64
@@ -26,7 +26,7 @@ export function baseParamInfoById(
   form: NotNullId,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<TempParamDO>(
+  return http.request<BaseParamDO>(
     "post",
     baseApi("/base/param/infoById"),
     form,
@@ -48,7 +48,7 @@ export function baseParamPage(
   form: BaseParamPageDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<Page<TempParamDO>>(
+  return http.request<Page<BaseParamDO>>(
     "post",
     baseApi("/base/param/page"),
     form,

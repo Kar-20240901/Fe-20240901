@@ -8,11 +8,11 @@ import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
 import {
   baseParamDeleteByIdSet,
+  BaseParamDO,
   baseParamInfoById,
   baseParamInsertOrUpdate,
   baseParamPage,
-  BaseParamPageDTO,
-  TempParamDO
+  BaseParamPageDTO
 } from "@/api/http/base/BaseParamController";
 import FormEdit from "@/views/base/param/formEdit.vue";
 
@@ -24,7 +24,7 @@ const search = ref<BaseParamPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<TempParamDO[]>([]);
+const dataList = ref<BaseParamDO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
@@ -61,12 +61,12 @@ function resetSearch() {
   onSearch();
 }
 
-function editClick(row: TempParamDO) {
+function editClick(row: BaseParamDO) {
   title.value = "修改参数";
   formRef.value.editOpen(baseParamInfoById({ id: row.id }));
 }
 
-function addClick(row: TempParamDO) {
+function addClick(row: BaseParamDO) {
   title.value = "新增参数";
   formRef.value.addOpen(row);
 }
@@ -81,7 +81,7 @@ function confirmAfterFun(res, done) {
   onSearch();
 }
 
-function deleteClick(row: TempParamDO) {
+function deleteClick(row: BaseParamDO) {
   ExecConfirm(
     async () => {
       await baseParamDeleteByIdSet({ idSet: [row.id] }).then(res => {
@@ -111,7 +111,7 @@ function deleteBySelectIdArr() {
   );
 }
 
-function onSelectChange(rowArr?: TempParamDO[]) {
+function onSelectChange(rowArr?: BaseParamDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 }
 </script>
