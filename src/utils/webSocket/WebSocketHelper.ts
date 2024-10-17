@@ -47,6 +47,8 @@ function HandleAllWebSocketUrl(
     webSocket.onmessage = (message: MessageEvent<string>) => {
       const webSocketMessage: IWebSocketMessage<any> = JSON.parse(message.data);
 
+      console.log("webSocketMessage", webSocketMessage);
+
       if (webSocketMessage.uri === NETTY_WEB_SOCKET_HEART_BEAT) {
         const ms = new Date().getTime() - beginTs;
 
