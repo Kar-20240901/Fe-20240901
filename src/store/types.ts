@@ -1,4 +1,5 @@
 import type { RouteRecordName } from "vue-router";
+import type { IWebSocketMessage } from "@/utils/webSocket/WebSocketHelper";
 
 export type cacheType = {
   mode: string;
@@ -44,4 +45,9 @@ export type userType = {
   permissions?: Array<string>;
   isRemembered?: boolean;
   loginDay?: number;
+};
+
+export type webSocketType = {
+  webSocketStatus: boolean;
+  webSocketMessage: IWebSocketMessage<any>;
 };

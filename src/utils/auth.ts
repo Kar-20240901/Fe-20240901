@@ -33,7 +33,7 @@ export const multipleTabsKey = "multiple-tabs";
 
 /** 获取`token` */
 export function getToken(): DataInfo {
-  return storageLocal().getItem(userKey);
+  return storageLocal().getItem<DataInfo>(userKey);
 }
 
 /**

@@ -27,6 +27,7 @@ import { ListToTree } from "@/utils/TreeUtil";
 import { baseUserManageSignInFlag } from "@/api/http/base/BaseUserController";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
+import { ConnectWebSocket } from "@/utils/webSocket/WebSocketUtil";
 
 const IFrame = () => import("@/layout/frame.vue");
 
@@ -275,6 +276,8 @@ function getDynamicRoutes(
     });
 
     res(ListToTree(resArr));
+
+    ConnectWebSocket(); // 连接 webSocket
   });
 }
 

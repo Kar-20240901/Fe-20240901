@@ -15,6 +15,7 @@ import {
   signUserNameJwtRefreshToken,
   signUserNameSignInPassword
 } from "@/api/http/base/SignUserNameController";
+import { CloseWebSocket } from "@/utils/webSocket/WebSocketUtil";
 
 export const useUserStore = defineStore({
   id: "pure-user",
@@ -86,6 +87,7 @@ export const useUserStore = defineStore({
       useMultiTagsStoreHook().handleTags("equal", [...routerArrays]);
       resetRouter();
       router.push(signPath);
+      CloseWebSocket(); // 关闭 webSocket
     },
     /** 刷新`token` */
     async handRefreshToken(body) {

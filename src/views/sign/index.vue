@@ -18,6 +18,7 @@ import User from "@iconify-icons/ri/user-3-fill";
 import { Validate } from "@/utils/ValidatorUtil";
 import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
 import { ToastSuccess } from "@/utils/ToastUtil";
+import { CloseWebSocket } from "@/utils/webSocket/WebSocketUtil";
 
 defineOptions({
   name: "Sign"
@@ -77,6 +78,8 @@ function onkeypress({ code }: KeyboardEvent) {
 
 onMounted(() => {
   window.document.addEventListener("keypress", onkeypress);
+
+  CloseWebSocket(); // 关闭 webSocket
 });
 
 onBeforeUnmount(() => {
