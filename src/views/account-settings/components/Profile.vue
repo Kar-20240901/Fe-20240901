@@ -16,7 +16,7 @@ import {
   CheckFileSize
 } from "@/utils/FileUtil";
 import CommonConstant from "@/model/constant/CommonConstant";
-import { handleAvatarFileId } from "@/utils/UserUtil";
+import { handleAvatarFileId, setUserKey } from "@/utils/UserUtil";
 
 defineOptions({
   name: "Profile"
@@ -43,6 +43,8 @@ onMounted(() => {
   baseUserSelfInfo()
     .then(res => {
       userInfo.value = res.data;
+
+      setUserKey({ nickname: res.data.nickname, username: res.data.username });
 
       const avatarFileId = res.data.avatarFileId!;
 
@@ -101,6 +103,10 @@ const onSubmit = async () => {
 
     baseUserSelfUpdateInfo({ ...userInfo.value })
       .then(res => {
+        setUserKey({
+          nickname: userInfo.value.nickname,
+          username: userInfo.value.username
+        });
         ToastSuccess(res.msg);
       })
       .finally(() => {
