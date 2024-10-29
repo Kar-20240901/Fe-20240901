@@ -60,7 +60,7 @@ const onChange = (uploadFile: UploadFile) => {
     return;
   }
 
-  if (!CheckFileSize(uploadFile.size!)) {
+  if (!CheckFileSize(uploadFile.size!, 2097152)) {
     ToastError("图片大于 2MB，请重新选择");
     uploadRef.value.clearFiles();
     return;
