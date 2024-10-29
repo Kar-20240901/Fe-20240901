@@ -78,6 +78,7 @@ const onChange = (uploadFile: UploadFile) => {
 const handleClose = () => {
   cropRef.value.hidePopover();
   uploadRef.value.clearFiles();
+  cropperBlob.value = undefined;
   isShow.value = false;
 };
 
