@@ -13,6 +13,7 @@ import {
   baseUserSelfInfo,
   BaseUserSelfInfoVO
 } from "@/api/http/base/BaseUserController";
+import { handleAvatarFileId } from "@/utils/UserUtil";
 
 defineOptions({
   name: "AccountSettings"
@@ -32,14 +33,8 @@ const userAvatarUrl = ref("");
 onMounted(() => {
   baseUserSelfInfo().then(res => {
     userInfo.value = res.data;
-
     const avatarFileId = res.data.avatarFileId!;
-
-    if (avatarFileId !== "-1") {
-      // SysFileGetPublicUrl({ idSet: [avatarFileId!] }).then(res => {
-      //   userAvatarUrl.value = res.data.map![avatarFileId] || "";
-      // });
-    }
+    handleAvatarFileId(avatarFileId, url => (userAvatarUrl.value = url));
   });
 });
 

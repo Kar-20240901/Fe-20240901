@@ -15,8 +15,8 @@ import {
   CheckAvatarFileType,
   CheckFileSize
 } from "@/utils/FileUtil";
-import { baseFileGetPublicUrl } from "@/api/http/base/BaseFileController";
 import CommonConstant from "@/model/constant/CommonConstant";
+import { handleAvatarFileId } from "@/utils/UserUtil";
 
 defineOptions({
   name: "Profile"
@@ -39,15 +39,6 @@ const userAvatarUrl = ref("");
 
 const submitLoadingFlag = ref<boolean>(true);
 
-// 处理：头像文件 id
-function handleAvatarFileId(avatarFileId: string) {
-  if (avatarFileId !== "-1") {
-    baseFileGetPublicUrl({ idSet: [avatarFileId!] }).then(res => {
-      userAvatarUrl.value = res.data.map![avatarFileId] || "";
-    });
-  }
-}
-
 onMounted(() => {
   baseUserSelfInfo()
     .then(res => {
@@ -55,7 +46,7 @@ onMounted(() => {
 
       const avatarFileId = res.data.avatarFileId!;
 
-      handleAvatarFileId(avatarFileId); // 处理：头像文件 id
+      handleAvatarFileId(avatarFileId, url => (userAvatarUrl.value = url)); // 处理：头像文件 id
     })
     .finally(() => {
       submitLoadingFlag.value = false;
@@ -93,7 +84,7 @@ const onCropper = ({ blob }) => (cropperBlob.value = blob);
 const handleSubmitImage = () => {
   BaseFileUpload(new File([cropperBlob.value], "avatar"), "AVATAR").then(
     res => {
-      handleAvatarFileId(res.data);
+      handleAvatarFileId(res.data, url => (userAvatarUrl.value = url));
       ToastSuccess(res.msg);
       handleClose();
     }
