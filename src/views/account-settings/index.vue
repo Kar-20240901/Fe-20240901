@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { onBeforeMount, onMounted, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { ReText } from "@/components/ReText";
 import Profile from "./components/Profile.vue";
 import { deviceDetection, useGlobal } from "@pureadmin/utils";
@@ -9,18 +9,15 @@ import LaySidebarTopCollapse from "@/layout/components/lay-sidebar/components/Si
 
 import leftLine from "@iconify-icons/ri/arrow-left-s-line";
 import ProfileIcon from "@iconify-icons/ri/user-3-line";
-import {
-  baseUserSelfInfo,
-  BaseUserSelfInfoVO
-} from "@/api/http/base/BaseUserController";
-import { handleAvatarFileId } from "@/utils/UserUtil";
+import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
+import { useUserStoreHook } from "@/store/modules/user";
 
 defineOptions({
   name: "AccountSettings"
 });
 
 const router = useRouter();
-const isOpen = ref(deviceDetection() ? false : true);
+const isOpen = ref(!deviceDetection());
 const { $storage } = useGlobal<GlobalPropertiesApi>();
 onBeforeMount(() => {
   useDataThemeChange().dataThemeChange($storage.layout?.overallStyle);
@@ -30,12 +27,9 @@ const userInfo = ref<BaseUserSelfInfoVO>({});
 
 const userAvatarUrl = ref("");
 
-onMounted(() => {
-  baseUserSelfInfo().then(res => {
-    userInfo.value = res.data;
-    const avatarFileId = res.data.avatarFileId!;
-    handleAvatarFileId(avatarFileId, url => (userAvatarUrl.value = url));
-  });
+useUserStoreHook().$subscribe((mutation, state) => {
+  userInfo.value = { ...state };
+  userAvatarUrl.value = state.avatar;
 });
 
 const panes = [
