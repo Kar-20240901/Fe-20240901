@@ -4,7 +4,8 @@ import { GetBrowserCategory } from "@/utils/BrowserCategoryUtil";
 import { TempRequestCategoryEnum } from "@/views/base/user/enums";
 import { http, ORIGIN_RESPONSE } from "@/utils/http";
 import type { PureHttpResponse, RequestMethods } from "@/utils/http/types";
-import { NotNullId } from "@/api/http/base/BaseFileController";
+import type { NotNullId } from "@/api/http/base/BaseFileController";
+import { baseApi } from "@/api/http/utils";
 
 export function GetFileCanPreviewFlag(fileName: string) {
   return fileName.endsWith(".txt");
@@ -143,7 +144,7 @@ export function ExecFileDownload<T>(url: string, form?: T) {
   FileDownload(url, Download, form);
 }
 
-export const BaseFilePrivateDownloadUrl = "/base/file/privateDownload";
+export const BaseFilePrivateDownloadUrl = baseApi("/base/file/privateDownload");
 
 // 文件-管理 文件下载
 export function BaseFilePrivateDownload(form: NotNullId) {
@@ -161,7 +162,7 @@ export function BaseFileUpload(file: File, type: TSysFileUploadProType) {
 
   formData.append("uploadType", type);
 
-  return FileUpload(formData, "/base/file/upload");
+  return FileUpload(formData, baseApi("/base/file/upload"));
 }
 
 // 文件上传

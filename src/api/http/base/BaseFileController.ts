@@ -67,7 +67,7 @@ export function baseFilePrivateDownload(
   form: NotNullId,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<void>(
+  return http.request<undefined>(
     "post",
     baseApi("/base/file/privateDownload"),
     form,
