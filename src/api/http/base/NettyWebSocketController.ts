@@ -31,3 +31,13 @@ export function nettyWebSocketGetAllWebSocketUrl(
     config
   );
 }
+
+// 心跳检测
+export function nettyWebSocketHeartBeat(config?: PureHttpRequestConfig) {
+  return http.request<string>(
+    "post",
+    baseApi("/netty/webSocket/heartBeat"),
+    undefined,
+    config
+  );
+}

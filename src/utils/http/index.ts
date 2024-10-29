@@ -33,6 +33,8 @@ const defaultConfig: AxiosRequestConfig = {
   }
 };
 
+export const ORIGIN_RESPONSE = "origin-response";
+
 class PureHttp {
   constructor() {
     this.httpInterceptorsRequest();
@@ -135,6 +137,9 @@ class PureHttp {
         if (PureHttp.initConfig.beforeResponseCallback) {
           PureHttp.initConfig.beforeResponseCallback(response);
           return response.data;
+        }
+        if ($config.headers[ORIGIN_RESPONSE]) {
+          return response;
         }
         return response.data;
       },
@@ -245,6 +250,33 @@ class PureHttp {
     config?: PureHttpRequestConfig
   ): Promise<R<T>> {
     return this.request<T, P>("get", url, params, config);
+  }
+
+  /** 通用请求工具函数：原始 */
+  public requestOriginal<T, P = any>(
+    method: RequestMethods,
+    url: string,
+    param?: P,
+    axiosConfig?: PureHttpRequestConfig
+  ): Promise<T> {
+    const config = {
+      ...axiosConfig,
+      method,
+      url,
+      data: param
+    };
+
+    // 单独处理自定义请求/响应回调
+    return new Promise((resolve, reject) => {
+      PureHttp.axiosInstance
+        .request(config)
+        .then((response: any) => {
+          resolve(response as T);
+        })
+        .catch(error => {
+          reject(this.responseInterceptorsError(error, config));
+        });
+    });
   }
 }
 
