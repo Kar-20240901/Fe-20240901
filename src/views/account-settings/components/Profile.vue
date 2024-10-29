@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import type { FormInstance, FormRules } from "element-plus";
+import type { FormInstance, FormRules, UploadFile } from "element-plus";
 import { deviceDetection } from "@pureadmin/utils";
 import uploadLine from "@iconify-icons/ri/upload-line";
 import {
@@ -8,10 +8,15 @@ import {
   BaseUserSelfInfoVO,
   baseUserSelfUpdateInfo
 } from "@/api/http/base/BaseUserController";
-import { ToastSuccess } from "@/utils/ToastUtil";
+import { ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import ReCropperPreview from "@/components/ReCropperPreview/src/index.vue";
-import { BaseFileUpload } from "@/utils/FileUtil";
+import {
+  BaseFileUpload,
+  CheckAvatarFileType,
+  CheckFileSize
+} from "@/utils/FileUtil";
 import { baseFileGetPublicUrl } from "@/api/http/base/BaseFileController";
+import CommonConstant from "@/model/constant/CommonConstant";
 
 defineOptions({
   name: "Profile"
@@ -57,7 +62,18 @@ onMounted(() => {
     });
 });
 
-const onChange = uploadFile => {
+const onChange = (uploadFile: UploadFile) => {
+  if (!CheckAvatarFileType(uploadFile.raw.type)) {
+    ToastError("暂不支持此文件类型：" + uploadFile.raw.type + "，请重新选择");
+    uploadRef.value.clearFiles();
+    return;
+  }
+
+  if (!CheckFileSize(uploadFile.size!)) {
+    ToastError("图片大于 2MB，请重新选择");
+    uploadRef.value.clearFiles();
+    return;
+  }
   const reader = new FileReader();
   reader.onload = e => {
     imgSrc.value = e.target.result as string;
@@ -85,16 +101,15 @@ const handleSubmitImage = () => {
 };
 
 // 更新信息
-const onSubmit = async (formEl: FormInstance) => {
-  await formEl.validate((valid, fields) => {
+const onSubmit = async () => {
+  await userInfoFormRef.value.validate(valid => {
     if (!valid) {
       return;
     }
     submitLoadingFlag.value = true;
 
-    baseUserSelfUpdateInfo(fields)
+    baseUserSelfUpdateInfo({ ...userInfo.value })
       .then(res => {
-        userInfo.value = { ...fields };
         ToastSuccess(res.msg);
       })
       .finally(() => {
@@ -122,8 +137,7 @@ const onSubmit = async (formEl: FormInstance) => {
         <el-avatar :size="80" :src="userAvatarUrl" />
         <el-upload
           ref="uploadRef"
-          accept="image/*"
-          action="#"
+          :accept="CommonConstant.IMAGE_FILE_ACCEPT_TYPE"
           :limit="1"
           :auto-upload="false"
           :show-file-list="false"
@@ -138,21 +152,17 @@ const onSubmit = async (formEl: FormInstance) => {
       <el-form-item label="昵称" prop="nickname">
         <el-input v-model="userInfo.nickname" placeholder="请输入昵称" />
       </el-form-item>
-      <el-form-item label="简介">
+      <el-form-item label="简介" prop="bio">
         <el-input
           v-model="userInfo.bio"
           placeholder="请输入简介"
           type="textarea"
           :autosize="{ minRows: 6, maxRows: 8 }"
-          maxlength="56"
+          maxlength="100"
           show-word-limit
         />
       </el-form-item>
-      <el-button
-        :loading="submitLoadingFlag"
-        type="primary"
-        @click="onSubmit(userInfoFormRef)"
-      >
+      <el-button :loading="submitLoadingFlag" type="primary" @click="onSubmit">
         更新信息
       </el-button>
     </el-form>
