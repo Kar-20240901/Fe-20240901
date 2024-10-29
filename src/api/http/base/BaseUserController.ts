@@ -114,18 +114,15 @@ export interface BaseUserPageDTO {
 
 export interface BaseUserPageVO {
   passwordFlag?: boolean; // 是否有密码
-  postIdSet?: string[]; // 岗位 idSet，format：int64
   lastActiveTime?: string; // 最近活跃时间，format：date-time
   avatarFileId?: string; // 头像 fileId（文件主键 id），备注：没有时则为 -1，format：int64
   wxOpenId?: string; // 微信 openId
   signUpType?: string; // 请求类别
   ip?: string; // ip
   wxAppId?: string; // 微信 appId
-  deptIdSet?: string[]; // 部门 idSet，format：int64
   phone?: string; // 手机号码，会脱敏
   createTime?: string; // 创建时间，format：date-time
   nickname?: string; // 昵称
-  roleIdSet?: string[]; // 角色 idSet，format：int64
   id?: string; // 主键 id，format：int64
   region?: string; // Ip2RegionUtil.getRegion() 获取到的 ip所处区域
   enableFlag?: boolean; // 正常/冻结

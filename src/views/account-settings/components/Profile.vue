@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { createFormData, deviceDetection } from "@pureadmin/utils";
+import { deviceDetection } from "@pureadmin/utils";
 import uploadLine from "@iconify-icons/ri/upload-line";
 import {
   baseUserSelfInfo,
   BaseUserSelfInfoVO,
   baseUserSelfUpdateInfo
 } from "@/api/http/base/BaseUserController";
-import { ToastError } from "@/utils/ToastUtil";
+import { ToastSuccess } from "@/utils/ToastUtil";
+import ReCropperPreview from "@/components/ReCropperPreview/src/index.vue";
+import { BaseFileUpload } from "@/utils/FileUtil";
+import { baseFileGetPublicUrl } from "@/api/http/base/BaseFileController";
 
 defineOptions({
   name: "Profile"
@@ -29,20 +32,29 @@ const rules: FormRules<BaseUserSelfInfoVO> = {
 
 const userAvatarUrl = ref("");
 
-const submitLoadingFlag = ref<boolean>(false);
+const submitLoadingFlag = ref<boolean>(true);
+
+// 处理：头像文件 id
+function handleAvatarFileId(avatarFileId: string) {
+  if (avatarFileId !== "-1") {
+    baseFileGetPublicUrl({ idSet: [avatarFileId!] }).then(res => {
+      userAvatarUrl.value = res.data.map![avatarFileId] || "";
+    });
+  }
+}
 
 onMounted(() => {
-  baseUserSelfInfo().then(res => {
-    userInfo.value = res.data;
+  baseUserSelfInfo()
+    .then(res => {
+      userInfo.value = res.data;
 
-    const avatarFileId = res.data.avatarFileId!;
+      const avatarFileId = res.data.avatarFileId!;
 
-    if (avatarFileId !== "-1") {
-      // SysFileGetPublicUrl({ idSet: [avatarFileId!] }).then(res => {
-      //   userAvatarUrl.value = res.data.map![avatarFileId] || "";
-      // });
-    }
-  });
+      handleAvatarFileId(avatarFileId); // 处理：头像文件 id
+    })
+    .finally(() => {
+      submitLoadingFlag.value = false;
+    });
 });
 
 const onChange = uploadFile => {
@@ -63,23 +75,13 @@ const handleClose = () => {
 const onCropper = ({ blob }) => (cropperBlob.value = blob);
 
 const handleSubmitImage = () => {
-  const formData = createFormData({
-    files: new File([cropperBlob.value], "avatar")
-  });
-  ToastError("更新头像失败：暂未提供该功能");
-  handleClose();
-  // formUpload(formData)
-  //   .then(({ success, data }) => {
-  //     if (success) {
-  //       message("更新头像成功", { type: "success" });
-  //       handleClose();
-  //     } else {
-  //       message("更新头像失败");
-  //     }
-  //   })
-  //   .catch(error => {
-  //     message(`提交异常 ${error}`, { type: "error" });
-  //   });
+  BaseFileUpload(new File([cropperBlob.value], "avatar"), "AVATAR").then(
+    res => {
+      handleAvatarFileId(res.data);
+      ToastSuccess(res.msg);
+      handleClose();
+    }
+  );
 };
 
 // 更新信息
@@ -92,7 +94,8 @@ const onSubmit = async (formEl: FormInstance) => {
 
     baseUserSelfUpdateInfo(fields)
       .then(res => {
-        ToastError(res.msg);
+        userInfo.value = { ...fields };
+        ToastSuccess(res.msg);
       })
       .finally(() => {
         submitLoadingFlag.value = false;
