@@ -40,15 +40,15 @@ export interface BaseUserInsertOrUpdateDTO {
   originPassword?: string; // 前端加密之后的原始密码
   password?: string; // 前端加密之后的密码
   deptIdSet?: string[]; // 部门 idSet，format：int64
-  phone?: string; // 手机号码，maxLength：100，minLength：0
+  phone?: string; // 手机号码
   wxUnionId?: string; // 微信 unionId
-  nickname?: string; // 昵称，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{1,20}$，maxLength：100，minLength：0
+  nickname?: string; // 昵称，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{1,20}$
   roleIdSet?: string[]; // 角色 idSet，format：int64
   id?: string; // 主键 id，format：int64
   enableFlag?: boolean; // 正常/冻结
-  email?: string; // 邮箱，maxLength：200，minLength：0
+  email?: string; // 邮箱
   manageSignInFlag?: boolean; // 是否允许登录：后台管理系统
-  username?: string; // 用户名，maxLength：100，minLength：0
+  username?: string; // 用户名
 }
 
 // 新增/修改

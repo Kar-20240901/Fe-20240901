@@ -29,8 +29,12 @@ export const BaseSocketOnlineTypeEnum: IBaseSocketOnlineTypeEnum = {
 
 export const BaseSocketOnlineTypeOptions: Array<OptionsType> = [];
 
+export const BaseSocketOnlineTypeMap = new Map<number, string>();
+
 Object.keys(BaseSocketOnlineTypeEnum).forEach(key => {
   const item = BaseSocketOnlineTypeEnum[key] as IEnum<number>;
 
   BaseSocketOnlineTypeOptions.push({ label: item.name, value: item.code });
+
+  BaseSocketOnlineTypeMap.set(item.code, item.name);
 });

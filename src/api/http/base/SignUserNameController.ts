@@ -3,7 +3,7 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface SignUserNameUpdateUserNameDTO {
-  newUserName?: string; // 新用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，maxLength：100，minLength：0，required：true
+  newUserName?: string; // 新用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
   currentPassword?: string; // 前端加密之后的密码，required：true
 }
 
@@ -23,7 +23,7 @@ export function signUserNameUpdateUserName(
 export interface SignUserNameSignUpDTO {
   password?: string; // 前端加密之后的密码，required：true
   originPassword?: string; // 前端加密之后的原始密码，required：true
-  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，maxLength：100，minLength：0，required：true
+  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
 }
 
 // 注册
@@ -58,7 +58,7 @@ export function signUserNameSignDelete(
 
 export interface SignUserNameSignInPasswordDTO {
   password?: string; // 前端加密之后的密码，required：true
-  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，maxLength：100，minLength：0，required：true
+  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
 }
 
 export interface SignInVO {

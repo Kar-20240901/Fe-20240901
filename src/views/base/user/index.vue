@@ -29,12 +29,12 @@ import {
   ElOrderDTO,
   GetMyOrderDTO
 } from "@/model/dto/MyOrderDTO";
-import {
-  TempRequestCategoryEnum,
-  tempRequestCategoryEnumMap
-} from "@/views/base/user/enums";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import CommonConstant from "@/model/constant/CommonConstant";
+import {
+  TempRequestCategoryEnum,
+  TempRequestCategoryMap
+} from "@/model/enum/TempRequestCategoryEnum";
 
 defineOptions({
   name: "BaseUser"
@@ -368,15 +368,13 @@ function thawClick() {
           sortable
           label="创建时间"
         >
-          <span>{{
-            FormatDateTimeForCurrentDay(new Date(scope.row.createTime))
-          }}</span>
+          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
         <el-table-column #default="scope" label="注册终端">
-          <span>{{
-            tempRequestCategoryEnumMap.get(scope.row.signUpType) ||
+          {{
+            TempRequestCategoryMap.get(scope.row.signUpType) ||
             TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
-          }}</span>
+          }}
         </el-table-column>
         <el-table-column
           #default="scope"
@@ -384,9 +382,7 @@ function thawClick() {
           label="最近活跃时间"
           sortable
         >
-          <span>{{
-            FormatDateTimeForCurrentDay(new Date(scope.row.lastActiveTime))
-          }}</span>
+          {{ FormatDateTimeForCurrentDay(new Date(scope.row.lastActiveTime)) }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button
