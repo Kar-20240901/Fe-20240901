@@ -1,29 +1,84 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { message } from "@/utils/message";
 import { deviceDetection } from "@pureadmin/utils";
+import { useUserStoreHook } from "@/store/modules/user";
 
 defineOptions({
   name: "AccountManagement"
 });
 
-const passwordIndex = 0;
-const emailIndex = 1;
+const usernameIndex = 0;
+const passwordIndex = 1;
+const emailIndex = 2;
+const signDeleteIndex = 3;
 
 const list = ref([
   {
-    title: "账户密码",
-    button: "修改"
+    title: "账号用户名",
+    illustrate: "",
+    button: ""
+  },
+  {
+    title: "账号密码",
+    button: ""
   },
   {
     title: "绑定邮箱",
     illustrate: "",
     button: ""
+  },
+  {
+    title: "账号注销",
+    illustrate: "",
+    button: "注销"
   }
 ]);
 
-function onClick(item) {
-  message("请根据具体业务自行实现", { type: "success" });
+useUserStoreHook().$subscribe((mutation, state) => {
+  if (state.username) {
+    list[usernameIndex].illustrate = state.username;
+    list[usernameIndex].button = "修改";
+  } else {
+    list[emailIndex].illustrate = "";
+    list[usernameIndex].button = "设置";
+  }
+
+  if (state.passwordFlag) {
+    list[passwordIndex].button = "修改";
+  } else {
+    list[passwordIndex].button = "设置";
+  }
+
+  if (state.email) {
+    list[emailIndex].illustrate = state.email;
+    list[emailIndex].button = "修改";
+  } else {
+    list[emailIndex].illustrate = "";
+    list[emailIndex].button = "设置";
+  }
+
+  if (state.createTime) {
+    list[signDeleteIndex].illustrate = state.createTime;
+  } else {
+    list[signDeleteIndex].illustrate = "";
+  }
+});
+
+function onClick(index, item) {
+  if (index === usernameIndex) {
+    if (item.button === "设置") {
+    } else if (item.button === "修改") {
+    }
+  } else if (index === passwordIndex) {
+    if (item.button === "设置") {
+    } else if (item.button === "修改") {
+    }
+  } else if (index === emailIndex) {
+    if (item.button === "设置") {
+    } else if (item.button === "修改") {
+    }
+  } else if (index === signDeleteIndex) {
+  }
 }
 </script>
 
@@ -47,7 +102,7 @@ function onClick(item) {
           v-if="item.button"
           type="primary"
           text
-          @click="onClick(index)"
+          @click="onClick(index, item)"
         >
           {{ item.button }}
         </el-button>
