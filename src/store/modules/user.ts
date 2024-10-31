@@ -29,8 +29,14 @@ export const useUserStore = defineStore({
     // 页面级别权限
     roles: storageLocal().getItem<DataInfo>(userKey)?.roles ?? [],
     // 按钮级别权限
-    permissions:
-      storageLocal().getItem<DataInfo<number>>(userKey)?.permissions ?? [],
+    permissions: storageLocal().getItem<DataInfo>(userKey)?.permissions ?? [],
+    // 按钮级别权限
+    passwordFlag:
+      storageLocal().getItem<DataInfo>(userKey)?.passwordFlag ?? false,
+    // 按钮级别权限
+    createTime: storageLocal().getItem<DataInfo>(userKey)?.createTime ?? "",
+    // 按钮级别权限
+    email: storageLocal().getItem<DataInfo>(userKey)?.email ?? "",
     // 是否勾选了登录页的免登录
     isRemembered: false,
     // 登录页的免登录存储几天，默认7天
@@ -56,6 +62,14 @@ export const useUserStore = defineStore({
     /** 存储按钮级别权限 */
     SET_PERMS(permissions: Array<string>) {
       this.permissions = permissions;
+    },
+    /** 存储邮箱 */
+    SET_EMAIL(email: string) {
+      this.email = email;
+    },
+    /** 存储是否有密码 */
+    SET_PASSWORD_FLAG(passwordFlag: boolean) {
+      this.passwordFlag = passwordFlag;
     },
     /** 存储是否勾选了登录页的免登录 */
     SET_ISREMEMBERED(bool: boolean) {

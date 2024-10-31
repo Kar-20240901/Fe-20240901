@@ -156,7 +156,7 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
   <div class="flex flex-col">
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="id：" prop="name">
+        <el-form-item label="id：" prop="id">
           <el-input
             v-model="search.id"
             placeholder="请输入id"

@@ -1,6 +1,7 @@
 import Cookies from "js-cookie";
 import { isIncludeAllChildren, isString, storageLocal } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
+import { setUserKey } from "@/utils/UserUtil";
 
 export interface DataInfo<T = string> {
   /** token */
@@ -19,6 +20,9 @@ export interface DataInfo<T = string> {
   roles?: Array<string>;
   /** 当前登录用户的按钮级别权限 */
   permissions?: Array<string>;
+  passwordFlag?: boolean; // 是否有密码，用于前端显示，修改密码/设置密码
+  createTime?: string; // 账号注册时间，format：date-time
+  email?: string; // 邮箱，会脱敏
 }
 
 export const userKey = "user-info";
@@ -43,10 +47,8 @@ export function getToken(): DataInfo {
  * 将`avatar`、`username`、`nickname`、`roles`、`jwtRefreshToken`、`expires`这六条信息放在key值为`user-info`的localStorage里（利用`multipleTabsKey`当浏览器完全关闭后自动销毁）
  */
 export function setToken(data: DataInfo) {
-  let jwtExpireTs = 0;
   const { jwt, jwtRefreshToken } = data;
   const { isRemembered, loginDay } = useUserStoreHook();
-  jwtExpireTs = parseInt(data.jwtExpireTs);
 
   Cookies.set(
     multipleTabsKey,
@@ -58,47 +60,7 @@ export function setToken(data: DataInfo) {
       : {}
   );
 
-  function setUserKey({ avatar, username, nickname, roles, permissions }) {
-    useUserStoreHook().SET_AVATAR(avatar);
-    useUserStoreHook().SET_USERNAME(username);
-    useUserStoreHook().SET_NICKNAME(nickname);
-    useUserStoreHook().SET_ROLES(roles);
-    useUserStoreHook().SET_PERMS(permissions);
-    storageLocal().setItem(userKey, {
-      jwt,
-      jwtRefreshToken,
-      jwtExpireTs,
-      avatar,
-      username,
-      nickname,
-      roles
-    });
-  }
-
-  if (data.username && data.roles) {
-    const { username, roles } = data;
-    setUserKey({
-      avatar: data?.avatar ?? "",
-      username,
-      nickname: data?.nickname ?? "",
-      roles,
-      permissions: data?.permissions ?? []
-    });
-  } else {
-    const avatar = storageLocal().getItem<DataInfo>(userKey)?.avatar ?? "";
-    const username = storageLocal().getItem<DataInfo>(userKey)?.username ?? "";
-    const nickname = storageLocal().getItem<DataInfo>(userKey)?.nickname ?? "";
-    const roles = storageLocal().getItem<DataInfo>(userKey)?.roles ?? [];
-    const permissions =
-      storageLocal().getItem<DataInfo<number>>(userKey)?.permissions ?? [];
-    setUserKey({
-      avatar,
-      username,
-      nickname,
-      roles,
-      permissions
-    });
-  }
+  setUserKey({ jwt, jwtRefreshToken, jwtExpireTs: data.jwtExpireTs });
 }
 
 /** 删除`token`以及key值为`user-info`的localStorage信息 */

@@ -56,17 +56,11 @@ const {
         <template #dropdown>
           <el-dropdown-menu class="logout">
             <el-dropdown-item @click="toAccountSettings">
-              <IconifyIconOffline
-                :icon="AccountSettingsIcon"
-                style="margin: 5px"
-              />
+              <IconifyIconOffline :icon="AccountSettingsIcon" class="m-[5px]" />
               账户设置
             </el-dropdown-item>
             <el-dropdown-item @click="logout">
-              <IconifyIconOffline
-                :icon="LogoutCircleRLine"
-                style="margin: 5px"
-              />
+              <IconifyIconOffline :icon="LogoutCircleRLine" class="m-[5px]" />
               退出系统
             </el-dropdown-item>
           </el-dropdown-menu>

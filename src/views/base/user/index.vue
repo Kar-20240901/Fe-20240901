@@ -361,7 +361,7 @@ function thawClick() {
         >
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
-        <el-table-column prop="region" label="ip位置" />
+        <el-table-column prop="region" label="地点" />
         <el-table-column
           #default="scope"
           prop="createTime"

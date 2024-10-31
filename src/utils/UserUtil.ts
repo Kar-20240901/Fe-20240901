@@ -6,17 +6,21 @@ import { type DataInfo, getToken, userKey } from "@/utils/auth";
 // 处理：头像文件 id
 export function handleAvatarFileId(
   avatarFileId: string,
-  callBack: (url: string) => void
+  callBack?: (url: string) => void
 ) {
   if (avatarFileId === "-1") {
     setUserKey({ avatar: "" });
-    callBack("");
+    if (callBack) {
+      callBack("");
+    }
     return;
   }
   baseFileGetPublicUrl({ idSet: [avatarFileId!] }).then(res => {
     const avatar = res.data.map![avatarFileId] || "";
     setUserKey({ avatar });
-    callBack(avatar);
+    if (callBack) {
+      callBack(avatar);
+    }
   });
 }
 
@@ -28,5 +32,8 @@ export function setUserKey(dataInfo: DataInfo) {
   useUserStoreHook().SET_NICKNAME(data.nickname);
   useUserStoreHook().SET_ROLES(data.roles);
   useUserStoreHook().SET_PERMS(data.permissions);
+  useUserStoreHook().SET_EMAIL(data.email);
+  useUserStoreHook().SET_EMAIL(data.email);
+  useUserStoreHook().SET_PASSWORD_FLAG(data.passwordFlag);
   storageLocal().setItem(userKey, data);
 }

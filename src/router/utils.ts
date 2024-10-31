@@ -24,10 +24,14 @@ import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { baseMenuUserSelfMenuList } from "@/api/http/base/BaseMenuController";
 import { ListToTree } from "@/utils/TreeUtil";
-import { baseUserManageSignInFlag } from "@/api/http/base/BaseUserController";
+import {
+  baseUserManageSignInFlag,
+  baseUserSelfInfo
+} from "@/api/http/base/BaseUserController";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
 import { ConnectWebSocket } from "@/utils/webSocket/WebSocketUtil";
+import { handleAvatarFileId, setUserKey } from "@/utils/UserUtil";
 
 const IFrame = () => import("@/layout/frame.vue");
 
@@ -276,6 +280,21 @@ function getDynamicRoutes(
     });
 
     res(ListToTree(resArr));
+
+    // 获取：当前用户的信息
+    baseUserSelfInfo().then(res => {
+      setUserKey({
+        nickname: res.data.nickname,
+        username: res.data.username,
+        createTime: res.data.createTime,
+        passwordFlag: res.data.passwordFlag,
+        email: res.data.email
+      });
+
+      const avatarFileId = res.data.avatarFileId!;
+
+      handleAvatarFileId(avatarFileId); // 处理：头像文件 id
+    });
 
     ConnectWebSocket(); // 连接 webSocket
   });

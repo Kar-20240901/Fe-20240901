@@ -11,6 +11,10 @@ import leftLine from "@iconify-icons/ri/arrow-left-s-line";
 import ProfileIcon from "@iconify-icons/ri/user-3-line";
 import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
 import { useUserStoreHook } from "@/store/modules/user";
+import SecurityLog from "@/views/account-settings/components/SecurityLog.vue";
+import AccountManagement from "@/views/account-settings/components/AccountManagement.vue";
+import SecurityLogIcon from "@iconify-icons/ri/window-line";
+import AccountManagementIcon from "@iconify-icons/ri/profile-line";
 
 defineOptions({
   name: "AccountSettings"
@@ -38,19 +42,19 @@ const panes = [
     label: "个人信息",
     icon: ProfileIcon,
     component: Profile
+  },
+  {
+    key: "securityLog",
+    label: "安全日志",
+    icon: SecurityLogIcon,
+    component: SecurityLog
+  },
+  {
+    key: "accountManagement",
+    label: "账户管理",
+    icon: AccountManagementIcon,
+    component: AccountManagement
   }
-  // {
-  //   key: "securityLog",
-  //   label: "安全日志",
-  //   icon: SecurityLogIcon,
-  //   component: SecurityLog
-  // },
-  // {
-  //   key: "accountManagement",
-  //   label: "账户管理",
-  //   icon: AccountManagementIcon,
-  //   component: AccountManagement
-  // }
 ];
 const witchPane = ref("profile");
 </script>

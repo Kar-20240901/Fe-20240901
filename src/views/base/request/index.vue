@@ -1,31 +1,29 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
-import Delete from "@iconify-icons/ep/delete";
-import {
-  BaseSocketRefUserDO,
-  baseSocketRefUserOfflineByIdSet,
-  baseSocketRefUserPage,
-  BaseSocketRefUserPageDTO
-} from "@/api/http/base/BaseSocketRefUserController";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
-import { BaseSocketOnlineTypeMap } from "@/model/enum/BaseSocketOnlineTypeEnum";
+import {
+  BaseRequestDO,
+  baseRequestPage,
+  BaseRequestPageDTO
+} from "@/api/http/base/BaseRequestController";
+import { DictVO } from "@/api/http/base/BaseRoleController";
+import { baseUserDictList } from "@/api/http/base/BaseUserController";
 import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
 } from "@/model/enum/TempRequestCategoryEnum";
 
 defineOptions({
-  name: "BaseSocketRefUser"
+  name: "BaseRequest"
 });
 
-const search = ref<BaseSocketRefUserPageDTO>({});
+const search = ref<BaseRequestPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseSocketRefUserDO[]>([]);
+const dataList = ref<BaseRequestDO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
@@ -40,7 +38,7 @@ onMounted(() => {
 
 function onSearch() {
   loading.value = true;
-  baseSocketRefUserPage({
+  baseRequestPage({
     ...search.value,
     current: currentPage.value as any,
     pageSize: pageSize.value as any
@@ -59,40 +57,20 @@ function resetSearch() {
   onSearch();
 }
 
-function offlineClick(row: BaseSocketRefUserDO) {
-  ExecConfirm(
-    async () => {
-      await baseSocketRefUserOfflineByIdSet({ idSet: [row.id] }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定下线【${row.id}】吗？`
-  );
-}
-
-function offlineBySelectIdArr() {
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-  ExecConfirm(
-    async () => {
-      await baseSocketRefUserOfflineByIdSet({ idSet: selectIdArr.value }).then(
-        res => {
-          ToastSuccess(res.msg);
-          onSearch();
-        }
-      );
-    },
-    undefined,
-    `确定下线勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
-}
-
-function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
+function onSelectChange(rowArr?: BaseRequestDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
+}
+
+const userDictList = ref<DictVO[]>([]);
+
+onMounted(() => {
+  initUserDictList();
+});
+
+function initUserDictList() {
+  baseUserDictList().then(res => {
+    userDictList.value = res.data.records;
+  });
 }
 </script>
 
@@ -100,13 +78,23 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
   <div class="flex flex-col">
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="id：" prop="id">
-          <el-input
-            v-model="search.id"
-            placeholder="请输入id"
+        <el-form-item label="用户：" prop="createId">
+          <el-select
+            v-model="search.createId"
+            placeholder="请选择"
+            class="w-full"
             clearable
-            class="!w-[180px]"
-          />
+            filterable
+          >
+            <el-option
+              v-for="item in userDictList"
+              :key="item.id"
+              :value="item.id"
+              :label="item.name"
+            >
+              {{ item.name }}
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button
@@ -128,15 +116,7 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
       <div class="pb-3 flex justify-between">
         <div />
 
-        <div>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(Delete)"
-            @click="offlineBySelectIdArr"
-          >
-            批量下线
-          </el-button>
-        </div>
+        <div />
       </div>
 
       <el-table
@@ -155,11 +135,6 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
       >
         <el-table-column type="selection" />
         <el-table-column prop="id" label="id" />
-        <el-table-column prop="socketId" label="socketId" />
-        <el-table-column prop="nickname" label="用户" width="100" />
-        <el-table-column #default="scope" prop="type" label="类型" width="100">
-          {{ BaseSocketOnlineTypeMap.get(scope.row.type) || "" }}
-        </el-table-column>
         <el-table-column prop="ip" label="ip" width="100" />
         <el-table-column prop="region" label="地点" width="100" />
         <el-table-column #default="scope" prop="type" label="终端" width="100">
@@ -180,10 +155,10 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon(Delete)"
-            @click="offlineClick(scope.row)"
+            :icon="useRenderIcon('ep:circle-check')"
+            @click="viewClick(scope.row)"
           >
-            下线
+            查看
           </el-button>
         </el-table-column>
       </el-table>

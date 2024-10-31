@@ -7,31 +7,22 @@ defineOptions({
   name: "AccountManagement"
 });
 
+const passwordIndex = 0;
+const emailIndex = 1;
+
 const list = ref([
   {
     title: "账户密码",
-    illustrate: "当前密码强度：强",
     button: "修改"
   },
   {
-    title: "密保手机",
-    illustrate: "已经绑定手机：158****6789",
-    button: "修改"
-  },
-  {
-    title: "密保问题",
-    illustrate: "未设置密保问题，密保问题可有效保护账户安全",
-    button: "修改"
-  },
-  {
-    title: "备用邮箱",
-    illustrate: "已绑定邮箱：pure***@163.com",
-    button: "修改"
+    title: "绑定邮箱",
+    illustrate: "",
+    button: ""
   }
 ]);
 
 function onClick(item) {
-  console.log("onClick", item.title);
   message("请根据具体业务自行实现", { type: "success" });
 }
 </script>
@@ -48,9 +39,16 @@ function onClick(item) {
       <div class="flex items-center">
         <div class="flex-1">
           <p>{{ item.title }}</p>
-          <el-text class="mx-1" type="info">{{ item.illustrate }}</el-text>
+          <el-text v-if="item.illustrate" class="mx-1" type="info"
+            >{{ item.illustrate }}
+          </el-text>
         </div>
-        <el-button type="primary" text @click="onClick(item)">
+        <el-button
+          v-if="item.button"
+          type="primary"
+          text
+          @click="onClick(index)"
+        >
           {{ item.button }}
         </el-button>
       </div>
