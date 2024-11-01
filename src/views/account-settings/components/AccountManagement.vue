@@ -82,7 +82,6 @@ function onClick(index, item) {
   } else if (index === passwordIndex) {
     if (item.button === "设置") {
       if (userInfo.value.email) {
-      } else if (userInfo.value.username) {
       }
     } else if (item.button === "修改") {
       if (userInfo.value.email) {
