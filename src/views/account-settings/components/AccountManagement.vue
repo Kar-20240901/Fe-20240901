@@ -98,6 +98,9 @@ function onClick(index, item) {
       }
     }
   } else if (index === signDeleteIndex) {
+    if (userInfo.value.email) {
+    } else if (userInfo.value.username) {
+    }
   }
 }
 </script>
