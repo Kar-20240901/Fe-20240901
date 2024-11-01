@@ -73,7 +73,7 @@ export function baseRequestSelfLoginRecord(
   );
 }
 
-export interface SysRequestAllAvgVO {
+export interface BaseRequestAllAvgVO {
   avgMs?: number; // 请求的平均耗时（毫秒），format：int32
   count?: string; // 请求的总数，format：int64
 }
@@ -83,7 +83,7 @@ export function baseRequestAllAvgPro(
   form: BaseRequestPageDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<SysRequestAllAvgVO>(
+  return http.request<BaseRequestAllAvgVO>(
     "post",
     baseApi("/base/request/allAvgPro"),
     form,
