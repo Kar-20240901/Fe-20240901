@@ -3,7 +3,7 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface SignEmailSignInCodeDTO {
-  code?: string; // 手机验证码，正则表达式：^[0-9]{6}$，required：true
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
   email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
 }
 
@@ -51,6 +51,25 @@ export function signEmailUpdateEmailSendCodeOld(
     "post",
     baseApi("/sign/email/updateEmail/sendCode/old"),
     undefined,
+    config
+  );
+}
+
+export interface SignEmailSetPasswordDTO {
+  password?: string; // 前端加密之后的密码，required：true
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
+  originPassword?: string; // 前端加密之后的原始密码，required：true
+}
+
+// 设置密码
+export function signEmailSetPassword(
+  form: SignEmailSetPasswordDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/sign/email/setPassword"),
+    form,
     config
   );
 }
@@ -211,6 +230,16 @@ export function signEmailSignInPassword(
     "post",
     baseApi("/sign/email/sign/in/password"),
     form,
+    config
+  );
+}
+
+// 设置密码-发送验证码
+export function signEmailSetPasswordSendCode(config?: PureHttpRequestConfig) {
+  return http.request<string>(
+    "post",
+    baseApi("/sign/email/setPassword/sendCode"),
+    undefined,
     config
   );
 }

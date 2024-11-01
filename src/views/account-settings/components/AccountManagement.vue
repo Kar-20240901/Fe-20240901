@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { deviceDetection } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
+import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
 
 defineOptions({
   name: "AccountManagement"
@@ -34,7 +35,11 @@ const list = ref([
   }
 ]);
 
+const userInfo = ref<BaseUserSelfInfoVO>({});
+
 useUserStoreHook().$subscribe((mutation, state) => {
+  userInfo.value = { ...state };
+
   if (state.username) {
     list[usernameIndex].illustrate = state.username;
     list[usernameIndex].button = "修改";
@@ -67,15 +72,30 @@ useUserStoreHook().$subscribe((mutation, state) => {
 function onClick(index, item) {
   if (index === usernameIndex) {
     if (item.button === "设置") {
+      if (userInfo.value.email) {
+      }
     } else if (item.button === "修改") {
+      if (userInfo.value.email) {
+      } else if (userInfo.value.username) {
+      }
     }
   } else if (index === passwordIndex) {
     if (item.button === "设置") {
+      if (userInfo.value.email) {
+      } else if (userInfo.value.username) {
+      }
     } else if (item.button === "修改") {
+      if (userInfo.value.email) {
+      } else if (userInfo.value.username) {
+      }
     }
   } else if (index === emailIndex) {
     if (item.button === "设置") {
+      if (userInfo.value.username) {
+      }
     } else if (item.button === "修改") {
+      if (userInfo.value.email) {
+      }
     }
   } else if (index === signDeleteIndex) {
   }
