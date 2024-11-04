@@ -3,7 +3,6 @@ import { ref } from "vue";
 import ReCol from "@/components/ReCol";
 import { BaseMenuInsertOrUpdateDTO } from "@/api/http/base/BaseMenuController";
 import { R } from "@/model/vo/R";
-import { formEditRule } from "@/views/base/menu/formEditRule";
 import CommonConstant from "@/model/constant/CommonConstant";
 import { IconSelect } from "@/components/ReIcon";
 import { showFlagOptions } from "@/views/base/menu/enums";
@@ -77,7 +76,6 @@ function confirmClick() {
       ref="formRef"
       v-loading="dialogLoading"
       :model="form"
-      :rules="formEditRule"
       label-width="auto"
     >
       <el-row :gutter="30">
@@ -106,7 +104,13 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="菜单名称" prop="name">
+          <el-form-item
+            label="菜单名称"
+            prop="name"
+            :rules="[
+              { required: true, message: '菜单名称为必填项', trigger: 'blur' }
+            ]"
+          >
             <el-input
               v-model="form.name"
               clearable
@@ -116,7 +120,13 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="菜单路径" prop="path">
+          <el-form-item
+            label="菜单路径"
+            prop="path"
+            :rules="[
+              { required: true, message: '菜单路径为必填项', trigger: 'blur' }
+            ]"
+          >
             <el-input
               v-model="form.path"
               clearable

@@ -6,7 +6,6 @@ import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
 import { BaseParamInsertOrUpdateDTO } from "@/api/http/base/BaseParamController";
-import { formEditRule } from "@/views/base/param/formEditRule";
 import { IParamDialogFormProps } from "@/views/base/param/types";
 
 const form = ref<BaseParamInsertOrUpdateDTO>({});
@@ -72,12 +71,17 @@ function confirmClick() {
       ref="formRef"
       v-loading="dialogLoading"
       :model="form"
-      :rules="formEditRule"
       label-width="auto"
     >
       <el-row :gutter="30">
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="参数名称" prop="name">
+          <el-form-item
+            label="参数名称"
+            prop="name"
+            :rules="[
+              { required: true, message: '参数名称为必填项', trigger: 'blur' }
+            ]"
+          >
             <el-input
               v-model="form.name"
               clearable
@@ -87,7 +91,13 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="参数值" prop="value">
+          <el-form-item
+            label="参数值"
+            prop="value"
+            :rules="[
+              { required: true, message: '参数值为必填项', trigger: 'blur' }
+            ]"
+          >
             <el-input
               v-model="form.value"
               clearable

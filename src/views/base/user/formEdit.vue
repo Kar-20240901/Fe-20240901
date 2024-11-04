@@ -8,7 +8,7 @@ import { BaseUserInsertOrUpdateDTO } from "@/api/http/base/BaseUserController";
 import { IUserDialogFormProps } from "@/views/base/user/types";
 import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
 import { enableFlagOptions } from "@/views/base/user/enums";
-import { formEditRule } from "@/views/base/user/formEditRule";
+import { Validate } from "@/utils/ValidatorUtil";
 
 const form = ref<BaseUserInsertOrUpdateDTO>({});
 const formRef = ref();
@@ -73,12 +73,22 @@ function confirmClick() {
       ref="formRef"
       v-loading="dialogLoading"
       :model="form"
-      :rules="formEditRule"
       label-width="auto"
     >
       <el-row :gutter="30">
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="用户昵称" prop="nickname">
+          <el-form-item
+            label="用户昵称"
+            prop="nickname"
+            :rules="[
+              {
+                required: true,
+                message: '用户昵称为必填项',
+                trigger: 'blur',
+                asyncValidator: Validate.nickname.validator
+              }
+            ]"
+          >
             <el-input
               v-model="form.nickname"
               clearable
@@ -88,7 +98,16 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="用户名" prop="username">
+          <el-form-item
+            label="用户名"
+            prop="username"
+            :rules="[
+              {
+                trigger: 'blur',
+                asyncValidator: Validate.username.canNullValidator
+              }
+            ]"
+          >
             <el-input
               v-model="form.username"
               clearable
@@ -98,13 +117,31 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="邮箱" prop="email">
+          <el-form-item
+            label="邮箱"
+            prop="email"
+            :rules="[
+              {
+                trigger: 'blur',
+                asyncValidator: Validate.email.canNullValidator
+              }
+            ]"
+          >
             <el-input v-model="form.email" clearable placeholder="请输入邮箱" />
           </el-form-item>
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="手机号" prop="phone">
+          <el-form-item
+            label="手机号"
+            prop="phone"
+            :rules="[
+              {
+                trigger: 'blur',
+                asyncValidator: Validate.phone.canNullValidator
+              }
+            ]"
+          >
             <el-input
               v-model="form.phone"
               clearable
@@ -144,7 +181,16 @@ function confirmClick() {
         </re-col>
 
         <re-col v-if="!form.id" :value="12" :xs="24" :sm="24">
-          <el-form-item label="密码" prop="password">
+          <el-form-item
+            label="密码"
+            prop="password"
+            :rules="[
+              {
+                trigger: 'blur',
+                asyncValidator: Validate.password.canNullValidator
+              }
+            ]"
+          >
             <el-input
               v-model="form.password"
               clearable

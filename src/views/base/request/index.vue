@@ -14,6 +14,8 @@ import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
 } from "@/model/enum/TempRequestCategoryEnum";
+import FormEdit from "@/views/base/request/formEdit.vue";
+import { baseRequestInfoInfoById } from "@/api/http/base/BaseRequestInfoController";
 
 defineOptions({
   name: "BaseRequest"
@@ -71,6 +73,14 @@ function initUserDictList() {
   baseUserDictList().then(res => {
     userDictList.value = res.data.records;
   });
+}
+
+const formRef = ref();
+const title = ref<string>("");
+
+function viewClick(row: BaseRequestDO) {
+  title.value = "查看请求";
+  formRef.value.editOpen(baseRequestInfoInfoById({ id: row.id }));
 }
 </script>
 
@@ -173,6 +183,16 @@ function initUserDictList() {
         @change="onSearch"
       />
     </div>
+
+    <form-edit
+      ref="formRef"
+      :title="title"
+      :confirm-fun="confirmFun"
+      :confirm-after-fun="confirmAfterFun"
+      :auth-dict-list="authDictList"
+      :menu-dict-list="menuDictList"
+      :user-dict-list="userDictList"
+    />
   </div>
 </template>
 

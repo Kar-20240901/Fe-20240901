@@ -3,7 +3,6 @@ import { ref } from "vue";
 import ReCol from "@/components/ReCol";
 import { BaseAreaInsertOrUpdateDTO } from "@/api/http/base/BaseAreaController";
 import { R } from "@/model/vo/R";
-import { formEditRule } from "@/views/base/area/formEditRule";
 import CommonConstant from "@/model/constant/CommonConstant";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
@@ -74,7 +73,6 @@ function confirmClick() {
       ref="formRef"
       v-loading="dialogLoading"
       :model="form"
-      :rules="formEditRule"
       label-width="auto"
     >
       <el-row :gutter="30">
@@ -103,7 +101,13 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="区域名称" prop="name">
+          <el-form-item
+            label="区域名称"
+            prop="name"
+            :rules="[
+              { required: true, message: '区域名称为必填项', trigger: 'blur' }
+            ]"
+          >
             <el-input
               v-model="form.name"
               clearable

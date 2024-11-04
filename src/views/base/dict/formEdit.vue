@@ -3,10 +3,6 @@ import { computed, ref } from "vue";
 import ReCol from "@/components/ReCol";
 import { BaseDictInsertOrUpdateDTO } from "@/api/http/base/BaseDictController";
 import { R } from "@/model/vo/R";
-import {
-  formEditRuleDict,
-  formEditRuleDictItem
-} from "@/views/base/dict/formEditRule";
 import CommonConstant from "@/model/constant/CommonConstant";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
@@ -82,12 +78,25 @@ const dictFlag = computed(() => {
       ref="formRef"
       v-loading="dialogLoading"
       :model="form"
-      :rules="dictFlag ? formEditRuleDict : formEditRuleDictItem"
       label-width="auto"
     >
       <el-row :gutter="30">
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="字典key" prop="dictKey">
+          <el-form-item
+            label="字典key"
+            prop="dictKey"
+            :rules="
+              dictFlag
+                ? [
+                    {
+                      required: true,
+                      message: '字典key为必填项',
+                      trigger: 'blur'
+                    }
+                  ]
+                : undefined
+            "
+          >
             <el-input
               v-model="form.dictKey"
               clearable
@@ -101,6 +110,13 @@ const dictFlag = computed(() => {
           <el-form-item
             :label="dictFlag ? '字典名称' : '字典项名称'"
             prop="name"
+            :rules="[
+              {
+                required: true,
+                message: `${dictFlag ? '字典名称' : '字典项名称'}为必填项`,
+                trigger: 'blur'
+              }
+            ]"
           >
             <el-input
               v-model="form.name"
@@ -111,7 +127,17 @@ const dictFlag = computed(() => {
         </re-col>
 
         <re-col v-if="!dictFlag" :value="12" :xs="24" :sm="24">
-          <el-form-item label="字典项value" prop="value">
+          <el-form-item
+            label="字典项value"
+            prop="value"
+            :rules="[
+              {
+                required: true,
+                message: '字典项value为必填项',
+                trigger: 'blur'
+              }
+            ]"
+          >
             <el-input
               v-model="form.value"
               clearable

@@ -6,7 +6,6 @@ import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
 import { BaseRoleInsertOrUpdateDTO } from "@/api/http/base/BaseRoleController";
-import { formEditRule } from "@/views/base/role/formEditRule";
 import { IRoleDialogFormProps } from "@/views/base/role/types";
 import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
 
@@ -73,12 +72,17 @@ function confirmClick() {
       ref="formRef"
       v-loading="dialogLoading"
       :model="form"
-      :rules="formEditRule"
       label-width="auto"
     >
       <el-row :gutter="30">
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="角色名称" prop="name">
+          <el-form-item
+            label="角色名称"
+            prop="name"
+            :rules="[
+              { required: true, message: '角色名称为必填项', trigger: 'blur' }
+            ]"
+          >
             <el-input
               v-model="form.name"
               clearable

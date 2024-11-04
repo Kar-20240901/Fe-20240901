@@ -5,7 +5,6 @@ import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
-import { formEditRule } from "@/views/base/auth/formEditRule";
 import { BaseAuthInsertOrUpdateDTO } from "@/api/http/base/BaseAuthController";
 import { IAuthDialogFormProps } from "@/views/base/auth/types";
 
@@ -72,12 +71,16 @@ function confirmClick() {
       ref="formRef"
       v-loading="dialogLoading"
       :model="form"
-      :rules="formEditRule"
       label-width="auto"
     >
       <el-row :gutter="30">
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item prop="name">
+          <el-form-item
+            prop="name"
+            :rules="[
+              { required: true, message: '权限名称为必填项', trigger: 'blur' }
+            ]"
+          >
             <template #label>
               <div
                 v-tippy="{ content: '例如：基础:菜单:新增修改' }"
