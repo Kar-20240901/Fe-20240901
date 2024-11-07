@@ -31,7 +31,7 @@ function open() {
 
 defineExpose({
   getForm,
-  addOpen: open
+  open
 });
 
 const props = defineProps<IDialogFormProps>();

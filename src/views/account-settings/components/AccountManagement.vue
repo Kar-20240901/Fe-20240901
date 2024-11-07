@@ -70,10 +70,13 @@ useUserStoreHook().$subscribe((mutation, state) => {
   }
 });
 
+const setUserNameByEmailRef = ref();
+
 function onClick(index, item) {
   if (index === usernameIndex) {
     if (item.button === "设置") {
       if (userInfo.value.email) {
+        setUserNameByEmailRef.value.open();
       }
     } else if (item.button === "修改") {
       if (userInfo.value.email) {
@@ -133,7 +136,7 @@ function onClick(index, item) {
       <el-divider />
     </div>
 
-    <SetUserNameByEmail title="设置用户名" />
+    <SetUserNameByEmail ref="setUserNameByEmailRef" title="设置用户名" />
   </div>
 </template>
 
