@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { deviceDetection } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
 import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
+import SetUserNameByEmail from "@/views/account-settings/components/email/SetUserNameByEmail.vue";
 
 defineOptions({
   name: "AccountManagement"
@@ -131,6 +132,8 @@ function onClick(index, item) {
       </div>
       <el-divider />
     </div>
+
+    <SetUserNameByEmail title="设置用户名" />
   </div>
 </template>
 

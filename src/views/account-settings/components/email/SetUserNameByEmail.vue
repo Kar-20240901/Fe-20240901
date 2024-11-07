@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onUnmounted, ref } from "vue";
 import ReCol from "@/components/ReCol";
-import { R } from "@/model/vo/R";
-import ReSegmented from "@/components/ReSegmented/src";
-import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
-import { BaseParamInsertOrUpdateDTO } from "@/api/http/base/BaseParamController";
-import { formEditRule } from "@/views/base/param/formEditRule";
-import { IParamDialogFormProps } from "@/views/base/param/types";
+import {
+  doConfirmClick,
+  doOpen,
+  IDialogFormProps
+} from "@/model/types/IDialogFormProps";
+import {
+  signEmailSetUserName,
+  SignEmailSetUserNameDTO,
+  signEmailSetUserNameSendCode
+} from "@/api/http/base/SignEmailController";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import { useVerifyCode } from "@/utils/verifyCode";
+import { ToastSuccess } from "@/utils/ToastUtil";
+import { useUserStoreHook } from "@/store/modules/user";
 
-const form = ref<BaseParamInsertOrUpdateDTO>({});
+const form = ref<SignEmailSetUserNameDTO>({});
 const formRef = ref();
-const dialogLoading = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 
@@ -19,43 +25,41 @@ function getForm() {
   return form;
 }
 
-function addOpen(formTemp?: BaseParamInsertOrUpdateDTO) {
-  doOpen(
-    formRef,
-    form,
-    visible,
-    confirmLoading,
-    {
-      enableFlag: true,
-      ...formTemp
-    },
-    dialogLoading
-  );
-}
-
-function editOpen(fun: Promise<R<any>>) {
-  dialogLoading.value = true;
-  confirmLoading.value = false;
-  visible.value = true;
-  form.value = {};
-  formRef.value?.clearValidate();
-  fun.then(res => {
-    form.value = res.data;
-    dialogLoading.value = false;
-  });
+function open() {
+  doOpen(formRef, form, visible, confirmLoading, {});
 }
 
 defineExpose({
   getForm,
-  addOpen,
-  editOpen
+  addOpen: open
 });
 
-const props = defineProps<IParamDialogFormProps>();
+const props = defineProps<IDialogFormProps>();
+
+const { isDisabled, text } = useVerifyCode();
+
+function confirmFun() {
+  return signEmailSetUserName(form.value);
+}
+
+function confirmAfterFun(res, done) {
+  done();
+  ToastSuccess(res.msg);
+  useUserStoreHook().logOut(); // 退出登录
+}
 
 function confirmClick() {
-  doConfirmClick(formRef, props, visible, confirmLoading);
+  doConfirmClick(
+    formRef,
+    { confirmFun, confirmAfterFun },
+    visible,
+    confirmLoading
+  );
 }
+
+onUnmounted(() => {
+  useVerifyCode().end();
+});
 </script>
 
 <template>
@@ -68,61 +72,47 @@ function confirmClick() {
     width="45%"
     destroy-on-close
   >
-    <el-form
-      ref="formRef"
-      v-loading="dialogLoading"
-      :model="form"
-      :rules="formEditRule"
-      label-width="auto"
-    >
+    <el-form ref="formRef" :model="form" label-width="auto">
       <el-row :gutter="30">
-        <re-col :value="12" :xs="24" :sm="24">
+        <re-col :value="24" :xs="24" :sm="24">
           <el-form-item
-            label="参数名称"
-            prop="name"
+            label="用户名"
+            prop="username"
             :rules="[
               { required: true, message: '参数名称为必填项', trigger: 'blur' }
             ]"
           >
             <el-input
-              v-model="form.name"
+              v-model="form.username"
               clearable
-              placeholder="请输入参数名称"
+              placeholder="请输入用户名"
             />
           </el-form-item>
         </re-col>
 
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="参数值" prop="value">
-            <el-input
-              v-model="form.value"
-              clearable
-              placeholder="请输入参数值"
-            />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="唯一标识" prop="uuid">
-            <el-input
-              v-model="form.uuid"
-              clearable
-              placeholder="请输入唯一标识"
-            />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="启用" prop="enableFlag">
-            <re-segmented
-              :modelValue="form.enableFlag ? 0 : 1"
-              :options="enableFlagOptions"
-              @change="
-                ({ option: { value } }) => {
-                  form.enableFlag = value;
-                }
-              "
-            />
+        <re-col :value="24" :xs="24" :sm="24">
+          <el-form-item prop="code">
+            <div class="w-full flex justify-between">
+              <el-input
+                v-model="form.code"
+                clearable
+                placeholder="邮箱验证码"
+                :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
+              />
+              <el-button
+                :disabled="isDisabled"
+                class="ml-2"
+                @click="
+                  useVerifyCode().start(
+                    formRef,
+                    'code',
+                    signEmailSetUserNameSendCode({ username: form.username })
+                  )
+                "
+              >
+                {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}
+              </el-button>
+            </div>
           </el-form-item>
         </re-col>
       </el-row>
