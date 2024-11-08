@@ -6,8 +6,8 @@ import {
   doOpen,
   IDialogFormProps
 } from "@/model/types/IDialogFormProps";
-import { formRules } from "@/components/KarAddOrderNo/formRule";
 import ReCol from "@/components/ReCol";
+import { Validate } from "@/utils/ValidatorUtil";
 
 defineOptions({
   name: "KarAddOrderNo"
@@ -50,10 +50,21 @@ function confirmClick() {
     width="30%"
     destroy-on-close
   >
-    <el-form ref="formRef" :model="form" label-width="auto" :rules="formRules">
+    <el-form ref="formRef" :model="form" label-width="auto">
       <el-row>
         <re-col>
-          <el-form-item label="累加的值" prop="number">
+          <el-form-item
+            label="累加的值"
+            prop="number"
+            :rules="[
+              {
+                required: true,
+                message: '累加值为必填项',
+                trigger: 'blur',
+                asyncValidator: Validate.nickname.validator
+              }
+            ]"
+          >
             <el-input-number
               v-model="form.number as unknown as number"
               class="!w-full"

@@ -4,6 +4,7 @@ import { deviceDetection } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
 import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
 import SetUserNameByEmail from "@/views/account-settings/components/email/SetUserNameByEmail.vue";
+import UpdateUserNameByEmail from "@/views/account-settings/components/email/UpdateUserNameByEmail.vue";
 
 defineOptions({
   name: "AccountManagement"
@@ -71,6 +72,7 @@ useUserStoreHook().$subscribe((mutation, state) => {
 });
 
 const setUserNameByEmailRef = ref();
+const updateUserNameByEmailRef = ref();
 
 function onClick(index, item) {
   if (index === usernameIndex) {
@@ -80,6 +82,7 @@ function onClick(index, item) {
       }
     } else if (item.button === "修改") {
       if (userInfo.value.email) {
+        updateUserNameByEmailRef.value.open();
       } else if (userInfo.value.username) {
       }
     }
@@ -137,6 +140,7 @@ function onClick(index, item) {
     </div>
 
     <SetUserNameByEmail ref="setUserNameByEmailRef" title="设置用户名" />
+    <UpdateUserNameByEmail ref="updateUserNameByEmailRef" title="修改用户名" />
   </div>
 </template>
 

@@ -15,6 +15,7 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { useVerifyCode } from "@/utils/verifyCode";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { useUserStoreHook } from "@/store/modules/user";
+import { Validate } from "@/utils/ValidatorUtil";
 
 const form = ref<SignEmailSetUserNameDTO>({});
 const formRef = ref();
@@ -79,7 +80,12 @@ onUnmounted(() => {
             label="用户名"
             prop="username"
             :rules="[
-              { required: true, message: '参数名称为必填项', trigger: 'blur' }
+              {
+                required: true,
+                message: '用户名为必填项',
+                trigger: 'blur',
+                asyncValidator: Validate.username.validator
+              }
             ]"
           >
             <el-input
@@ -105,7 +111,7 @@ onUnmounted(() => {
                 @click="
                   useVerifyCode().start(
                     formRef,
-                    'code',
+                    'username',
                     signEmailSetUserNameSendCode({ username: form.username })
                   )
                 "
