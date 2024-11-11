@@ -61,7 +61,7 @@ function confirmClick() {
                 required: true,
                 message: '累加值为必填项',
                 trigger: 'blur',
-                asyncValidator: Validate.nickname.validator
+                asyncValidator: Validate.integer.validator
               }
             ]"
           >

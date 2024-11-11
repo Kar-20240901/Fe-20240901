@@ -82,7 +82,6 @@ onUnmounted(() => {
             :rules="[
               {
                 required: true,
-                message: '用户名为必填项',
                 trigger: 'blur',
                 asyncValidator: Validate.username.validator
               }
@@ -97,7 +96,16 @@ onUnmounted(() => {
         </re-col>
 
         <re-col :value="24" :xs="24" :sm="24">
-          <el-form-item prop="code">
+          <el-form-item
+            prop="code"
+            :rules="[
+              {
+                required: true,
+                trigger: 'blur',
+                asyncValidator: Validate.code.validator
+              }
+            ]"
+          >
             <div class="w-full flex justify-between">
               <el-input
                 v-model="form.code"

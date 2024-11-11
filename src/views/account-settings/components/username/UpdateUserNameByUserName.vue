@@ -13,6 +13,7 @@ import {
   SignUserNameUpdateUserNameDTO
 } from "@/api/http/base/SignUserNameController";
 import { Validate } from "@/utils/ValidatorUtil";
+import { RSAEncrypt } from "@/utils/RsaUtil";
 
 const form = ref<SignUserNameUpdateUserNameDTO>({});
 const formRef = ref();
@@ -35,7 +36,9 @@ defineExpose({
 const props = defineProps<IDialogFormProps>();
 
 function confirmFun() {
-  return signUserNameUpdateUserName(form.value);
+  const formValue = { ...form.value };
+  formValue.currentPassword = RSAEncrypt(formValue.currentPassword);
+  return signUserNameUpdateUserName(formValue);
 }
 
 function confirmAfterFun(res, done) {
@@ -73,7 +76,6 @@ function confirmClick() {
             :rules="[
               {
                 required: true,
-                message: '用户名为必填项',
                 trigger: 'blur',
                 asyncValidator: Validate.username.validator
               }
@@ -94,7 +96,6 @@ function confirmClick() {
             :rules="[
               {
                 required: true,
-                message: '参数名称为必填项',
                 trigger: 'blur',
                 asyncValidator: Validate.password.validator
               }

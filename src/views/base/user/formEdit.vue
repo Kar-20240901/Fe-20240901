@@ -83,7 +83,6 @@ function confirmClick() {
             :rules="[
               {
                 required: true,
-                message: '用户昵称为必填项',
                 trigger: 'blur',
                 asyncValidator: Validate.nickname.validator
               }

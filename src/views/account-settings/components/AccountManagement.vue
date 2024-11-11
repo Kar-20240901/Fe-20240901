@@ -5,6 +5,9 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
 import SetUserNameByEmail from "@/views/account-settings/components/email/SetUserNameByEmail.vue";
 import UpdateUserNameByEmail from "@/views/account-settings/components/email/UpdateUserNameByEmail.vue";
+import UpdateUserNameByUserName from "@/views/account-settings/components/username/UpdateUserNameByUserName.vue";
+import SetPasswordByEmail from "@/views/account-settings/components/email/SetPasswordByEmail.vue";
+import UpdatePasswordByEmail from "@/views/account-settings/components/email/UpdatePasswordByEmail.vue";
 
 defineOptions({
   name: "AccountManagement"
@@ -73,6 +76,11 @@ useUserStoreHook().$subscribe((mutation, state) => {
 
 const setUserNameByEmailRef = ref();
 const updateUserNameByEmailRef = ref();
+const updateUserNameByUserNameRef = ref();
+
+const setPasswordByEmailRef = ref();
+const updatePasswordByEmailRef = ref();
+const updatePasswordByUserNameRef = ref();
 
 function onClick(index, item) {
   if (index === usernameIndex) {
@@ -84,15 +92,19 @@ function onClick(index, item) {
       if (userInfo.value.email) {
         updateUserNameByEmailRef.value.open();
       } else if (userInfo.value.username) {
+        updateUserNameByUserNameRef.value.open();
       }
     }
   } else if (index === passwordIndex) {
     if (item.button === "设置") {
       if (userInfo.value.email) {
+        setPasswordByEmailRef.value.open();
       }
     } else if (item.button === "修改") {
       if (userInfo.value.email) {
+        updatePasswordByEmailRef.value.open();
       } else if (userInfo.value.username) {
+        updatePasswordByUserNameRef.value.open();
       }
     }
   } else if (index === emailIndex) {
@@ -141,6 +153,13 @@ function onClick(index, item) {
 
     <SetUserNameByEmail ref="setUserNameByEmailRef" title="设置用户名" />
     <UpdateUserNameByEmail ref="updateUserNameByEmailRef" title="修改用户名" />
+    <UpdateUserNameByUserName
+      ref="updateUserNameByUserNameRef"
+      title="修改用户名"
+    />
+
+    <SetPasswordByEmail ref="setPasswordByEmailRef" title="设置密码" />
+    <UpdatePasswordByEmail ref="updatePasswordByEmailRef" title="设置密码" />
   </div>
 </template>
 
