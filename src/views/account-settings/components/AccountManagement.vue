@@ -8,6 +8,10 @@ import UpdateUserNameByEmail from "@/views/account-settings/components/email/Upd
 import UpdateUserNameByUserName from "@/views/account-settings/components/username/UpdateUserNameByUserName.vue";
 import SetPasswordByEmail from "@/views/account-settings/components/email/SetPasswordByEmail.vue";
 import UpdatePasswordByEmail from "@/views/account-settings/components/email/UpdatePasswordByEmail.vue";
+import SetEmailByUserName from "@/views/account-settings/components/username/SetEmailByUserName.vue";
+import UpdateEmailByEmail from "@/views/account-settings/components/email/UpdateEmailByEmail.vue";
+import SignDeleteByEmail from "@/views/account-settings/components/email/SignDeleteByEmail.vue";
+import SignDeleteByUserName from "@/views/account-settings/components/username/SignDeleteByUserName.vue";
 
 defineOptions({
   name: "AccountManagement"
@@ -82,6 +86,12 @@ const setPasswordByEmailRef = ref();
 const updatePasswordByEmailRef = ref();
 const updatePasswordByUserNameRef = ref();
 
+const setEmailByUserNameRef = ref();
+const updateEmailByEmailRef = ref();
+
+const signDeleteByEmailRef = ref();
+const signDeleteByUserNameRef = ref();
+
 function onClick(index, item) {
   if (index === usernameIndex) {
     if (item.button === "设置") {
@@ -110,14 +120,18 @@ function onClick(index, item) {
   } else if (index === emailIndex) {
     if (item.button === "设置") {
       if (userInfo.value.username) {
+        setEmailByUserNameRef.value.open();
       }
     } else if (item.button === "修改") {
       if (userInfo.value.email) {
+        updateEmailByEmailRef.value.open();
       }
     }
   } else if (index === signDeleteIndex) {
     if (userInfo.value.email) {
+      signDeleteByEmailRef.value.open();
     } else if (userInfo.value.username) {
+      signDeleteByUserNameRef.value.open();
     }
   }
 }
@@ -160,6 +174,12 @@ function onClick(index, item) {
 
     <SetPasswordByEmail ref="setPasswordByEmailRef" title="设置密码" />
     <UpdatePasswordByEmail ref="updatePasswordByEmailRef" title="设置密码" />
+
+    <SetEmailByUserName ref="setEmailByUserNameRef" title="设置邮箱" />
+    <UpdateEmailByEmail ref="updateEmailByEmailRef" title="修改邮箱" />
+
+    <SignDeleteByEmail ref="signDeleteByEmailRef" title="账号注销" />
+    <SignDeleteByUserName ref="signDeleteByUserNameRef" title="账号注销" />
   </div>
 </template>
 
