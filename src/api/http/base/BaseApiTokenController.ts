@@ -8,15 +8,18 @@ export interface BaseApiTokenPageDTO {
   current?: string; // 第几页，format：int64
   name?: string; // 名称
   pageSize?: string; // 每页显示条数，format：int64
+  userId?: string; // 用户主键id，format：int64
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseApiTokenDO {
   createTime?: string; // 创建时间，format：date-time
+  lastUseTime?: string; // 最近使用时间，format：date-time
   name?: string; // apiToken名
   updateTime?: string; // 修改时间，format：date-time
   id?: string; // null，format：int64
   userId?: string; // 用户 id，format：int64
+  enableFlag?: boolean; // 是否启用
   token?: string; // 调用 api时，传递的 token，格式：uuid
 }
 
@@ -53,6 +56,8 @@ export function baseApiTokenDeleteByIdSet(
 export interface BaseApiTokenInsertOrUpdateDTO {
   name?: string; // 名称，required：true
   id?: string; // 主键 id，format：int64
+  userId?: string; // 用户主键id，format：int64
+  enableFlag?: boolean; // 是否启用
 }
 
 // 新增/修改
