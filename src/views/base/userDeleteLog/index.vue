@@ -3,29 +3,26 @@ import { onMounted, ref } from "vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import FormEdit from "@/views/base/userDeleteLog/formEdit.vue";
 import {
-  BaseRequestDO,
-  baseRequestPage,
-  BaseRequestPageDTO
-} from "@/api/http/base/BaseRequestController";
-import { DictVO } from "@/api/http/base/BaseRoleController";
-import { baseUserDictList } from "@/api/http/base/BaseUserController";
-import {
-  TempRequestCategoryEnum,
-  TempRequestCategoryMap
-} from "@/model/enum/TempRequestCategoryEnum";
-import FormEdit from "@/views/base/request/formEdit.vue";
-import { baseRequestInfoInfoById } from "@/api/http/base/BaseRequestInfoController";
+  baseUserDeleteLogDeleteByIdSet,
+  BaseUserDeleteLogDO,
+  baseUserDeleteLogInfoById,
+  baseUserDeleteLogPage,
+  BaseUserDeleteLogPageDTO
+} from "@/api/http/base/BaseUserDeleteLogController";
+import Delete from "@iconify-icons/ep/delete";
+import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 
 defineOptions({
-  name: "BaseRequest"
+  name: "BaseUserDeleteLog"
 });
 
-const search = ref<BaseRequestPageDTO>({});
+const search = ref<BaseUserDeleteLogPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseRequestDO[]>([]);
+const dataList = ref<BaseUserDeleteLogDO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
@@ -40,7 +37,7 @@ onMounted(() => {
 
 function onSearch() {
   loading.value = true;
-  baseRequestPage({
+  baseUserDeleteLogPage({
     ...search.value,
     current: currentPage.value as any,
     pageSize: pageSize.value as any
@@ -59,28 +56,48 @@ function resetSearch() {
   onSearch();
 }
 
-function onSelectChange(rowArr?: BaseRequestDO[]) {
+function onSelectChange(rowArr?: BaseUserDeleteLogDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
-}
-
-const userDictList = ref<DictVO[]>([]);
-
-onMounted(() => {
-  initUserDictList();
-});
-
-function initUserDictList() {
-  baseUserDictList().then(res => {
-    userDictList.value = res.data.records;
-  });
 }
 
 const formRef = ref();
 const title = ref<string>("");
 
-function viewClick(row: BaseRequestDO) {
-  title.value = "查看请求";
-  formRef.value.editOpen(baseRequestInfoInfoById({ id: row.id }));
+function viewClick(row: BaseUserDeleteLogDO) {
+  title.value = "查看用户删除详情";
+  formRef.value.editOpen(baseUserDeleteLogInfoById({ id: row.id }));
+}
+
+function deleteClick(row: BaseUserDeleteLogDO) {
+  ExecConfirm(
+    async () => {
+      await baseUserDeleteLogDeleteByIdSet({ idSet: [row.id] }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定删除【${row.nickname}】吗？`
+  );
+}
+
+function deleteBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  ExecConfirm(
+    async () => {
+      await baseUserDeleteLogDeleteByIdSet({ idSet: selectIdArr.value }).then(
+        res => {
+          ToastSuccess(res.msg);
+          onSearch();
+        }
+      );
+    },
+    undefined,
+    `确定删除勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
 }
 </script>
 
@@ -88,23 +105,13 @@ function viewClick(row: BaseRequestDO) {
   <div class="flex flex-col">
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="用户：" prop="createId">
-          <el-select
-            v-model="search.createId"
-            placeholder="请选择"
-            class="w-full"
+        <el-form-item label="用户名：" prop="username">
+          <el-input
+            v-model="search.username"
+            placeholder="请输入用户名"
             clearable
-            filterable
-          >
-            <el-option
-              v-for="item in userDictList"
-              :key="item.id"
-              :value="item.id"
-              :label="item.name"
-            >
-              {{ item.name }}
-            </el-option>
-          </el-select>
+            class="!w-[180px]"
+          />
         </el-form-item>
         <el-form-item>
           <el-button
@@ -126,7 +133,15 @@ function viewClick(row: BaseRequestDO) {
       <div class="pb-3 flex justify-between">
         <div />
 
-        <div />
+        <div>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(Delete)"
+            @click="deleteBySelectIdArr"
+          >
+            批量删除
+          </el-button>
+        </div>
       </div>
 
       <el-table
@@ -145,14 +160,7 @@ function viewClick(row: BaseRequestDO) {
       >
         <el-table-column type="selection" />
         <el-table-column prop="id" label="id" />
-        <el-table-column prop="ip" label="ip" width="100" />
-        <el-table-column prop="region" label="地点" width="100" />
-        <el-table-column #default="scope" prop="type" label="终端" width="100">
-          {{
-            TempRequestCategoryMap.get(scope.row.type) ||
-            TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
-          }}
-        </el-table-column>
+        <el-table-column prop="nickname" label="昵称" />
         <el-table-column
           #default="scope"
           prop="createTime"
@@ -170,6 +178,14 @@ function viewClick(row: BaseRequestDO) {
           >
             查看
           </el-button>
+          <el-button
+            link
+            type="primary"
+            :icon="useRenderIcon(Delete)"
+            @click="deleteClick(scope.row)"
+          >
+            删除
+          </el-button>
         </el-table-column>
       </el-table>
 
@@ -184,7 +200,7 @@ function viewClick(row: BaseRequestDO) {
       />
     </div>
 
-    <form-edit ref="formRef" :title="title" :user-dict-list="userDictList" />
+    <form-edit ref="formRef" :title="title" />
   </div>
 </template>
 
