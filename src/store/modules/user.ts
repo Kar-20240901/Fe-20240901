@@ -37,6 +37,8 @@ export const useUserStore = defineStore({
     createTime: storageLocal().getItem<DataInfo>(userKey)?.createTime ?? "",
     // 按钮级别权限
     email: storageLocal().getItem<DataInfo>(userKey)?.email ?? "",
+    // 判断登录页面显示哪个组件（0：登录（默认）、1：邮箱登录、2：邮箱注册、3：用户名注册、4：忘记密码）
+    currentPage: 0,
     // 是否勾选了登录页的免登录
     isRemembered: false,
     // 登录页的免登录存储几天，默认7天
@@ -70,6 +72,10 @@ export const useUserStore = defineStore({
     /** 存储是否有密码 */
     SET_PASSWORD_FLAG(passwordFlag: boolean) {
       this.passwordFlag = passwordFlag;
+    },
+    /** 存储登录页面显示哪个组件 */
+    SET_CURRENTPAGE(value: number) {
+      this.currentPage = value;
     },
     /** 存储是否勾选了登录页的免登录 */
     SET_ISREMEMBERED(bool: boolean) {

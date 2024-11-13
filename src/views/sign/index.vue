@@ -8,7 +8,7 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { getTopMenu, initRouter } from "@/router/utils";
 import { avatar, bg, illustration } from "./utils/static";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { onBeforeUnmount, onMounted, ref, toRaw } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, toRaw } from "vue";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
 
 import dayIcon from "@/assets/svg/day.svg?component";
@@ -19,6 +19,12 @@ import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { CloseWebSocket } from "@/utils/webSocket/WebSocketUtil";
 import { Validate } from "@/utils/ValidatorUtil";
+import { operates } from "@/views/sign/utils/enums";
+import SignInEmail from "@/views/sign/components/SignInEmail.vue";
+import SignUpEmail from "@/views/sign/components/SignUpEmail.vue";
+import SignUpUserName from "@/views/sign/components/SignUpUserName.vue";
+import ForgetPassword from "@/views/sign/components/ForgetPassword.vue";
+import { SignUserNameSignInPasswordDTO } from "@/api/http/base/SignUserNameController";
 
 defineOptions({
   name: "Sign"
@@ -34,7 +40,7 @@ const { dataTheme, overallStyle, dataThemeChange } = useDataThemeChange();
 dataThemeChange(overallStyle.value);
 const { title } = useNav();
 
-const ruleForm = ref({
+const ruleForm = ref<SignUserNameSignInPasswordDTO>({
   username: "admin",
   password: "karadmin"
 });
@@ -84,6 +90,10 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.document.removeEventListener("keypress", onkeypress);
+});
+
+const currentPage = computed(() => {
+  return useUserStoreHook().currentPage;
 });
 </script>
 
@@ -151,7 +161,17 @@ onBeforeUnmount(() => {
               </el-form-item>
             </Motion>
 
-            <Motion :delay="250">
+            <Motion :delay="200">
+              <div class="w-full h-[20px] flex justify-between items-center">
+                <div />
+                <el-button
+                  link
+                  type="primary"
+                  @click="useUserStoreHook().SET_CURRENTPAGE(4)"
+                >
+                  忘记密码?
+                </el-button>
+              </div>
               <el-button
                 class="w-full mt-4"
                 size="default"
@@ -162,7 +182,32 @@ onBeforeUnmount(() => {
                 登 录
               </el-button>
             </Motion>
+
+            <Motion :delay="250">
+              <el-form-item>
+                <div class="w-full h-[20px] flex justify-between items-center">
+                  <el-button
+                    v-for="(item, index) in operates"
+                    :key="index"
+                    class="w-full mt-4"
+                    size="default"
+                    @click="useUserStoreHook().SET_CURRENTPAGE(index + 1)"
+                  >
+                    {{ item.title }}
+                  </el-button>
+                </div>
+              </el-form-item>
+            </Motion>
           </el-form>
+
+          <!-- 邮箱登录 -->
+          <SignInEmail v-if="currentPage === 1" />
+          <!-- 邮箱注册 -->
+          <SignUpEmail v-if="currentPage === 2" />
+          <!-- 用户名注册 -->
+          <SignUpUserName v-if="currentPage === 3" />
+          <!-- 忘记密码 -->
+          <ForgetPassword v-if="currentPage === 4" />
         </div>
       </div>
     </div>
