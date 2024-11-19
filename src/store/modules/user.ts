@@ -13,9 +13,13 @@ import { signPath } from "@/router";
 import {
   type SignInVO,
   signUserNameJwtRefreshToken,
-  signUserNameSignInPassword
+  signUserNameSignInPassword,
+  type SignUserNameSignInPasswordDTO
 } from "@/api/http/base/SignUserNameController";
 import { CloseWebSocket } from "@/utils/webSocket/WebSocketUtil";
+import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
+import { Validate } from "@/utils/ValidatorUtil";
+import { signEmailSignInPassword } from "@/api/http/base/SignEmailController";
 
 export const useUserStore = defineStore({
   id: "pure-user",
@@ -86,16 +90,29 @@ export const useUserStore = defineStore({
       this.loginDay = Number(value);
     },
     /** 登入 */
-    async loginByUsername(data) {
+    async loginByUsername(data: SignUserNameSignInPasswordDTO) {
       return new Promise<SignInVO>((resolve, reject) => {
-        signUserNameSignInPassword(data)
-          .then(data => {
-            if (data?.data) setToken(data.data);
-            resolve(data.data);
-          })
-          .catch(error => {
-            reject(error);
-          });
+        data.password = PasswordRSAEncrypt(data.password); // 密码加密
+        if (Validate.email.regex.test(data.username)) {
+          // 如果是：邮箱
+          signEmailSignInPassword(data)
+            .then(data => {
+              if (data?.data) setToken(data.data);
+              resolve(data.data);
+            })
+            .catch(error => {
+              reject(error);
+            });
+        } else {
+          signUserNameSignInPassword(data)
+            .then(data => {
+              if (data?.data) setToken(data.data);
+              resolve(data.data);
+            })
+            .catch(error => {
+              reject(error);
+            });
+        }
       });
     },
     /** 前端登出（不调用接口） */

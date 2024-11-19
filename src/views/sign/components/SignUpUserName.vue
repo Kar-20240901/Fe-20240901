@@ -10,7 +10,6 @@ import {
   signUserNameSignUp,
   SignUserNameSignUpDTO
 } from "@/api/http/base/SignUserNameController";
-import { useVerifyCode } from "@/utils/verifyCode";
 import { PasswordRSAEncrypt, RSAEncrypt } from "@/utils/RsaUtil";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { Validate } from "@/utils/ValidatorUtil";
@@ -18,7 +17,6 @@ import { Validate } from "@/utils/ValidatorUtil";
 const loading = ref(false);
 const ruleForm = ref<SignUserNameSignUpDTO>({});
 const ruleFormRef = ref<FormInstance>();
-const { isDisabled, text } = useVerifyCode();
 
 const onUpdate = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -42,7 +40,6 @@ const onUpdate = async (formEl: FormInstance | undefined) => {
 };
 
 function onBack() {
-  useVerifyCode().end();
   useUserStoreHook().SET_CURRENTPAGE(0);
 }
 </script>

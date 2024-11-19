@@ -15,10 +15,8 @@ import dayIcon from "@/assets/svg/day.svg?component";
 import darkIcon from "@/assets/svg/dark.svg?component";
 import Lock from "@iconify-icons/ri/lock-fill";
 import User from "@iconify-icons/ri/user-3-fill";
-import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { CloseWebSocket } from "@/utils/webSocket/WebSocketUtil";
-import { Validate } from "@/utils/ValidatorUtil";
 import { operates } from "@/views/sign/utils/enums";
 import SignInEmail from "@/views/sign/components/SignInEmail.vue";
 import SignUpEmail from "@/views/sign/components/SignUpEmail.vue";
@@ -55,7 +53,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
     useUserStoreHook()
       .loginByUsername({
         username: ruleForm.value.username,
-        password: PasswordRSAEncrypt(ruleForm.value.password)
+        password: ruleForm.value.password
       })
       .then(() => {
         // 获取后端路由
@@ -84,7 +82,6 @@ function onkeypress({ code }: KeyboardEvent) {
 
 onMounted(() => {
   window.document.addEventListener("keypress", onkeypress);
-
   CloseWebSocket(); // 关闭 webSocket
 });
 
@@ -124,12 +121,14 @@ const currentPage = computed(() => {
           <el-form ref="ruleFormRef" :model="ruleForm" size="large">
             <Motion :delay="100">
               <el-form-item
+                prop="username"
                 :rules="[
                   {
-                    validator: Validate.username.validator
+                    required: true,
+                    message: '请输入账号',
+                    trigger: 'blur'
                   }
                 ]"
-                prop="username"
               >
                 <el-input
                   v-model="ruleForm.username"
