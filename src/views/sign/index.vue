@@ -38,10 +38,7 @@ const { dataTheme, overallStyle, dataThemeChange } = useDataThemeChange();
 dataThemeChange(overallStyle.value);
 const { title } = useNav();
 
-const ruleForm = ref<SignUserNameSignInPasswordDTO>({
-  username: "admin",
-  password: "karadmin"
-});
+const ruleForm = ref<SignUserNameSignInPasswordDTO>({});
 
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
