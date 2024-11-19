@@ -1,69 +1,43 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import Motion from "../utils/motion";
-import { message } from "@/utils/message";
-import { updateRules } from "../utils/rule";
 import type { FormInstance } from "element-plus";
-import { useVerifyCode } from "../utils/verifyCode";
-import { $t, transformI18n } from "@/plugins/i18n";
 import { useUserStoreHook } from "@/store/modules/user";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Lock from "@iconify-icons/ri/lock-fill";
-import Iphone from "@iconify-icons/ep/iphone";
-import User from "@iconify-icons/ri/user-3-fill";
+import {
+  signEmailSignUp,
+  SignEmailSignUpDTO,
+  signEmailSignUpSendCode
+} from "@/api/http/base/SignEmailController";
+import { ToastSuccess } from "@/utils/ToastUtil";
+import { Validate } from "@/utils/ValidatorUtil";
+import { useVerifyCode } from "@/utils/verifyCode";
+import { PasswordRSAEncrypt, RSAEncrypt } from "@/utils/RsaUtil";
 
-const { t } = useI18n();
-const checked = ref(false);
 const loading = ref(false);
-const ruleForm = reactive({
-  username: "",
-  phone: "",
-  verifyCode: "",
-  password: "",
-  repeatPassword: ""
-});
+const ruleForm = ref<SignEmailSignUpDTO>({});
 const ruleFormRef = ref<FormInstance>();
 const { isDisabled, text } = useVerifyCode();
-const repeatPasswordRule = [
-  {
-    validator: (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error(transformI18n($t("login.purePassWordSureReg"))));
-      } else if (ruleForm.password !== value) {
-        callback(
-          new Error(transformI18n($t("login.purePassWordDifferentReg")))
-        );
-      } else {
-        callback();
-      }
-    },
-    trigger: "blur"
-  }
-];
 
 const onUpdate = async (formEl: FormInstance | undefined) => {
-  loading.value = true;
   if (!formEl) return;
   await formEl.validate(valid => {
-    if (valid) {
-      if (checked.value) {
-        // 模拟请求，需根据实际开发进行修改
-        setTimeout(() => {
-          message(transformI18n($t("login.pureRegisterSuccess")), {
-            type: "success"
-          });
-          loading.value = false;
-        }, 2000);
-      } else {
-        loading.value = false;
-        message(transformI18n($t("login.pureTickPrivacy")), {
-          type: "warning"
-        });
-      }
-    } else {
-      loading.value = false;
+    if (!valid) {
+      return;
     }
+    loading.value = true;
+    const formValue = { ...ruleForm.value };
+    formValue.originPassword = RSAEncrypt(formValue.password);
+    formValue.password = PasswordRSAEncrypt(formValue.password);
+    signEmailSignUp(formValue)
+      .then(res => {
+        ToastSuccess(res.msg);
+        onBack();
+      })
+      .finally(() => {
+        loading.value = false;
+      });
   });
 };
 
@@ -74,99 +48,80 @@ function onBack() {
 </script>
 
 <template>
-  <el-form
-    ref="ruleFormRef"
-    :model="ruleForm"
-    :rules="updateRules"
-    size="large"
-  >
+  <el-form ref="ruleFormRef" :model="ruleForm" size="large">
     <Motion>
       <el-form-item
         :rules="[
           {
             required: true,
-            message: transformI18n($t('login.pureUsernameReg')),
-            trigger: 'blur'
+            trigger: 'blur',
+            asyncValidator: Validate.email.validator
           }
         ]"
-        prop="username"
+        prop="email"
       >
         <el-input
-          v-model="ruleForm.username"
+          v-model="ruleForm.email"
           clearable
-          :placeholder="t('login.pureUsername')"
-          :prefix-icon="useRenderIcon(User)"
+          placeholder="邮箱"
+          :prefix-icon="useRenderIcon('ri:mail-fill')"
         />
       </el-form-item>
     </Motion>
 
     <Motion :delay="100">
-      <el-form-item prop="phone">
+      <el-form-item
+        prop="password"
+        :rules="[
+          {
+            required: true,
+            trigger: 'blur',
+            asyncValidator: Validate.password.validator
+          }
+        ]"
+      >
         <el-input
-          v-model="ruleForm.phone"
+          v-model="ruleForm.password"
           clearable
-          :placeholder="t('login.purePhone')"
-          :prefix-icon="useRenderIcon(Iphone)"
+          show-password
+          placeholder="密码"
+          :prefix-icon="useRenderIcon(Lock)"
         />
       </el-form-item>
     </Motion>
 
     <Motion :delay="150">
-      <el-form-item prop="verifyCode">
+      <el-form-item
+        prop="code"
+        :rules="[
+          {
+            required: true,
+            trigger: 'blur',
+            asyncValidator: Validate.code.validator
+          }
+        ]"
+      >
         <div class="w-full flex justify-between">
           <el-input
-            v-model="ruleForm.verifyCode"
+            v-model="ruleForm.code"
             clearable
-            :placeholder="t('login.pureSmsVerifyCode')"
+            placeholder="邮箱验证码"
             :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
           />
           <el-button
             :disabled="isDisabled"
             class="ml-2"
-            @click="useVerifyCode().start(ruleFormRef, 'phone')"
+            @click="
+              useVerifyCode().start(
+                ruleFormRef,
+                'email',
+                signEmailSignUpSendCode({ email: ruleForm.email })
+              )
+            "
           >
-            {{
-              text.length > 0
-                ? text + t("login.pureInfo")
-                : t("login.pureGetVerifyCode")
-            }}
+            {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}
           </el-button>
         </div>
-      </el-form-item>
-    </Motion>
-
-    <Motion :delay="200">
-      <el-form-item prop="password">
-        <el-input
-          v-model="ruleForm.password"
-          clearable
-          show-password
-          :placeholder="t('login.purePassword')"
-          :prefix-icon="useRenderIcon(Lock)"
-        />
-      </el-form-item>
-    </Motion>
-
-    <Motion :delay="250">
-      <el-form-item :rules="repeatPasswordRule" prop="repeatPassword">
-        <el-input
-          v-model="ruleForm.repeatPassword"
-          clearable
-          show-password
-          :placeholder="t('login.pureSure')"
-          :prefix-icon="useRenderIcon(Lock)"
-        />
-      </el-form-item>
-    </Motion>
-
-    <Motion :delay="300">
-      <el-form-item>
-        <el-checkbox v-model="checked">
-          {{ t("login.pureReadAccept") }}
-        </el-checkbox>
-        <el-button link type="primary">
-          {{ t("login.purePrivacyPolicy") }}
-        </el-button>
       </el-form-item>
     </Motion>
 
@@ -179,7 +134,7 @@ function onBack() {
           :loading="loading"
           @click="onUpdate(ruleFormRef)"
         >
-          {{ t("login.pureDefinite") }}
+          注册
         </el-button>
       </el-form-item>
     </Motion>
@@ -187,7 +142,7 @@ function onBack() {
     <Motion :delay="400">
       <el-form-item>
         <el-button class="w-full" size="default" @click="onBack">
-          {{ t("login.pureBack") }}
+          返回
         </el-button>
       </el-form-item>
     </Motion>

@@ -1,40 +1,48 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import Motion from "../utils/motion";
-import { message } from "@/utils/message";
-import { phoneRules } from "../utils/rule";
 import type { FormInstance } from "element-plus";
-import { $t, transformI18n } from "@/plugins/i18n";
-import { useVerifyCode } from "../utils/verifyCode";
 import { useUserStoreHook } from "@/store/modules/user";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Iphone from "@iconify-icons/ep/iphone";
+import { useVerifyCode } from "@/utils/verifyCode";
+import {
+  signEmailSignInCode,
+  SignEmailSignInCodeDTO
+} from "@/api/http/base/SignEmailController";
+import { ToastSuccess } from "@/utils/ToastUtil";
+import { Validate } from "@/utils/ValidatorUtil";
+import { getTopMenu, initRouter } from "@/router/utils";
+import { useRouter } from "vue-router";
 
-const { t } = useI18n();
+const router = useRouter();
 const loading = ref(false);
-const ruleForm = reactive({
-  phone: "",
-  verifyCode: ""
-});
+const ruleForm = ref<SignEmailSignInCodeDTO>({});
 const ruleFormRef = ref<FormInstance>();
 const { isDisabled, text } = useVerifyCode();
 
 const onLogin = async (formEl: FormInstance | undefined) => {
-  loading.value = true;
   if (!formEl) return;
   await formEl.validate(valid => {
-    if (valid) {
-      // 模拟登录请求，需根据实际开发进行修改
-      setTimeout(() => {
-        message(transformI18n($t("login.pureLoginSuccess")), {
-          type: "success"
-        });
-        loading.value = false;
-      }, 2000);
-    } else {
-      loading.value = false;
+    if (!valid) {
+      return;
     }
+    loading.value = true;
+    signEmailSignInCode(ruleForm.value)
+      .then(() => {
+        // 获取后端路由
+        return initRouter()
+          .then(() => {
+            router.push(getTopMenu(true).path).then(() => {
+              ToastSuccess("欢迎回来 ~");
+            });
+          })
+          .finally(() => {
+            loading.value = false;
+          });
+      })
+      .finally(() => {
+        loading.value = false;
+      });
   });
 };
 
@@ -45,37 +53,57 @@ function onBack() {
 </script>
 
 <template>
-  <el-form ref="ruleFormRef" :model="ruleForm" :rules="phoneRules" size="large">
+  <el-form ref="ruleFormRef" :model="ruleForm" size="large">
     <Motion>
-      <el-form-item prop="phone">
+      <el-form-item
+        prop="email"
+        :rules="[
+          {
+            required: true,
+            trigger: 'blur',
+            asyncValidator: Validate.email.validator
+          }
+        ]"
+      >
         <el-input
-          v-model="ruleForm.phone"
+          v-model="ruleForm.email"
           clearable
-          :placeholder="t('login.purePhone')"
-          :prefix-icon="useRenderIcon(Iphone)"
+          placeholder="邮箱"
+          :prefix-icon="useRenderIcon('ri:mail-fill')"
         />
       </el-form-item>
     </Motion>
 
     <Motion :delay="100">
-      <el-form-item prop="verifyCode">
+      <el-form-item
+        prop="code"
+        :rules="[
+          {
+            required: true,
+            trigger: 'blur',
+            asyncValidator: Validate.code.validator
+          }
+        ]"
+      >
         <div class="w-full flex justify-between">
           <el-input
-            v-model="ruleForm.verifyCode"
+            v-model="ruleForm.code"
             clearable
-            :placeholder="t('login.pureSmsVerifyCode')"
+            placeholder="邮箱验证码"
             :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
           />
           <el-button
             :disabled="isDisabled"
             class="ml-2"
-            @click="useVerifyCode().start(ruleFormRef, 'phone')"
+            @click="
+              useVerifyCode().start(
+                ruleFormRef,
+                'email',
+                signEmailSignInCode({ email: ruleForm.email })
+              )
+            "
           >
-            {{
-              text.length > 0
-                ? text + t("login.pureInfo")
-                : t("login.pureGetVerifyCode")
-            }}
+            {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}
           </el-button>
         </div>
       </el-form-item>
@@ -90,7 +118,7 @@ function onBack() {
           :loading="loading"
           @click="onLogin(ruleFormRef)"
         >
-          {{ t("login.pureLogin") }}
+          登录
         </el-button>
       </el-form-item>
     </Motion>
@@ -98,7 +126,7 @@ function onBack() {
     <Motion :delay="200">
       <el-form-item>
         <el-button class="w-full" size="default" @click="onBack">
-          {{ t("login.pureBack") }}
+          返回
         </el-button>
       </el-form-item>
     </Motion>

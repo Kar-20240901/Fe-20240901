@@ -1,6 +1,6 @@
 const operates = [
   {
-    title: "邮箱登录"
+    title: "邮箱验证码登录"
   },
   {
     title: "邮箱注册"

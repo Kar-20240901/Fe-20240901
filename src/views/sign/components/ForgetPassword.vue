@@ -50,18 +50,21 @@ function onBack() {
 <template>
   <el-form ref="ruleFormRef" :model="ruleForm" size="large">
     <Motion>
-      <el-form-item prop="email">
+      <el-form-item
+        prop="email"
+        :rules="[
+          {
+            required: true,
+            trigger: 'blur',
+            asyncValidator: Validate.email.validator
+          }
+        ]"
+      >
         <el-input
           v-model="ruleForm.email"
           clearable
           placeholder="邮箱"
           :prefix-icon="useRenderIcon('ri:mail-fill')"
-          :rules="[
-            {
-              trigger: 'blur',
-              asyncValidator: Validate.email.validator
-            }
-          ]"
         />
       </el-form-item>
     </Motion>
@@ -102,7 +105,16 @@ function onBack() {
     </Motion>
 
     <Motion :delay="150">
-      <el-form-item prop="newPassword">
+      <el-form-item
+        prop="newPassword"
+        :rules="[
+          {
+            required: true,
+            trigger: 'blur',
+            asyncValidator: Validate.password.validator
+          }
+        ]"
+      >
         <el-input
           v-model="ruleForm.newPassword"
           clearable
