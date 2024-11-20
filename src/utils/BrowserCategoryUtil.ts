@@ -1,4 +1,4 @@
-import { TempRequestCategoryEnum } from "@/views/base/user/enums";
+import { TempRequestCategoryEnum } from "@/model/enum/TempRequestCategoryEnum";
 
 let browserCategory: number | null = null;
 

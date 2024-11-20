@@ -212,7 +212,7 @@ function initRouter() {
       return new Promise((resolve, reject) => {
         getDynamicRoutes(reject)
           .then(data => {
-            handleAsyncRoutes(cloneDeep(data));
+            handleAsyncRoutes(data);
             storageLocal().setItem(key, data);
             resolve(router);
           })
@@ -223,7 +223,7 @@ function initRouter() {
     return new Promise((resolve, reject) => {
       getDynamicRoutes(reject)
         .then(data => {
-          handleAsyncRoutes(cloneDeep(data));
+          handleAsyncRoutes(data);
           resolve(router);
         })
         .catch(() => {});

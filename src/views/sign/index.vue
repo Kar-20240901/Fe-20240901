@@ -115,7 +115,12 @@ const currentPage = computed(() => {
             <h2 class="outline-none">{{ title }}</h2>
           </Motion>
 
-          <el-form ref="ruleFormRef" :model="ruleForm" size="large">
+          <el-form
+            v-if="currentPage === 0"
+            ref="ruleFormRef"
+            :model="ruleForm"
+            size="large"
+          >
             <Motion :delay="100">
               <el-form-item
                 prop="username"
@@ -158,25 +163,27 @@ const currentPage = computed(() => {
             </Motion>
 
             <Motion :delay="200">
-              <div class="w-full h-[20px] flex justify-between items-center">
-                <div />
+              <el-form-item>
+                <div class="w-full h-[20px] flex justify-between items-center">
+                  <div />
+                  <el-button
+                    link
+                    type="primary"
+                    @click="useUserStoreHook().SET_CURRENTPAGE(4)"
+                  >
+                    忘记密码?
+                  </el-button>
+                </div>
                 <el-button
-                  link
+                  class="w-full mt-4"
+                  size="default"
                   type="primary"
-                  @click="useUserStoreHook().SET_CURRENTPAGE(4)"
+                  :loading="loading"
+                  @click="onLogin(ruleFormRef)"
                 >
-                  忘记密码?
+                  登 录
                 </el-button>
-              </div>
-              <el-button
-                class="w-full mt-4"
-                size="default"
-                type="primary"
-                :loading="loading"
-                @click="onLogin(ruleFormRef)"
-              >
-                登 录
-              </el-button>
+              </el-form-item>
             </Motion>
 
             <Motion :delay="250">

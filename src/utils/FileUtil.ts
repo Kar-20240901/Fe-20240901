@@ -1,11 +1,11 @@
 // 获取：文件是否可以预览
 import { ToastError } from "@/utils/ToastUtil";
 import { GetBrowserCategory } from "@/utils/BrowserCategoryUtil";
-import { TempRequestCategoryEnum } from "@/views/base/user/enums";
 import { http, ORIGIN_RESPONSE } from "@/utils/http";
 import type { PureHttpResponse, RequestMethods } from "@/utils/http/types";
 import type { NotNullId } from "@/api/http/base/BaseFileController";
 import { baseApi } from "@/api/http/utils";
+import { TempRequestCategoryEnum } from "@/model/enum/TempRequestCategoryEnum";
 
 export function GetFileCanPreviewFlag(fileName: string) {
   return fileName.endsWith(".txt");

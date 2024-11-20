@@ -125,7 +125,7 @@ function onBack() {
       </el-form-item>
     </Motion>
 
-    <Motion :delay="250">
+    <Motion :delay="200">
       <el-form-item>
         <el-button
           class="w-full"
@@ -139,7 +139,7 @@ function onBack() {
       </el-form-item>
     </Motion>
 
-    <Motion :delay="300">
+    <Motion :delay="250">
       <el-form-item>
         <el-button class="w-full" size="default" @click="onBack">
           返回
