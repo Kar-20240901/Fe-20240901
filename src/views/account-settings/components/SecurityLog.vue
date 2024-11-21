@@ -2,7 +2,6 @@
 import { onMounted, ref } from "vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
-import { BaseSocketRefUserDO } from "@/api/http/base/BaseSocketRefUserController";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import {
   TempRequestCategoryEnum,
@@ -30,8 +29,6 @@ const pageSize = ref<number>(15);
 
 const tableRef = ref();
 
-const selectIdArr = ref<string[]>([]);
-
 onMounted(() => {
   onSearch();
 });
@@ -55,10 +52,6 @@ function onSearch() {
 function resetSearch() {
   searchRef.value.resetFields();
   onSearch();
-}
-
-function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
-  selectIdArr.value = rowArr.map(it => it.id);
 }
 </script>
 
@@ -116,10 +109,8 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
           show-overflow-tooltip
           stripe
           highlight-current-row
-          @selection-change="onSelectChange"
         >
-          <el-table-column type="selection" />
-          <el-table-column prop="name" label="详情" />
+          <el-table-column prop="name" label="详情" width="100" />
           <el-table-column prop="ip" label="ip" width="100" />
           <el-table-column prop="region" label="地点" width="100" />
           <el-table-column
@@ -139,7 +130,7 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
             label="创建时间"
             width="100"
           >
-            {{ FormatDateTimeForCurrentDay(scope.row.createTime) }}
+            {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
           </el-table-column>
         </el-table>
 

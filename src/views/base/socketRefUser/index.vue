@@ -174,7 +174,7 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
           label="创建时间"
           width="100"
         >
-          {{ FormatDateTimeForCurrentDay(scope.row.createTime) }}
+          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button
