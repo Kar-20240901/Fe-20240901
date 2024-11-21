@@ -17,6 +17,7 @@ import {
 } from "@/utils/FileUtil";
 import CommonConstant from "@/model/constant/CommonConstant";
 import { handleAvatarFileId, setUserKey } from "@/utils/UserUtil";
+import Avatar from "@/assets/user.jpg";
 
 defineOptions({
   name: "Profile"
@@ -132,7 +133,7 @@ const onSubmit = async () => {
       :model="userInfo"
     >
       <el-form-item label="头像">
-        <el-avatar :size="80" :src="userAvatarUrl" />
+        <el-avatar :size="80" :src="userAvatarUrl || Avatar" />
         <el-upload
           ref="uploadRef"
           :accept="CommonConstant.IMAGE_FILE_ACCEPT_TYPE"

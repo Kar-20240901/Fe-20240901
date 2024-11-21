@@ -15,6 +15,7 @@ import SecurityLog from "@/views/account-settings/components/SecurityLog.vue";
 import AccountManagement from "@/views/account-settings/components/AccountManagement.vue";
 import SecurityLogIcon from "@iconify-icons/ri/window-line";
 import AccountManagementIcon from "@iconify-icons/ri/profile-line";
+import Avatar from "@/assets/user.jpg";
 
 defineOptions({
   name: "AccountSettings"
@@ -77,7 +78,7 @@ const witchPane = ref("profile");
           </div>
         </el-menu-item>
         <div class="flex items-center ml-8 mt-4 mb-4">
-          <el-avatar :size="48" :src="userAvatarUrl" />
+          <el-avatar :size="48" :src="userAvatarUrl || Avatar" />
           <div class="ml-4 flex flex-col max-w-[130px]">
             <ReText class="font-bold !self-baseline">
               {{ userInfo.nickname }}
