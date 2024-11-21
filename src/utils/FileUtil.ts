@@ -151,16 +151,24 @@ export function BaseFilePrivateDownload(form: NotNullId) {
   ExecFileDownload(BaseFilePrivateDownloadUrl, form);
 }
 
-// 101 头像
-type TSysFileUploadProType = "AVATAR";
+// 101 头像 801 文件系统
+type TSysFileUploadProType = "AVATAR" | "FILE_SYSTEM";
 
 // 文件-管理 文件上传
-export function BaseFileUpload(file: File, type: TSysFileUploadProType) {
+export function BaseFileUpload(
+  file: File,
+  type: TSysFileUploadProType,
+  handleFormData?: (formData: FormData) => void
+) {
   const formData = new FormData();
 
   formData.append("file", file);
 
   formData.append("uploadType", type);
+
+  if (handleFormData) {
+    handleFormData(formData);
+  }
 
   return FileUpload(formData, baseApi("/base/file/upload"));
 }
