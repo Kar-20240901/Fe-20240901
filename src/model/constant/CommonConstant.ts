@@ -65,7 +65,7 @@ export default {
 
   TOOLTIP_STR_LENGTH: 500, // tooltip字符串的长度
 
-  TOP_PARENT_ID_STR: "0", // 顶层 parentId
+  TOP_PID_STR: "0", // 顶层 pid
 
   TOP_TENANT_ID_STR: "0", // 默认租户 id
 
@@ -73,5 +73,7 @@ export default {
 
   TENANT_USER_ID_STR: "-2", // 租户的用户 id
 
-  ADMIN_USER_ID_STR: "0" // 系统管理员的用户 id
+  ADMIN_USER_ID_STR: "0", // 系统管理员的用户 id
+
+  BIO_MAX_LENGTH: 100 // 个人简介最大长度
 };

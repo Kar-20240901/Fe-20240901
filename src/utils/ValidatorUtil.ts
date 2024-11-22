@@ -64,6 +64,7 @@ function CanNullValidator(
 
 interface IValidateHandle {
   regex: RegExp;
+  maxLength: number;
   emptyErrorMsg: string;
   errorMsg: string;
   validate: (value: string) => boolean;
@@ -90,6 +91,7 @@ export interface IValidate {
 export const Validate: IValidate = {
   integer: {
     regex: /^-?\d+$/,
+    maxLength: 300,
     emptyErrorMsg: "请输入数字",
     errorMsg: "请输入数字",
     validate(value: string) {
@@ -105,6 +107,7 @@ export const Validate: IValidate = {
 
   email: {
     regex: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
+    maxLength: 100,
     emptyErrorMsg: "请输入邮箱",
     errorMsg: "邮箱格式错误",
     validate(value: string) {
@@ -120,6 +123,7 @@ export const Validate: IValidate = {
 
   password: {
     regex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/,
+    maxLength: 20,
     emptyErrorMsg: "请输入密码",
     errorMsg:
       "密码格式错误：必须包含大小写字母和数字，可以使用特殊字符，长度8-20",
@@ -136,6 +140,7 @@ export const Validate: IValidate = {
 
   code: {
     regex: /^[0-9]{6}$/,
+    maxLength: 6,
     emptyErrorMsg: "请输入验证码",
     errorMsg: "验证码格式错误",
     validate(value: string) {
@@ -151,6 +156,7 @@ export const Validate: IValidate = {
 
   nickname: {
     regex: /^[\u4E00-\u9FA5A-Za-z0-9_-]{1,20}$/,
+    maxLength: 20,
     emptyErrorMsg: "请输入昵称",
     errorMsg: "昵称格式错误：只能包含中文，数字，字母，下划线，横杠，长度1-20",
     validate(value: string) {
@@ -167,6 +173,7 @@ export const Validate: IValidate = {
   phone: {
     regex:
       /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/,
+    maxLength: 20,
     emptyErrorMsg: "请输入手机号",
     errorMsg: "手机号格式错误",
     validate(value: string) {
@@ -182,6 +189,7 @@ export const Validate: IValidate = {
 
   username: {
     regex: /^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$/,
+    maxLength: 20,
     emptyErrorMsg: "请输入用户名",
     errorMsg:
       "用户名格式错误：只能包含中文，数字，字母，下划线，横杠，长度2-20",
@@ -198,6 +206,7 @@ export const Validate: IValidate = {
 
   url: {
     regex: /^[a-zA-Z]+:\/\/[\w-+&@#/%?=~_|!:,.;]*[\w-+&@#/%=~_|]$/,
+    maxLength: 300,
     emptyErrorMsg: "请输入地址",
     errorMsg: "地址格式错误",
     validate(value: string) {
@@ -213,6 +222,7 @@ export const Validate: IValidate = {
 
   bankDebitCard: {
     regex: /^(\d{16}|\d{19}|\d{17})$/,
+    maxLength: 19,
     emptyErrorMsg: "请输入银行卡号",
     errorMsg: "银行卡号格式错误",
     validate(value: string) {

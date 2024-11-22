@@ -9,10 +9,6 @@ import { getTopMenu, initRouter } from "@/router/utils";
 import { avatar, bg, illustration } from "./utils/static";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { computed, onBeforeUnmount, onMounted, ref, toRaw } from "vue";
-import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
-
-import dayIcon from "@/assets/svg/day.svg?component";
-import darkIcon from "@/assets/svg/dark.svg?component";
 import Lock from "@iconify-icons/ri/lock-fill";
 import User from "@iconify-icons/ri/user-3-fill";
 import { ToastSuccess } from "@/utils/ToastUtil";
@@ -34,8 +30,6 @@ const ruleFormRef = ref<FormInstance>();
 const { initStorage } = useLayout();
 initStorage();
 
-const { dataTheme, overallStyle, dataThemeChange } = useDataThemeChange();
-dataThemeChange(overallStyle.value);
 const { title } = useNav();
 
 const ruleForm = ref<SignUserNameSignInPasswordDTO>({});
@@ -94,16 +88,6 @@ const currentPage = computed(() => {
 <template>
   <div class="select-none">
     <img :src="bg" class="wave" />
-    <div class="flex-c absolute right-5 top-3">
-      <!-- 主题 -->
-      <el-switch
-        v-model="dataTheme"
-        inline-prompt
-        :active-icon="dayIcon"
-        :inactive-icon="darkIcon"
-        @change="dataThemeChange"
-      />
-    </div>
     <div class="login-container">
       <div class="img">
         <component :is="toRaw(illustration)" />

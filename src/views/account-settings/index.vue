@@ -28,12 +28,18 @@ onBeforeMount(() => {
   useDataThemeChange().dataThemeChange($storage.layout?.overallStyle);
 });
 
-const userInfo = ref<BaseUserSelfInfoVO>({});
+const userInfo = ref<BaseUserSelfInfoVO>({
+  nickname: useUserStoreHook().nickname,
+  username: useUserStoreHook().username
+});
 
-const userAvatarUrl = ref("");
+const userAvatarUrl = ref(useUserStoreHook().avatar || "");
 
 useUserStoreHook().$subscribe((mutation, state) => {
-  userInfo.value = { ...state };
+  userInfo.value = {
+    nickname: useUserStoreHook().nickname,
+    username: useUserStoreHook().username
+  };
   userAvatarUrl.value = state.avatar;
 });
 

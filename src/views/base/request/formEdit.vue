@@ -64,7 +64,7 @@ const props = defineProps<IRequestDialogFormProps>();
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="是否成功" prop="successFlag">
+          <el-form-item label="成功" prop="successFlag">
             <el-select v-model="form.successFlag" class="w-full" disabled>
               <el-option
                 v-for="(item, index) in yesOrNoOptions"

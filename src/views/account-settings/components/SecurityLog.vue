@@ -110,26 +110,16 @@ function resetSearch() {
           stripe
           highlight-current-row
         >
-          <el-table-column prop="name" label="详情" width="100" />
-          <el-table-column prop="ip" label="ip" width="100" />
-          <el-table-column prop="region" label="地点" width="100" />
-          <el-table-column
-            #default="scope"
-            prop="category"
-            label="终端"
-            width="100"
-          >
+          <el-table-column prop="name" label="详情" />
+          <el-table-column prop="ip" label="ip" />
+          <el-table-column prop="region" label="地点" />
+          <el-table-column #default="scope" prop="category" label="终端">
             {{
               TempRequestCategoryMap.get(scope.row.category) ||
               TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
             }}
           </el-table-column>
-          <el-table-column
-            #default="scope"
-            prop="createTime"
-            label="创建时间"
-            width="100"
-          >
+          <el-table-column #default="scope" prop="createTime" label="创建时间">
             {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
           </el-table-column>
         </el-table>

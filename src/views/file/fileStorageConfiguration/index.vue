@@ -1,31 +1,37 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
-import FormEdit from "@/views/base/userDeleteLog/formEdit.vue";
-import {
-  baseUserDeleteLogDeleteByIdSet,
-  BaseUserDeleteLogDO,
-  baseUserDeleteLogInfoById,
-  baseUserDeleteLogPage,
-  BaseUserDeleteLogPageDTO
-} from "@/api/http/base/BaseUserDeleteLogController";
+import AddFill from "@iconify-icons/ri/add-circle-line";
+import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
-import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
+import FormEdit from "@/views/base/param/formEdit.vue";
+import {
+  baseFileStorageConfigurationDeleteByIdSet,
+  BaseFileStorageConfigurationDO,
+  baseFileStorageConfigurationInfoById,
+  baseFileStorageConfigurationInsertOrUpdate,
+  baseFileStorageConfigurationPage,
+  BaseFileStorageConfigurationPageDTO
+} from "@/api/http/base/BaseFileStorageConfigurationController";
+import { BaseFileStorageTypeMap } from "@/model/enum/BaseFileStorageTypeEnum";
 
 defineOptions({
-  name: "BaseUserDeleteLog"
+  name: "FileStorageConfiguration"
 });
 
-const search = ref<BaseUserDeleteLogPageDTO>({});
+const search = ref<BaseFileStorageConfigurationPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseUserDeleteLogDO[]>([]);
+const dataList = ref<BaseFileStorageConfigurationDO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
+
+const formRef = ref();
+const title = ref<string>("");
 
 const tableRef = ref();
 
@@ -37,7 +43,7 @@ onMounted(() => {
 
 function onSearch() {
   loading.value = true;
-  baseUserDeleteLogPage({
+  baseFileStorageConfigurationPage({
     ...search.value,
     current: currentPage.value as any,
     pageSize: pageSize.value as any
@@ -56,28 +62,40 @@ function resetSearch() {
   onSearch();
 }
 
-function onSelectChange(rowArr?: BaseUserDeleteLogDO[]) {
-  selectIdArr.value = rowArr.map(it => it.id);
+function editClick(row: BaseFileStorageConfigurationDO) {
+  title.value = "修改文件存储";
+  formRef.value.editOpen(baseFileStorageConfigurationInfoById({ id: row.id }));
 }
 
-const formRef = ref();
-const title = ref<string>("");
-
-function viewClick(row: BaseUserDeleteLogDO) {
-  title.value = "查看用户注销详情";
-  formRef.value.editOpen(baseUserDeleteLogInfoById({ id: row.id }));
+function addClick(row: BaseFileStorageConfigurationDO) {
+  title.value = "新增文件存储";
+  formRef.value.addOpen(row);
 }
 
-function deleteClick(row: BaseUserDeleteLogDO) {
+function confirmFun() {
+  return baseFileStorageConfigurationInsertOrUpdate(
+    formRef.value.getForm().value
+  );
+}
+
+function confirmAfterFun(res, done) {
+  done();
+  ToastSuccess(res.msg);
+  onSearch();
+}
+
+function deleteClick(row: BaseFileStorageConfigurationDO) {
   ExecConfirm(
     async () => {
-      await baseUserDeleteLogDeleteByIdSet({ idSet: [row.id] }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
+      await baseFileStorageConfigurationDeleteByIdSet({ idSet: [row.id] }).then(
+        res => {
+          ToastSuccess(res.msg);
+          onSearch();
+        }
+      );
     },
     undefined,
-    `确定删除【${row.nickname}】吗？`
+    `确定删除【${row.name}】吗？`
   );
 }
 
@@ -88,16 +106,20 @@ function deleteBySelectIdArr() {
   }
   ExecConfirm(
     async () => {
-      await baseUserDeleteLogDeleteByIdSet({ idSet: selectIdArr.value }).then(
-        res => {
-          ToastSuccess(res.msg);
-          onSearch();
-        }
-      );
+      await baseFileStorageConfigurationDeleteByIdSet({
+        idSet: selectIdArr.value
+      }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
     },
     undefined,
     `确定删除勾选的【${selectIdArr.value.length}】项数据吗？`
   );
+}
+
+function onSelectChange(rowArr?: BaseFileStorageConfigurationDO[]) {
+  selectIdArr.value = rowArr.map(it => it.id);
 }
 </script>
 
@@ -105,10 +127,10 @@ function deleteBySelectIdArr() {
   <div class="flex flex-col">
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="用户名：" prop="username">
+        <el-form-item label="文件存储名称：" prop="name">
           <el-input
-            v-model="search.username"
-            placeholder="请输入用户名"
+            v-model="search.name"
+            placeholder="请输入文件存储名称"
             clearable
             class="!w-[180px]"
           />
@@ -136,10 +158,17 @@ function deleteBySelectIdArr() {
         <div>
           <el-button
             type="primary"
+            :icon="useRenderIcon(AddFill)"
+            @click="addClick({})"
+          >
+            新增文件存储
+          </el-button>
+          <el-button
+            type="primary"
             :icon="useRenderIcon(Delete)"
             @click="deleteBySelectIdArr"
           >
-            批量删除
+            批量文件存储
           </el-button>
         </div>
       </div>
@@ -159,24 +188,34 @@ function deleteBySelectIdArr() {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="id" label="id" />
-        <el-table-column prop="nickname" label="昵称" />
+        <el-table-column prop="name" label="文件存储名称" />
+        <el-table-column #default="scope" prop="type" label="类型" width="100">
+          {{ BaseFileStorageTypeMap.get(scope.row.type) || "" }}
+        </el-table-column>
         <el-table-column
           #default="scope"
-          prop="createTime"
-          label="创建时间"
+          prop="defaultFlag"
+          label="默认"
           width="100"
         >
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
+          {{ scope.row.defaultFlag ? "是" : "否" }}
+        </el-table-column>
+        <el-table-column
+          #default="scope"
+          prop="enableFlag"
+          label="禁用"
+          width="100"
+        >
+          {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon('ep:circle-check')"
-            @click="viewClick(scope.row)"
+            :icon="useRenderIcon(EditPen)"
+            @click="editClick(scope.row)"
           >
-            查看
+            修改
           </el-button>
           <el-button
             link
@@ -200,7 +239,12 @@ function deleteBySelectIdArr() {
       />
     </div>
 
-    <form-edit ref="formRef" :title="title" />
+    <form-edit
+      ref="formRef"
+      :title="title"
+      :confirm-fun="confirmFun"
+      :confirm-after-fun="confirmAfterFun"
+    />
   </div>
 </template>
 

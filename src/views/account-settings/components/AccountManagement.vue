@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { deviceDetection } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
 import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
@@ -44,38 +44,45 @@ const list = ref([
   }
 ]);
 
-const userInfo = ref<BaseUserSelfInfoVO>({});
+const userInfo = ref<BaseUserSelfInfoVO>({ ...useUserStoreHook().$state });
 
 useUserStoreHook().$subscribe((mutation, state) => {
   userInfo.value = { ...state };
+  handleUserInfo();
+});
 
-  if (state.username) {
-    list[usernameIndex].illustrate = state.username;
-    list[usernameIndex].button = "修改";
+function handleUserInfo() {
+  if (userInfo.value.username) {
+    list.value[usernameIndex].illustrate = userInfo.value.username;
+    list.value[usernameIndex].button = "修改";
   } else {
-    list[emailIndex].illustrate = "";
-    list[usernameIndex].button = "设置";
+    list.value[emailIndex].illustrate = "";
+    list.value[usernameIndex].button = "设置";
   }
 
-  if (state.passwordFlag) {
-    list[passwordIndex].button = "修改";
+  if (userInfo.value.passwordFlag) {
+    list.value[passwordIndex].button = "修改";
   } else {
-    list[passwordIndex].button = "设置";
+    list.value[passwordIndex].button = "设置";
   }
 
-  if (state.email) {
-    list[emailIndex].illustrate = state.email;
-    list[emailIndex].button = "修改";
+  if (userInfo.value.email) {
+    list.value[emailIndex].illustrate = userInfo.value.email;
+    list.value[emailIndex].button = "修改";
   } else {
-    list[emailIndex].illustrate = "";
-    list[emailIndex].button = "设置";
+    list.value[emailIndex].illustrate = "";
+    list.value[emailIndex].button = "设置";
   }
 
-  if (state.createTime) {
-    list[signDeleteIndex].illustrate = state.createTime;
+  if (userInfo.value.createTime) {
+    list.value[signDeleteIndex].illustrate = userInfo.value.createTime;
   } else {
-    list[signDeleteIndex].illustrate = "";
+    list.value[signDeleteIndex].illustrate = "";
   }
+}
+
+onMounted(() => {
+  handleUserInfo();
 });
 
 const setUserNameByEmailRef = ref();

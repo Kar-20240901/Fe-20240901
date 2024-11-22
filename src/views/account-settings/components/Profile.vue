@@ -18,6 +18,8 @@ import {
 import CommonConstant from "@/model/constant/CommonConstant";
 import { handleAvatarFileId, setUserKey } from "@/utils/UserUtil";
 import Avatar from "@/assets/user.jpg";
+import { useUserStoreHook } from "@/store/modules/user";
+import { Validate } from "@/utils/ValidatorUtil";
 
 defineOptions({
   name: "Profile"
@@ -36,7 +38,7 @@ const rules: FormRules<BaseUserSelfInfoVO> = {
   nickname: [{ required: true, message: "昵称为必填项", trigger: "blur" }]
 };
 
-const userAvatarUrl = ref("");
+const userAvatarUrl = ref(useUserStoreHook().avatar || "");
 
 const submitLoadingFlag = ref<boolean>(true);
 
@@ -148,8 +150,23 @@ const onSubmit = async () => {
           </el-button>
         </el-upload>
       </el-form-item>
-      <el-form-item label="昵称" prop="nickname">
-        <el-input v-model="userInfo.nickname" placeholder="请输入昵称" />
+      <el-form-item
+        label="昵称"
+        prop="nickname"
+        :rules="[
+          {
+            required: true,
+            trigger: 'blur',
+            asyncValidator: Validate.nickname.validator
+          }
+        ]"
+      >
+        <el-input
+          v-model="userInfo.nickname"
+          placeholder="请输入昵称"
+          :maxlength="Validate.nickname.maxLength"
+          show-word-limit
+        />
       </el-form-item>
       <el-form-item label="简介" prop="bio">
         <el-input
@@ -157,7 +174,7 @@ const onSubmit = async () => {
           placeholder="请输入简介"
           type="textarea"
           :autosize="{ minRows: 6, maxRows: 8 }"
-          maxlength="100"
+          :maxlength="CommonConstant.BIO_MAX_LENGTH"
           show-word-limit
         />
       </el-form-item>
