@@ -12,7 +12,6 @@ import {
   signEmailUpdateEmailSendCodeNew,
   signEmailUpdateEmailSendCodeOld
 } from "@/api/http/base/SignEmailController";
-import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { useVerifyCode } from "@/utils/verifyCode";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { useUserStoreHook } from "@/store/modules/user";
@@ -108,13 +107,13 @@ onUnmounted(() => {
                 asyncValidator: Validate.code.validator
               }
             ]"
+            label="新邮箱验证码"
           >
             <div class="w-full flex justify-between">
               <el-input
                 v-model="form.newEmailCode"
                 clearable
                 placeholder="新邮箱验证码"
-                :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
               />
               <el-button
                 :disabled="isDisabled"
@@ -143,13 +142,13 @@ onUnmounted(() => {
                 asyncValidator: Validate.code.validator
               }
             ]"
+            label="旧邮箱验证码"
           >
             <div class="w-full flex justify-between">
               <el-input
                 v-model="form.oldEmailCode"
                 clearable
                 placeholder="旧邮箱验证码"
-                :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
               />
               <el-button
                 :disabled="isDisabled2"

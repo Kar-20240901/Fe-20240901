@@ -95,7 +95,10 @@ export const useUserStore = defineStore({
         data.password = PasswordRSAEncrypt(data.password); // 密码加密
         if (Validate.email.regex.test(data.username)) {
           // 如果是：邮箱
-          signEmailSignInPassword(data)
+          signEmailSignInPassword({
+            email: data.username,
+            password: data.password
+          })
             .then(data => {
               if (data?.data) setToken(data.data);
               resolve(data.data);

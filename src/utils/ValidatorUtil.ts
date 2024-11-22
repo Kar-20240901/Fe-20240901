@@ -125,8 +125,7 @@ export const Validate: IValidate = {
     regex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/,
     maxLength: 20,
     emptyErrorMsg: "请输入密码",
-    errorMsg:
-      "密码格式错误：必须包含大小写字母和数字，可以使用特殊字符，长度8-20",
+    errorMsg: "必须包含大小写字母和数字，可以使用特殊字符，长度8-20",
     validate(value: string) {
       return this.regex.test(value);
     },

@@ -11,7 +11,6 @@ import {
   SignEmailSetPasswordDTO,
   signEmailSetPasswordSendCode
 } from "@/api/http/base/SignEmailController";
-import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { useVerifyCode } from "@/utils/verifyCode";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { useUserStoreHook } from "@/store/modules/user";
@@ -109,13 +108,13 @@ onUnmounted(() => {
                 asyncValidator: Validate.code.validator
               }
             ]"
+            label="邮箱验证码"
           >
             <div class="w-full flex justify-between">
               <el-input
                 v-model="form.code"
                 clearable
                 placeholder="邮箱验证码"
-                :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
               />
               <el-button
                 :disabled="isDisabled"

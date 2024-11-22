@@ -14,6 +14,7 @@ import { ToastSuccess } from "@/utils/ToastUtil";
 import { Validate } from "@/utils/ValidatorUtil";
 import { getTopMenu, initRouter } from "@/router/utils";
 import { useRouter } from "vue-router";
+import { setToken } from "@/utils/auth";
 
 const router = useRouter();
 const loading = ref(false);
@@ -29,10 +30,12 @@ const onLogin = async (formEl: FormInstance | undefined) => {
     }
     loading.value = true;
     signEmailSignInCode(ruleForm.value)
-      .then(() => {
+      .then(res => {
+        if (res?.data) setToken(res.data);
         // 获取后端路由
         return initRouter()
           .then(() => {
+            useVerifyCode().end();
             router.push(getTopMenu(true).path).then(() => {
               ToastSuccess("欢迎回来 ~");
             });

@@ -21,23 +21,27 @@ export const useVerifyCode = () => {
       if (!isValid) {
         return;
       }
-      sendCodeFun().then(res => {
-        ToastSuccess(res.msg);
-        clearInterval(timer.value);
-        isDisabled.value = true;
-        text.value = `${time}`;
-        timer.value = setInterval(() => {
-          if (time > 0) {
-            time -= 1;
-            text.value = `${time}`;
-          } else {
-            text.value = "";
-            isDisabled.value = false;
-            clearInterval(timer.value);
-            time = initTime;
-          }
-        }, 1000);
-      });
+      isDisabled.value = true;
+      sendCodeFun()
+        .then(res => {
+          ToastSuccess(res.msg);
+          clearInterval(timer.value);
+          text.value = `${time}`;
+          timer.value = setInterval(() => {
+            if (time > 0) {
+              time -= 1;
+              text.value = `${time}`;
+            } else {
+              text.value = "";
+              isDisabled.value = false;
+              clearInterval(timer.value);
+              time = initTime;
+            }
+          }, 1000);
+        })
+        .catch(() => {
+          isDisabled.value = false;
+        });
     });
   };
 
