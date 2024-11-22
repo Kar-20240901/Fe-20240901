@@ -116,11 +116,9 @@ onUnmounted(() => {
                 :disabled="isDisabled"
                 class="ml-2"
                 @click="
-                  useVerifyCode().start(
-                    formRef,
-                    'email',
-                    signEmailSignUpSendCode({ email: form.email })
-                  )
+                  useVerifyCode().start(formRef, 'email', () => {
+                    return signEmailSignUpSendCode({ email: form.email });
+                  })
                 "
               >
                 {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}

@@ -11,6 +11,7 @@ export interface BaseFilePageSelfDTO {
   publicFlag?: boolean; // 是否公开访问
   pageSize?: string; // 每页显示条数，format：int64
   storageType?: number; // 存放文件的服务器类型，format：int32
+  pid?: string; // 父节点id（顶级则为0），format：int64
   remark?: string; // 备注
   refId?: string; // 关联的 id，format：int64
   enableFlag?: boolean; // 是否启用
@@ -24,6 +25,7 @@ export interface BaseFileDO {
   remark?: string; // 备注
   pid?: string; // 上级文件夹的文件主键 id，默认为 0，format：int64
   type?: string; // 类型
+  oldUri?: string; // 旧的文件完整路径，用于：文件复制时使用
   updateId?: string; // 修改人id，format：int64
   children?: BaseFileDO[]; // 子节点
   uploadType?: number; // 文件上传类型，format：int32
@@ -31,6 +33,7 @@ export interface BaseFileDO {
   showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
   id?: string; // 主键 id，format：int64
   enableFlag?: boolean; // 是否启用
+  oldBucketName?: string; // 旧的桶名，用于：文件复制时使用
   orderNo?: number; // 排序号（值越大越前面，默认为 0），format：int32
   storageConfigurationId?: string; // 存储文件配置主键 id，format：int64
   newFileName?: string; // 新的文件名（包含文件类型），例如：uuid.xxx
@@ -53,6 +56,24 @@ export function baseFilePageSelf(
   return http.request<Page<BaseFileDO>>(
     "post",
     baseApi("/base/file/page/self"),
+    form,
+    config
+  );
+}
+
+export interface BaseFileUpdateSelfDTO {
+  fileName?: string; // 文件名
+  id?: string; // 主键 id，required：true，format：int64
+}
+
+// 修改：文件和文件夹-自我
+export function baseFileUpdateSelf(
+  form: BaseFileUpdateSelfDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/file/update/self"),
     form,
     config
   );
@@ -83,6 +104,7 @@ export interface BaseFilePageDTO {
   pageSize?: string; // 每页显示条数，format：int64
   storageType?: number; // 存放文件的服务器类型，format：int32
   belongId?: string; // 归属者用户主键 id（拥有全部权限），format：int64
+  pid?: string; // 父节点id（顶级则为0），format：int64
   remark?: string; // 备注
   refId?: string; // 关联的 id，format：int64
   enableFlag?: boolean; // 是否启用
@@ -106,7 +128,7 @@ export interface NotEmptyIdSet {
   idSet?: string[]; // 主键 idSet，required：true，format：int64
 }
 
-// 批量删除文件：公有和私有
+// 批量删除文件：公有和私有，文件和文件夹
 export function baseFileRemoveByFileIdSet(
   form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
@@ -136,6 +158,24 @@ export function baseFileGetPublicUrl(
   );
 }
 
+export interface BaseFileCopySelfDTO {
+  idSet?: string[]; // 主键 idSet，required：true，format：int64
+  pid?: string; // 父节点id（顶级则为0），required：true，format：int64
+}
+
+// 复制：文件和文件夹-自我
+export function baseFileCopySelf(
+  form: BaseFileCopySelfDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/file/copy/self"),
+    form,
+    config
+  );
+}
+
 // 查询：树结构-自我
 export function baseFilePageTreeSelf(
   form: BaseFilePageSelfDTO,
@@ -157,6 +197,24 @@ export function baseFilePage(
   return http.request<Page<BaseFileDO>>(
     "post",
     baseApi("/base/file/page"),
+    form,
+    config
+  );
+}
+
+export interface BaseFileMoveSelfDTO {
+  idSet?: string[]; // 主键 idSet，required：true，format：int64
+  pid?: string; // 父节点id（顶级则为0），required：true，format：int64
+}
+
+// 移动：文件和文件夹-自我
+export function baseFileMoveSelf(
+  form: BaseFileMoveSelfDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/file/move/self"),
     form,
     config
   );

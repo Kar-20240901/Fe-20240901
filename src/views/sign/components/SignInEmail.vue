@@ -7,7 +7,8 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { useVerifyCode } from "@/utils/verifyCode";
 import {
   signEmailSignInCode,
-  SignEmailSignInCodeDTO
+  SignEmailSignInCodeDTO,
+  signEmailSignInSendCode
 } from "@/api/http/base/SignEmailController";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { Validate } from "@/utils/ValidatorUtil";
@@ -96,11 +97,9 @@ function onBack() {
             :disabled="isDisabled"
             class="ml-2"
             @click="
-              useVerifyCode().start(
-                ruleFormRef,
-                'email',
-                signEmailSignInCode({ email: ruleForm.email })
-              )
+              useVerifyCode().start(ruleFormRef, 'email', () => {
+                return signEmailSignInSendCode({ email: ruleForm.email });
+              })
             "
           >
             {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}

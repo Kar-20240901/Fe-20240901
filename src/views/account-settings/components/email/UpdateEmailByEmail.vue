@@ -120,11 +120,11 @@ onUnmounted(() => {
                 :disabled="isDisabled"
                 class="ml-2"
                 @click="
-                  useVerifyCode().start(
-                    formRef,
-                    'newEmail',
-                    signEmailUpdateEmailSendCodeNew({ email: form.newEmail })
-                  )
+                  useVerifyCode().start(formRef, 'newEmail', () => {
+                    return signEmailUpdateEmailSendCodeNew({
+                      email: form.newEmail
+                    });
+                  })
                 "
               >
                 {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}
@@ -155,11 +155,9 @@ onUnmounted(() => {
                 :disabled="isDisabled2"
                 class="ml-2"
                 @click="
-                  useVerifyCode2().start(
-                    formRef,
-                    '',
-                    signEmailUpdateEmailSendCodeOld()
-                  )
+                  useVerifyCode2().start(formRef, '', () => {
+                    return signEmailUpdateEmailSendCodeOld();
+                  })
                 "
               >
                 {{ text2.length > 0 ? text2 + "秒后重新获取" : "获取验证码" }}

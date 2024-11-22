@@ -2,6 +2,7 @@ import type { FormInstance, FormItemProp } from "element-plus";
 import { clone } from "@pureadmin/utils";
 import { ref } from "vue";
 import type { R } from "@/model/vo/R";
+import { ToastSuccess } from "@/utils/ToastUtil";
 
 const isDisabled2 = ref(false);
 const timer2 = ref(null);
@@ -11,7 +12,7 @@ export const useVerifyCode2 = () => {
   const start = async (
     formEl: FormInstance | undefined,
     props: FormItemProp,
-    sendCodeFun: Promise<R<any>>,
+    sendCodeFun: () => Promise<R<any>>,
     time = 60
   ) => {
     if (!formEl) return;
@@ -20,7 +21,8 @@ export const useVerifyCode2 = () => {
       if (!isValid) {
         return;
       }
-      sendCodeFun.then(() => {
+      sendCodeFun().then(res => {
+        ToastSuccess(res.msg);
         clearInterval(timer2.value);
         isDisabled2.value = true;
         text2.value = `${time}`;
