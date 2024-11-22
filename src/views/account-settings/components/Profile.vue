@@ -47,7 +47,13 @@ onMounted(() => {
     .then(res => {
       userInfo.value = res.data;
 
-      setUserKey({ nickname: res.data.nickname, username: res.data.username });
+      setUserKey({
+        nickname: res.data.nickname,
+        username: res.data.username,
+        createTime: res.data.createTime,
+        passwordFlag: res.data.passwordFlag,
+        email: res.data.email
+      });
 
       const avatarFileId = res.data.avatarFileId!;
 

@@ -56,6 +56,42 @@ export function signUserNameSignDelete(
   );
 }
 
+export interface SignUserNameSetEmailSendCodeDTO {
+  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
+}
+
+// 设置邮箱：发送验证码
+export function signUserNameSetEmailSendCode(
+  form: SignUserNameSetEmailSendCodeDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/sign/userName/setEmail/sendCode"),
+    form,
+    config
+  );
+}
+
+export interface SignUserNameSetEmailDTO {
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
+  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
+  currentPassword?: string; // 前端加密之后的密码，required：true
+}
+
+// 设置邮箱
+export function signUserNameSetEmail(
+  form: SignUserNameSetEmailDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/sign/userName/setEmail"),
+    form,
+    config
+  );
+}
+
 export interface SignUserNameSignInPasswordDTO {
   password?: string; // 前端加密之后的密码，required：true
   username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true

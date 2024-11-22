@@ -11,7 +11,6 @@ import {
   SignEmailSignUpDTO,
   signEmailSignUpSendCode
 } from "@/api/http/base/SignEmailController";
-import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { useVerifyCode } from "@/utils/verifyCode";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { useUserStoreHook } from "@/store/modules/user";
@@ -79,12 +78,13 @@ onUnmounted(() => {
   >
     <el-form ref="formRef" :model="form" label-width="auto">
       <el-row :gutter="30">
-        <re-col :value="12" :xs="24" :sm="24">
+        <re-col :value="24" :xs="24" :sm="24">
           <el-form-item
             label="邮箱"
             prop="email"
             :rules="[
               {
+                required: true,
                 trigger: 'blur',
                 asyncValidator: Validate.email.validator
               }
@@ -104,13 +104,13 @@ onUnmounted(() => {
                 asyncValidator: Validate.code.validator
               }
             ]"
+            label="邮箱验证码"
           >
             <div class="w-full flex justify-between">
               <el-input
                 v-model="form.code"
                 clearable
                 placeholder="邮箱验证码"
-                :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
               />
               <el-button
                 :disabled="isDisabled"

@@ -12,6 +12,7 @@ import SetEmailByUserName from "@/views/account-settings/components/username/Set
 import UpdateEmailByEmail from "@/views/account-settings/components/email/UpdateEmailByEmail.vue";
 import SignDeleteByEmail from "@/views/account-settings/components/email/SignDeleteByEmail.vue";
 import SignDeleteByUserName from "@/views/account-settings/components/username/SignDeleteByUserName.vue";
+import UpdatePasswordByUserName from "@/views/account-settings/components/username/UpdatePasswordByUserName.vue";
 
 defineOptions({
   name: "AccountManagement"
@@ -180,7 +181,11 @@ function onClick(index, item) {
     />
 
     <SetPasswordByEmail ref="setPasswordByEmailRef" title="设置密码" />
-    <UpdatePasswordByEmail ref="updatePasswordByEmailRef" title="设置密码" />
+    <UpdatePasswordByUserName
+      ref="updatePasswordByUserNameRef"
+      title="修改密码"
+    />
+    <UpdatePasswordByEmail ref="updatePasswordByEmailRef" title="修改密码" />
 
     <SetEmailByUserName ref="setEmailByUserNameRef" title="设置邮箱" />
     <UpdateEmailByEmail ref="updateEmailByEmailRef" title="修改邮箱" />

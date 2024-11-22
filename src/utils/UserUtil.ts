@@ -33,7 +33,6 @@ export function setUserKey(dataInfo: DataInfo) {
   useUserStoreHook().SET_ROLES(data.roles);
   useUserStoreHook().SET_PERMS(data.permissions);
   useUserStoreHook().SET_EMAIL(data.email);
-  useUserStoreHook().SET_EMAIL(data.email);
   useUserStoreHook().SET_PASSWORD_FLAG(data.passwordFlag);
   storageLocal().setItem(userKey, data);
 }

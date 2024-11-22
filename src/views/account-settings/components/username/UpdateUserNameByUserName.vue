@@ -13,7 +13,7 @@ import {
   SignUserNameUpdateUserNameDTO
 } from "@/api/http/base/SignUserNameController";
 import { Validate } from "@/utils/ValidatorUtil";
-import { RSAEncrypt } from "@/utils/RsaUtil";
+import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
 
 const form = ref<SignUserNameUpdateUserNameDTO>({});
 const formRef = ref();
@@ -37,7 +37,7 @@ const props = defineProps<IDialogFormProps>();
 
 function confirmFun() {
   const formValue = { ...form.value };
-  formValue.currentPassword = RSAEncrypt(formValue.currentPassword);
+  formValue.currentPassword = PasswordRSAEncrypt(formValue.currentPassword);
   return signUserNameUpdateUserName(formValue);
 }
 
@@ -71,8 +71,8 @@ function confirmClick() {
       <el-row :gutter="30">
         <re-col :value="24" :xs="24" :sm="24">
           <el-form-item
-            label="用户名"
-            prop="username"
+            label="新用户名"
+            prop="newUserName"
             :rules="[
               {
                 required: true,
@@ -84,7 +84,7 @@ function confirmClick() {
             <el-input
               v-model="form.newUserName"
               clearable
-              placeholder="请输入用户名"
+              placeholder="请输入新用户名"
             />
           </el-form-item>
         </re-col>

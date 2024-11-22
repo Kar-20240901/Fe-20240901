@@ -78,12 +78,13 @@ onUnmounted(() => {
   >
     <el-form ref="formRef" :model="form" label-width="auto">
       <el-row :gutter="30">
-        <re-col :value="12" :xs="24" :sm="24">
+        <re-col :value="24" :xs="24" :sm="24">
           <el-form-item
             label="新邮箱"
             prop="newEmail"
             :rules="[
               {
+                required: true,
                 trigger: 'blur',
                 asyncValidator: Validate.email.validator
               }

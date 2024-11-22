@@ -13,7 +13,7 @@ import {
   SignUserNameSignDeleteDTO
 } from "@/api/http/base/SignUserNameController";
 import { Validate } from "@/utils/ValidatorUtil";
-import { RSAEncrypt } from "@/utils/RsaUtil";
+import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
 
 const form = ref<SignUserNameSignDeleteDTO>({});
 const formRef = ref();
@@ -37,7 +37,7 @@ const props = defineProps<IDialogFormProps>();
 
 function confirmFun() {
   const formValue = { ...form.value };
-  formValue.currentPassword = RSAEncrypt(formValue.currentPassword);
+  formValue.currentPassword = PasswordRSAEncrypt(formValue.currentPassword);
   return signUserNameSignDelete(formValue);
 }
 

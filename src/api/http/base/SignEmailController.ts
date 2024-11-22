@@ -6,7 +6,7 @@ export interface SignEmailUpdateEmailSendCodeNewDTO {
   email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
 }
 
-// 修改邮箱-发送新邮箱验证码
+// 修改邮箱：0发送新邮箱验证码
 export function signEmailUpdateEmailSendCodeNew(
   form: SignEmailUpdateEmailSendCodeNewDTO,
   config?: PureHttpRequestConfig
@@ -19,7 +19,7 @@ export function signEmailUpdateEmailSendCodeNew(
   );
 }
 
-// 修改邮箱-发送旧邮箱验证码
+// 修改邮箱：发送旧邮箱验证码
 export function signEmailUpdateEmailSendCodeOld(
   config?: PureHttpRequestConfig
 ) {
@@ -35,7 +35,7 @@ export interface EmailNotBlankDTO {
   email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
 }
 
-// 注册-发送验证码
+// 注册：发送验证码
 export function signEmailSignUpSendCode(
   form: EmailNotBlankDTO,
   config?: PureHttpRequestConfig
@@ -67,7 +67,7 @@ export function signEmailSetPassword(
   );
 }
 
-// 邮箱验证码登录-发送验证码
+// 邮箱验证码登录：发送验证码
 export function signEmailSignInSendCode(
   form: EmailNotBlankDTO,
   config?: PureHttpRequestConfig
@@ -80,7 +80,7 @@ export function signEmailSignInSendCode(
   );
 }
 
-// 修改密码-发送验证码
+// 修改密码：发送验证码
 export function signEmailUpdatePasswordSendCode(
   config?: PureHttpRequestConfig
 ) {
@@ -180,7 +180,7 @@ export interface SignEmailUpdateUserNameSendCodeDTO {
   username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
 }
 
-// 修改用户名-发送验证码
+// 修改用户名：发送验证码
 export function signEmailUpdateUserNameSendCode(
   form: SignEmailUpdateUserNameSendCodeDTO,
   config?: PureHttpRequestConfig
@@ -222,7 +222,7 @@ export function signEmailSetPhone(
   );
 }
 
-// 设置密码-发送验证码
+// 设置密码：发送验证码
 export function signEmailSetPasswordSendCode(config?: PureHttpRequestConfig) {
   return http.request<string>(
     "post",
@@ -312,7 +312,7 @@ export function signEmailForgetPassword(
   );
 }
 
-// 忘记密码-发送验证码
+// 忘记密码：发送验证码
 export function signEmailForgetPasswordSendCode(
   form: EmailNotBlankDTO,
   config?: PureHttpRequestConfig
@@ -345,7 +345,7 @@ export function signEmailSignUp(
   );
 }
 
-// 账号注销-发送验证码
+// 账号注销：发送验证码
 export function signEmailSignDeleteSendCode(config?: PureHttpRequestConfig) {
   return http.request<string>(
     "post",
@@ -395,7 +395,7 @@ export interface SignEmailSetUserNameSendCodeDTO {
   username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
 }
 
-// 设置用户名-发送验证码
+// 设置用户名：发送验证码
 export function signEmailSetUserNameSendCode(
   form: SignEmailSetUserNameSendCodeDTO,
   config?: PureHttpRequestConfig
