@@ -6,18 +6,18 @@ import {
   doOpen,
   IDialogFormProps
 } from "@/model/types/IDialogFormProps";
-import {
-  signEmailSignUp,
-  SignEmailSignUpDTO,
-  signEmailSignUpSendCode
-} from "@/api/http/base/SignEmailController";
 import { useVerifyCode } from "@/utils/verifyCode";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { useUserStoreHook } from "@/store/modules/user";
 import { Validate } from "@/utils/ValidatorUtil";
-import { PasswordRSAEncrypt, RSAEncrypt } from "@/utils/RsaUtil";
+import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
+import {
+  signUserNameSetEmail,
+  SignUserNameSetEmailDTO,
+  signUserNameSetEmailSendCode
+} from "@/api/http/base/SignUserNameController";
 
-const form = ref<SignEmailSignUpDTO>({});
+const form = ref<SignUserNameSetEmailDTO>({});
 const formRef = ref();
 const confirmLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
@@ -41,9 +41,8 @@ const { isDisabled, text } = useVerifyCode();
 
 function confirmFun() {
   const formValue = { ...form.value };
-  formValue.originPassword = RSAEncrypt(formValue.password);
-  formValue.password = PasswordRSAEncrypt(formValue.password);
-  return signEmailSignUp(formValue);
+  formValue.currentPassword = PasswordRSAEncrypt(formValue.currentPassword);
+  return signUserNameSetEmail(formValue);
 }
 
 function confirmAfterFun(res, done) {
@@ -117,7 +116,7 @@ onUnmounted(() => {
                 class="ml-2"
                 @click="
                   useVerifyCode().start(formRef, 'email', () => {
-                    return signEmailSignUpSendCode({ email: form.email });
+                    return signUserNameSetEmailSendCode({ email: form.email });
                   })
                 "
               >
@@ -129,8 +128,8 @@ onUnmounted(() => {
 
         <re-col :value="24" :xs="24" :sm="24">
           <el-form-item
-            label="密码"
-            prop="password"
+            label="当前密码"
+            prop="currentPassword"
             :rules="[
               {
                 required: true,
@@ -140,9 +139,9 @@ onUnmounted(() => {
             ]"
           >
             <el-input
-              v-model="form.password"
+              v-model="form.currentPassword"
               clearable
-              placeholder="请输入密码"
+              placeholder="请输入当前密码"
             />
           </el-form-item>
         </re-col>
