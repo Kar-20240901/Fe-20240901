@@ -3,6 +3,7 @@ import { useBoolean } from "../../hooks/useBoolean";
 import SearchModal from "./components/SearchModal.vue";
 
 const { bool: show, toggle } = useBoolean();
+
 function handleSearch() {
   toggle();
 }

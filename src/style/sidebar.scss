@@ -462,13 +462,13 @@
 
       /* 搜索 */
       .search-container,
-      /* 全屏 */
+        /* 全屏 */
       .fullscreen-icon,
-      /* 消息通知 */
+        /* 消息通知 */
       .dropdown-badge,
-      /* 用户名 */
+        /* 用户名 */
       .el-dropdown-link,
-      /* 设置 */
+        /* 设置 */
       .set-icon {
         &:hover {
           background: $menuHover;
@@ -636,13 +636,13 @@ body[layout="vertical"] {
 
   /* 搜索 */
   .search-container,
-  /* 全屏 */
+    /* 全屏 */
   .fullscreen-icon,
-  /* 消息通知 */
+    /* 消息通知 */
   .dropdown-badge,
-  /* 用户名 */
+    /* 用户名 */
   .el-dropdown-link,
-  /* 设置 */
+    /* 设置 */
   .set-icon {
     &:hover {
       background: #f6f6f6;

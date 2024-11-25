@@ -27,6 +27,9 @@ import {
 import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
 import { baseRoleDictList, DictVO } from "@/api/http/base/BaseRoleController";
 import { CalcOrderNo } from "@/utils/TreeUtil";
+import { storageLocal } from "@pureadmin/utils";
+import { usePermissionStoreHook } from "@/store/modules/permission";
+import { initRouter } from "@/router/utils";
 
 defineOptions({
   name: "BaseMenu"
@@ -101,6 +104,12 @@ function confirmAfterFun(res, done) {
   done();
   ToastSuccess(res.msg);
   onSearch();
+}
+
+function handleRouter() {
+  storageLocal().removeItem("async-routes");
+  usePermissionStoreHook().clearAllCachePage();
+  initRouter();
 }
 
 function deleteClick(row: BaseMenuDO) {

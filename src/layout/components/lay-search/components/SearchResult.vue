@@ -8,6 +8,7 @@ import EnterOutlined from "@/assets/svg/enter_outlined.svg?component";
 
 interface Emits {
   (e: "update:value", val: string): void;
+
   (e: "enter"): void;
 }
 
