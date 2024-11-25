@@ -18,7 +18,8 @@ const include = [
   "@vueuse/core",
   "@pureadmin/utils",
   "responsive-storage",
-  "vue-tippy"
+  "vue-tippy",
+  "vue-virtual-scroller"
 ];
 
 /**

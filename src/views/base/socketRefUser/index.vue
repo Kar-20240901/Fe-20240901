@@ -16,6 +16,7 @@ import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
 } from "@/model/enum/TempRequestCategoryEnum";
+import { BaseSocketTypeMap } from "@/model/enum/BaseSocketTypeEnum";
 
 defineOptions({
   name: "BaseSocketRefUser"
@@ -157,8 +158,8 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
         <el-table-column prop="id" label="id" />
         <el-table-column prop="socketId" label="socketId" />
         <el-table-column prop="nickname" label="用户" />
-        <el-table-column #default="scope" prop="type" label="类型">
-          {{ BaseSocketOnlineTypeMap.get(scope.row.type) || "" }}
+        <el-table-column #default="scope" prop="onlineType" label="状态">
+          {{ BaseSocketOnlineTypeMap.get(scope.row.onlineType) || "" }}
         </el-table-column>
         <el-table-column prop="ip" label="ip" />
         <el-table-column prop="region" label="地点" />
@@ -167,6 +168,9 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
             TempRequestCategoryMap.get(scope.row.type) ||
             TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
           }}
+        </el-table-column>
+        <el-table-column #default="scope" prop="type" label="类型">
+          {{ BaseSocketTypeMap.get(scope.row.type) || "" }}
         </el-table-column>
         <el-table-column #default="scope" prop="createTime" label="创建时间">
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}

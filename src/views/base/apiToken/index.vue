@@ -6,8 +6,6 @@ import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
-import { BaseParamDO } from "@/api/http/base/BaseParamController";
-import FormEdit from "@/views/base/param/formEdit.vue";
 import {
   baseApiTokenDeleteByIdSet,
   BaseApiTokenDO,
@@ -17,6 +15,7 @@ import {
   BaseApiTokenPageDTO
 } from "@/api/http/base/BaseApiTokenController";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import FormEdit from "./formEdit.vue";
 
 defineOptions({
   name: "BaseApiToken"
@@ -64,12 +63,12 @@ function resetSearch() {
 }
 
 function editClick(row: BaseApiTokenDO) {
-  title.value = "修改apiToken";
+  title.value = "修改令牌";
   formRef.value.editOpen(baseApiTokenInfoById({ id: row.id }));
 }
 
 function addClick(row: BaseApiTokenDO) {
-  title.value = "新增apiToken";
+  title.value = "新增令牌";
   formRef.value.addOpen(row);
 }
 
@@ -83,7 +82,7 @@ function confirmAfterFun(res, done) {
   onSearch();
 }
 
-function deleteClick(row: BaseParamDO) {
+function deleteClick(row: BaseApiTokenDO) {
   ExecConfirm(
     async () => {
       await baseApiTokenDeleteByIdSet({ idSet: [row.id] }).then(res => {
@@ -115,7 +114,7 @@ function deleteBySelectIdArr() {
   );
 }
 
-function onSelectChange(rowArr?: BaseParamDO[]) {
+function onSelectChange(rowArr?: BaseApiTokenDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 }
 </script>
@@ -124,10 +123,10 @@ function onSelectChange(rowArr?: BaseParamDO[]) {
   <div class="flex flex-col">
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="apiToken名称：" prop="name">
+        <el-form-item label="令牌名称：" prop="name">
           <el-input
             v-model="search.name"
-            placeholder="请输入apiToken名称"
+            placeholder="请输入令牌名称"
             clearable
             class="!w-[180px]"
           />
@@ -158,7 +157,7 @@ function onSelectChange(rowArr?: BaseParamDO[]) {
             :icon="useRenderIcon(AddFill)"
             @click="addClick({})"
           >
-            新增apiToken
+            新增令牌
           </el-button>
           <el-button
             type="primary"
@@ -185,7 +184,7 @@ function onSelectChange(rowArr?: BaseParamDO[]) {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="name" label="apiToken名称" />
+        <el-table-column prop="name" label="令牌名称" />
         <el-table-column
           #default="scope"
           prop="lastUseTime"
@@ -194,12 +193,7 @@ function onSelectChange(rowArr?: BaseParamDO[]) {
         >
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.lastUseTime)) }}
         </el-table-column>
-        <el-table-column
-          #default="scope"
-          prop="enableFlag"
-          label="禁用"
-          width="100"
-        >
+        <el-table-column #default="scope" prop="enableFlag" label="禁用">
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">

@@ -19,6 +19,7 @@ export interface BaseUserDeleteLogPageDTO {
 }
 
 export interface BaseUserDeleteLogDO {
+  userCreateTime?: string; // 用户创建时间，format：date-time
   wxOpenId?: string; // 微信 openId，可以为空
   avatarFileId?: string; // 头像 fileId（文件主键 id），format：int64
   wxAppId?: string; // 微信 appId，可以为空

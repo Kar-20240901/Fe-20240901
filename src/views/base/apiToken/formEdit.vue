@@ -25,6 +25,7 @@ function addOpen(formTemp?: BaseApiTokenInsertOrUpdateDTO) {
     visible,
     confirmLoading,
     {
+      enableFlag: true,
       ...formTemp
     },
     dialogLoading
@@ -75,12 +76,12 @@ function confirmClick() {
       <el-row :gutter="30">
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item
-            label="apiToken名称"
+            label="令牌名称"
             prop="name"
             :rules="[
               {
                 required: true,
-                message: 'apiToken名称为必填项',
+                message: '令牌名称为必填项',
                 trigger: 'blur'
               }
             ]"
@@ -88,7 +89,7 @@ function confirmClick() {
             <el-input
               v-model="form.name"
               clearable
-              placeholder="请输入apiToken名称"
+              placeholder="请输入令牌名称"
             />
           </el-form-item>
         </re-col>

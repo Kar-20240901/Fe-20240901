@@ -122,7 +122,7 @@ watch(
 
 <template>
   <div class="selector">
-    <el-input v-model="inputValue" disabled>
+    <el-input v-model="inputValue" readonly>
       <template #append>
         <el-popover
           :width="394"
