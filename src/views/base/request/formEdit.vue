@@ -70,6 +70,7 @@ const props = defineProps<IRequestDialogFormProps>();
                 v-for="(item, index) in yesOrNoOptions"
                 :key="index"
                 :value="item.value"
+                :label="item.label as string"
               >
                 {{ item.label }}
               </el-option>

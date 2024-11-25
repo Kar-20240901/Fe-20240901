@@ -103,6 +103,7 @@ function confirmClick() {
                 v-for="(item, index) in BaseFileStorageTypeOptions"
                 :key="index"
                 :value="item.value"
+                :label="item.label as string"
               >
                 {{ item.label }}
               </el-option>

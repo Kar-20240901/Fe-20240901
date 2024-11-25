@@ -145,6 +145,8 @@ function viewClick(row: BaseRequestDO) {
       >
         <el-table-column type="selection" />
         <el-table-column prop="id" label="id" />
+        <el-table-column prop="name" label="名称" />
+        <el-table-column prop="uri" label="路径" />
         <el-table-column prop="ip" label="ip" />
         <el-table-column prop="region" label="地点" />
         <el-table-column #default="scope" prop="type" label="终端">
@@ -153,10 +155,18 @@ function viewClick(row: BaseRequestDO) {
             TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
           }}
         </el-table-column>
+        <el-table-column
+          #default="scope"
+          prop="successFlag"
+          label="成功"
+          width="100"
+        >
+          {{ scope.row.successFlag ? "是" : "否" }}
+        </el-table-column>
         <el-table-column #default="scope" prop="createTime" label="创建时间">
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
-        <el-table-column #default="scope" label="操作">
+        <el-table-column #default="scope" label="操作" width="100">
           <el-button
             link
             type="primary"
