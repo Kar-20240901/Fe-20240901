@@ -92,7 +92,7 @@ function viewClick(row: BaseRequestDO) {
           <el-select
             v-model="search.createId"
             placeholder="请选择"
-            class="w-full"
+            class="!w-[180px]"
             clearable
             filterable
           >
@@ -145,27 +145,22 @@ function viewClick(row: BaseRequestDO) {
       >
         <el-table-column type="selection" />
         <el-table-column prop="id" label="id" />
-        <el-table-column prop="ip" label="ip" width="100" />
-        <el-table-column prop="region" label="地点" width="100" />
-        <el-table-column #default="scope" prop="type" label="终端" width="100">
+        <el-table-column prop="ip" label="ip" />
+        <el-table-column prop="region" label="地点" />
+        <el-table-column #default="scope" prop="type" label="终端">
           {{
             TempRequestCategoryMap.get(scope.row.type) ||
             TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
           }}
         </el-table-column>
-        <el-table-column
-          #default="scope"
-          prop="createTime"
-          label="创建时间"
-          width="100"
-        >
+        <el-table-column #default="scope" prop="createTime" label="创建时间">
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon('ep:circle-check')"
+            :icon="useRenderIcon('ep:view')"
             @click="viewClick(scope.row)"
           >
             查看

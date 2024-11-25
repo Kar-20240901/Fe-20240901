@@ -225,28 +225,18 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
       >
         <el-table-column type="selection" />
         <el-table-column prop="id" label="id" />
-        <el-table-column #default="scope" prop="type" label="类型" width="100">
+        <el-table-column #default="scope" prop="type" label="类型">
           {{ BaseSocketTypeMap.get(scope.row.type) || "" }}
         </el-table-column>
-        <el-table-column #default="scope" label="地址" width="100">
+        <el-table-column #default="scope" label="地址">
           {{
             scope.row.scheme + scope.row.host + scope.row.port + scope.row.path
           }}
         </el-table-column>
-        <el-table-column
-          #default="scope"
-          prop="createTime"
-          label="创建时间"
-          width="100"
-        >
+        <el-table-column #default="scope" prop="createTime" label="创建时间">
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
-        <el-table-column
-          #default="scope"
-          prop="enableFlag"
-          label="禁用"
-          width="100"
-        >
+        <el-table-column #default="scope" prop="enableFlag" label="禁用">
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">

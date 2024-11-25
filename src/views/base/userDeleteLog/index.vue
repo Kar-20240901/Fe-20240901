@@ -163,17 +163,19 @@ function deleteBySelectIdArr() {
         <el-table-column prop="nickname" label="昵称" />
         <el-table-column
           #default="scope"
-          prop="createTime"
+          prop="userCreateTime"
           label="创建时间"
-          width="100"
         >
+          {{ FormatDateTimeForCurrentDay(new Date(scope.row.userCreateTime)) }}
+        </el-table-column>
+        <el-table-column #default="scope" prop="createTime" label="删除时间">
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon('ep:circle-check')"
+            :icon="useRenderIcon('ep:view')"
             @click="viewClick(scope.row)"
           >
             查看

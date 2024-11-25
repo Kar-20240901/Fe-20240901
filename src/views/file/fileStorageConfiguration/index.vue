@@ -189,23 +189,13 @@ function onSelectChange(rowArr?: BaseFileStorageConfigurationDO[]) {
       >
         <el-table-column type="selection" />
         <el-table-column prop="name" label="文件存储名称" />
-        <el-table-column #default="scope" prop="type" label="类型" width="100">
+        <el-table-column #default="scope" prop="type" label="类型">
           {{ BaseFileStorageTypeMap.get(scope.row.type) || "" }}
         </el-table-column>
-        <el-table-column
-          #default="scope"
-          prop="defaultFlag"
-          label="默认"
-          width="100"
-        >
+        <el-table-column #default="scope" prop="defaultFlag" label="默认">
           {{ scope.row.defaultFlag ? "是" : "否" }}
         </el-table-column>
-        <el-table-column
-          #default="scope"
-          prop="enableFlag"
-          label="禁用"
-          width="100"
-        >
+        <el-table-column #default="scope" prop="enableFlag" label="禁用">
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">
