@@ -18,6 +18,9 @@ export const BASE_IM_SESSION_REF_USER_JOIN_USER_ID_SET =
 export const BASE_SOCKET_REF_USER_CHANGE_CONSOLE_FLAG_BY_ID_SET =
   "/base/socketRefUser/changeConsoleFlagByIdSet";
 
+// 退出登录
+export const BASE_SIGN_OUT = "/base/sign/out";
+
 /**
  * 心跳检测，请求
  */

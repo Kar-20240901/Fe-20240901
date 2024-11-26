@@ -97,8 +97,18 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="类型" prop="type">
-            <el-select v-model="form.type" class="w-full" disabled>
+          <el-form-item
+            label="类型"
+            prop="type"
+            :rules="[
+              {
+                required: true,
+                message: '类型为必填项',
+                trigger: 'blur'
+              }
+            ]"
+          >
+            <el-select v-model="form.type" class="w-full" clearable>
               <el-option
                 v-for="(item, index) in BaseFileStorageTypeOptions"
                 :key="index"
@@ -111,22 +121,26 @@ function confirmClick() {
           </el-form-item>
         </re-col>
 
-        <re-col :value="12" :xs="24" :sm="24">
+        <re-col :value="24" :xs="24" :sm="24">
           <el-form-item label="钥匙" prop="accessKey">
             <el-input
               v-model="form.accessKey"
               clearable
               placeholder="请输入钥匙"
+              type="textarea"
+              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>
 
-        <re-col :value="12" :xs="24" :sm="24">
+        <re-col :value="24" :xs="24" :sm="24">
           <el-form-item label="秘钥" prop="secretKey">
             <el-input
               v-model="form.secretKey"
               clearable
               placeholder="请输入秘钥"
+              type="textarea"
+              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>

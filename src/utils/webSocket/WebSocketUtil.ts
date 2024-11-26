@@ -3,11 +3,13 @@ import {
   GetWebSocketId,
   type IWebSocketMessage
 } from "@/utils/webSocket/WebSocketHelper";
-import { HeartBeatRequest } from "@/api/socket/WebSocket";
+import { BASE_SIGN_OUT, HeartBeatRequest } from "@/api/socket/WebSocket";
 import { getToken } from "@/utils/auth";
 import { nettyWebSocketGetWebSocketUrlById } from "@/api/http/base/NettyWebSocketController";
 import { BaseSocketOnlineTypeEnum } from "@/model/enum/BaseSocketOnlineTypeEnum";
 import { useWebSocketStoreHook } from "@/store/modules/webSocket";
+import { useUserStoreHook } from "@/store/modules/user";
+import { ToastError } from "@/utils/ToastUtil";
 
 let myWebSocket: WebSocket | null = null;
 let heartBeatInterval: any = null; // 心跳检测，定时器
@@ -123,6 +125,14 @@ export function ConnectWebSocket() {
 
     myWebSocket.onmessage = (message: MessageEvent<string>) => {
       const webSocketMessage: IWebSocketMessage<any> = JSON.parse(message.data);
+
+      console.log("webSocketMessage", webSocketMessage);
+
+      if (webSocketMessage.uri === BASE_SIGN_OUT) {
+        ToastError("您已被管理员下线");
+        useUserStoreHook().logOut(); // 退出登录
+        return;
+      }
 
       // 更新 vuex里面 webSocket的值
       useWebSocketStoreHook().setWebSocketMessage(webSocketMessage);

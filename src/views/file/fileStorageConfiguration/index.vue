@@ -6,7 +6,7 @@ import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
-import FormEdit from "@/views/base/param/formEdit.vue";
+import FormEdit from "./formEdit.vue";
 import {
   baseFileStorageConfigurationDeleteByIdSet,
   BaseFileStorageConfigurationDO,

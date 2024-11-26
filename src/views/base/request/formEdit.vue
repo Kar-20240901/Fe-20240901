@@ -90,7 +90,7 @@ const props = defineProps<IRequestDialogFormProps>();
               v-model="form.requestParam"
               readonly
               type="textarea"
-              :autosize="{ minRows: 3, maxRows: 4 }"
+              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>
@@ -101,7 +101,7 @@ const props = defineProps<IRequestDialogFormProps>();
               v-model="form.responseValue"
               readonly
               type="textarea"
-              :autosize="{ minRows: 3, maxRows: 4 }"
+              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>
@@ -112,7 +112,7 @@ const props = defineProps<IRequestDialogFormProps>();
               v-model="form.errorMsg"
               readonly
               type="textarea"
-              :autosize="{ minRows: 3, maxRows: 4 }"
+              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>

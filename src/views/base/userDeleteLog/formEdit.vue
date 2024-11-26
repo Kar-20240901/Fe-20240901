@@ -4,6 +4,7 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import { BaseUserDeleteLogDO } from "@/api/http/base/BaseUserDeleteLogController";
 import { IUserDeleteLogDialogFormProps } from "@/views/base/userDeleteLog/types";
+import { TempRequestCategoryOptions } from "@/model/enum/TempRequestCategoryEnum";
 
 const form = ref<BaseUserDeleteLogDO>({});
 const formRef = ref();
@@ -89,6 +90,21 @@ const props = defineProps<IUserDeleteLogDialogFormProps>();
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="微信appId" prop="wxAppId">
             <el-input v-model="form.wxAppId" readonly />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="注册终端" prop="signUpType">
+            <el-select v-model="form.signUpType" class="w-full" disabled>
+              <el-option
+                v-for="(item, index) in TempRequestCategoryOptions"
+                :key="index"
+                :value="item.value"
+                :label="item.label as string"
+              >
+                {{ item.label }}
+              </el-option>
+            </el-select>
           </el-form-item>
         </re-col>
 
