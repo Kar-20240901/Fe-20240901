@@ -5,14 +5,16 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseFilePageSelfDTO {
-  current?: string; // 第几页，format：int64
   originFileName?: string; // 文件原始名（包含文件类型）
-  uploadType?: number; // 文件上传类型，format：int32
+  globalFlag?: boolean; // 全局搜索
   publicFlag?: boolean; // 是否公开访问
   pageSize?: string; // 每页显示条数，format：int64
-  storageType?: number; // 存放文件的服务器类型，format：int32
   pid?: string; // 父节点id（顶级则为0），format：int64
   remark?: string; // 备注
+  current?: string; // 第几页，format：int64
+  uploadType?: number; // 文件上传类型，format：int32
+  storageType?: number; // 存放文件的服务器类型，format：int32
+  showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
   refId?: string; // 关联的 id，format：int64
   enableFlag?: boolean; // 是否启用
   order?: MyOrderDTO; // 排序字段
@@ -97,15 +99,17 @@ export function baseFilePrivateDownload(
 }
 
 export interface BaseFilePageDTO {
-  current?: string; // 第几页，format：int64
   originFileName?: string; // 文件原始名（包含文件类型）
-  uploadType?: number; // 文件上传类型，format：int32
+  globalFlag?: boolean; // 全局搜索
   publicFlag?: boolean; // 是否公开访问
   pageSize?: string; // 每页显示条数，format：int64
-  storageType?: number; // 存放文件的服务器类型，format：int32
-  belongId?: string; // 归属者用户主键 id（拥有全部权限），format：int64
   pid?: string; // 父节点id（顶级则为0），format：int64
   remark?: string; // 备注
+  current?: string; // 第几页，format：int64
+  uploadType?: number; // 文件上传类型，format：int32
+  storageType?: number; // 存放文件的服务器类型，format：int32
+  showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
+  belongId?: string; // 归属者用户主键 id（拥有全部权限），format：int64
   refId?: string; // 关联的 id，format：int64
   enableFlag?: boolean; // 是否启用
   order?: MyOrderDTO; // 排序字段

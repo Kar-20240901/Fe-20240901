@@ -18,7 +18,7 @@ import {
 import { BaseFileStorageTypeMap } from "@/model/enum/BaseFileStorageTypeEnum";
 
 defineOptions({
-  name: "FileStorageConfiguration"
+  name: "BaseFileStorageConfiguration"
 });
 
 const search = ref<BaseFileStorageConfigurationPageDTO>({});

@@ -28,6 +28,7 @@ function addOpen(formTemp?: BaseUserInsertOrUpdateDTO) {
     confirmLoading,
     {
       enableFlag: true,
+      manageSignInFlag: true,
       ...formTemp
     },
     dialogLoading
