@@ -16,6 +16,7 @@ export interface BaseFilePageSelfDTO {
   storageType?: number; // 存放文件的服务器类型，format：int32
   showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
   refId?: string; // 关联的 id，format：int64
+  backUpFlag?: boolean; // 返回上级
   enableFlag?: boolean; // 是否启用
   order?: MyOrderDTO; // 排序字段
 }
@@ -111,6 +112,7 @@ export interface BaseFilePageDTO {
   showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
   belongId?: string; // 归属者用户主键 id（拥有全部权限），format：int64
   refId?: string; // 关联的 id，format：int64
+  backUpFlag?: boolean; // 返回上级
   enableFlag?: boolean; // 是否启用
   order?: MyOrderDTO; // 排序字段
 }

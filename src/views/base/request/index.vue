@@ -4,6 +4,8 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import {
+  baseRequestAllAvgPro,
+  BaseRequestAllAvgVO,
   BaseRequestDO,
   baseRequestPage,
   BaseRequestPageDTO
@@ -34,6 +36,8 @@ const tableRef = ref();
 
 const selectIdArr = ref<string[]>([]);
 
+const avgVo = ref<BaseRequestAllAvgVO>({});
+
 onMounted(() => {
   onSearch();
 });
@@ -52,6 +56,10 @@ function onSearch() {
     .finally(() => {
       loading.value = false;
     });
+
+  baseRequestAllAvgPro({ ...search.value }).then(res => {
+    avgVo.value = res.data;
+  });
 }
 
 function resetSearch() {
@@ -124,7 +132,9 @@ function viewClick(row: BaseRequestDO) {
 
     <div class="flex flex-col px-5 py-3 bg-bg_color">
       <div class="pb-3 flex justify-between">
-        <div />
+        <div>
+          耗时 {{ avgVo.avgMs || 0 }} 毫秒 | 总数 {{ avgVo.count || 0 }} 条
+        </div>
 
         <div />
       </div>

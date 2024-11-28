@@ -126,8 +126,6 @@ export function ConnectWebSocket() {
     myWebSocket.onmessage = (message: MessageEvent<string>) => {
       const webSocketMessage: IWebSocketMessage<any> = JSON.parse(message.data);
 
-      console.log("webSocketMessage", webSocketMessage);
-
       if (webSocketMessage.uri === BASE_SIGN_OUT) {
         ToastError("您已被管理员下线");
         useUserStoreHook().logOut(); // 退出登录
