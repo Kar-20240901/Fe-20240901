@@ -125,6 +125,10 @@ function backUpClick() {
     search.value.backUpFlag = false;
   });
 }
+
+function itemClick(row: BaseFileDO) {
+  console.log("row", row);
+}
 </script>
 
 <template>
@@ -270,7 +274,10 @@ function backUpClick() {
                             </div>
                           </div>
                         </template>
-                        <div class="flex flex-col items-center">
+                        <div
+                          class="flex flex-col items-center"
+                          @dblclick="itemClick(subItem)"
+                        >
                           <IconifyIconOnline
                             :icon="
                               subItem.type === BaseFileTypeEnum.FOLDER

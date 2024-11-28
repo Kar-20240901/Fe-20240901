@@ -17,7 +17,7 @@ import {
 } from "@/utils/FileUtil";
 import CommonConstant from "@/model/constant/CommonConstant";
 import { handleAvatarFileId, setUserKey } from "@/utils/UserUtil";
-import Avatar from "@/assets/user.jpg";
+import Avatar from "@/assets/user.png";
 import { useUserStoreHook } from "@/store/modules/user";
 import { Validate } from "@/utils/ValidatorUtil";
 

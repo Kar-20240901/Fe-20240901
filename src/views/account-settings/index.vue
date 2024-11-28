@@ -15,7 +15,7 @@ import SecurityLog from "@/views/account-settings/components/SecurityLog.vue";
 import AccountManagement from "@/views/account-settings/components/AccountManagement.vue";
 import SecurityLogIcon from "@iconify-icons/ri/window-line";
 import AccountManagementIcon from "@iconify-icons/ri/profile-line";
-import Avatar from "@/assets/user.jpg";
+import Avatar from "@/assets/user.png";
 
 defineOptions({
   name: "AccountSettings"
