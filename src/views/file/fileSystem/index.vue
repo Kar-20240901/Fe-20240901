@@ -142,28 +142,31 @@ const fileList = ref<UploadUserFile[]>([]);
 
 function beforeUploadFun() {}
 
-function httpRequestFun(options: UploadRequestOptions) {
-  if (fileList.value.length < 1) {
-    return;
-  }
+function httpRequestFun(options: UploadRequestOptions): Promise<void> {
+  return new Promise(resolve => {
+    if (fileList.value.length < 1) {
+      return resolve();
+    }
 
-  fileLoading.value = true;
+    fileLoading.value = true;
 
-  const requestList: Promise<R>[] = [];
+    const requestList: Promise<R>[] = [];
 
-  fileList.value.forEach(item => {
-    requestList.push(BaseFileUpload(item.raw, "FILE_SYSTEM"));
-  });
-
-  Promise.all(requestList)
-    .then(res => {
-      if (res[0]) {
-        ToastSuccess(res[0].msg);
-      }
-    })
-    .finally(() => {
-      fileLoading.value = false;
+    fileList.value.forEach(item => {
+      requestList.push(BaseFileUpload(item.raw, "FILE_SYSTEM"));
     });
+
+    Promise.all(requestList)
+      .then(res => {
+        if (res[0]) {
+          ToastSuccess(res[0].msg);
+        }
+      })
+      .finally(() => {
+        fileLoading.value = false;
+        resolve();
+      });
+  });
 }
 
 function downClick() {
@@ -267,7 +270,7 @@ function downClick() {
           </el-button>
         </div>
 
-        <div>
+        <div class="flex">
           <el-upload
             v-model:file-list="fileList"
             :show-file-list="false"
@@ -276,6 +279,7 @@ function downClick() {
             :auto-upload="false"
             :http-request="httpRequestFun"
             multiple
+            class="mr-[12px]"
           >
             <el-button
               type="primary"
