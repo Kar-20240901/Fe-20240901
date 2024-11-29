@@ -15,8 +15,14 @@ import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import { BaseFileTypeEnum } from "@/model/enum/BaseFileTypeEnum";
 import Delete from "@iconify-icons/ep/delete";
 import CommonConstant from "@/model/constant/CommonConstant";
-import { GetFileSizeStr } from "@/utils/FileUtil";
+import {
+  BaseFilePrivateDownload,
+  BaseFileUpload,
+  GetFileSizeStr
+} from "@/utils/FileUtil";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { UploadRequestOptions, UploadUserFile } from "element-plus";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -129,6 +135,47 @@ function backUpClick() {
 function itemClick(row: BaseFileDO) {
   console.log("row", row);
 }
+
+const fileLoading = ref<boolean>(false);
+
+const fileList = ref<UploadUserFile[]>([]);
+
+function beforeUploadFun() {}
+
+function httpRequestFun(options: UploadRequestOptions) {
+  if (fileList.value.length < 1) {
+    return;
+  }
+
+  fileLoading.value = true;
+
+  const requestList: Promise<R>[] = [];
+
+  fileList.value.forEach(item => {
+    requestList.push(BaseFileUpload(item.raw, "FILE_SYSTEM"));
+  });
+
+  Promise.all(requestList)
+    .then(res => {
+      if (res[0]) {
+        ToastSuccess(res[0].msg);
+      }
+    })
+    .finally(() => {
+      fileLoading.value = false;
+    });
+}
+
+function downClick() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  selectIdArr.value.forEach(item => {
+    BaseFilePrivateDownload({ id: item });
+  });
+}
 </script>
 
 <template>
@@ -221,17 +268,28 @@ function itemClick(row: BaseFileDO) {
         </div>
 
         <div>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon('ep:upload')"
-            @click="deleteBySelectIdArr"
+          <el-upload
+            v-model:file-list="fileList"
+            :show-file-list="false"
+            :disabled="fileLoading"
+            :before-upload="beforeUploadFun"
+            :auto-upload="false"
+            :http-request="httpRequestFun"
+            multiple
           >
-            上传
-          </el-button>
+            <el-button
+              type="primary"
+              :icon="useRenderIcon('ep:upload')"
+              :loading="fileLoading"
+            >
+              上传
+            </el-button>
+          </el-upload>
+
           <el-button
             type="primary"
             :icon="useRenderIcon('ep:download')"
-            @click="deleteBySelectIdArr"
+            @click="downClick"
           >
             下载
           </el-button>
