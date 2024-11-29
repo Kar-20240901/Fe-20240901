@@ -76,6 +76,7 @@ const onChange = (uploadFile: UploadFile) => {
     uploadRef.value.clearFiles();
     return;
   }
+
   const reader = new FileReader();
   reader.onload = e => {
     imgSrc.value = e.target.result as string;

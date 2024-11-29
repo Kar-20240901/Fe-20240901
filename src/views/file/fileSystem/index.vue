@@ -21,7 +21,7 @@ import {
   GetFileSizeStr
 } from "@/utils/FileUtil";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
-import { UploadRequestOptions, UploadUserFile } from "element-plus";
+import { UploadFile, UploadFiles } from "element-plus";
 import { R } from "@/model/vo/R";
 
 defineOptions({
@@ -138,37 +138,6 @@ function itemClick(row: BaseFileDO) {
 
 const fileLoading = ref<boolean>(false);
 
-const fileList = ref<UploadUserFile[]>([]);
-
-function beforeUploadFun() {}
-
-function httpRequestFun(options: UploadRequestOptions): Promise<void> {
-  return new Promise(resolve => {
-    if (fileList.value.length < 1) {
-      return resolve();
-    }
-
-    fileLoading.value = true;
-
-    const requestList: Promise<R>[] = [];
-
-    fileList.value.forEach(item => {
-      requestList.push(BaseFileUpload(item.raw, "FILE_SYSTEM"));
-    });
-
-    Promise.all(requestList)
-      .then(res => {
-        if (res[0]) {
-          ToastSuccess(res[0].msg);
-        }
-      })
-      .finally(() => {
-        fileLoading.value = false;
-        resolve();
-      });
-  });
-}
-
 function downClick() {
   if (!selectIdArr.value.length) {
     ToastError("请勾选数据");
@@ -178,6 +147,30 @@ function downClick() {
   selectIdArr.value.forEach(item => {
     BaseFilePrivateDownload({ id: item });
   });
+}
+
+const uploadRef = ref();
+
+function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
+  fileLoading.value = true;
+
+  const requestList: Promise<R>[] = [];
+
+  uploadFiles.forEach(item => {
+    requestList.push(BaseFileUpload(item.raw, "FILE_SYSTEM"));
+  });
+
+  Promise.all(requestList)
+    .then(res => {
+      if (res[0]) {
+        ToastSuccess(res[0].msg);
+        onSearch();
+      }
+    })
+    .finally(() => {
+      fileLoading.value = false;
+      uploadRef.value.clearFiles();
+    });
 }
 </script>
 
@@ -272,14 +265,13 @@ function downClick() {
 
         <div class="flex">
           <el-upload
-            v-model:file-list="fileList"
+            ref="uploadRef"
             :show-file-list="false"
             :disabled="fileLoading"
-            :before-upload="beforeUploadFun"
             :auto-upload="false"
-            :http-request="httpRequestFun"
             multiple
             class="mr-[12px]"
+            :on-change="onChangeFun"
           >
             <el-button
               type="primary"
