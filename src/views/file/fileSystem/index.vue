@@ -23,6 +23,7 @@ import {
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { UploadFile, UploadFiles } from "element-plus";
 import { R } from "@/model/vo/R";
+import { IDataList } from "@/views/file/fileSystem/types";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -32,7 +33,7 @@ const search = ref<BaseFilePageSelfDTO>({ pid: CommonConstant.TOP_PID_STR });
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<Array<BaseFileDO[]>>([]);
+const dataList = ref<IDataList[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
@@ -54,7 +55,7 @@ function onSearch(sufFun?: () => void) {
     pageSize: pageSize.value as any
   })
     .then(res => {
-      let dataListTemp = [];
+      let dataListTemp: IDataList[] = [];
 
       let dataListItemList = [];
 
@@ -172,6 +173,22 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
       uploadRef.value.clearFiles();
     });
 }
+
+function selectAllClick() {
+  if (selectIdArr.value.length === total.value) {
+    // 取消全部勾选
+    selectIdArr.value = [];
+  } else {
+    // 勾选全部
+    const selectIdArrTemp = [];
+    dataList.value.forEach(item => {
+      item.l.forEach(subItem => {
+        selectIdArrTemp.push(subItem.id);
+      });
+    });
+    selectIdArr.value = selectIdArrTemp;
+  }
+}
 </script>
 
 <template>
@@ -229,7 +246,7 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
           <el-button
             type="primary"
             :icon="useRenderIcon('ep:check')"
-            @click="deleteBySelectIdArr"
+            @click="selectAllClick"
           >
             全选
           </el-button>
@@ -272,6 +289,7 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
             multiple
             class="mr-[12px]"
             :on-change="onChangeFun"
+            drag
           >
             <el-button
               type="primary"
