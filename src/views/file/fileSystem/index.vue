@@ -26,6 +26,7 @@ import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { UploadFile, UploadFiles } from "element-plus";
 import { R } from "@/model/vo/R";
 import { IDataList } from "@/views/file/fileSystem/types";
+import { debounce } from "@pureadmin/utils";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -159,28 +160,39 @@ function downClick() {
 }
 
 const uploadRef = ref();
+const uploadFilesRef = ref<UploadFiles>();
+
+const uploadToastDebounce = debounce(() => ToastSuccess("上传成功"));
 
 function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
   fileLoading.value = true;
-
-  const requestList: Promise<R>[] = [];
-
-  uploadFiles.forEach(item => {
-    requestList.push(BaseFileUpload(item.raw, "FILE_SYSTEM"));
-  });
-
-  Promise.all(requestList)
-    .then(res => {
-      if (res[0]) {
-        ToastSuccess(res[0].msg);
-        onSearch();
-      }
-    })
-    .finally(() => {
-      fileLoading.value = false;
-      uploadRef.value.clearFiles();
-    });
+  uploadFilesRef.value = uploadFiles;
+  onChangeFunDebounce();
 }
+
+const onChangeFunDebounce = debounce(
+  () => {
+    const requestList: Promise<R>[] = [];
+
+    uploadFilesRef.value.forEach(item => {
+      requestList.push(BaseFileUpload(item.raw, "FILE_SYSTEM"));
+    });
+
+    Promise.all(requestList)
+      .then(res => {
+        if (res[0]) {
+          uploadToastDebounce();
+        }
+      })
+      .finally(() => {
+        onSearch();
+        fileLoading.value = false;
+        uploadRef.value.clearFiles();
+      });
+  },
+  1000,
+  false
+);
 
 function selectAllClick() {
   if (selectIdArr.value.length === total.value) {
@@ -201,7 +213,10 @@ function selectAllClick() {
 const tree = ref<BaseFileDO[]>([]);
 
 function treeSelfData() {
-  baseFilePageTreeSelf({ ...search.value }).then(res => {
+  baseFilePageTreeSelf({
+    ...search.value,
+    type: BaseFileTypeEnum.FOLDER.code as any
+  }).then(res => {
     tree.value = res.data;
   });
 }
@@ -404,12 +419,14 @@ function treeSelfData() {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 :deep(.el-checkbox) {
   height: 66px;
+  margin-right: 0;
 }
 
-:deep(.el-checkbox) {
-  margin-right: 0;
+:deep(.el-upload-dragger) {
+  padding: 0;
+  border: none;
 }
 </style>

@@ -11,6 +11,7 @@ export interface BaseFilePageSelfDTO {
   pageSize?: string; // 每页显示条数，format：int64
   pid?: string; // 父节点id（顶级则为0），format：int64
   remark?: string; // 备注
+  type?: string; // 类型
   current?: string; // 第几页，format：int64
   uploadType?: number; // 文件上传类型，format：int32
   storageType?: number; // 存放文件的服务器类型，format：int32
@@ -106,6 +107,7 @@ export interface BaseFilePageDTO {
   pageSize?: string; // 每页显示条数，format：int64
   pid?: string; // 父节点id（顶级则为0），format：int64
   remark?: string; // 备注
+  type?: string; // 类型
   current?: string; // 第几页，format：int64
   uploadType?: number; // 文件上传类型，format：int32
   storageType?: number; // 存放文件的服务器类型，format：int32
