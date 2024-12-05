@@ -1,31 +1,37 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {ExecConfirm, ToastError, ToastSuccess} from "@/utils/ToastUtil";
+import { onMounted, ref } from "vue";
+import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
+  baseFileCopySelf,
   BaseFileDO,
   baseFilePageSelf,
   BaseFilePageSelfDTO,
+  baseFilePageTreeSelf,
   baseFileRemoveByFileIdSet
 } from "@/api/http/base/BaseFileController";
-import {useRenderIcon} from "@/components/ReIcon/src/hooks";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
-import {enableFlagOptions} from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
 import ReSegmented from "@/components/ReSegmented/src";
-import {DynamicScroller, DynamicScrollerItem} from "vue-virtual-scroller";
-import {BaseFileTypeEnum} from "@/model/enum/BaseFileTypeEnum";
+import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
+import { BaseFileTypeEnum } from "@/model/enum/BaseFileTypeEnum";
 import Delete from "@iconify-icons/ep/delete";
 import CommonConstant from "@/model/constant/CommonConstant";
-import {BaseFilePrivateDownload, BaseFileUpload, GetFileSizeStr} from "@/utils/FileUtil";
-import {FormatDateTimeForCurrentDay} from "@/utils/DateUtil";
-import {UploadFile, UploadFiles} from "element-plus";
-import {R} from "@/model/vo/R";
-import {IDataList} from "@/views/file/fileSystem/types";
+import {
+  BaseFilePrivateDownload,
+  BaseFileUpload,
+  GetFileSizeStr
+} from "@/utils/FileUtil";
+import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { UploadFile, UploadFiles } from "element-plus";
+import { R } from "@/model/vo/R";
+import { IDataList } from "@/views/file/fileSystem/types";
 
 defineOptions({
   name: "BaseFileSystem"
 });
 
-const search = ref<BaseFilePageSelfDTO>({pid: CommonConstant.TOP_PID_STR});
+const search = ref<BaseFilePageSelfDTO>({ pid: CommonConstant.TOP_PID_STR });
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
@@ -50,35 +56,37 @@ function onSearch(sufFun?: () => void) {
     current: currentPage.value as any,
     pageSize: pageSize.value as any
   })
-  .then(res => {
-    let dataListTemp: IDataList[] = [];
+    .then(res => {
+      let dataListTemp: IDataList[] = [];
 
-    let dataListItemList = [];
+      let dataListItemList = [];
 
-    res.data.records.forEach((item, index) => {
-      if (index % 10 === 0 && index !== 0) {
-        dataListTemp.push({id: dataListTemp.length, l: dataListItemList});
+      res.data.records.forEach((item, index) => {
+        if (index % 10 === 0 && index !== 0) {
+          dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
 
-        dataListItemList = [];
+          dataListItemList = [];
+        }
+
+        dataListItemList.push(item);
+      });
+
+      if (dataListItemList.length > 0) {
+        dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
       }
 
-      dataListItemList.push(item);
+      dataList.value = dataListTemp;
+      total.value = res.data.total;
+    })
+    .finally(() => {
+      loading.value = false;
+
+      if (sufFun) {
+        sufFun();
+      }
     });
 
-    if (dataListItemList.length > 0) {
-      dataListTemp.push({id: dataListTemp.length, l: dataListItemList});
-    }
-
-    dataList.value = dataListTemp;
-    total.value = res.data.total;
-  })
-  .finally(() => {
-    loading.value = false;
-
-    if (sufFun) {
-      sufFun();
-    }
-  });
+  treeSelfData();
 }
 
 function resetSearch() {
@@ -86,15 +94,18 @@ function resetSearch() {
   onSearch();
 }
 
-function editClick(row: BaseFileDO) {
-  title.value = "修改文件";
-}
-
-function addClick(row: BaseFileDO) {
-  title.value = "新增文件";
+function copyClick() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  title.value = "复制文件";
 }
 
 function confirmFun() {
+  if (title.value === "复制文件") {
+    baseFileCopySelf({});
+  }
 }
 
 function confirmAfterFun(res, done) {
@@ -143,7 +154,7 @@ function downClick() {
   }
 
   selectIdArr.value.forEach(item => {
-    BaseFilePrivateDownload({id: item});
+    BaseFilePrivateDownload({ id: item });
   });
 }
 
@@ -159,16 +170,16 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
   });
 
   Promise.all(requestList)
-  .then(res => {
-    if (res[0]) {
-      ToastSuccess(res[0].msg);
-      onSearch();
-    }
-  })
-  .finally(() => {
-    fileLoading.value = false;
-    uploadRef.value.clearFiles();
-  });
+    .then(res => {
+      if (res[0]) {
+        ToastSuccess(res[0].msg);
+        onSearch();
+      }
+    })
+    .finally(() => {
+      fileLoading.value = false;
+      uploadRef.value.clearFiles();
+    });
 }
 
 function selectAllClick() {
@@ -185,6 +196,14 @@ function selectAllClick() {
     });
     selectIdArr.value = selectIdArrTemp;
   }
+}
+
+const tree = ref<BaseFileDO[]>([]);
+
+function treeSelfData() {
+  baseFilePageTreeSelf({ ...search.value }).then(res => {
+    tree.value = res.data;
+  });
 }
 </script>
 
@@ -307,7 +326,7 @@ function selectAllClick() {
         </div>
       </div>
 
-      <div class="mt-[30px]"/>
+      <div class="mt-[30px]" />
 
       <div v-loading="loading">
         <el-checkbox-group v-model="selectIdArr">
@@ -358,7 +377,7 @@ function selectAllClick() {
                           <el-text
                             class="text-[13px] w-[80px] h-[16px] text-center"
                             truncated
-                          >{{ subItem.showFileName }}
+                            >{{ subItem.showFileName }}
                           </el-text>
                         </div>
                       </el-tooltip>
@@ -372,7 +391,7 @@ function selectAllClick() {
       </div>
 
       <div class="pb-3 flex justify-between text-[13px]">
-        <div/>
+        <div />
 
         <div>
           {{ total }} 个项目
@@ -391,6 +410,6 @@ function selectAllClick() {
 }
 
 :deep(.el-checkbox) {
-  margin-right: 0px;
+  margin-right: 0;
 }
 </style>
