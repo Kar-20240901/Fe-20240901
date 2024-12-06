@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
   baseFileCopySelf,
+  baseFileCreateFolderSelf,
   BaseFileDO,
   baseFilePageSelf,
   BaseFilePageSelfDTO,
@@ -27,6 +28,7 @@ import { UploadFile, UploadFiles } from "element-plus";
 import { R } from "@/model/vo/R";
 import { IDataList } from "@/views/file/fileSystem/types";
 import { debounce } from "@pureadmin/utils";
+import CreateFolderFormEdit from "@/views/file/fileSystem/createFolderFormEdit.vue";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -41,7 +43,6 @@ const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
 
-const formRef = ref();
 const title = ref<string>("");
 
 const selectIdArr = ref<string[]>([]);
@@ -58,6 +59,10 @@ function onSearch(sufFun?: () => void) {
     pageSize: pageSize.value as any
   })
     .then(res => {
+      if (search.value.backUpFlag && res.data.records.length) {
+        search.value.pid = res.data.records[0].pid;
+      }
+
       let dataListTemp: IDataList[] = [];
 
       let dataListItemList = [];
@@ -103,7 +108,7 @@ function copyClick() {
   title.value = "复制文件";
 }
 
-function confirmFun() {
+function fileConfirmFun() {
   if (title.value === "复制文件") {
     baseFileCopySelf({});
   }
@@ -143,7 +148,10 @@ function backUpClick() {
 }
 
 function itemClick(row: BaseFileDO) {
-  console.log("row", row);
+  if ((row.type as any) === BaseFileTypeEnum.FOLDER.code) {
+    search.value.pid = row.id;
+    onSearch();
+  }
 }
 
 const fileLoading = ref<boolean>(false);
@@ -220,6 +228,18 @@ function treeSelfData() {
     tree.value = res.data;
   });
 }
+
+const createFolderFormEditRef = ref();
+
+function createFolderClick() {
+  createFolderFormEditRef.value.open();
+}
+
+function createFolderConfirmAfterFun() {
+  return baseFileCreateFolderSelf(
+    createFolderFormEditRef.value.getForm().value
+  );
+}
 </script>
 
 <template>
@@ -269,7 +289,7 @@ function treeSelfData() {
               search.pid !== CommonConstant.TOP_PID_STR && !search.globalFlag
             "
             type="primary"
-            :icon="useRenderIcon(Delete)"
+            :icon="useRenderIcon('ri:arrow-go-back-fill')"
             @click="backUpClick"
           >
             返回上一级
@@ -280,6 +300,13 @@ function treeSelfData() {
             @click="selectAllClick"
           >
             全选
+          </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon('ri:folder-add-fill')"
+            @click="createFolderClick"
+          >
+            创建文件夹
           </el-button>
           <el-button
             type="primary"
@@ -365,7 +392,9 @@ function treeSelfData() {
                         <template #content>
                           <div class="flex flex-col">
                             <div>名称：{{ subItem.showFileName }}</div>
-                            <div>
+                            <div
+                              v-if="subItem.type === BaseFileTypeEnum.FILE.code"
+                            >
                               大小：{{ GetFileSizeStr(subItem.fileSize) }}
                             </div>
                             <div>
@@ -383,7 +412,7 @@ function treeSelfData() {
                         >
                           <IconifyIconOnline
                             :icon="
-                              subItem.type === BaseFileTypeEnum.FOLDER
+                              subItem.type === BaseFileTypeEnum.FOLDER.code
                                 ? 'ri:folder-open-fill'
                                 : 'ri:file-2-line'
                             "
@@ -416,6 +445,13 @@ function treeSelfData() {
         </div>
       </div>
     </div>
+
+    <createFolderFormEdit
+      ref="createFolderFormEditRef"
+      title="创建文件夹"
+      :confirm-after-fun="confirmAfterFun"
+      :confirm-fun="createFolderConfirmAfterFun"
+    />
   </div>
 </template>
 

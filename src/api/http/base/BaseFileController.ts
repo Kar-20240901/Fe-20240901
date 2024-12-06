@@ -65,6 +65,24 @@ export function baseFilePageSelf(
   );
 }
 
+export interface BaseFileCreateFolderSelfSelfDTO {
+  pid?: string; // 父节点id（顶级则为0），format：int64
+  folderName?: string; // 文件夹名，required：true
+}
+
+// 创建：文件夹-自我
+export function baseFileCreateFolderSelf(
+  form: BaseFileCreateFolderSelfSelfDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/file/createFolder/self"),
+    form,
+    config
+  );
+}
+
 export interface BaseFileUpdateSelfDTO {
   fileName?: string; // 文件名
   id?: string; // 主键 id，required：true，format：int64

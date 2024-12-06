@@ -66,7 +66,7 @@ function confirmClick() {
     draggable
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    width="45%"
+    width="30%"
     destroy-on-close
   >
     <el-form ref="formRef" :model="form" label-width="auto">

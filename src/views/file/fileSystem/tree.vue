@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ReCol from "@/components/ReCol";
-import { R } from "@/model/vo/R";
 import { doConfirmClick } from "@/model/types/IDialogFormProps";
 import { BaseFileCopySelfDTO } from "@/api/http/base/BaseFileController";
 import { IFileTreeDialogFormProps } from "@/views/file/fileSystem/types";
@@ -16,8 +15,8 @@ function getForm() {
   return form;
 }
 
-function editOpen(fun: Promise<R<any>>) {
-  dialogLoading.value = true;
+function open() {
+  dialogLoading.value = false;
   confirmLoading.value = false;
   visible.value = true;
   form.value = {};
@@ -26,7 +25,7 @@ function editOpen(fun: Promise<R<any>>) {
 
 defineExpose({
   getForm,
-  editOpen
+  open
 });
 
 const props = defineProps<IFileTreeDialogFormProps>();

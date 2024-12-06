@@ -3,20 +3,13 @@ import { ref } from "vue";
 import ReCol from "@/components/ReCol";
 import {
   doConfirmClick,
-  doOpen,
-  IDialogFormProps
+  type IDialogFormProps
 } from "@/model/types/IDialogFormProps";
-import { ToastSuccess } from "@/utils/ToastUtil";
-import { useUserStoreHook } from "@/store/modules/user";
-import {
-  signUserNameSignDelete,
-  SignUserNameSignDeleteDTO
-} from "@/api/http/base/SignUserNameController";
-import { Validate } from "@/utils/ValidatorUtil";
-import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
+import { BaseFileCreateFolderSelfSelfDTO } from "@/api/http/base/BaseFileController";
 
-const form = ref<SignUserNameSignDeleteDTO>({});
+const form = ref<BaseFileCreateFolderSelfSelfDTO>({});
 const formRef = ref();
+const dialogLoading = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 
@@ -25,7 +18,11 @@ function getForm() {
 }
 
 function open() {
-  doOpen(formRef, form, visible, confirmLoading, {});
+  dialogLoading.value = false;
+  confirmLoading.value = false;
+  visible.value = true;
+  form.value = {};
+  formRef.value?.clearValidate();
 }
 
 defineExpose({
@@ -35,25 +32,8 @@ defineExpose({
 
 const props = defineProps<IDialogFormProps>();
 
-function confirmFun() {
-  const formValue = { ...form.value };
-  formValue.currentPassword = PasswordRSAEncrypt(formValue.currentPassword);
-  return signUserNameSignDelete(formValue);
-}
-
-function confirmAfterFun(res, done) {
-  done();
-  ToastSuccess(res.msg);
-  useUserStoreHook().logOut(); // 退出登录
-}
-
 function confirmClick() {
-  doConfirmClick(
-    formRef,
-    { confirmFun, confirmAfterFun },
-    visible,
-    confirmLoading
-  );
+  doConfirmClick(formRef, props, visible, confirmLoading);
 }
 </script>
 
@@ -67,24 +47,29 @@ function confirmClick() {
     width="30%"
     destroy-on-close
   >
-    <el-form ref="formRef" :model="form" label-width="auto">
+    <el-form
+      ref="formRef"
+      v-loading="dialogLoading"
+      :model="form"
+      label-width="auto"
+    >
       <el-row :gutter="30">
         <re-col :value="24" :xs="24" :sm="24">
           <el-form-item
-            label="当前密码"
-            prop="currentPassword"
+            label="文件夹名称"
+            prop="folderName"
             :rules="[
               {
                 required: true,
-                trigger: 'blur',
-                asyncValidator: Validate.password.validator
+                message: '文件夹名称为必填项',
+                trigger: 'blur'
               }
             ]"
           >
             <el-input
-              v-model="form.currentPassword"
+              v-model="form.folderName"
               clearable
-              placeholder="请输入当前密码"
+              placeholder="请输入文件夹名称"
             />
           </el-form-item>
         </re-col>
