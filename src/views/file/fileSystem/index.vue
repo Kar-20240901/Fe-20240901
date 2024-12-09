@@ -41,7 +41,7 @@ const loading = ref<boolean>(false);
 const dataList = ref<IDataList[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
-const pageSize = ref<number>(15);
+const pageSize = ref<number>(-1);
 
 const title = ref<string>("");
 
@@ -183,7 +183,11 @@ const onChangeFunDebounce = debounce(
     const requestList: Promise<R>[] = [];
 
     uploadFilesRef.value.forEach(item => {
-      requestList.push(BaseFileUpload(item.raw, "FILE_SYSTEM"));
+      requestList.push(
+        BaseFileUpload(item.raw, "FILE_SYSTEM", formData => {
+          formData.append("pid", search.value.pid);
+        })
+      );
     });
 
     Promise.all(requestList)
