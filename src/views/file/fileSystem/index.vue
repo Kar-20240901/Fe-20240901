@@ -5,10 +5,12 @@ import {
   baseFileCopySelf,
   baseFileCreateFolderSelf,
   BaseFileDO,
+  baseFileMoveSelf,
   baseFilePageSelf,
   BaseFilePageSelfDTO,
   baseFilePageTreeSelf,
-  baseFileRemoveByFileIdSet
+  baseFileRemoveByFileIdSet,
+  baseFileUpdateSelf
 } from "@/api/http/base/BaseFileController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
@@ -29,6 +31,8 @@ import { R } from "@/model/vo/R";
 import { IDataList } from "@/views/file/fileSystem/types";
 import { debounce } from "@pureadmin/utils";
 import CreateFolderFormEdit from "@/views/file/fileSystem/createFolderFormEdit.vue";
+import FileTree from "@/views/file/fileSystem/fileTree.vue";
+import RenameFormEdit from "@/views/file/fileSystem/renameFormEdit.vue";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -100,21 +104,41 @@ function resetSearch() {
   onSearch();
 }
 
+const fileTreeRef = ref();
+
+const copyTitle = "复制文件";
+const moveTitle = "移动文件";
+
 function copyClick() {
   if (!selectIdArr.value.length) {
     ToastError("请勾选数据");
     return;
   }
-  title.value = "复制文件";
+  title.value = copyTitle;
 }
 
-function fileConfirmFun() {
-  if (title.value === "复制文件") {
-    baseFileCopySelf({});
+function moveClick() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  title.value = moveTitle;
+}
+
+function fileTreeConfirmFun() {
+  const pid = fileTreeRef.value.getForm().value.pid;
+
+  if (title.value === copyTitle) {
+    return baseFileCopySelf({ pid, idSet: selectIdArr.value });
+  } else if (title.value === moveTitle) {
+    return baseFileMoveSelf({ pid, idSet: selectIdArr.value });
+  } else {
+    ToastError("类型异常");
+    throw new Error("类型异常");
   }
 }
 
-function confirmAfterFun(res, done) {
+function fileTreeConfirmAfterFun(res, done) {
   done();
   ToastSuccess(res.msg);
   onSearch();
@@ -244,6 +268,16 @@ function createFolderConfirmAfterFun() {
     createFolderFormEditRef.value.getForm().value
   );
 }
+
+const renameRef = ref();
+
+function renameClick() {
+  renameRef.value.open();
+}
+
+function renameConfirmFun() {
+  return baseFileUpdateSelf(renameRef.value.getForm().value);
+}
 </script>
 
 <template>
@@ -315,21 +349,21 @@ function createFolderConfirmAfterFun() {
           <el-button
             type="primary"
             :icon="useRenderIcon('ep:copy-document')"
-            @click="deleteBySelectIdArr"
+            @click="copyClick"
           >
             复制
           </el-button>
           <el-button
             type="primary"
             :icon="useRenderIcon('ri:drag-move-2-fill')"
-            @click="deleteBySelectIdArr"
+            @click="moveClick"
           >
             移动
           </el-button>
           <el-button
             type="primary"
             :icon="useRenderIcon('ri:font-color')"
-            @click="deleteBySelectIdArr"
+            @click="renameClick"
           >
             重命名
           </el-button>
@@ -453,8 +487,23 @@ function createFolderConfirmAfterFun() {
     <createFolderFormEdit
       ref="createFolderFormEditRef"
       title="创建文件夹"
-      :confirm-after-fun="confirmAfterFun"
+      :confirm-after-fun="fileTreeConfirmAfterFun"
       :confirm-fun="createFolderConfirmAfterFun"
+    />
+
+    <fileTree
+      ref="fileTreeRef"
+      :title="title"
+      :tree="tree"
+      :confirm-fun="fileTreeConfirmFun"
+      :confirm-after-fun="fileTreeConfirmAfterFun"
+    />
+
+    <renameFormEdit
+      ref="renameRef"
+      title="修改文件名称"
+      :confirm-fun="renameConfirmFun"
+      :confirm-after-fun="fileTreeConfirmAfterFun"
     />
   </div>
 </template>

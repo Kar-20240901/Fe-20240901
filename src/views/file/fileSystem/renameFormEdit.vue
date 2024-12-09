@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ReCol from "@/components/ReCol";
-import { doConfirmClick } from "@/model/types/IDialogFormProps";
-import { BaseFileCopySelfDTO } from "@/api/http/base/BaseFileController";
-import { IFileTreeDialogFormProps } from "@/views/file/fileSystem/types";
+import {
+  doConfirmClick,
+  type IDialogFormProps
+} from "@/model/types/IDialogFormProps";
+import { BaseFileUpdateSelfDTO } from "@/api/http/base/BaseFileController";
 
-const form = ref<BaseFileCopySelfDTO>({});
+const form = ref<BaseFileUpdateSelfDTO>({});
 const formRef = ref();
 const dialogLoading = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
@@ -28,7 +30,7 @@ defineExpose({
   open
 });
 
-const props = defineProps<IFileTreeDialogFormProps>();
+const props = defineProps<IDialogFormProps>();
 
 function confirmClick() {
   doConfirmClick(formRef, props, visible, confirmLoading);
@@ -42,7 +44,7 @@ function confirmClick() {
     draggable
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    width="45%"
+    width="30%"
     destroy-on-close
   >
     <el-form
@@ -52,16 +54,22 @@ function confirmClick() {
       label-width="auto"
     >
       <el-row :gutter="30">
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="文件夹" prop="pid">
-            <el-tree-select
-              v-model="form.pid"
-              :data="props.tree"
-              check-strictly
-              placeholder="请选择文件夹"
-              show-checkbox
-              check-on-click-node
+        <re-col :value="24" :xs="24" :sm="24">
+          <el-form-item
+            label="文件名称"
+            prop="fileName"
+            :rules="[
+              {
+                required: true,
+                message: '文件名称为必填项',
+                trigger: 'blur'
+              }
+            ]"
+          >
+            <el-input
+              v-model="form.fileName"
               clearable
+              placeholder="请输入文件名称"
             />
           </el-form-item>
         </re-col>
