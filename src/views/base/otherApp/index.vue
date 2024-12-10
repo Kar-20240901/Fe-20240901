@@ -18,7 +18,7 @@ import {
 import { BaseOtherAppTypeMap } from "@/model/enum/BaseOtherAppTypeEnum";
 
 defineOptions({
-  name: "BaseOtherAppConfiguration"
+  name: "BaseOtherApp"
 });
 
 const search = ref<BaseOtherAppPageDTO>({});

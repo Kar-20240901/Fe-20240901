@@ -5,7 +5,7 @@ import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
-import { IOtherAppConfigurationDialogFormProps } from "@/views/base/otherAppConfiguration/types";
+import { IOtherAppConfigurationDialogFormProps } from "@/views/base/otherApp/types";
 import { BaseOtherAppInsertOrUpdateDTO } from "@/api/http/base/BaseOtherAppController";
 import { BaseOtherAppTypeOptions } from "@/model/enum/BaseOtherAppTypeEnum";
 import Info from "@iconify-icons/ri/information-line";
