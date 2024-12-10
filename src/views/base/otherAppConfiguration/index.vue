@@ -8,24 +8,24 @@ import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
 import FormEdit from "./formEdit.vue";
 import {
-  baseSmsConfigurationDeleteByIdSet,
-  BaseSmsConfigurationDO,
-  baseSmsConfigurationInfoById,
-  baseSmsConfigurationInsertOrUpdate,
-  baseSmsConfigurationPage,
-  BaseSmsConfigurationPageDTO
-} from "@/api/http/base/BaseSmsConfigurationController";
-import { BaseSmsTypeMap } from "@/model/enum/BaseSmsTypeEnum";
+  baseOtherAppDeleteByIdSet,
+  BaseOtherAppDO,
+  baseOtherAppInfoById,
+  baseOtherAppInsertOrUpdate,
+  baseOtherAppPage,
+  BaseOtherAppPageDTO
+} from "@/api/http/base/BaseOtherAppController";
+import { BaseOtherAppTypeMap } from "@/model/enum/BaseOtherAppTypeEnum";
 
 defineOptions({
-  name: "BaseSmsConfiguration"
+  name: "BaseOtherAppConfiguration"
 });
 
-const search = ref<BaseSmsConfigurationPageDTO>({});
+const search = ref<BaseOtherAppPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseSmsConfigurationDO[]>([]);
+const dataList = ref<BaseOtherAppDO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
@@ -43,7 +43,7 @@ onMounted(() => {
 
 function onSearch() {
   loading.value = true;
-  baseSmsConfigurationPage({
+  baseOtherAppPage({
     ...search.value,
     current: currentPage.value as any,
     pageSize: pageSize.value as any
@@ -62,18 +62,18 @@ function resetSearch() {
   onSearch();
 }
 
-function editClick(row: BaseSmsConfigurationDO) {
-  title.value = "修改短信配置";
-  formRef.value.editOpen(baseSmsConfigurationInfoById({ id: row.id }));
+function editClick(row: BaseOtherAppDO) {
+  title.value = "修改三方应用";
+  formRef.value.editOpen(baseOtherAppInfoById({ id: row.id }));
 }
 
-function addClick(row: BaseSmsConfigurationDO) {
-  title.value = "新增短信配置";
+function addClick(row: BaseOtherAppDO) {
+  title.value = "新增三方应用";
   formRef.value.addOpen(row);
 }
 
 function confirmFun() {
-  return baseSmsConfigurationInsertOrUpdate(formRef.value.getForm().value);
+  return baseOtherAppInsertOrUpdate(formRef.value.getForm().value);
 }
 
 function confirmAfterFun(res, done) {
@@ -82,10 +82,10 @@ function confirmAfterFun(res, done) {
   onSearch();
 }
 
-function deleteClick(row: BaseSmsConfigurationDO) {
+function deleteClick(row: BaseOtherAppDO) {
   ExecConfirm(
     async () => {
-      await baseSmsConfigurationDeleteByIdSet({ idSet: [row.id] }).then(res => {
+      await baseOtherAppDeleteByIdSet({ idSet: [row.id] }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -102,7 +102,7 @@ function deleteBySelectIdArr() {
   }
   ExecConfirm(
     async () => {
-      await baseSmsConfigurationDeleteByIdSet({
+      await baseOtherAppDeleteByIdSet({
         idSet: selectIdArr.value
       }).then(res => {
         ToastSuccess(res.msg);
@@ -114,7 +114,7 @@ function deleteBySelectIdArr() {
   );
 }
 
-function onSelectChange(rowArr?: BaseSmsConfigurationDO[]) {
+function onSelectChange(rowArr?: BaseOtherAppDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 }
 </script>
@@ -157,7 +157,7 @@ function onSelectChange(rowArr?: BaseSmsConfigurationDO[]) {
             :icon="useRenderIcon(AddFill)"
             @click="addClick({})"
           >
-            新增短信配置
+            新增三方应用
           </el-button>
           <el-button
             type="primary"
@@ -186,7 +186,7 @@ function onSelectChange(rowArr?: BaseSmsConfigurationDO[]) {
         <el-table-column type="selection" />
         <el-table-column prop="name" label="名称" />
         <el-table-column #default="scope" prop="type" label="类型">
-          {{ BaseSmsTypeMap.get(scope.row.type) || "" }}
+          {{ BaseOtherAppTypeMap.get(scope.row.type) || "" }}
         </el-table-column>
         <el-table-column #default="scope" prop="defaultFlag" label="默认">
           {{ scope.row.defaultFlag ? "是" : "否" }}

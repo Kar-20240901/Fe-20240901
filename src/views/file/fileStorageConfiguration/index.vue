@@ -168,7 +168,7 @@ function onSelectChange(rowArr?: BaseFileStorageConfigurationDO[]) {
             :icon="useRenderIcon(Delete)"
             @click="deleteBySelectIdArr"
           >
-            批量文件存储
+            批量删除
           </el-button>
         </div>
       </div>
