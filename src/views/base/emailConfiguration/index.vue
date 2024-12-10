@@ -99,7 +99,6 @@ onMounted(() => {
 
       <re-col v-else :value="24" :xs="24" :sm="24">
         <el-form-item
-          label="发送人密码"
           prop="pass"
           :rules="[
             {
@@ -109,6 +108,9 @@ onMounted(() => {
             }
           ]"
         >
+          <template #label>
+            <span>发送人密码</span>
+          </template>
           <el-input
             v-model="form.pass"
             clearable
