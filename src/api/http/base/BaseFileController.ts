@@ -44,6 +44,7 @@ export interface BaseFileDO {
   updateTime?: string; // 修改时间，format：date-time
   uri?: string; // 文件完整路径（包含文件类型，不包含请求端点），例如：avatar/uuid.xxx
   createTime?: string; // 创建时间，format：date-time
+  pidPathStr?: string; // 父id组合，例如：|0||1||2|，备注：不包含本级，需包含顶级 0
   fileSize?: string; // 文件大小，单位：byte，format：int64
   createId?: string; // 创建人id，format：int64
   storageType?: number; // 存放文件的服务器类型，format：int32

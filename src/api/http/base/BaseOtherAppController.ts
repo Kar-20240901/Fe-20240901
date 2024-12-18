@@ -122,19 +122,19 @@ export interface BaseOtherAppPageDTO {
 
 export interface BaseOtherAppDO {
   textReplyContent?: string; // 用户发送文字之后，回复的内容
-  openId?: string; // 第三方应用的 openId/微信号/企业ID，例如：接收微信公众号消息时的 ToUserName，不能重复
+  openId?: string; // 三方应用的 openId/微信号/企业ID，例如：接收微信公众号消息时的 ToUserName，不能重复
   updateTime?: string; // 修改时间，format：date-time
   remark?: string; // 备注
-  secret?: string; // 第三方应用的 secret
-  type?: number; // 第三方应用类型，format：int32
+  secret?: string; // 三方应用的 secret
+  type?: number; // 三方应用类型，format：int32
   updateId?: string; // 修改人id，format：int64
   imageReplyContent?: string; // 用户发送图片之后，回复的内容
   qrCode?: string; // 二维码，备注：不是二维码图片的地址，而是二维码解码之后的值
   createTime?: string; // 创建时间，format：date-time
   subscribeReplyContent?: string; // 用户点击关注之后，回复的内容，备注：如果取关然后再关注，也会回复该内容
   createId?: string; // 创建人id，format：int64
-  appId?: string; // 第三方应用的 appId，备注：同一个类型下，所有租户不能重复，原因：比如接收公众号消息时，就无法找到具体是哪一个租户
-  name?: string; // 第三方应用名
+  appId?: string; // 三方应用的 appId，备注：同一个类型下，所有租户不能重复，原因：比如接收公众号消息时，就无法找到具体是哪一个租户
+  name?: string; // 三方应用名
   id?: string; // 主键 id，format：int64
   enableFlag?: boolean; // 是否启用
 }
