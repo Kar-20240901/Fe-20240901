@@ -117,50 +117,42 @@ function confirmClick() {
           </el-form-item>
         </re-col>
 
-        <re-col :value="24" :xs="24" :sm="24">
+        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="appId" prop="appId">
             <el-input
               v-model="form.appId"
               clearable
               placeholder="请输入appId"
-              type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>
 
-        <re-col :value="24" :xs="24" :sm="24">
+        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="secret" prop="secret">
             <el-input
               v-model="form.secret"
               clearable
               placeholder="请输入secret"
-              type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>
 
-        <re-col :value="24" :xs="24" :sm="24">
+        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="关注回复" prop="subscribeReplyContent">
             <el-input
               v-model="form.subscribeReplyContent"
               clearable
               placeholder="请输入关注回复"
-              type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>
 
-        <re-col :value="24" :xs="24" :sm="24">
+        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="文字回复" prop="textReplyContent">
             <el-input
               v-model="form.textReplyContent"
               clearable
               placeholder="请输入文字回复"
-              type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>
@@ -178,15 +170,18 @@ function confirmClick() {
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item prop="qrCode">
             <template #label>
-              <span>二维码</span>
-              <IconifyIconOffline
-                v-tippy="{
-                  content: '备注：不是二维码图片的地址，而是二维码解码之后的值',
-                  placement: 'top'
-                }"
-                :icon="Info"
-                class="ml-1"
-              />
+              <div class="flex items-center">
+                <span>二维码</span>
+                <IconifyIconOffline
+                  v-tippy="{
+                    content:
+                      '备注：不是二维码图片的地址，而是二维码解码之后的值',
+                    placement: 'top'
+                  }"
+                  :icon="Info"
+                  class="ml-1"
+                />
+              </div>
             </template>
             <el-input
               v-model="form.qrCode"
@@ -199,15 +194,18 @@ function confirmClick() {
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item prop="openId">
             <template #label>
-              <span>openId</span>
-              <IconifyIconOffline
-                v-tippy="{
-                  content: '例如：接收微信公众号消息时的 ToUserName，不能重复',
-                  placement: 'top'
-                }"
-                :icon="Info"
-                class="ml-1"
-              />
+              <div class="flex items-center">
+                <span>openId</span>
+                <IconifyIconOffline
+                  v-tippy="{
+                    content:
+                      '例如：接收微信公众号消息时的 ToUserName，不能重复',
+                    placement: 'top'
+                  }"
+                  :icon="Info"
+                  class="ml-1"
+                />
+              </div>
             </template>
             <el-input
               v-model="form.openId"

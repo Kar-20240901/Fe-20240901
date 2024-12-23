@@ -117,50 +117,42 @@ function confirmClick() {
           </el-form-item>
         </re-col>
 
-        <re-col :value="24" :xs="24" :sm="24">
+        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="钥匙" prop="secretId">
             <el-input
               v-model="form.secretId"
               clearable
               placeholder="请输入钥匙"
-              type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>
 
-        <re-col :value="24" :xs="24" :sm="24">
+        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="秘钥" prop="secretKey">
             <el-input
               v-model="form.secretKey"
               clearable
               placeholder="请输入秘钥"
-              type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>
 
-        <re-col :value="24" :xs="24" :sm="24">
+        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="短信应用id" prop="sdkAppId">
             <el-input
               v-model="form.sdkAppId"
               clearable
               placeholder="请输入短信应用id"
-              type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>
 
-        <re-col :value="24" :xs="24" :sm="24">
+        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="签名内容" prop="signName">
             <el-input
               v-model="form.signName"
               clearable
               placeholder="请输入签名内容"
-              type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
             />
           </el-form-item>
         </re-col>

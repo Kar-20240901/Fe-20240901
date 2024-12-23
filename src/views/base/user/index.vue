@@ -246,10 +246,10 @@ function thawClick() {
   <div class="flex flex-col">
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="用户昵称：" prop="nickname">
+        <el-form-item label="昵称：" prop="nickname">
           <el-input
             v-model="search.nickname"
-            placeholder="请输入用户昵称"
+            placeholder="请输入昵称"
             clearable
             class="!w-[180px]"
           />

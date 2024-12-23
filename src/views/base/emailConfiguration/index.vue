@@ -32,7 +32,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <el-form ref="formRef" v-loading="loading" :model="form" label-width="auto">
+  <el-form
+    ref="formRef"
+    v-loading="loading"
+    :model="form"
+    label-width="auto"
+    class="bg-bg_color"
+  >
     <el-row :gutter="30">
       <re-col :value="24" :xs="24" :sm="24">
         <el-form-item label="正文前缀" prop="contentPre">

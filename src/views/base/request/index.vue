@@ -176,6 +176,7 @@ function viewClick(row: BaseRequestDO) {
         <el-table-column #default="scope" prop="createTime" label="创建时间">
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
+        <el-table-column prop="costMs" label="耗时" />
         <el-table-column #default="scope" label="操作" width="100">
           <el-button
             link

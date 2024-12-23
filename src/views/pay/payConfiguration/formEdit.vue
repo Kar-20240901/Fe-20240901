@@ -4,13 +4,15 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { BaseUserInsertOrUpdateDTO } from "@/api/http/base/BaseUserController";
-import { IUserDialogFormProps } from "@/views/base/user/types";
+import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
 import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
-import { enableFlagOptions } from "@/views/base/user/enums";
+import { BasePayConfigurationInsertOrUpdateDTO } from "@/api/http/base/BasePayConfigurationController";
+import { IPayConfigurationDialogFormProps } from "@/views/pay/payConfiguration/types";
+import { BasePayTypeOptions } from "@/model/enum/BasePayTypeEnum";
+import Info from "@iconify-icons/ri/information-line";
 import { Validate } from "@/utils/ValidatorUtil";
 
-const form = ref<BaseUserInsertOrUpdateDTO>({});
+const form = ref<BasePayConfigurationInsertOrUpdateDTO>({});
 const formRef = ref();
 const dialogLoading = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
@@ -20,7 +22,7 @@ function getForm() {
   return form;
 }
 
-function addOpen(formTemp?: BaseUserInsertOrUpdateDTO) {
+function addOpen(formTemp?: BasePayConfigurationInsertOrUpdateDTO) {
   doOpen(
     formRef,
     form,
@@ -28,18 +30,17 @@ function addOpen(formTemp?: BaseUserInsertOrUpdateDTO) {
     confirmLoading,
     {
       enableFlag: true,
-      manageSignInFlag: true,
       ...formTemp
     },
     dialogLoading
   );
 }
 
-function editOpen(fun: Promise<R<any>>, formTemp: BaseUserInsertOrUpdateDTO) {
+function editOpen(fun: Promise<R<any>>) {
   dialogLoading.value = true;
   confirmLoading.value = false;
   visible.value = true;
-  form.value = formTemp || {};
+  form.value = {};
   formRef.value?.clearValidate();
   fun.then(res => {
     form.value = res.data;
@@ -53,7 +54,7 @@ defineExpose({
   editOpen
 });
 
-const props = defineProps<IUserDialogFormProps>();
+const props = defineProps<IPayConfigurationDialogFormProps>();
 
 function confirmClick() {
   doConfirmClick(formRef, props, visible, confirmLoading);
@@ -79,134 +80,161 @@ function confirmClick() {
       <el-row :gutter="30">
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item
-            label="昵称"
-            prop="nickname"
+            label="名称"
+            prop="name"
             :rules="[
               {
                 required: true,
-                trigger: 'blur',
-                asyncValidator: Validate.nickname.validator
+                message: '名称为必填项',
+                trigger: 'blur'
               }
             ]"
           >
+            <el-input v-model="form.name" clearable placeholder="请输入名称" />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item
+            label="类型"
+            prop="type"
+            :rules="[
+              {
+                required: true,
+                message: '类型为必填项',
+                trigger: 'blur'
+              }
+            ]"
+          >
+            <el-select v-model="form.type" class="w-full" clearable>
+              <el-option
+                v-for="(item, index) in BasePayTypeOptions"
+                :key="index"
+                :value="item.value"
+                :label="item.label as string"
+              >
+                {{ item.label }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item
+            prop="serverUrl"
+            :rules="[
+              {
+                trigger: 'blur',
+                asyncValidator: Validate.url.canNullValidator
+              }
+            ]"
+          >
+            <template #label>
+              <span>网关地址</span>
+              <IconifyIconOffline
+                v-tippy="{
+                  content: '例如：https://openapi.alipay.com/gateway.do',
+                  placement: 'top'
+                }"
+                :icon="Info"
+                class="ml-1"
+              />
+            </template>
             <el-input
-              v-model="form.nickname"
+              v-model="form.serverUrl"
               clearable
-              placeholder="请输入昵称"
+              placeholder="请输入网关地址"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="应用id" prop="appId">
+            <el-input
+              v-model="form.appId"
+              clearable
+              placeholder="请输入appId"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="私钥" prop="privateKey">
+            <el-input
+              v-model="form.privateKey"
+              clearable
+              placeholder="请输入私钥"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="平台公钥" prop="platformPublicKey">
+            <el-input
+              v-model="form.platformPublicKey"
+              clearable
+              placeholder="请输入平台公钥"
             />
           </el-form-item>
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item
-            label="用户名"
-            prop="username"
+            label="异步通知地址"
+            prop="notifyUrl"
             :rules="[
               {
                 trigger: 'blur',
-                asyncValidator: Validate.username.canNullValidator
+                asyncValidator: Validate.url.canNullValidator
               }
             ]"
           >
             <el-input
-              v-model="form.username"
+              v-model="form.notifyUrl"
               clearable
-              placeholder="请输入用户名"
+              placeholder="请输入异步通知地址"
             />
           </el-form-item>
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item
-            label="邮箱"
-            prop="email"
-            :rules="[
-              {
-                trigger: 'blur',
-                asyncValidator: Validate.email.canNullValidator
-              }
-            ]"
-          >
-            <el-input v-model="form.email" clearable placeholder="请输入邮箱" />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item
-            label="手机号"
-            prop="phone"
-            :rules="[
-              {
-                trigger: 'blur',
-                asyncValidator: Validate.phone.canNullValidator
-              }
-            ]"
-          >
+          <el-form-item label="商户号" prop="merchantId">
             <el-input
-              v-model="form.phone"
+              v-model="form.merchantId"
               clearable
-              placeholder="请输入手机号"
+              placeholder="请输入商户号"
             />
           </el-form-item>
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="微信appId" prop="wxAppId">
+          <el-form-item label="证书序列" prop="merchantSerialNumber">
             <el-input
-              v-model="form.wxAppId"
+              v-model="form.merchantSerialNumber"
               clearable
-              placeholder="请输入微信appId"
+              placeholder="请输入商户证书序列号"
             />
           </el-form-item>
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="微信unionId" prop="wxUnionId">
+          <el-form-item label="apiV3Key" prop="apiV3Key">
             <el-input
-              v-model="form.wxUnionId"
+              v-model="form.apiV3Key"
               clearable
-              placeholder="请输入微信unionId"
+              placeholder="请输入apiV3Key"
             />
           </el-form-item>
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="微信openId" prop="wxOpenId">
-            <el-input
-              v-model="form.wxOpenId"
-              clearable
-              placeholder="请输入微信openId"
-            />
-          </el-form-item>
-        </re-col>
-
-        <re-col v-if="!form.id" :value="12" :xs="24" :sm="24">
-          <el-form-item
-            label="密码"
-            prop="password"
-            :rules="[
-              {
-                trigger: 'blur',
-                asyncValidator: Validate.password.canNullValidator
-              }
-            ]"
-          >
-            <el-input
-              v-model="form.password"
-              clearable
-              placeholder="请输入密码"
-            />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="后台登录" prop="manageSignInFlag">
+          <el-form-item label="默认" prop="defaultFlag">
             <re-segmented
-              :modelValue="form.manageSignInFlag ? 0 : 1"
+              :modelValue="form.defaultFlag ? 0 : 1"
               :options="yesOrNoOptions"
               @change="
                 ({ option: { value } }) => {
-                  form.manageSignInFlag = value;
+                  form.defaultFlag = value;
                 }
               "
             />
@@ -214,7 +242,7 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="状态" prop="enableFlag">
+          <el-form-item label="启用" prop="enableFlag">
             <re-segmented
               :modelValue="form.enableFlag ? 0 : 1"
               :options="enableFlagOptions"
@@ -224,42 +252,6 @@ function confirmClick() {
                 }
               "
             />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="个人简介" prop="bio">
-            <el-input
-              v-model="form.bio"
-              clearable
-              placeholder="请输入个人简介"
-              :autosize="{ minRows: 2, maxRows: 4 }"
-              type="textarea"
-            />
-          </el-form-item>
-        </re-col>
-
-        <re-col>
-          <el-form-item label="关联角色" prop="roleIdSet">
-            <el-select
-              v-model="form.roleIdSet"
-              placeholder="请选择"
-              class="w-full"
-              clearable
-              multiple
-              filterable
-              collapse-tags
-              collapse-tags-tooltip
-            >
-              <el-option
-                v-for="item in props.roleDictList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"
-              >
-                {{ item.name }}
-              </el-option>
-            </el-select>
           </el-form-item>
         </re-col>
       </el-row>
