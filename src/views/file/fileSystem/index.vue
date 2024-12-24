@@ -66,6 +66,8 @@ function onSearch(sufFun?: () => void) {
     pageSize: pageSize.value as any
   })
     .then(res => {
+      selectIdArr.value = [];
+
       if (search.value.backUpFlag && res.data.records.length) {
         search.value.pid = res.data.records[0].pid;
       }
@@ -285,11 +287,18 @@ function createFolderConfirmAfterFun() {
 const renameRef = ref();
 
 function renameClick() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
   renameRef.value.open();
 }
 
 function renameConfirmFun() {
-  return baseFileUpdateSelf(renameRef.value.getForm().value);
+  return baseFileUpdateSelf({
+    ...renameRef.value.getForm().value,
+    idSet: selectIdArr.value
+  });
 }
 </script>
 

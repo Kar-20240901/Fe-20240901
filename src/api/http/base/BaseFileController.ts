@@ -43,7 +43,7 @@ export interface BaseFileDO {
   storageConfigurationId?: string; // 存储文件配置主键 id，format：int64
   newFileName?: string; // 新的文件名（包含文件类型），例如：uuid.xxx
   updateTime?: string; // 修改时间，format：date-time
-  folderSize?: number; // 文件夹大小，format：int32
+  folderSize?: string; // 文件夹大小，format：int64
   pathList?: string[]; // 路径字符串集合，例如：/根目录/测试1/测试1-1，备注：不包含本级，但是包含顶级：根目录，并且和 pidList一一对应
   uri?: string; // 文件完整路径（包含文件类型，不包含请求端点），例如：avatar/uuid.xxx
   createTime?: string; // 创建时间，format：date-time
@@ -88,8 +88,8 @@ export function baseFileCreateFolderSelf(
 }
 
 export interface BaseFileUpdateSelfDTO {
+  idSet?: string[]; // 主键 idSet，required：true，format：int64
   fileName?: string; // 文件名
-  id?: string; // 主键 id，required：true，format：int64
 }
 
 // 修改：文件和文件夹-自我
