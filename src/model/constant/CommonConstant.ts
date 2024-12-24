@@ -75,5 +75,7 @@ export default {
 
   ADMIN_USER_ID_STR: "0", // 系统管理员的用户 id
 
+  TOP_FOLDER_NAME: "根文件夹", // 根文件夹
+
   BIO_MAX_LENGTH: 100 // 个人简介最大长度
 };

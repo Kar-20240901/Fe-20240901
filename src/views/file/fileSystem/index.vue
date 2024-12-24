@@ -55,6 +55,9 @@ onMounted(() => {
   onSearch();
 });
 
+const pidList = ref<string[]>([]); // 例如：[0,1,2]
+const pathList = ref<string[]>([]); // 例如：/根目录/测试1
+
 function onSearch(sufFun?: () => void) {
   loading.value = true;
   baseFilePageSelf({
@@ -65,6 +68,14 @@ function onSearch(sufFun?: () => void) {
     .then(res => {
       if (search.value.backUpFlag && res.data.records.length) {
         search.value.pid = res.data.records[0].pid;
+      }
+
+      if (res.data.records.length) {
+        pidList.value = res.data.records[0].pidList;
+        pathList.value = res.data.records[0].pathList;
+      } else {
+        pidList.value = [CommonConstant.TOP_FOLDER_NAME];
+        pathList.value = [CommonConstant.TOP_PID_STR];
       }
 
       let dataListTemp: IDataList[] = [];
@@ -86,7 +97,7 @@ function onSearch(sufFun?: () => void) {
       }
 
       dataList.value = dataListTemp;
-      total.value = res.data.total;
+      total.value = res.data.records.length;
     })
     .finally(() => {
       loading.value = false;
@@ -115,6 +126,7 @@ function copyClick() {
     return;
   }
   title.value = copyTitle;
+  fileTreeRef.value.open();
 }
 
 function moveClick() {
@@ -123,6 +135,7 @@ function moveClick() {
     return;
   }
   title.value = moveTitle;
+  fileTreeRef.value.open();
 }
 
 function fileTreeConfirmFun() {
@@ -434,6 +447,13 @@ function renameConfirmFun() {
                               v-if="subItem.type === BaseFileTypeEnum.FILE.code"
                             >
                               大小：{{ GetFileSizeStr(subItem.fileSize) }}
+                            </div>
+                            <div
+                              v-if="
+                                subItem.type === BaseFileTypeEnum.FOLDER.code
+                              "
+                            >
+                              大小：{{ GetFileSizeStr(subItem.folderSize) }}
                             </div>
                             <div>
                               创建时间：{{

@@ -52,7 +52,7 @@ function confirmClick() {
       label-width="auto"
     >
       <el-row :gutter="30">
-        <re-col :value="12" :xs="24" :sm="24">
+        <re-col :value="24" :xs="24" :sm="24">
           <el-form-item
             label="文件夹"
             prop="pid"
@@ -64,15 +64,25 @@ function confirmClick() {
               }
             ]"
           >
-            <el-tree-select
+            <el-cascader
               v-model="form.pid"
-              :data="props.tree"
-              check-strictly
-              placeholder="请选择文件夹"
-              show-checkbox
-              check-on-click-node
+              class="w-full"
+              :options="props.tree as any"
+              :props="{
+                value: 'id',
+                label: 'showFileName',
+                emitPath: false,
+                checkStrictly: true
+              }"
               clearable
-            />
+              filterable
+              placeholder="请选择文件夹"
+            >
+              <template #default="{ node, data }">
+                <span>{{ data.showFileName }}</span>
+                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+              </template>
+            </el-cascader>
           </el-form-item>
         </re-col>
       </el-row>

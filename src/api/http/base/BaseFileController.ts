@@ -24,6 +24,7 @@ export interface BaseFilePageSelfDTO {
 
 export interface BaseFileDO {
   bucketName?: string; // 桶名，例如：be-bucket
+  pidList?: string[]; // 父id组合集合，例如：[0,1,2]，备注：不包含本级，但是包含顶级：0，并且和 pathList一一对应，format：int64
   originFileName?: string; // 文件原始名（包含文件类型）
   publicFlag?: boolean; // 是否公开访问
   remark?: string; // 备注
@@ -42,9 +43,11 @@ export interface BaseFileDO {
   storageConfigurationId?: string; // 存储文件配置主键 id，format：int64
   newFileName?: string; // 新的文件名（包含文件类型），例如：uuid.xxx
   updateTime?: string; // 修改时间，format：date-time
+  folderSize?: number; // 文件夹大小，format：int32
+  pathList?: string[]; // 路径字符串集合，例如：/根目录/测试1/测试1-1，备注：不包含本级，但是包含顶级：根目录，并且和 pidList一一对应
   uri?: string; // 文件完整路径（包含文件类型，不包含请求端点），例如：avatar/uuid.xxx
   createTime?: string; // 创建时间，format：date-time
-  pidPathStr?: string; // 父id组合，例如：|0||1||2|，备注：不包含本级，需包含顶级 0
+  pidPathStr?: string; // 父id组合，例如：|0||1||2|，备注：不包含本级，但是包含顶级：0
   fileSize?: string; // 文件大小，单位：byte，format：int64
   createId?: string; // 创建人id，format：int64
   storageType?: number; // 存放文件的服务器类型，format：int32
