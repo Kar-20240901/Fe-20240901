@@ -55,8 +55,8 @@ onMounted(() => {
   onSearch();
 });
 
-const pidList = ref<string[]>([]); // 例如：[0,1,2]
-const pathList = ref<string[]>([]); // 例如：/根目录/测试1
+const pidList = ref<string[]>([CommonConstant.TOP_PID_STR]); // 例如：[0,1,2]
+const pathList = ref<string[]>([CommonConstant.TOP_FOLDER_NAME]); // 例如：/根目录/测试1
 
 function onSearch(sufFun?: () => void) {
   loading.value = true;
@@ -300,6 +300,11 @@ function renameConfirmFun() {
     idSet: selectIdArr.value
   });
 }
+
+function breadcrumbClick(index) {
+  search.value.pid = pidList[index];
+  onSearch();
+}
 </script>
 
 <template>
@@ -429,6 +434,16 @@ function renameConfirmFun() {
       </div>
 
       <div class="mt-[30px]" />
+
+      <div>
+        <el-breadcrumb separator="/">
+          <template v-for="(item, index) in pathList" :key="index">
+            <el-breadcrumb-item>
+              <a @click="breadcrumbClick(index)">{{ item }}</a>
+            </el-breadcrumb-item>
+          </template>
+        </el-breadcrumb>
+      </div>
 
       <div v-loading="loading">
         <el-checkbox-group v-model="selectIdArr">
