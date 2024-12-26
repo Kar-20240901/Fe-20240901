@@ -435,7 +435,7 @@ function breadcrumbClick(index) {
 
       <div class="mt-[30px]" />
 
-      <div>
+      <div v-loading="loading">
         <el-breadcrumb separator="/">
           <template v-for="(item, index) in pathList" :key="index">
             <el-breadcrumb-item>
