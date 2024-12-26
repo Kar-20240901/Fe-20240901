@@ -436,16 +436,16 @@ function breadcrumbClick(index) {
       <div class="mt-[30px]" />
 
       <div v-loading="loading">
-        <el-breadcrumb separator="/">
-          <template v-for="(item, index) in pathList" :key="index">
-            <el-breadcrumb-item>
-              <a @click="breadcrumbClick(index)">{{ item }}</a>
-            </el-breadcrumb-item>
-          </template>
-        </el-breadcrumb>
-      </div>
+        <div>
+          <el-breadcrumb separator="/">
+            <template v-for="(item, index) in pathList" :key="index">
+              <el-breadcrumb-item>
+                <a @click="breadcrumbClick(index)">{{ item }}</a>
+              </el-breadcrumb-item>
+            </template>
+          </el-breadcrumb>
+        </div>
 
-      <div v-loading="loading">
         <el-checkbox-group v-model="selectIdArr">
           <DynamicScroller
             :items="dataList"
