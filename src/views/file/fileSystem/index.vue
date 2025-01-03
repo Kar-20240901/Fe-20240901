@@ -68,13 +68,13 @@ function onSearch(sufFun?: () => void) {
     .then(res => {
       selectIdArr.value = [];
 
-      if (search.value.backUpFlag && res.data.records.length) {
-        search.value.pid = res.data.records[0].pid;
+      if (search.value.backUpFlag && res.data.backUpPid) {
+        search.value.pid = res.data.backUpPid;
       }
 
-      if (res.data.records.length) {
-        pidList.value = res.data.records[0].pidList;
-        pathList.value = res.data.records[0].pathList;
+      if (res.data.pidList.length) {
+        pidList.value = res.data.pidList;
+        pathList.value = res.data.pathList;
       } else {
         pidList.value = [CommonConstant.TOP_FOLDER_NAME];
         pathList.value = [CommonConstant.TOP_PID_STR];
@@ -278,9 +278,10 @@ function createFolderClick() {
 }
 
 function createFolderConfirmAfterFun() {
-  return baseFileCreateFolderSelf(
-    createFolderFormEditRef.value.getForm().value
-  );
+  return baseFileCreateFolderSelf({
+    ...createFolderFormEditRef.value.getForm().value,
+    pid: search.value.pid
+  });
 }
 
 const renameRef = ref();
@@ -301,8 +302,7 @@ function renameConfirmFun() {
 }
 
 function breadcrumbClick(index) {
-  const pidTemp = pidList[index];
-  console.log("pidTemp", pidTemp);
+  const pidTemp = pidList.value[index];
   if (!pidTemp) {
     return;
   }
@@ -455,7 +455,7 @@ function breadcrumbClick(index) {
           </el-breadcrumb>
         </div>
 
-        <el-checkbox-group v-model="selectIdArr">
+        <el-checkbox-group v-if="dataList.length" v-model="selectIdArr">
           <DynamicScroller
             :items="dataList"
             :item-size="66"
@@ -523,6 +523,10 @@ function breadcrumbClick(index) {
             </template>
           </DynamicScroller>
         </el-checkbox-group>
+
+        <div v-else class="text-[15px] flex w-full justify-center">
+          此文件夹为空。
+        </div>
       </div>
 
       <div class="pb-3 flex justify-between text-[13px]">

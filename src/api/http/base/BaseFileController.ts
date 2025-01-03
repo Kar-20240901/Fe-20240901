@@ -1,4 +1,3 @@
-import type { Page } from "@/model/vo/Page";
 import type MyOrderDTO from "@/model/dto/MyOrderDTO";
 import { http } from "@/utils/http";
 import { baseApi } from "@/api/http/utils";
@@ -24,7 +23,6 @@ export interface BaseFilePageSelfDTO {
 
 export interface BaseFileDO {
   bucketName?: string; // 桶名，例如：be-bucket
-  pidList?: string[]; // 父id组合集合，例如：[0,1,2]，备注：不包含本级，但是包含顶级：0，并且和 pathList一一对应，format：int64
   originFileName?: string; // 文件原始名（包含文件类型）
   publicFlag?: boolean; // 是否公开访问
   remark?: string; // 备注
@@ -44,7 +42,6 @@ export interface BaseFileDO {
   newFileName?: string; // 新的文件名（包含文件类型），例如：uuid.xxx
   updateTime?: string; // 修改时间，format：date-time
   folderSize?: string; // 文件夹大小，format：int64
-  pathList?: string[]; // 路径字符串集合，例如：/根目录/测试1/测试1-1，备注：不包含本级，但是包含顶级：根目录，并且和 pidList一一对应
   uri?: string; // 文件完整路径（包含文件类型，不包含请求端点），例如：avatar/uuid.xxx
   uploadFlag?: boolean; // 是否还在上传中，目的：无法操作
   createTime?: string; // 创建时间，format：date-time
@@ -57,12 +54,19 @@ export interface BaseFileDO {
   fileExtName?: string; // 文件类型（不含点），备注：这个是读取文件流的头部信息获得文件类型
 }
 
+export interface BaseFilePageSelfVO {
+  records?: BaseFileDO[]; // 数据
+  pidList?: string[]; // 父id组合集合，例如：[0,1,2]，备注：包含本级，并且包含顶级：0，并且和 pathList一一对应，format：int64
+  pathList?: string[]; // 路径字符串集合，例如：/根目录/测试1/测试1-1，备注：包含本级，并且包含顶级：根目录，并且和 pidList一一对应
+  backUpPid?: string; // 返回上一级的 pid，format：int64
+}
+
 // 分页排序查询-自我
 export function baseFilePageSelf(
   form: BaseFilePageSelfDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<Page<BaseFileDO>>(
+  return http.request<BaseFilePageSelfVO>(
     "post",
     baseApi("/base/file/page/self"),
     form,
@@ -129,7 +133,7 @@ export function baseFilePage(
   form: BaseFilePageDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<Page<BaseFileDO>>(
+  return http.request<BaseFilePageSelfVO>(
     "post",
     baseApi("/base/file/page"),
     form,
