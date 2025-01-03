@@ -85,7 +85,7 @@ function onSearch(sufFun?: () => void) {
       let dataListItemList = [];
 
       res.data.records.forEach((item, index) => {
-        if (index % 10 === 0 && index !== 0) {
+        if (index % 12 === 0 && index !== 0) {
           dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
 
           dataListItemList = [];
@@ -455,85 +455,89 @@ function breadcrumbClick(index) {
           </el-breadcrumb>
         </div>
 
-        <el-checkbox-group v-if="dataList.length" v-model="selectIdArr">
-          <DynamicScroller
-            :items="dataList"
-            :item-size="66"
-            :min-item-size="66"
-            direction="vertical"
-          >
-            <template #default="{ item, index, active }">
-              <DynamicScrollerItem
-                :item="item"
-                :active="active"
-                :data-index="index"
-                :data-active="active"
-              >
-                <div class="flex space-x-[20px]">
-                  <template v-for="subItem in item.l" :key="subItem.id">
-                    <el-checkbox :value="subItem.id">
-                      <el-tooltip placement="top" :show-after="500">
-                        <template #content>
-                          <div class="flex flex-col">
-                            <div>名称：{{ subItem.showFileName }}</div>
-                            <div
-                              v-if="subItem.type === BaseFileTypeEnum.FILE.code"
-                            >
-                              大小：{{ GetFileSizeStr(subItem.fileSize) }}
+        <el-scrollbar height="600px">
+          <el-checkbox-group v-if="dataList.length" v-model="selectIdArr">
+            <DynamicScroller
+              :items="dataList"
+              :item-size="66"
+              :min-item-size="66"
+              direction="vertical"
+            >
+              <template #default="{ item, index, active }">
+                <DynamicScrollerItem
+                  :item="item"
+                  :active="active"
+                  :data-index="index"
+                  :data-active="active"
+                >
+                  <div class="flex space-x-[20px]">
+                    <template v-for="subItem in item.l" :key="subItem.id">
+                      <el-checkbox :value="subItem.id">
+                        <el-tooltip placement="top" :show-after="500">
+                          <template #content>
+                            <div class="flex flex-col">
+                              <div>名称：{{ subItem.showFileName }}</div>
+                              <div
+                                v-if="
+                                  subItem.type === BaseFileTypeEnum.FILE.code
+                                "
+                              >
+                                大小：{{ GetFileSizeStr(subItem.fileSize) }}
+                              </div>
+                              <div
+                                v-if="
+                                  subItem.type === BaseFileTypeEnum.FOLDER.code
+                                "
+                              >
+                                大小：{{ GetFileSizeStr(subItem.folderSize) }}
+                              </div>
+                              <div>
+                                创建时间：{{
+                                  FormatDateTimeForCurrentDay(
+                                    new Date(subItem.createTime)
+                                  )
+                                }}
+                              </div>
                             </div>
-                            <div
-                              v-if="
+                          </template>
+                          <div
+                            class="flex flex-col items-center"
+                            @dblclick="itemClick(subItem)"
+                          >
+                            <IconifyIconOnline
+                              :icon="
                                 subItem.type === BaseFileTypeEnum.FOLDER.code
+                                  ? 'ri:folder-open-fill'
+                                  : 'ri:file-2-line'
                               "
-                            >
-                              大小：{{ GetFileSizeStr(subItem.folderSize) }}
-                            </div>
-                            <div>
-                              创建时间：{{
-                                FormatDateTimeForCurrentDay(
-                                  new Date(subItem.createTime)
-                                )
-                              }}
-                            </div>
+                              width="50"
+                            />
+                            <el-text
+                              class="text-[13px] w-[80px] h-[16px] text-center"
+                              truncated
+                              >{{ subItem.showFileName }}
+                            </el-text>
                           </div>
-                        </template>
-                        <div
-                          class="flex flex-col items-center"
-                          @dblclick="itemClick(subItem)"
-                        >
-                          <IconifyIconOnline
-                            :icon="
-                              subItem.type === BaseFileTypeEnum.FOLDER.code
-                                ? 'ri:folder-open-fill'
-                                : 'ri:file-2-line'
-                            "
-                            width="50"
-                          />
-                          <el-text
-                            class="text-[13px] w-[80px] h-[16px] text-center"
-                            truncated
-                            >{{ subItem.showFileName }}
-                          </el-text>
-                        </div>
-                      </el-tooltip>
-                    </el-checkbox>
-                  </template>
-                </div>
-              </DynamicScrollerItem>
-            </template>
-          </DynamicScroller>
-        </el-checkbox-group>
+                        </el-tooltip>
+                      </el-checkbox>
+                    </template>
+                  </div>
+                </DynamicScrollerItem>
+              </template>
+            </DynamicScroller>
+          </el-checkbox-group>
 
-        <div v-else class="text-[15px] flex w-full justify-center">
-          此文件夹为空。
-        </div>
+          <div v-else class="text-[15px] flex w-full justify-center">
+            此文件夹为空。
+          </div>
+        </el-scrollbar>
       </div>
 
-      <div class="pb-3 flex justify-between text-[13px]">
+      <div class="pt-3 flex justify-between text-[13px]">
         <div />
 
         <div>
-          {{ total }} 个项目
+          {{ total }} 个项目 | 总大小 {{ "500kb" }}
           {{
             selectIdArr.length ? ` | 已选择 ${selectIdArr.length} 个项目` : ""
           }}
