@@ -46,6 +46,7 @@ export interface BaseFileDO {
   folderSize?: string; // 文件夹大小，format：int64
   pathList?: string[]; // 路径字符串集合，例如：/根目录/测试1/测试1-1，备注：不包含本级，但是包含顶级：根目录，并且和 pidList一一对应
   uri?: string; // 文件完整路径（包含文件类型，不包含请求端点），例如：avatar/uuid.xxx
+  uploadFlag?: boolean; // 是否还在上传中，目的：无法操作
   createTime?: string; // 创建时间，format：date-time
   pidPathStr?: string; // 父id组合，例如：|0||1||2|，备注：不包含本级，但是包含顶级：0
   fileSize?: string; // 文件大小，单位：byte，format：int64
@@ -87,6 +88,73 @@ export function baseFileCreateFolderSelf(
   );
 }
 
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，required：true，format：int64
+}
+
+// 批量删除文件：公有和私有，文件和文件夹
+export function baseFileRemoveByFileIdSet(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/file/removeByFileIdSet"),
+    form,
+    config
+  );
+}
+
+export interface BaseFilePageDTO {
+  originFileName?: string; // 文件原始名（包含文件类型）
+  globalFlag?: boolean; // 全局搜索
+  publicFlag?: boolean; // 是否公开访问
+  pageSize?: string; // 每页显示条数，format：int64
+  pid?: string; // 父节点id（顶级则为0），format：int64
+  remark?: string; // 备注
+  type?: string; // 类型
+  current?: string; // 第几页，format：int64
+  uploadType?: number; // 文件上传类型，format：int32
+  storageType?: number; // 存放文件的服务器类型，format：int32
+  showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
+  belongId?: string; // 归属者用户主键 id（拥有全部权限），format：int64
+  refId?: string; // 关联的 id，format：int64
+  backUpFlag?: boolean; // 返回上级
+  enableFlag?: boolean; // 是否启用
+  order?: MyOrderDTO; // 排序字段
+}
+
+// 分页排序查询
+export function baseFilePage(
+  form: BaseFilePageDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<Page<BaseFileDO>>(
+    "post",
+    baseApi("/base/file/page"),
+    form,
+    config
+  );
+}
+
+export interface BaseFileMoveSelfDTO {
+  idSet?: string[]; // 主键 idSet，required：true，format：int64
+  pid?: string; // 父节点id（顶级则为0），required：true，format：int64
+}
+
+// 移动：文件和文件夹-自我
+export function baseFileMoveSelf(
+  form: BaseFileMoveSelfDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/file/move/self"),
+    form,
+    config
+  );
+}
+
 export interface BaseFileUpdateSelfDTO {
   idSet?: string[]; // 主键 idSet，required：true，format：int64
   fileName?: string; // 文件名
@@ -122,25 +190,6 @@ export function baseFilePrivateDownload(
   );
 }
 
-export interface BaseFilePageDTO {
-  originFileName?: string; // 文件原始名（包含文件类型）
-  globalFlag?: boolean; // 全局搜索
-  publicFlag?: boolean; // 是否公开访问
-  pageSize?: string; // 每页显示条数，format：int64
-  pid?: string; // 父节点id（顶级则为0），format：int64
-  remark?: string; // 备注
-  type?: string; // 类型
-  current?: string; // 第几页，format：int64
-  uploadType?: number; // 文件上传类型，format：int32
-  storageType?: number; // 存放文件的服务器类型，format：int32
-  showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
-  belongId?: string; // 归属者用户主键 id（拥有全部权限），format：int64
-  refId?: string; // 关联的 id，format：int64
-  backUpFlag?: boolean; // 返回上级
-  enableFlag?: boolean; // 是否启用
-  order?: MyOrderDTO; // 排序字段
-}
-
 // 查询：树结构
 export function baseFilePageTree(
   form: BaseFilePageDTO,
@@ -154,18 +203,42 @@ export function baseFilePageTree(
   );
 }
 
-export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
+export interface BaseFileUploadChunkComposeDTO {
+  transferId?: string; // 传输id，format：int64
 }
 
-// 批量删除文件：公有和私有，文件和文件夹
-export function baseFileRemoveByFileIdSet(
-  form: NotEmptyIdSet,
+// 上传分片文件-合并：公有和私有
+export function baseFileUploadChunkCompose(
+  form: BaseFileUploadChunkComposeDTO,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
     "post",
-    baseApi("/base/file/removeByFileIdSet"),
+    baseApi("/base/file/upload/chunk/compose"),
+    form,
+    config
+  );
+}
+
+export interface BaseFileUploadChunkDTO {
+  file?: string; // null，format：binary
+  uploadType?: string; // 文件上传的类型，required：true
+  remark?: string; // 备注
+  extraJson?: string; // 额外信息（json格式）
+  pid?: string; // 父节点id（顶级则为0），format：int64
+  chunkNum?: number; // 当前分片在整个文件中的顺序编号，每个分片都有一个唯一的编号（从1开始），required：true，format：int32
+  refId?: string; // 关联的 id，format：int64
+  transferId?: string; // 传输id，required：true，format：int64
+}
+
+// 上传分片文件：公有和私有
+export function baseFileUploadChunk(
+  form: BaseFileUploadChunkDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/file/upload/chunk"),
     form,
     config
   );
@@ -206,6 +279,38 @@ export function baseFileCopySelf(
   );
 }
 
+export interface BaseFileUploadChunkPreDTO {
+  fileSign?: string; // 文件签名，用于校验文件是否完整，一般采用 md5的方式，required：true
+  fileName?: string; // 文件名，required：true
+  file?: string; // null，format：binary
+  fileSize?: string; // 文件总大小，required：true，format：int64
+  uploadType?: string; // 文件上传的类型，required：true
+  remark?: string; // 备注
+  extraJson?: string; // 额外信息（json格式）
+  pid?: string; // 父节点id（顶级则为0），format：int64
+  refId?: string; // 关联的 id，format：int64
+}
+
+export interface BaseFileUploadChunkPreVO {
+  chunkTotal?: number; // 总分片个数，format：int32
+  chunkSize?: string; // 每个分片的大小，format：int64
+  transferId?: string; // 传输id，format：int64
+  fileId?: string; // 文件主键id，format：int64
+}
+
+// 上传分片文件-准备工作：公有和私有
+export function baseFileUploadChunkPre(
+  form: BaseFileUploadChunkPreDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<BaseFileUploadChunkPreVO>(
+    "post",
+    baseApi("/base/file/upload/chunk/pre"),
+    form,
+    config
+  );
+}
+
 // 查询：树结构-自我
 export function baseFilePageTreeSelf(
   form: BaseFilePageSelfDTO,
@@ -214,37 +319,6 @@ export function baseFilePageTreeSelf(
   return http.request<BaseFileDO[]>(
     "post",
     baseApi("/base/file/page/tree/self"),
-    form,
-    config
-  );
-}
-
-// 分页排序查询
-export function baseFilePage(
-  form: BaseFilePageDTO,
-  config?: PureHttpRequestConfig
-) {
-  return http.request<Page<BaseFileDO>>(
-    "post",
-    baseApi("/base/file/page"),
-    form,
-    config
-  );
-}
-
-export interface BaseFileMoveSelfDTO {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
-  pid?: string; // 父节点id（顶级则为0），required：true，format：int64
-}
-
-// 移动：文件和文件夹-自我
-export function baseFileMoveSelf(
-  form: BaseFileMoveSelfDTO,
-  config?: PureHttpRequestConfig
-) {
-  return http.request<string>(
-    "post",
-    baseApi("/base/file/move/self"),
     form,
     config
   );
