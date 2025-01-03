@@ -265,7 +265,6 @@ const tree = ref<BaseFileDO[]>([]);
 
 function treeSelfData() {
   baseFilePageTreeSelf({
-    ...search.value,
     type: BaseFileTypeEnum.FOLDER.code as any
   }).then(res => {
     tree.value = res.data;
@@ -302,7 +301,12 @@ function renameConfirmFun() {
 }
 
 function breadcrumbClick(index) {
-  search.value.pid = pidList[index];
+  const pidTemp = pidList[index];
+  console.log("pidTemp", pidTemp);
+  if (!pidTemp) {
+    return;
+  }
+  search.value.pid = pidTemp;
   onSearch();
 }
 </script>
@@ -401,6 +405,13 @@ function breadcrumbClick(index) {
           >
             删除
           </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(Refresh)"
+            @click="onSearch()"
+          >
+            刷新
+          </el-button>
         </div>
 
         <div class="flex">
@@ -433,10 +444,8 @@ function breadcrumbClick(index) {
         </div>
       </div>
 
-      <div class="mt-[30px]" />
-
       <div v-loading="loading">
-        <div>
+        <div class="py-[15px]">
           <el-breadcrumb separator="/">
             <template v-for="(item, index) in pathList" :key="index">
               <el-breadcrumb-item>
@@ -463,7 +472,7 @@ function breadcrumbClick(index) {
                 <div class="flex space-x-[20px]">
                   <template v-for="subItem in item.l" :key="subItem.id">
                     <el-checkbox :value="subItem.id">
-                      <el-tooltip placement="top">
+                      <el-tooltip placement="top" :show-after="500">
                         <template #content>
                           <div class="flex flex-col">
                             <div>名称：{{ subItem.showFileName }}</div>
