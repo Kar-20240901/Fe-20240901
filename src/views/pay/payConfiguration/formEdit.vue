@@ -130,15 +130,17 @@ function confirmClick() {
             ]"
           >
             <template #label>
-              <span>网关地址</span>
-              <IconifyIconOffline
-                v-tippy="{
-                  content: '例如：https://openapi.alipay.com/gateway.do',
-                  placement: 'top'
-                }"
-                :icon="Info"
-                class="ml-1"
-              />
+              <div class="flex items-center">
+                <span>网关地址</span>
+                <IconifyIconOffline
+                  v-tippy="{
+                    content: '例如：https://openapi.alipay.com/gateway.do',
+                    placement: 'top'
+                  }"
+                  :icon="Info"
+                  class="ml-1"
+                />
+              </div>
             </template>
             <el-input
               v-model="form.serverUrl"

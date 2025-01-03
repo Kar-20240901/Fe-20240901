@@ -26,6 +26,7 @@ export interface IBasePayTypeEnum {
 
   UNION: IBasePayTypeItemEnum;
   GOOGLE: IBasePayTypeItemEnum;
+  APPLY: IBasePayTypeItemEnum;
 }
 
 // 支付方式类型枚举类
@@ -130,6 +131,11 @@ export const BasePayTypeEnum: IBasePayTypeEnum = {
   GOOGLE: {
     code: 401,
     name: "谷歌"
+  },
+
+  APPLY: {
+    code: 501,
+    name: "苹果"
   }
 };
 

@@ -289,6 +289,13 @@ function deleteMenu(item, tag?: string) {
   handleAliveRoute(route as ToRouteType);
 }
 
+function handleMouseClick(item, event: MouseEvent) {
+  if (event.button === 1) {
+    // 如果是点击鼠标中键
+    deleteMenu(item);
+  }
+}
+
 function onClickDrop(key, item, selectRoute?: RouteConfigs) {
   if (item && item.disabled) return;
 
@@ -585,6 +592,7 @@ onBeforeUnmount(() => {
           @mouseenter.prevent="onMouseenter(index)"
           @mouseleave.prevent="onMouseleave(index)"
           @click="tagOnClick(item)"
+          @mousedown="e => handleMouseClick(item, e)"
         >
           <template v-if="showModel !== 'chrome'">
             <span
