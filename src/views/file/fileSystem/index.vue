@@ -16,7 +16,7 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
 import ReSegmented from "@/components/ReSegmented/src";
-import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
+import { RecycleScroller } from "vue-virtual-scroller";
 import { BaseFileTypeEnum } from "@/model/enum/BaseFileTypeEnum";
 import Delete from "@iconify-icons/ep/delete";
 import CommonConstant from "@/model/constant/CommonConstant";
@@ -469,74 +469,60 @@ function breadcrumbClick(index) {
 
         <el-scrollbar height="600px">
           <el-checkbox-group v-if="dataList.length" v-model="selectIdArr">
-            <DynamicScroller
-              :items="dataList"
-              :item-size="66"
-              :min-item-size="66"
-              direction="vertical"
-            >
-              <template #default="{ item, index, active }">
-                <DynamicScrollerItem
-                  :item="item"
-                  :active="active"
-                  :data-index="index"
-                  :data-active="active"
-                >
-                  <div class="flex space-x-[20px]">
-                    <template v-for="subItem in item.l" :key="subItem.id">
-                      <el-checkbox :value="subItem.id">
-                        <el-tooltip placement="top" :show-after="500">
-                          <template #content>
-                            <div class="flex flex-col">
-                              <div>名称：{{ subItem.showFileName }}</div>
-                              <div
-                                v-if="
-                                  subItem.type === BaseFileTypeEnum.FILE.code
-                                "
-                              >
-                                大小：{{ GetFileSizeStr(subItem.fileSize) }}
-                              </div>
-                              <div
-                                v-if="
-                                  subItem.type === BaseFileTypeEnum.FOLDER.code
-                                "
-                              >
-                                大小：{{ GetFileSizeStr(subItem.folderSize) }}
-                              </div>
-                              <div>
-                                创建时间：{{
-                                  FormatDateTimeForCurrentDay(
-                                    new Date(subItem.createTime)
-                                  )
-                                }}
-                              </div>
+            <RecycleScroller :items="dataList" :item-size="66">
+              <template #default="{ item }">
+                <div class="flex space-x-[20px]">
+                  <template v-for="subItem in item.l" :key="subItem.id">
+                    <el-checkbox :value="subItem.id">
+                      <el-tooltip placement="top" :show-after="500">
+                        <template #content>
+                          <div class="flex flex-col">
+                            <div>名称：{{ subItem.showFileName }}</div>
+                            <div
+                              v-if="subItem.type === BaseFileTypeEnum.FILE.code"
+                            >
+                              大小：{{ GetFileSizeStr(subItem.fileSize) }}
                             </div>
-                          </template>
-                          <div
-                            class="flex flex-col items-center"
-                            @dblclick="itemClick(subItem)"
-                          >
-                            <IconifyIconOnline
-                              :icon="
+                            <div
+                              v-else-if="
                                 subItem.type === BaseFileTypeEnum.FOLDER.code
-                                  ? 'ri:folder-open-fill'
-                                  : 'ri:file-2-line'
                               "
-                              width="50"
-                            />
-                            <el-text
-                              class="text-[13px] w-[80px] h-[16px] text-center"
-                              truncated
-                              >{{ subItem.showFileName }}
-                            </el-text>
+                            >
+                              大小：{{ GetFileSizeStr(subItem.folderSize) }}
+                            </div>
+                            <div>
+                              创建时间：{{
+                                FormatDateTimeForCurrentDay(
+                                  new Date(subItem.createTime)
+                                )
+                              }}
+                            </div>
                           </div>
-                        </el-tooltip>
-                      </el-checkbox>
-                    </template>
-                  </div>
-                </DynamicScrollerItem>
+                        </template>
+                        <div
+                          class="flex flex-col items-center"
+                          @dblclick="itemClick(subItem)"
+                        >
+                          <IconifyIconOnline
+                            :icon="
+                              subItem.type === BaseFileTypeEnum.FOLDER.code
+                                ? 'ri:folder-open-fill'
+                                : 'ri:file-2-line'
+                            "
+                            width="50"
+                          />
+                          <el-text
+                            class="text-[13px] w-[80px] h-[16px] text-center"
+                            truncated
+                            >{{ subItem.showFileName }}
+                          </el-text>
+                        </div>
+                      </el-tooltip>
+                    </el-checkbox>
+                  </template>
+                </div>
               </template>
-            </DynamicScroller>
+            </RecycleScroller>
           </el-checkbox-group>
 
           <div v-else class="text-[15px] flex w-full justify-center">
