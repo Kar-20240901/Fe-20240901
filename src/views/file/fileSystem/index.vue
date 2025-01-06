@@ -49,6 +49,8 @@ const pageSize = ref<number>(-1);
 
 const title = ref<string>("");
 
+const totalSize = ref<number>(0);
+
 const selectIdArr = ref<string[]>([]);
 
 onMounted(() => {
@@ -67,6 +69,7 @@ function onSearch(sufFun?: () => void) {
   })
     .then(res => {
       selectIdArr.value = [];
+      totalSize.value = 0;
 
       if (search.value.backUpFlag && res.data.backUpPid) {
         search.value.pid = res.data.backUpPid;
@@ -84,6 +87,8 @@ function onSearch(sufFun?: () => void) {
 
       let dataListItemList = [];
 
+      let totalSizeTemp = 0;
+
       res.data.records.forEach((item, index) => {
         if (index % 12 === 0 && index !== 0) {
           dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
@@ -92,6 +97,12 @@ function onSearch(sufFun?: () => void) {
         }
 
         dataListItemList.push(item);
+
+        if ((item.type as any) === BaseFileTypeEnum.FILE.code) {
+          totalSizeTemp = totalSizeTemp + Number(item.fileSize);
+        } else {
+          totalSizeTemp = totalSizeTemp + Number(item.folderSize);
+        }
       });
 
       if (dataListItemList.length > 0) {
@@ -100,6 +111,7 @@ function onSearch(sufFun?: () => void) {
 
       dataList.value = dataListTemp;
       total.value = res.data.records.length;
+      totalSize.value = totalSizeTemp;
     })
     .finally(() => {
       loading.value = false;
@@ -537,7 +549,7 @@ function breadcrumbClick(index) {
         <div />
 
         <div>
-          {{ total }} 个项目 | 总大小 {{ "500kb" }}
+          {{ total }} 个项目 | 总大小 {{ GetFileSizeStr(totalSize) }}
           {{
             selectIdArr.length ? ` | 已选择 ${selectIdArr.length} 个项目` : ""
           }}

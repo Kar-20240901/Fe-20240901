@@ -37,15 +37,16 @@ export function GetFileSizeStr(size: number | string): string {
     return "";
   }
 
-  const numberSize = Number(size);
+  const bytes = Number(size);
 
-  const toFixed = (numberSize / 1024 / 1024).toFixed(2);
-
-  if (Number(toFixed) === 0) {
-    return numberSize + "Byte";
+  const units = ["Byte", "Kb", "Mb", "Gb", "Tb"];
+  let index = Math.floor(Math.log(bytes) / Math.log(1024));
+  if (index > units.length - 1) {
+    index = units.length - 1;
   }
-
-  return toFixed + "Mb";
+  const unit = units[index];
+  const res = bytes / Math.pow(1024, index);
+  return res.toFixed(2) + " " + unit;
 }
 
 /**
