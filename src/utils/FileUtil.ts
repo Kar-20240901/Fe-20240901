@@ -33,8 +33,8 @@ export function OpenFileDownloadPageFlag(): boolean {
  * 获取：文件大小字符串
  */
 export function GetFileSizeStr(size: number | string): string {
-  if (!size && size !== 0 && size !== "0") {
-    return "";
+  if (!size || size === 0 || size === "0") {
+    return "0Byte";
   }
 
   const bytes = Number(size);

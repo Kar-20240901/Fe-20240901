@@ -199,8 +199,6 @@ function itemClick(row: BaseFileDO) {
   }
 }
 
-const fileLoading = ref<boolean>(false);
-
 function downClick() {
   if (!selectIdArr.value.length) {
     ToastError("请勾选数据");

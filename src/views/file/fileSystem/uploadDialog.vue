@@ -115,7 +115,7 @@ function deleteClick(row: BaseFileTransferDO) {
   >
     <div class="flex flex-col px-5 py-3 bg-bg_color">
       <div class="pb-3 flex justify-between">
-        <div>
+        <div class="flex">
           <el-upload
             ref="uploadRef"
             :show-file-list="false"

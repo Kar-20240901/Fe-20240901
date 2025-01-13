@@ -44,7 +44,7 @@ export const BaseFileTransferStatusEnum: IBaseFileTransferStatusEnum = {
 
   COMPOSE_COMPLETE: {
     code: 601,
-    name: "合并完成"
+    name: "完成"
   }
 };
 
