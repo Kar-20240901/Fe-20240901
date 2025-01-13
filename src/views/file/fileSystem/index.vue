@@ -20,19 +20,13 @@ import { RecycleScroller } from "vue-virtual-scroller";
 import { BaseFileTypeEnum } from "@/model/enum/BaseFileTypeEnum";
 import Delete from "@iconify-icons/ep/delete";
 import CommonConstant from "@/model/constant/CommonConstant";
-import {
-  BaseFilePrivateDownload,
-  BaseFileUpload,
-  GetFileSizeStr
-} from "@/utils/FileUtil";
+import { BaseFilePrivateDownload, GetFileSizeStr } from "@/utils/FileUtil";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
-import { UploadFile, UploadFiles } from "element-plus";
-import { R } from "@/model/vo/R";
 import { IDataList } from "@/views/file/fileSystem/types";
-import { debounce } from "@pureadmin/utils";
 import CreateFolderFormEdit from "@/views/file/fileSystem/createFolderFormEdit.vue";
 import FileTree from "@/views/file/fileSystem/fileTree.vue";
 import RenameFormEdit from "@/views/file/fileSystem/renameFormEdit.vue";
+import UploadDialog from "@/views/file/fileSystem/uploadDialog.vue";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -218,44 +212,29 @@ function downClick() {
   });
 }
 
-const uploadRef = ref();
-const uploadFilesRef = ref<UploadFiles>();
-
-const uploadToastDebounce = debounce(() => ToastSuccess("上传成功"));
-
-function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
-  fileLoading.value = true;
-  uploadFilesRef.value = uploadFiles;
-  onChangeFunDebounce();
+function uploadClick() {
+  uploadDialogRef.value.open();
 }
 
-const onChangeFunDebounce = debounce(
-  () => {
-    const requestList: Promise<R>[] = [];
-
-    uploadFilesRef.value.forEach(item => {
-      requestList.push(
-        BaseFileUpload(item.raw, "FILE_SYSTEM", formData => {
-          formData.append("pid", search.value.pid);
-        })
-      );
-    });
-
-    Promise.all(requestList)
-      .then(res => {
-        if (res[0]) {
-          uploadToastDebounce();
-        }
-      })
-      .finally(() => {
-        onSearch();
-        fileLoading.value = false;
-        uploadRef.value.clearFiles();
-      });
-  },
-  1000,
-  false
-);
+// const onChangeFunDebounce = debounce(() => {
+//   const requestList: Promise<R>[] = [];
+//
+//   uploadFilesRef.value.forEach(item => {
+//     requestList.push(
+//       BaseFileUpload(item.raw, "FILE_SYSTEM", formData => {
+//         formData.append("pid", search.value.pid);
+//       })
+//     );
+//   });
+//
+//   Promise.all(requestList)
+//     .then(res => {})
+//     .finally(() => {
+//       onSearch();
+//       fileLoading.value = false;
+//       uploadRef.value.clearFiles();
+//     });
+// }, 1000);
 
 function selectAllClick() {
   if (selectIdArr.value.length === total.value) {
@@ -321,6 +300,8 @@ function breadcrumbClick(index) {
   search.value.pid = pidTemp;
   onSearch();
 }
+
+const uploadDialogRef = ref();
 </script>
 
 <template>
@@ -427,24 +408,13 @@ function breadcrumbClick(index) {
         </div>
 
         <div class="flex">
-          <el-upload
-            ref="uploadRef"
-            :show-file-list="false"
-            :disabled="fileLoading"
-            :auto-upload="false"
-            multiple
-            class="mr-[12px]"
-            :on-change="onChangeFun"
-            drag
+          <el-button
+            type="primary"
+            :icon="useRenderIcon('ep:upload')"
+            @click="uploadClick"
           >
-            <el-button
-              type="primary"
-              :icon="useRenderIcon('ep:upload')"
-              :loading="fileLoading"
-            >
-              上传
-            </el-button>
-          </el-upload>
+            上传
+          </el-button>
 
           <el-button
             type="primary"
@@ -564,6 +534,8 @@ function breadcrumbClick(index) {
       :confirm-fun="renameConfirmFun"
       :confirm-after-fun="fileTreeConfirmAfterFun"
     />
+
+    <uploadDialog ref="uploadDialogRef" title="上传" />
   </div>
 </template>
 
