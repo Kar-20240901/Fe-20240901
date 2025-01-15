@@ -9,3 +9,7 @@ export interface IDataList {
 export interface IFileTreeDialogFormProps extends IDialogFormProps {
   tree: BaseFileDO[];
 }
+
+export interface IUploadDialogFormProps extends IDialogFormProps {
+  tableSearch?: () => void;
+}

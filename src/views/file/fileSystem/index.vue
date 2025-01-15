@@ -45,7 +45,7 @@ const title = ref<string>("");
 
 const totalSize = ref<number>(0);
 
-const selectIdArr = ref<string[]>([]);
+const selectIdArr = ref<Set<string>>(new Set<string>());
 
 onMounted(() => {
   onSearch();
@@ -62,7 +62,7 @@ function onSearch(sufFun?: () => void) {
     pageSize: pageSize.value as any
   })
     .then(res => {
-      selectIdArr.value = [];
+      selectIdArr.value = new Set<string>();
       totalSize.value = 0;
 
       if (search.value.backUpFlag && res.data.backUpPid) {
@@ -84,7 +84,7 @@ function onSearch(sufFun?: () => void) {
       let totalSizeTemp = 0;
 
       res.data.records.forEach((item, index) => {
-        if (index % 12 === 0 && index !== 0) {
+        if (index % 13 === 0 && index !== 0) {
           dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
 
           dataListItemList = [];
@@ -129,7 +129,7 @@ const copyTitle = "复制文件";
 const moveTitle = "移动文件";
 
 function copyClick() {
-  if (!selectIdArr.value.length) {
+  if (!selectIdArr.value.size) {
     ToastError("请勾选数据");
     return;
   }
@@ -138,7 +138,7 @@ function copyClick() {
 }
 
 function moveClick() {
-  if (!selectIdArr.value.length) {
+  if (!selectIdArr.value.size) {
     ToastError("请勾选数据");
     return;
   }
@@ -150,9 +150,9 @@ function fileTreeConfirmFun() {
   const pid = fileTreeRef.value.getForm().value.pid;
 
   if (title.value === copyTitle) {
-    return baseFileCopySelf({ pid, idSet: selectIdArr.value });
+    return baseFileCopySelf({ pid, idSet: [...selectIdArr.value] });
   } else if (title.value === moveTitle) {
-    return baseFileMoveSelf({ pid, idSet: selectIdArr.value });
+    return baseFileMoveSelf({ pid, idSet: [...selectIdArr.value] });
   } else {
     ToastError("类型异常");
     throw new Error("类型异常");
@@ -166,22 +166,22 @@ function fileTreeConfirmAfterFun(res, done) {
 }
 
 function deleteBySelectIdArr() {
-  if (!selectIdArr.value.length) {
+  if (!selectIdArr.value.size) {
     ToastError("请勾选数据");
     return;
   }
   ExecConfirm(
     async () => {
       await baseFileRemoveByFileIdSet({
-        idSet: selectIdArr.value
+        idSet: [...selectIdArr.value]
       }).then(res => {
-        selectIdArr.value = [];
+        selectIdArr.value = new Set<string>();
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
-    `确定删除勾选的【${selectIdArr.value.length}】项数据吗？`
+    `确定删除勾选的【${selectIdArr.value.size}】项数据吗？`
   );
 }
 
@@ -192,15 +192,23 @@ function backUpClick() {
   });
 }
 
-function itemClick(row: BaseFileDO) {
+function itemDblClick(row: BaseFileDO) {
   if ((row.type as any) === BaseFileTypeEnum.FOLDER.code) {
     search.value.pid = row.id;
     onSearch();
   }
 }
 
+function itemClick(row: BaseFileDO) {
+  if (selectIdArr.value.has(row.id)) {
+    selectIdArr.value.delete(row.id);
+  } else {
+    selectIdArr.value.add(row.id);
+  }
+}
+
 function downClick() {
-  if (!selectIdArr.value.length) {
+  if (!selectIdArr.value.size) {
     ToastError("请勾选数据");
     return;
   }
@@ -215,15 +223,15 @@ function uploadClick() {
 }
 
 function selectAllClick() {
-  if (selectIdArr.value.length === total.value) {
+  if (selectIdArr.value.size === total.value) {
     // 取消全部勾选
-    selectIdArr.value = [];
+    selectIdArr.value = new Set<string>();
   } else {
     // 勾选全部
-    const selectIdArrTemp = [];
+    const selectIdArrTemp = new Set<string>();
     dataList.value.forEach(item => {
       item.l.forEach(subItem => {
-        selectIdArrTemp.push(subItem.id);
+        selectIdArrTemp.add(subItem.id);
       });
     });
     selectIdArr.value = selectIdArrTemp;
@@ -256,7 +264,7 @@ function createFolderConfirmAfterFun() {
 const renameRef = ref();
 
 function renameClick() {
-  if (!selectIdArr.value.length) {
+  if (!selectIdArr.value.size) {
     ToastError("请勾选数据");
     return;
   }
@@ -419,10 +427,10 @@ const uploadDialogRef = ref();
           <RecycleScroller
             v-if="dataList.length"
             :items="dataList"
-            :item-size="66"
+            :item-size="78"
           >
             <template #default="{ item }">
-              <div class="flex space-x-[20px]">
+              <div class="flex">
                 <template v-for="subItem in item.l" :key="subItem.id">
                   <el-tooltip placement="top" :show-after="500">
                     <template #content>
@@ -447,24 +455,29 @@ const uploadDialogRef = ref();
                         </div>
                       </div>
                     </template>
-                    <div
-                      class="flex flex-col items-center"
-                      @dblclick="itemClick(subItem)"
+                    <el-button
+                      text
+                      :type="selectIdArr.has(subItem.id) ? 'primary' : ''"
+                      class="!h-[78px]"
+                      @dblclick="itemDblClick(subItem)"
+                      @click="itemClick(subItem)"
                     >
-                      <IconifyIconOnline
-                        :icon="
-                          subItem.type === BaseFileTypeEnum.FOLDER.code
-                            ? 'ri:folder-open-fill'
-                            : 'ri:file-2-line'
-                        "
-                        width="50"
-                      />
-                      <el-text
-                        class="text-[13px] w-[80px] h-[16px] text-center"
-                        truncated
-                        >{{ subItem.showFileName }}
-                      </el-text>
-                    </div>
+                      <div class="flex flex-col items-center">
+                        <IconifyIconOnline
+                          :icon="
+                            subItem.type === BaseFileTypeEnum.FOLDER.code
+                              ? 'ri:folder-open-fill'
+                              : 'ri:file-2-line'
+                          "
+                          width="50"
+                        />
+                        <el-text
+                          class="text-[13px] w-[80px] h-[18px] text-center"
+                          truncated
+                          >{{ subItem.showFileName }}
+                        </el-text>
+                      </div>
+                    </el-button>
                   </el-tooltip>
                 </template>
               </div>
@@ -482,9 +495,7 @@ const uploadDialogRef = ref();
 
         <div>
           {{ total }} 个项目 | 总大小 {{ GetFileSizeStr(totalSize) }}
-          {{
-            selectIdArr.length ? ` | 已选择 ${selectIdArr.length} 个项目` : ""
-          }}
+          {{ selectIdArr.size ? ` | 已选择 ${selectIdArr.size} 个项目` : "" }}
         </div>
       </div>
     </div>
@@ -511,7 +522,7 @@ const uploadDialogRef = ref();
       :confirm-after-fun="fileTreeConfirmAfterFun"
     />
 
-    <uploadDialog ref="uploadDialogRef" title="上传" />
+    <uploadDialog ref="uploadDialogRef" title="上传" :table-search="onSearch" />
   </div>
 </template>
 
@@ -524,5 +535,31 @@ const uploadDialogRef = ref();
 :deep(.el-upload-dragger) {
   padding: 0;
   border: none;
+}
+
+.custom-button {
+  box-sizing: border-box;
+  display: inline-block;
+  padding: 12px 20px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  color: #606266;
+  text-align: center;
+  white-space: nowrap;
+  appearance: none;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  outline: none;
+  transition: 0.1s;
+}
+
+.custom-button:hover {
+  color: #409eff;
+  background-color: #ecf5ff;
+  border-color: #c6e2ff;
 }
 </style>

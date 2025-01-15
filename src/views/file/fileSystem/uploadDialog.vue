@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { type IDialogFormProps } from "@/model/types/IDialogFormProps";
 import {
   baseFileTransferDeleteByIdSet,
   BaseFileTransferDO,
@@ -16,6 +15,9 @@ import { FileUpload } from "@/utils/FileUtil";
 import { baseFileUploadFileSystemPre } from "@/api/http/base/BaseFileController";
 import { baseApi } from "@/api/http/utils";
 import { BaseFileUploadTypeEnumEnum } from "@/model/enum/BaseFileUploadTypeEnum";
+import Refresh from "@iconify-icons/ep/refresh";
+import { IUploadDialogFormProps } from "@/views/file/fileSystem/types";
+import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 
 const search = ref<BaseFileTransferPageDTO>({});
 
@@ -23,7 +25,7 @@ const loading = ref<boolean>(false);
 const dataList = ref<BaseFileTransferDO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
-const pageSize = ref<number>(15);
+const pageSize = ref<number>(10);
 
 const selectIdArr = ref<string[]>([]);
 const tableRef = ref();
@@ -31,6 +33,10 @@ const tableRef = ref();
 const visible = ref<boolean>(false);
 
 function open() {
+  total.value = 0;
+  currentPage.value = 1;
+  pageSize.value = 10;
+  dataList.value = [];
   visible.value = true;
   onSearch();
 }
@@ -55,7 +61,7 @@ defineExpose({
   open
 });
 
-const props = defineProps<IDialogFormProps>();
+const props = defineProps<IUploadDialogFormProps>();
 
 const uploadRef = ref();
 const uploadFilesRef = ref<UploadFiles>([]);
@@ -72,6 +78,8 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
     fileSize: uploadFile.size as any,
     uploadType: BaseFileUploadTypeEnumEnum.FILE_SYSTEM.code as any
   }).then(res => {
+    onSearch();
+
     const formData = new FormData();
 
     formData.append("file", uploadFile.raw);
@@ -80,6 +88,10 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
 
     FileUpload(formData, baseApi("/base/file/upload/fileSystem")).then(() => {
       onSearch();
+
+      if (props.tableSearch) {
+        props.tableSearch();
+      }
     });
   });
 }
@@ -161,11 +173,11 @@ function deleteClick(row: BaseFileTransferDO) {
         <div>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri:search-line')"
+            :icon="useRenderIcon(Refresh)"
             :loading="loading"
             @click="onSearch"
           >
-            搜索
+            刷新
           </el-button>
         </div>
       </div>
@@ -182,14 +194,28 @@ function deleteClick(row: BaseFileTransferDO) {
         show-overflow-tooltip
         stripe
         highlight-current-row
+        max-height="600px"
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="name" label="名称" />
-        <el-table-column #default="scope" prop="status" label="状态">
-          {{ BaseFileTransferStatusMap.get(scope.row.type) || "" }}
+        <el-table-column prop="showFileName" label="文件名" />
+        <el-table-column
+          #default="scope"
+          prop="status"
+          label="状态"
+          width="100"
+        >
+          {{ BaseFileTransferStatusMap.get(scope.row.status) || "" }}
         </el-table-column>
-        <el-table-column #default="scope" label="操作">
+        <el-table-column
+          #default="scope"
+          prop="createTime"
+          label="创建时间"
+          width="120"
+        >
+          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
+        </el-table-column>
+        <el-table-column #default="scope" label="操作" width="120">
           <el-button
             link
             type="primary"
@@ -207,14 +233,10 @@ function deleteClick(row: BaseFileTransferDO) {
         class="mt-3"
         layout="->, prev, pager, next, jumper, sizes, total"
         :total="total"
-        :page-sizes="[15, 50, 100]"
+        :page-sizes="[10, 50, 100]"
         @change="onSearch"
       />
     </div>
-
-    <template #footer>
-      <el-button @click="visible = false">关闭</el-button>
-    </template>
   </el-dialog>
 </template>
 
