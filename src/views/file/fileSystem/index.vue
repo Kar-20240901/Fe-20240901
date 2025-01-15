@@ -201,6 +201,10 @@ function itemDblClick(row: BaseFileDO) {
 }
 
 function itemClick(row: BaseFileDO) {
+  if (row.uploadFlag) {
+    ToastError("文件传输中，请稍后再试");
+    return;
+  }
   if (selectIdArr.value.has(row.id)) {
     selectIdArr.value.delete(row.id);
   } else {
@@ -232,6 +236,9 @@ function selectAllClick() {
     const selectIdArrTemp = new Set<string>();
     dataList.value.forEach(item => {
       item.l.forEach(subItem => {
+        if (row.uploadFlag) {
+          return;
+        }
         selectIdArrTemp.add(subItem.id);
       });
     });
@@ -433,7 +440,7 @@ const uploadDialogRef = ref();
             <template #default="{ item }">
               <div class="flex h-[90px]">
                 <template v-for="subItem in item.l" :key="subItem.id">
-                  <el-tooltip placement="top" :show-after="500">
+                  <el-tooltip placement="top" :show-after="800">
                     <template #content>
                       <div class="flex flex-col">
                         <div>名称：{{ subItem.showFileName }}</div>
@@ -480,7 +487,8 @@ const uploadDialogRef = ref();
                           :type="
                             selectIdArr.has(subItem.id) ? 'primary' : undefined
                           "
-                          >{{ subItem.showFileName }}
+                          >{{ subItem.uploadFlag ? "(传输中)" : ""
+                          }}{{ subItem.showFileName }}
                         </el-text>
                       </div>
                     </el-button>
