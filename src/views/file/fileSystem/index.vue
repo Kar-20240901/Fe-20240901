@@ -457,7 +457,9 @@ const uploadDialogRef = ref();
                     </template>
                     <el-button
                       text
-                      :type="selectIdArr.has(subItem.id) ? 'primary' : ''"
+                      :type="
+                        selectIdArr.has(subItem.id) ? 'primary' : undefined
+                      "
                       class="!h-[78px]"
                       @dblclick="itemDblClick(subItem)"
                       @click="itemClick(subItem)"
