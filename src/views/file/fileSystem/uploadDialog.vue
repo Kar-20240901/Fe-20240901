@@ -12,6 +12,10 @@ import Delete from "@iconify-icons/ep/delete";
 import { UploadFile, UploadFiles } from "element-plus";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { BaseFileTransferStatusMap } from "@/model/enum/BaseFileTransferStatusEnum";
+import { FileUpload } from "@/utils/FileUtil";
+import { baseFileUploadFileSystemPre } from "@/api/http/base/BaseFileController";
+import { baseApi } from "@/api/http/utils";
+import { BaseFileUploadTypeEnumEnum } from "@/model/enum/BaseFileUploadTypeEnum";
 
 const search = ref<BaseFileTransferPageDTO>({});
 
@@ -60,10 +64,24 @@ function onBeforeUpload() {
   return true;
 }
 
-function uploadHttpRequest() {}
-
 function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
   uploadFilesRef.value = uploadFiles;
+
+  baseFileUploadFileSystemPre({
+    fileName: uploadFile.name,
+    fileSize: uploadFile.size as any,
+    uploadType: BaseFileUploadTypeEnumEnum.FILE_SYSTEM.code as any
+  }).then(res => {
+    const formData = new FormData();
+
+    formData.append("file", uploadFile.raw);
+
+    formData.append("transferId", res.data.transferId);
+
+    FileUpload(formData, baseApi("/base/file/upload/fileSystem")).then(() => {
+      onSearch();
+    });
+  });
 }
 
 function deleteBySelectIdArr() {
@@ -124,7 +142,6 @@ function deleteClick(row: BaseFileTransferDO) {
             class="mr-[12px]"
             :on-change="onChangeFun"
             :before-upload="onBeforeUpload"
-            :http-request="uploadHttpRequest"
             :file-list="uploadFilesRef"
             drag
           >

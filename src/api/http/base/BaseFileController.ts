@@ -109,6 +109,70 @@ export function baseFileRemoveByFileIdSet(
   );
 }
 
+export interface BaseFileUploadFileSystemDTO {
+  file?: string; // null，format：binary
+  transferId?: string; // 传输id，format：int64
+}
+
+// 文件系统上传文件：公有和私有
+export function baseFileUploadFileSystem(
+  form: BaseFileUploadFileSystemDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/file/upload/fileSystem"),
+    form,
+    config
+  );
+}
+
+export interface BaseFileUploadFileSystemPreDTO {
+  fileName?: string; // 文件名，required：true
+  file?: string; // null，format：binary
+  fileSize?: string; // 文件总大小，required：true，format：int64
+  uploadType?: string; // 文件上传的类型，required：true
+  remark?: string; // 备注
+  extraJson?: string; // 额外信息（json格式）
+  pid?: string; // 父节点id（顶级则为0），format：int64
+  refId?: string; // 关联的 id，format：int64
+}
+
+export interface BaseFileUploadFileSystemPreVO {
+  transferId?: string; // 传输id，format：int64
+  fileId?: string; // 文件主键id，format：int64
+}
+
+// 文件系统上传文件-准备工作：公有和私有
+export function baseFileUploadFileSystemPre(
+  form: BaseFileUploadFileSystemPreDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<BaseFileUploadFileSystemPreVO>(
+    "post",
+    baseApi("/base/file/upload/fileSystem/pre"),
+    form,
+    config
+  );
+}
+
+export interface BaseFileUploadFileSystemChunkComposeDTO {
+  transferId?: string; // 传输id，format：int64
+}
+
+// 文件系统上传分片文件-合并：公有和私有
+export function baseFileUploadFileSystemChunkCompose(
+  form: BaseFileUploadFileSystemChunkComposeDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/file/upload/fileSystem/chunk/compose"),
+    form,
+    config
+  );
+}
+
 export interface BaseFilePageDTO {
   originFileName?: string; // 文件原始名（包含文件类型）
   globalFlag?: boolean; // 全局搜索
@@ -159,6 +223,38 @@ export function baseFileMoveSelf(
   );
 }
 
+export interface BaseFileUploadFileSystemChunkPreDTO {
+  fileSign?: string; // 文件签名，用于校验文件是否完整，一般采用 md5的方式，required：true
+  fileName?: string; // 文件名，required：true
+  file?: string; // null，format：binary
+  fileSize?: string; // 文件总大小，required：true，format：int64
+  uploadType?: string; // 文件上传的类型，required：true
+  remark?: string; // 备注
+  extraJson?: string; // 额外信息（json格式）
+  pid?: string; // 父节点id（顶级则为0），format：int64
+  refId?: string; // 关联的 id，format：int64
+}
+
+export interface BaseFileUploadFileSystemChunkPreVO {
+  chunkTotal?: number; // 总分片个数，format：int32
+  chunkSize?: string; // 每个分片的大小，format：int64
+  transferId?: string; // 传输id，format：int64
+  fileId?: string; // 文件主键id，format：int64
+}
+
+// 文件系统上传分片文件-准备工作：公有和私有
+export function baseFileUploadFileSystemChunkPre(
+  form: BaseFileUploadFileSystemChunkPreDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<BaseFileUploadFileSystemChunkPreVO>(
+    "post",
+    baseApi("/base/file/upload/fileSystem/chunk/pre"),
+    form,
+    config
+  );
+}
+
 export interface BaseFileUpdateSelfDTO {
   idSet?: string[]; // 主键 idSet，required：true，format：int64
   fileName?: string; // 文件名
@@ -172,6 +268,30 @@ export function baseFileUpdateSelf(
   return http.request<string>(
     "post",
     baseApi("/base/file/update/self"),
+    form,
+    config
+  );
+}
+
+export interface BaseFileUploadFileSystemChunkDTO {
+  file?: string; // null，format：binary
+  uploadType?: string; // 文件上传的类型，required：true
+  remark?: string; // 备注
+  extraJson?: string; // 额外信息（json格式）
+  pid?: string; // 父节点id（顶级则为0），format：int64
+  chunkNum?: number; // 当前分片在整个文件中的顺序编号，每个分片都有一个唯一的编号（从1开始），required：true，format：int32
+  refId?: string; // 关联的 id，format：int64
+  transferId?: string; // 传输id，required：true，format：int64
+}
+
+// 文件系统上传分片文件：公有和私有
+export function baseFileUploadFileSystemChunk(
+  form: BaseFileUploadFileSystemChunkDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/file/upload/fileSystem/chunk"),
     form,
     config
   );
@@ -207,47 +327,6 @@ export function baseFilePageTree(
   );
 }
 
-export interface BaseFileUploadChunkComposeDTO {
-  transferId?: string; // 传输id，format：int64
-}
-
-// 上传分片文件-合并：公有和私有
-export function baseFileUploadChunkCompose(
-  form: BaseFileUploadChunkComposeDTO,
-  config?: PureHttpRequestConfig
-) {
-  return http.request<string>(
-    "post",
-    baseApi("/base/file/upload/chunk/compose"),
-    form,
-    config
-  );
-}
-
-export interface BaseFileUploadChunkDTO {
-  file?: string; // null，format：binary
-  uploadType?: string; // 文件上传的类型，required：true
-  remark?: string; // 备注
-  extraJson?: string; // 额外信息（json格式）
-  pid?: string; // 父节点id（顶级则为0），format：int64
-  chunkNum?: number; // 当前分片在整个文件中的顺序编号，每个分片都有一个唯一的编号（从1开始），required：true，format：int32
-  refId?: string; // 关联的 id，format：int64
-  transferId?: string; // 传输id，required：true，format：int64
-}
-
-// 上传分片文件：公有和私有
-export function baseFileUploadChunk(
-  form: BaseFileUploadChunkDTO,
-  config?: PureHttpRequestConfig
-) {
-  return http.request<string>(
-    "post",
-    baseApi("/base/file/upload/chunk"),
-    form,
-    config
-  );
-}
-
 export interface LongObjectMapVOString {
   map?: object; // map对象
 }
@@ -278,38 +357,6 @@ export function baseFileCopySelf(
   return http.request<string>(
     "post",
     baseApi("/base/file/copy/self"),
-    form,
-    config
-  );
-}
-
-export interface BaseFileUploadChunkPreDTO {
-  fileSign?: string; // 文件签名，用于校验文件是否完整，一般采用 md5的方式，required：true
-  fileName?: string; // 文件名，required：true
-  file?: string; // null，format：binary
-  fileSize?: string; // 文件总大小，required：true，format：int64
-  uploadType?: string; // 文件上传的类型，required：true
-  remark?: string; // 备注
-  extraJson?: string; // 额外信息（json格式）
-  pid?: string; // 父节点id（顶级则为0），format：int64
-  refId?: string; // 关联的 id，format：int64
-}
-
-export interface BaseFileUploadChunkPreVO {
-  chunkTotal?: number; // 总分片个数，format：int32
-  chunkSize?: string; // 每个分片的大小，format：int64
-  transferId?: string; // 传输id，format：int64
-  fileId?: string; // 文件主键id，format：int64
-}
-
-// 上传分片文件-准备工作：公有和私有
-export function baseFileUploadChunkPre(
-  form: BaseFileUploadChunkPreDTO,
-  config?: PureHttpRequestConfig
-) {
-  return http.request<BaseFileUploadChunkPreVO>(
-    "post",
-    baseApi("/base/file/upload/chunk/pre"),
     form,
     config
   );

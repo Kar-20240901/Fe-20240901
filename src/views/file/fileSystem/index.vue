@@ -214,26 +214,6 @@ function uploadClick() {
   uploadDialogRef.value.open();
 }
 
-// const onChangeFunDebounce = debounce(() => {
-//   const requestList: Promise<R>[] = [];
-//
-//   uploadFilesRef.value.forEach(item => {
-//     requestList.push(
-//       BaseFileUpload(item.raw, "FILE_SYSTEM", formData => {
-//         formData.append("pid", search.value.pid);
-//       })
-//     );
-//   });
-//
-//   Promise.all(requestList)
-//     .then(res => {})
-//     .finally(() => {
-//       onSearch();
-//       fileLoading.value = false;
-//       uploadRef.value.clearFiles();
-//     });
-// }, 1000);
-
 function selectAllClick() {
   if (selectIdArr.value.length === total.value) {
     // 取消全部勾选
@@ -436,62 +416,60 @@ const uploadDialogRef = ref();
         </div>
 
         <el-scrollbar height="600px">
-          <el-checkbox-group v-if="dataList.length" v-model="selectIdArr">
-            <RecycleScroller :items="dataList" :item-size="66">
-              <template #default="{ item }">
-                <div class="flex space-x-[20px]">
-                  <template v-for="subItem in item.l" :key="subItem.id">
-                    <el-checkbox :value="subItem.id">
-                      <el-tooltip placement="top" :show-after="500">
-                        <template #content>
-                          <div class="flex flex-col">
-                            <div>名称：{{ subItem.showFileName }}</div>
-                            <div
-                              v-if="subItem.type === BaseFileTypeEnum.FILE.code"
-                            >
-                              大小：{{ GetFileSizeStr(subItem.fileSize) }}
-                            </div>
-                            <div
-                              v-else-if="
-                                subItem.type === BaseFileTypeEnum.FOLDER.code
-                              "
-                            >
-                              大小：{{ GetFileSizeStr(subItem.folderSize) }}
-                            </div>
-                            <div>
-                              创建时间：{{
-                                FormatDateTimeForCurrentDay(
-                                  new Date(subItem.createTime)
-                                )
-                              }}
-                            </div>
-                          </div>
-                        </template>
-                        <div
-                          class="flex flex-col items-center"
-                          @dblclick="itemClick(subItem)"
-                        >
-                          <IconifyIconOnline
-                            :icon="
-                              subItem.type === BaseFileTypeEnum.FOLDER.code
-                                ? 'ri:folder-open-fill'
-                                : 'ri:file-2-line'
-                            "
-                            width="50"
-                          />
-                          <el-text
-                            class="text-[13px] w-[80px] h-[16px] text-center"
-                            truncated
-                            >{{ subItem.showFileName }}
-                          </el-text>
+          <RecycleScroller
+            v-if="dataList.length"
+            :items="dataList"
+            :item-size="66"
+          >
+            <template #default="{ item }">
+              <div class="flex space-x-[20px]">
+                <template v-for="subItem in item.l" :key="subItem.id">
+                  <el-tooltip placement="top" :show-after="500">
+                    <template #content>
+                      <div class="flex flex-col">
+                        <div>名称：{{ subItem.showFileName }}</div>
+                        <div v-if="subItem.type === BaseFileTypeEnum.FILE.code">
+                          大小：{{ GetFileSizeStr(subItem.fileSize) }}
                         </div>
-                      </el-tooltip>
-                    </el-checkbox>
-                  </template>
-                </div>
-              </template>
-            </RecycleScroller>
-          </el-checkbox-group>
+                        <div
+                          v-else-if="
+                            subItem.type === BaseFileTypeEnum.FOLDER.code
+                          "
+                        >
+                          大小：{{ GetFileSizeStr(subItem.folderSize) }}
+                        </div>
+                        <div>
+                          创建时间：{{
+                            FormatDateTimeForCurrentDay(
+                              new Date(subItem.createTime)
+                            )
+                          }}
+                        </div>
+                      </div>
+                    </template>
+                    <div
+                      class="flex flex-col items-center"
+                      @dblclick="itemClick(subItem)"
+                    >
+                      <IconifyIconOnline
+                        :icon="
+                          subItem.type === BaseFileTypeEnum.FOLDER.code
+                            ? 'ri:folder-open-fill'
+                            : 'ri:file-2-line'
+                        "
+                        width="50"
+                      />
+                      <el-text
+                        class="text-[13px] w-[80px] h-[16px] text-center"
+                        truncated
+                        >{{ subItem.showFileName }}
+                      </el-text>
+                    </div>
+                  </el-tooltip>
+                </template>
+              </div>
+            </template>
+          </RecycleScroller>
 
           <div v-else class="text-[15px] flex w-full justify-center">
             此文件夹为空。
