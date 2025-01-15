@@ -76,7 +76,8 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
   baseFileUploadFileSystemPre({
     fileName: uploadFile.name,
     fileSize: uploadFile.size as any,
-    uploadType: BaseFileUploadTypeEnumEnum.FILE_SYSTEM.code as any
+    uploadType: BaseFileUploadTypeEnumEnum.FILE_SYSTEM.code as any,
+    pid: props.pid
   }).then(res => {
     onSearch();
 
@@ -211,7 +212,7 @@ function deleteClick(row: BaseFileTransferDO) {
           #default="scope"
           prop="createTime"
           label="创建时间"
-          width="120"
+          width="200"
         >
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>

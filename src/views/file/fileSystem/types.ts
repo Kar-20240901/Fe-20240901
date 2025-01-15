@@ -11,5 +11,6 @@ export interface IFileTreeDialogFormProps extends IDialogFormProps {
 }
 
 export interface IUploadDialogFormProps extends IDialogFormProps {
+  pid?: string;
   tableSearch?: () => void;
 }

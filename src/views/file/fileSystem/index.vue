@@ -424,14 +424,14 @@ const uploadDialogRef = ref();
           </el-breadcrumb>
         </div>
 
-        <el-scrollbar height="650px">
+        <el-scrollbar height="650px" view-class="flex flex-col h-full">
           <RecycleScroller
             v-if="dataList.length"
             :items="dataList"
-            :min-item-size="78"
+            :min-item-size="90"
           >
             <template #default="{ item }">
-              <div class="flex">
+              <div class="flex h-[90px]">
                 <template v-for="subItem in item.l" :key="subItem.id">
                   <el-tooltip placement="top" :show-after="500">
                     <template #content>
@@ -477,6 +477,9 @@ const uploadDialogRef = ref();
                         <el-text
                           class="text-[13px] w-[80px] h-[18px] text-center"
                           truncated
+                          :type="
+                            selectIdArr.has(subItem.id) ? 'primary' : undefined
+                          "
                           >{{ subItem.showFileName }}
                         </el-text>
                       </div>
