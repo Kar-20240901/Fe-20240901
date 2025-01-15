@@ -16,17 +16,18 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
 import ReSegmented from "@/components/ReSegmented/src";
-import { RecycleScroller } from "vue-virtual-scroller";
 import { BaseFileTypeEnum } from "@/model/enum/BaseFileTypeEnum";
 import Delete from "@iconify-icons/ep/delete";
 import CommonConstant from "@/model/constant/CommonConstant";
 import { BaseFilePrivateDownload, GetFileSizeStr } from "@/utils/FileUtil";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { IDataList } from "@/views/file/fileSystem/types";
 import CreateFolderFormEdit from "@/views/file/fileSystem/createFolderFormEdit.vue";
 import FileTree from "@/views/file/fileSystem/fileTree.vue";
 import RenameFormEdit from "@/views/file/fileSystem/renameFormEdit.vue";
 import UploadDialog from "@/views/file/fileSystem/uploadDialog.vue";
+import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
+import { RecycleScroller } from "vue-virtual-scroller";
+import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -413,7 +414,7 @@ const uploadDialogRef = ref();
       </div>
 
       <div v-loading="loading">
-        <div class="py-[15px]">
+        <div class="py-[17px]">
           <el-breadcrumb separator="/">
             <template v-for="(item, index) in pathList" :key="index">
               <el-breadcrumb-item>
@@ -423,11 +424,11 @@ const uploadDialogRef = ref();
           </el-breadcrumb>
         </div>
 
-        <el-scrollbar height="600px">
+        <el-scrollbar height="650px">
           <RecycleScroller
             v-if="dataList.length"
             :items="dataList"
-            :item-size="78"
+            :min-item-size="78"
           >
             <template #default="{ item }">
               <div class="flex">
