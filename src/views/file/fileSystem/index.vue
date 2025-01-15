@@ -236,7 +236,7 @@ function selectAllClick() {
     const selectIdArrTemp = new Set<string>();
     dataList.value.forEach(item => {
       item.l.forEach(subItem => {
-        if (row.uploadFlag) {
+        if (subItem.uploadFlag) {
           return;
         }
         selectIdArrTemp.add(subItem.id);

@@ -18,7 +18,7 @@ import { BaseFileUploadTypeEnumEnum } from "@/model/enum/BaseFileUploadTypeEnum"
 import Refresh from "@iconify-icons/ep/refresh";
 import { IUploadDialogFormProps } from "@/views/file/fileSystem/types";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
-import { debounce } from "@pureadmin/utils";
+import { throttle } from "@pureadmin/utils";
 
 const search = ref<BaseFileTransferPageDTO>({});
 
@@ -80,11 +80,11 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
     uploadType: BaseFileUploadTypeEnumEnum.FILE_SYSTEM.code as any,
     pid: props.pid
   }).then(res => {
-    if (props.tableSearch) {
-      tableSearchDebounce();
-    }
+    onSearchThrottle();
 
-    onSearchDebounce();
+    if (props.tableSearch) {
+      tableSearchThrottle();
+    }
 
     const formData = new FormData();
 
@@ -93,18 +93,22 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
     formData.append("transferId", res.data.transferId);
 
     FileUpload(formData, baseApi("/base/file/upload/fileSystem")).then(() => {
-      onSearchDebounce();
+      onSearchThrottle();
+
+      if (props.tableSearch) {
+        tableSearchThrottle();
+      }
     });
   });
 }
 
-const onSearchDebounce = debounce(() => {
+const onSearchThrottle = throttle(() => {
   onSearch();
-}, 600);
+}, 1000);
 
-const tableSearchDebounce = debounce(() => {
+const tableSearchThrottle = throttle(() => {
   props.tableSearch();
-}, 600);
+}, 1000);
 
 function deleteBySelectIdArr() {
   if (!selectIdArr.value.length) {
