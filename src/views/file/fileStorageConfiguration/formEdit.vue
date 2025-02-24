@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import {ref} from "vue";
 import ReCol from "@/components/ReCol";
-import { R } from "@/model/vo/R";
+import {R} from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
-import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
-import { BaseFileStorageConfigurationInsertOrUpdateDTO } from "@/api/http/base/BaseFileStorageConfigurationController";
-import { IFileStorageConfigurationDialogFormProps } from "@/views/file/fileStorageConfiguration/types";
-import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
-import { BaseFileStorageTypeOptions } from "@/model/enum/BaseFileStorageTypeEnum";
+import {doConfirmClick, doOpen} from "@/model/types/IDialogFormProps";
+import {enableFlagOptions} from "@/model/enum/enableFlagEnum";
+import {
+  BaseFileStorageConfigurationInsertOrUpdateDTO
+} from "@/api/http/base/BaseFileStorageConfigurationController";
+import {
+  IFileStorageConfigurationDialogFormProps
+} from "@/views/file/fileStorageConfiguration/types";
+import {yesOrNoOptions} from "@/model/enum/yesOrNoEnum";
+import {BaseFileStorageTypeOptions} from "@/model/enum/BaseFileStorageTypeEnum";
 
 const form = ref<BaseFileStorageConfigurationInsertOrUpdateDTO>({});
 const formRef = ref();
@@ -122,7 +126,17 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="24" :xs="24" :sm="24">
-          <el-form-item label="钥匙" prop="accessKey">
+          <el-form-item
+            :rules="[
+              {
+                required: true,
+                message: '钥匙为必填项',
+                trigger: 'blur'
+              }
+            ]"
+            label="钥匙"
+            prop="accessKey"
+          >
             <el-input
               v-model="form.accessKey"
               clearable
@@ -134,7 +148,17 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="24" :xs="24" :sm="24">
-          <el-form-item label="秘钥" prop="secretKey">
+          <el-form-item
+            :rules="[
+              {
+                required: true,
+                message: '秘钥为必填项',
+                trigger: 'blur'
+              }
+            ]"
+            label="秘钥"
+            prop="secretKey"
+          >
             <el-input
               v-model="form.secretKey"
               clearable
@@ -146,7 +170,17 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="上传端点" prop="uploadEndpoint">
+          <el-form-item
+            :rules="[
+              {
+                required: true,
+                message: '上传端点为必填项',
+                trigger: 'blur'
+              }
+            ]"
+            label="上传端点"
+            prop="uploadEndpoint"
+          >
             <el-input
               v-model="form.uploadEndpoint"
               clearable
@@ -156,7 +190,17 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="公开下载端点" prop="publicDownloadEndpoint">
+          <el-form-item
+            :rules="[
+              {
+                required: true,
+                message: '公开下载端点为必填项',
+                trigger: 'blur'
+              }
+            ]"
+            label="公开下载端点"
+            prop="publicDownloadEndpoint"
+          >
             <el-input
               v-model="form.publicDownloadEndpoint"
               clearable
@@ -166,7 +210,17 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="公开桶" prop="bucketPublicName">
+          <el-form-item
+            :rules="[
+              {
+                required: true,
+                message: '公开桶为必填项',
+                trigger: 'blur'
+              }
+            ]"
+            label="公开桶"
+            prop="bucketPublicName"
+          >
             <el-input
               v-model="form.bucketPublicName"
               clearable
@@ -176,7 +230,17 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="私有桶" prop="bucketPrivateName">
+          <el-form-item
+            :rules="[
+              {
+                required: true,
+                message: '私有桶为必填项',
+                trigger: 'blur'
+              }
+            ]"
+            label="私有桶"
+            prop="bucketPrivateName"
+          >
             <el-input
               v-model="form.bucketPrivateName"
               clearable
