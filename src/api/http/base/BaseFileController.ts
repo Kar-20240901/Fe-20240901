@@ -237,7 +237,7 @@ export interface BaseFileUploadFileSystemChunkPreDTO {
 
 export interface BaseFileUploadFileSystemChunkPreVO {
   chunkTotal?: number; // 总分片个数，format：int32
-  chunkSize?: string; // 每个分片的大小，format：int64
+  chunkSize?: number; // 每个分片的大小，format：int32
   transferId?: string; // 传输id，format：int64
   fileId?: string; // 文件主键id，format：int64
 }

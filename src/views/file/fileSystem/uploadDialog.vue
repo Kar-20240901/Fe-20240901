@@ -12,13 +12,19 @@ import { UploadFile, UploadFiles } from "element-plus";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { BaseFileTransferStatusMap } from "@/model/enum/BaseFileTransferStatusEnum";
 import { FileUpload } from "@/utils/FileUtil";
-import { baseFileUploadFileSystemPre } from "@/api/http/base/BaseFileController";
+import {
+  baseFileUploadFileSystemChunkCompose,
+  baseFileUploadFileSystemChunkPre,
+  baseFileUploadFileSystemPre
+} from "@/api/http/base/BaseFileController";
 import { baseApi } from "@/api/http/utils";
 import { BaseFileUploadTypeEnumEnum } from "@/model/enum/BaseFileUploadTypeEnum";
 import Refresh from "@iconify-icons/ep/refresh";
 import { IUploadDialogFormProps } from "@/views/file/fileSystem/types";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { throttle } from "@pureadmin/utils";
+import CommonConstant from "@/model/constant/CommonConstant";
+import { MD5 } from "crypto-js";
 
 const search = ref<BaseFileTransferPageDTO>({});
 
@@ -74,6 +80,91 @@ function onBeforeUpload() {
 function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
   uploadFilesRef.value = uploadFiles;
 
+  if (uploadFile.size >= CommonConstant.FILE_CHUNK_SIZE * 1.5) {
+    // 分片上传文件
+    uploadFileSystemChunk(uploadFile);
+  } else {
+    // 普通上传文件
+    uploadFileSystem(uploadFile);
+  }
+}
+
+// 分片上传文件
+function uploadFileSystemChunk(uploadFile: UploadFile) {
+  const reader = new FileReader();
+  reader.readAsArrayBuffer(uploadFile.raw);
+
+  ToastSuccess("文件读取中，请稍后");
+
+  reader.onerror = () => {
+    ToastError("操作失败：文件读取异常");
+  };
+
+  reader.onload = (e: ProgressEvent<FileReader>) => {
+    const arrayBuffer = e.target.result as ArrayBuffer;
+    const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
+    const md5 = MD5(wordArray).toString();
+
+    baseFileUploadFileSystemChunkPre({
+      fileName: uploadFile.name,
+      fileSize: uploadFile.size as any,
+      uploadType: BaseFileUploadTypeEnumEnum.FILE_SYSTEM.code as any,
+      pid: props.pid,
+      fileSign: md5
+    }).then(res => {
+      onSearchThrottle();
+
+      if (props.tableSearch) {
+        tableSearchThrottle();
+      }
+
+      const chunkCount = res.data.chunkTotal;
+      const chunkSize = res.data.chunkSize;
+
+      for (let i = 0; i < chunkCount; i++) {
+        const start = i * chunkSize;
+        const end = Math.min(start + chunkSize, uploadFile.size);
+
+        const chunk = uploadFile.raw.slice(start, end);
+
+        const formData = new FormData();
+
+        formData.append("file", chunk);
+
+        formData.append("transferId", res.data.transferId);
+
+        formData.append("chunkNum", (i + 1).toString());
+
+        FileUpload(
+          formData,
+          baseApi("/base/file/upload/fileSystem/chunk")
+        ).then(() => {
+          onSearchThrottle();
+
+          if (props.tableSearch) {
+            tableSearchThrottle();
+          }
+
+          // 如果是最后一个
+          if (i === chunkCount - 1) {
+            baseFileUploadFileSystemChunkCompose({
+              transferId: res.data.transferId
+            }).then(() => {
+              onSearchThrottle();
+
+              if (props.tableSearch) {
+                tableSearchThrottle();
+              }
+            });
+          }
+        });
+      }
+    });
+  };
+}
+
+// 普通上传文件
+function uploadFileSystem(uploadFile: UploadFile) {
   baseFileUploadFileSystemPre({
     fileName: uploadFile.name,
     fileSize: uploadFile.size as any,
