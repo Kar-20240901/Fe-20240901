@@ -10,7 +10,10 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Delete from "@iconify-icons/ep/delete";
 import { UploadFile, UploadFiles } from "element-plus";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
-import { BaseFileTransferStatusMap } from "@/model/enum/BaseFileTransferStatusEnum";
+import {
+  BaseFileTransferStatusEnum,
+  BaseFileTransferStatusMap
+} from "@/model/enum/BaseFileTransferStatusEnum";
 import { FileUpload } from "@/utils/FileUtil";
 import {
   baseFileUploadFileSystemChunkCompose,
@@ -24,7 +27,7 @@ import { IUploadDialogFormProps } from "@/views/file/fileSystem/types";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { throttle } from "@pureadmin/utils";
 import CommonConstant from "@/model/constant/CommonConstant";
-import { MD5 } from "crypto-js";
+import * as CryptoJS from "crypto-js";
 
 const search = ref<BaseFileTransferPageDTO>({});
 
@@ -103,7 +106,7 @@ function uploadFileSystemChunk(uploadFile: UploadFile) {
   reader.onload = (e: ProgressEvent<FileReader>) => {
     const arrayBuffer = e.target.result as ArrayBuffer;
     const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
-    const md5 = MD5(wordArray).toString();
+    const md5 = CryptoJS.MD5(wordArray).toString();
 
     baseFileUploadFileSystemChunkPre({
       fileName: uploadFile.name,
@@ -121,6 +124,8 @@ function uploadFileSystemChunk(uploadFile: UploadFile) {
       const chunkCount = res.data.chunkTotal;
       const chunkSize = res.data.chunkSize;
 
+      const promiseArr: Promise<any>[] = [];
+
       for (let i = 0; i < chunkCount; i++) {
         const start = i * chunkSize;
         const end = Math.min(start + chunkSize, uploadFile.size);
@@ -135,30 +140,32 @@ function uploadFileSystemChunk(uploadFile: UploadFile) {
 
         formData.append("chunkNum", (i + 1).toString());
 
-        FileUpload(
-          formData,
-          baseApi("/base/file/upload/fileSystem/chunk")
-        ).then(() => {
+        promiseArr.push(
+          FileUpload(formData, baseApi("/base/file/upload/fileSystem/chunk"))
+        );
+      }
+
+      ToastSuccess("读取完成，传输中，请稍后");
+
+      Promise.all(promiseArr).then(() => {
+        ToastSuccess("传输完成，合并中，请稍后");
+        onSearchThrottle();
+
+        if (props.tableSearch) {
+          tableSearchThrottle();
+        }
+
+        baseFileUploadFileSystemChunkCompose({
+          transferId: res.data.transferId
+        }).then(() => {
+          ToastSuccess("合并完成");
           onSearchThrottle();
 
           if (props.tableSearch) {
             tableSearchThrottle();
           }
-
-          // 如果是最后一个
-          if (i === chunkCount - 1) {
-            baseFileUploadFileSystemChunkCompose({
-              transferId: res.data.transferId
-            }).then(() => {
-              onSearchThrottle();
-
-              if (props.tableSearch) {
-                tableSearchThrottle();
-              }
-            });
-          }
         });
-      }
+      });
     });
   };
 }
@@ -184,6 +191,7 @@ function uploadFileSystem(uploadFile: UploadFile) {
     formData.append("transferId", res.data.transferId);
 
     FileUpload(formData, baseApi("/base/file/upload/fileSystem")).then(() => {
+      ToastSuccess("传输完成");
       onSearchThrottle();
 
       if (props.tableSearch) {
@@ -234,6 +242,25 @@ function deleteClick(row: BaseFileTransferDO) {
     },
     undefined,
     `确定删除【${row.showFileName}】吗？`
+  );
+}
+
+function composeClick(row: BaseFileTransferDO) {
+  ExecConfirm(
+    async () => {
+      await baseFileUploadFileSystemChunkCompose({
+        transferId: row.id
+      }).then(() => {
+        ToastSuccess("合并完成");
+        onSearchThrottle();
+
+        if (props.tableSearch) {
+          tableSearchThrottle();
+        }
+      });
+    },
+    undefined,
+    `确定合并【${row.showFileName}】吗？`
   );
 }
 </script>
@@ -322,11 +349,17 @@ function deleteClick(row: BaseFileTransferDO) {
         </el-table-column>
         <el-table-column #default="scope" label="操作" width="120">
           <el-button
+            v-if="
+              scope.row.status ===
+              BaseFileTransferStatusEnum.TRANSFER_COMPLETE.code
+            "
             link
             type="primary"
-            :icon="useRenderIcon(Delete)"
-            @click="deleteClick(scope.row)"
+            @click="composeClick(scope.row)"
           >
+            合并
+          </el-button>
+          <el-button link type="primary" @click="deleteClick(scope.row)">
             删除
           </el-button>
         </el-table-column>
