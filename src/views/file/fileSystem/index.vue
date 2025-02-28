@@ -196,6 +196,7 @@ function backUpClick() {
 function itemDblClick(row: BaseFileDO) {
   if ((row.type as any) === BaseFileTypeEnum.FOLDER.code) {
     search.value.pid = row.id;
+    search.value.globalFlag = false;
     onSearch();
   }
 }
@@ -536,7 +537,12 @@ const uploadDialogRef = ref();
       :confirm-after-fun="fileTreeConfirmAfterFun"
     />
 
-    <uploadDialog ref="uploadDialogRef" title="上传" :table-search="onSearch" />
+    <uploadDialog
+      ref="uploadDialogRef"
+      title="上传"
+      :table-search="onSearch"
+      :pid="search.pid"
+    />
   </div>
 </template>
 
