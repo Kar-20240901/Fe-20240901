@@ -63,7 +63,7 @@ function onSearch(sufFun?: () => void) {
     pageSize: pageSize.value as any
   })
     .then(res => {
-      selectIdArr.value = new Set<string>();
+      selectIdArr.value.clear();
       totalSize.value = 0;
 
       if (search.value.backUpFlag && res.data.backUpPid) {
@@ -176,7 +176,7 @@ function deleteBySelectIdArr() {
       await baseFileRemoveByFileIdSet({
         idSet: [...selectIdArr.value]
       }).then(res => {
-        selectIdArr.value = new Set<string>();
+        selectIdArr.value.clear();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -231,7 +231,7 @@ function uploadClick() {
 function selectAllClick() {
   if (selectIdArr.value.size === total.value) {
     // 取消全部勾选
-    selectIdArr.value = new Set<string>();
+    selectIdArr.value.clear();
   } else {
     // 勾选全部
     const selectIdArrTemp = new Set<string>();
@@ -283,7 +283,7 @@ function renameClick() {
 function renameConfirmFun() {
   return baseFileUpdateSelf({
     ...renameRef.value.getForm().value,
-    idSet: selectIdArr.value
+    idSet: [...selectIdArr.value]
   });
 }
 
@@ -533,7 +533,7 @@ const uploadDialogRef = ref();
     <renameFormEdit
       ref="renameRef"
       title="修改文件名称"
-      :confirm-fun="renameConfirmFun"
+      :confirm-fun="() => renameConfirmFun()"
       :confirm-after-fun="fileTreeConfirmAfterFun"
     />
 
