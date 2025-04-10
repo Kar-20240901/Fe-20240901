@@ -77,5 +77,7 @@ export default {
 
   TOP_FOLDER_NAME: "根文件夹", // 根文件夹
 
-  BIO_MAX_LENGTH: 100 // 个人简介最大长度
+  BIO_MAX_LENGTH: 100, // 个人简介最大长度
+
+  FILE_CHUNK_SIZE: 1024 * 1024 * 5 // 每个分片文件最大大小
 };
