@@ -16,7 +16,7 @@ export interface BaseFileTransferDO {
   bucketName?: string; // 冗余字段：桶名，例如：be-bucket
   chunkTotal?: number; // 总分片个数，format：int32
   storageConfigurationId?: string; // 冗余字段：存储文件配置主键 id，format：int64
-  chunkSize?: string; // 每个分片的大小，format：int64
+  chunkSize?: number; // 每个分片的大小，format：int32
   newFileName?: string; // 冗余字段：新的文件名（包含文件类型），例如：uuid.xxx
   updateTime?: string; // 修改时间，format：date-time
   remark?: string; // 备注

@@ -3,30 +3,40 @@ import { onMounted, ref } from "vue";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
+import AddFill from "@iconify-icons/ri/add-circle-line";
+import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
+import FormEdit from "./formEdit.vue";
 import {
-  baseSocketDeleteByIdSet,
-  baseSocketDisableByIdSet,
-  BaseSocketDO,
-  baseSocketEnableByIdSet,
-  baseSocketPage,
-  BaseSocketPageDTO
-} from "@/api/http/base/BaseSocketController";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
-import { BaseSocketTypeMap } from "@/model/enum/BaseSocketTypeEnum";
+  baseBulletinDeleteByIdSet,
+  BaseBulletinDO,
+  baseBulletinInfoById,
+  baseBulletinInsertOrUpdate,
+  baseBulletinPage,
+  BaseBulletinPageDTO,
+  baseBulletinPublish,
+  baseBulletinRevoke
+} from "@/api/http/base/BaseBulletinController";
+import {
+  BaseBulletinStatusEnumMap,
+  BaseFileStorageTypeEnum
+} from "@/model/enum/BaseBulletinStatusEnum";
 
 defineOptions({
-  name: "BaseSocket"
+  name: "PlatformBulletin"
 });
 
-const search = ref<BaseSocketPageDTO>({});
+const search = ref<BaseBulletinPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseSocketDO[]>([]);
+const dataList = ref<BaseBulletinDO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
+
+const formRef = ref();
+const title = ref<string>("");
 
 const tableRef = ref();
 
@@ -38,7 +48,7 @@ onMounted(() => {
 
 function onSearch() {
   loading.value = true;
-  baseSocketPage({
+  baseBulletinPage({
     ...search.value,
     current: currentPage.value as any,
     pageSize: pageSize.value as any
@@ -57,76 +67,36 @@ function resetSearch() {
   onSearch();
 }
 
-function enableClick(row: BaseSocketDO) {
-  ExecConfirm(
-    async () => {
-      await baseSocketEnableByIdSet({ idSet: [row.id] }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定启用【${row.id}】吗？`
-  );
+function editClick(row: BaseBulletinDO) {
+  title.value = "修改公告";
+  formRef.value.editOpen(baseBulletinInfoById({ id: row.id }));
 }
 
-function disableClick(row: BaseSocketDO) {
-  ExecConfirm(
-    async () => {
-      await baseSocketDisableByIdSet({ idSet: [row.id] }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定禁用【${row.id}】吗？`
-  );
+function addClick(row: BaseBulletinDO) {
+  title.value = "新增公告";
+  formRef.value.addOpen(row);
 }
 
-function deleteClick(row: BaseSocketDO) {
-  ExecConfirm(
-    async () => {
-      await baseSocketDeleteByIdSet({ idSet: [row.id] }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定删除【${row.id}】吗？`
-  );
+function confirmFun() {
+  return baseBulletinInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function enableBySelectIdArr() {
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-  ExecConfirm(
-    async () => {
-      await baseSocketEnableByIdSet({ idSet: selectIdArr.value }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定启用勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
+function confirmAfterFun(res, done) {
+  done();
+  ToastSuccess(res.msg);
+  onSearch();
 }
 
-function disableBySelectIdArr() {
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
+function deleteClick(row: BaseBulletinDO) {
   ExecConfirm(
     async () => {
-      await baseSocketDisableByIdSet({ idSet: selectIdArr.value }).then(res => {
+      await baseBulletinDeleteByIdSet({ idSet: [row.id] }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
-    `确定禁用勾选的【${selectIdArr.value.length}】项数据吗？`
+    `确定删除【${row.title}】吗？`
   );
 }
 
@@ -137,18 +107,58 @@ function deleteBySelectIdArr() {
   }
   ExecConfirm(
     async () => {
-      await baseSocketDeleteByIdSet({ idSet: selectIdArr.value }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
+      await baseBulletinDeleteByIdSet({ idSet: selectIdArr.value }).then(
+        res => {
+          ToastSuccess(res.msg);
+          onSearch();
+        }
+      );
     },
     undefined,
     `确定删除勾选的【${selectIdArr.value.length}】项数据吗？`
   );
 }
 
-function onSelectChange(rowArr?: BaseSocketDO[]) {
+function onSelectChange(rowArr?: BaseBulletinDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
+}
+
+function operateClick(row: BaseBulletinDO) {
+  const status = row.status as any as number;
+
+  if (BaseFileStorageTypeEnum.DRAFT.code === status) {
+    baseBulletinPublish({ idSet: [row.id] }).then(res => {
+      ToastSuccess(res.msg);
+      onSearch();
+    });
+  } else if (BaseFileStorageTypeEnum.PUBLICITY.code === status) {
+    baseBulletinRevoke({ idSet: [row.id] }).then(res => {
+      ToastSuccess(res.msg);
+      onSearch();
+    });
+  }
+}
+
+function getOperateIcon(row: BaseBulletinDO) {
+  const status = row.status as any as number;
+
+  if (BaseFileStorageTypeEnum.DRAFT.code === status) {
+    return "ri:send-plane-fill";
+  } else if (BaseFileStorageTypeEnum.PUBLICITY.code === status) {
+    return "fa-solid:undo";
+  }
+  return "";
+}
+
+function getOperateName(row: BaseBulletinDO) {
+  const status = row.status as any as number;
+
+  if (BaseFileStorageTypeEnum.DRAFT.code === status) {
+    return "发布";
+  } else if (BaseFileStorageTypeEnum.PUBLICITY.code === status) {
+    return "撤回";
+  }
+  return "";
 }
 </script>
 
@@ -156,10 +166,10 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
   <div class="flex flex-col">
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="id：" prop="id">
+        <el-form-item label="公告标题：" prop="name">
           <el-input
-            v-model="search.id"
-            placeholder="请输入id"
+            v-model="search.title"
+            placeholder="请输入公告标题"
             clearable
             class="!w-[180px]"
           />
@@ -187,17 +197,10 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
         <div>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ep:circle-check')"
-            @click="enableBySelectIdArr"
+            :icon="useRenderIcon(AddFill)"
+            @click="addClick({})"
           >
-            批量启用
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon('ep:circle-close')"
-            @click="disableBySelectIdArr"
-          >
-            批量禁用
+            新增公告
           </el-button>
           <el-button
             type="primary"
@@ -224,41 +227,35 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="id" label="id" />
-        <el-table-column #default="scope" prop="type" label="类型">
-          {{ BaseSocketTypeMap.get(scope.row.type) || "" }}
+        <el-table-column prop="title" label="公告标题" />
+        <el-table-column #default="scope" prop="status" label="状态">
+          {{ BaseBulletinStatusEnumMap.get(scope.row.status) || "" }}
         </el-table-column>
-        <el-table-column #default="scope" label="地址">
-          {{
-            scope.row.scheme +
-            scope.row.host +
-            ":" +
-            scope.row.port +
-            scope.row.path
-          }}
-        </el-table-column>
-        <el-table-column #default="scope" prop="createTime" label="创建时间">
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
-        </el-table-column>
-        <el-table-column #default="scope" prop="enableFlag" label="禁用">
+        <el-table-column prop="publishTime" label="发布时间" />
+        <el-table-column
+          #default="scope"
+          prop="enableFlag"
+          label="禁用"
+          width="100"
+        >
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon('ep:circle-check')"
-            @click="enableClick(scope.row)"
+            :icon="useRenderIcon(getOperateIcon(scope.row))"
+            @click="operateClick(scope.row)"
           >
-            启用
+            {{ getOperateName(scope.row) }}
           </el-button>
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon('ep:circle-close')"
-            @click="disableClick(scope.row)"
+            :icon="useRenderIcon(EditPen)"
+            @click="editClick(scope.row)"
           >
-            禁用
+            修改
           </el-button>
           <el-button
             link
@@ -281,6 +278,13 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
         @change="onSearch"
       />
     </div>
+
+    <form-edit
+      ref="formRef"
+      :title="title"
+      :confirm-fun="confirmFun"
+      :confirm-after-fun="confirmAfterFun"
+    />
   </div>
 </template>
 

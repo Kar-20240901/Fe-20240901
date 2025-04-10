@@ -32,7 +32,7 @@ export interface BaseFileDO {
   updateId?: string; // 修改人id，format：int64
   children?: BaseFileDO[]; // 子节点
   uploadType?: number; // 文件上传类型，format：int32
-  belongId?: string; // 归属者用户主键 id（拥有全部权限），format：int64
+  belongId?: string; // 归属者用户主键 id，只用于删除操作，format：int64
   showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
   id?: string; // 主键 id，format：int64
   enableFlag?: boolean; // 是否启用
@@ -185,7 +185,7 @@ export interface BaseFilePageDTO {
   uploadType?: number; // 文件上传类型，format：int32
   storageType?: number; // 存放文件的服务器类型，format：int32
   showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
-  belongId?: string; // 归属者用户主键 id（拥有全部权限），format：int64
+  belongId?: string; // 归属者用户主键 id，只用于删除操作，format：int64
   refId?: string; // 关联的 id，format：int64
   backUpFlag?: boolean; // 返回上级
   enableFlag?: boolean; // 是否启用
@@ -237,7 +237,7 @@ export interface BaseFileUploadFileSystemChunkPreDTO {
 
 export interface BaseFileUploadFileSystemChunkPreVO {
   chunkTotal?: number; // 总分片个数，format：int32
-  chunkSize?: string; // 每个分片的大小，format：int64
+  chunkSize?: number; // 每个分片的大小，format：int32
   transferId?: string; // 传输id，format：int64
   fileId?: string; // 文件主键id，format：int64
 }

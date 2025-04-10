@@ -265,7 +265,7 @@ function addOrderNoConfirmAfterFun(res, done) {
             {{ scope.row.name }}
           </span>
         </el-table-column>
-        <el-table-column prop="path" label="路由路径" />
+        <el-table-column prop="path" label="菜单路径" />
         <el-table-column #default="scope" prop="orderNo" label="排序">
           <el-input-number
             v-model="scope.row.orderNo"
