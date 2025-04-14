@@ -48,13 +48,9 @@ export function baseBulletinUserSelfInfoById(
   );
 }
 
-export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
-}
-
 // 撤回
 export function baseBulletinRevoke(
-  form: NotEmptyIdSet,
+  form: NotNullId,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
@@ -96,6 +92,10 @@ export function baseBulletinUserSelfUpdateReadTime(
     undefined,
     config
   );
+}
+
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，required：true，format：int64
 }
 
 // 批量删除
@@ -172,7 +172,7 @@ export function baseBulletinUserSelfCount(config?: PureHttpRequestConfig) {
 
 // 发布
 export function baseBulletinPublish(
-  form: NotEmptyIdSet,
+  form: NotNullId,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
