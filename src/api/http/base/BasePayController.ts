@@ -20,13 +20,13 @@ export function basePayPayTradeStatusById(
 }
 
 // 通过主键id，查看支付状态-第三方支付平台
-export function basePayPayTradeStatusByIdOther(
+export function basePayPayTradeStatusByIdThird(
   form: NotNullId,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
     "post",
-    baseApi("/base/pay/payTradeStatusById/other"),
+    baseApi("/base/pay/payTradeStatusById/third"),
     form,
     config
   );

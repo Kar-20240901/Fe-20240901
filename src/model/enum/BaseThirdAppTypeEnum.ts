@@ -1,10 +1,10 @@
 import type { IEnum } from "@/model/enum/CommonEnum";
 import type { OptionsType } from "@/components/ReSegmented";
 
-export interface IBaseOtherAppTypeEnum {
+export interface IBaseThirdAppTypeEnum {
   WX_MINI_PROGRAM: IEnum<number>;
 
-  WX_OFFICIAL_ACCOUNT: IEnum<number>;
+  WX_OFFICIAL: IEnum<number>;
 
   WX_WORK: IEnum<number>;
 
@@ -16,13 +16,13 @@ export interface IBaseOtherAppTypeEnum {
 }
 
 // 第三方应用类型，枚举类
-export const BaseOtherAppTypeEnum: IBaseOtherAppTypeEnum = {
+export const BaseThirdAppTypeEnum: IBaseThirdAppTypeEnum = {
   WX_MINI_PROGRAM: {
     code: 101,
     name: "微信小程序"
   },
 
-  WX_OFFICIAL_ACCOUNT: {
+  WX_OFFICIAL: {
     code: 102,
     name: "微信公众号"
   },
@@ -48,14 +48,14 @@ export const BaseOtherAppTypeEnum: IBaseOtherAppTypeEnum = {
   }
 };
 
-export const BaseOtherAppTypeOptions: Array<OptionsType> = [];
+export const BaseThirdAppTypeOptions: Array<OptionsType> = [];
 
-export const BaseOtherAppTypeMap = new Map<number, string>();
+export const BaseThirdAppTypeMap = new Map<number, string>();
 
-Object.keys(BaseOtherAppTypeEnum).forEach(key => {
-  const item = BaseOtherAppTypeEnum[key] as IEnum<number>;
+Object.keys(BaseThirdAppTypeEnum).forEach(key => {
+  const item = BaseThirdAppTypeEnum[key] as IEnum<number>;
 
-  BaseOtherAppTypeOptions.push({ label: item.name, value: item.code });
+  BaseThirdAppTypeOptions.push({ label: item.name, value: item.code });
 
-  BaseOtherAppTypeMap.set(item.code, item.name);
+  BaseThirdAppTypeMap.set(item.code, item.name);
 });

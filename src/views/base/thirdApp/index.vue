@@ -8,24 +8,24 @@ import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
 import FormEdit from "./formEdit.vue";
 import {
-  baseOtherAppDeleteByIdSet,
-  BaseOtherAppDO,
-  baseOtherAppInfoById,
-  baseOtherAppInsertOrUpdate,
-  baseOtherAppPage,
-  BaseOtherAppPageDTO
-} from "@/api/http/base/BaseOtherAppController";
-import { BaseOtherAppTypeMap } from "@/model/enum/BaseOtherAppTypeEnum";
+  baseThirdAppDeleteByIdSet,
+  BaseThirdAppDO,
+  baseThirdAppInfoById,
+  baseThirdAppInsertOrUpdate,
+  baseThirdAppPage,
+  BaseThirdAppPageDTO
+} from "@/api/http/base/BaseThirdAppController";
+import { BaseThirdAppTypeMap } from "@/model/enum/BaseThirdAppTypeEnum";
 
 defineOptions({
-  name: "BaseOtherApp"
+  name: "BaseThirdApp"
 });
 
-const search = ref<BaseOtherAppPageDTO>({});
+const search = ref<BaseThirdAppPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseOtherAppDO[]>([]);
+const dataList = ref<BaseThirdAppDO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
@@ -43,7 +43,7 @@ onMounted(() => {
 
 function onSearch() {
   loading.value = true;
-  baseOtherAppPage({
+  baseThirdAppPage({
     ...search.value,
     current: currentPage.value as any,
     pageSize: pageSize.value as any
@@ -62,18 +62,18 @@ function resetSearch() {
   onSearch();
 }
 
-function editClick(row: BaseOtherAppDO) {
+function editClick(row: BaseThirdAppDO) {
   title.value = "修改三方应用";
-  formRef.value.editOpen(baseOtherAppInfoById({ id: row.id }));
+  formRef.value.editOpen(baseThirdAppInfoById({ id: row.id }));
 }
 
-function addClick(row: BaseOtherAppDO) {
+function addClick(row: BaseThirdAppDO) {
   title.value = "新增三方应用";
   formRef.value.addOpen(row);
 }
 
 function confirmFun() {
-  return baseOtherAppInsertOrUpdate(formRef.value.getForm().value);
+  return baseThirdAppInsertOrUpdate(formRef.value.getForm().value);
 }
 
 function confirmAfterFun(res, done) {
@@ -82,10 +82,10 @@ function confirmAfterFun(res, done) {
   onSearch();
 }
 
-function deleteClick(row: BaseOtherAppDO) {
+function deleteClick(row: BaseThirdAppDO) {
   ExecConfirm(
     async () => {
-      await baseOtherAppDeleteByIdSet({ idSet: [row.id] }).then(res => {
+      await baseThirdAppDeleteByIdSet({ idSet: [row.id] }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -102,7 +102,7 @@ function deleteBySelectIdArr() {
   }
   ExecConfirm(
     async () => {
-      await baseOtherAppDeleteByIdSet({
+      await baseThirdAppDeleteByIdSet({
         idSet: selectIdArr.value
       }).then(res => {
         ToastSuccess(res.msg);
@@ -114,7 +114,7 @@ function deleteBySelectIdArr() {
   );
 }
 
-function onSelectChange(rowArr?: BaseOtherAppDO[]) {
+function onSelectChange(rowArr?: BaseThirdAppDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 }
 </script>
@@ -186,7 +186,7 @@ function onSelectChange(rowArr?: BaseOtherAppDO[]) {
         <el-table-column type="selection" />
         <el-table-column prop="name" label="名称" />
         <el-table-column #default="scope" prop="type" label="类型">
-          {{ BaseOtherAppTypeMap.get(scope.row.type) || "" }}
+          {{ BaseThirdAppTypeMap.get(scope.row.type) || "" }}
         </el-table-column>
         <el-table-column #default="scope" prop="defaultFlag" label="默认">
           {{ scope.row.defaultFlag ? "是" : "否" }}

@@ -5,12 +5,12 @@ import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
-import { IOtherAppConfigurationDialogFormProps } from "@/views/base/otherApp/types";
-import { BaseOtherAppInsertOrUpdateDTO } from "@/api/http/base/BaseOtherAppController";
-import { BaseOtherAppTypeOptions } from "@/model/enum/BaseOtherAppTypeEnum";
+import { BaseThirdAppInsertOrUpdateDTO } from "@/api/http/base/BaseThirdAppController";
+import { BaseThirdAppTypeOptions } from "@/model/enum/BaseThirdAppTypeEnum";
 import Info from "@iconify-icons/ri/information-line";
+import { IThirdAppConfigurationDialogFormProps } from "@/views/base/thirdApp/types";
 
-const form = ref<BaseOtherAppInsertOrUpdateDTO>({});
+const form = ref<BaseThirdAppInsertOrUpdateDTO>({});
 const formRef = ref();
 const dialogLoading = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
@@ -20,7 +20,7 @@ function getForm() {
   return form;
 }
 
-function addOpen(formTemp?: BaseOtherAppInsertOrUpdateDTO) {
+function addOpen(formTemp?: BaseThirdAppInsertOrUpdateDTO) {
   doOpen(
     formRef,
     form,
@@ -52,7 +52,7 @@ defineExpose({
   editOpen
 });
 
-const props = defineProps<IOtherAppConfigurationDialogFormProps>();
+const props = defineProps<IThirdAppConfigurationDialogFormProps>();
 
 function confirmClick() {
   doConfirmClick(formRef, props, visible, confirmLoading);
@@ -106,7 +106,7 @@ function confirmClick() {
           >
             <el-select v-model="form.type" class="w-full" clearable>
               <el-option
-                v-for="(item, index) in BaseOtherAppTypeOptions"
+                v-for="(item, index) in BaseThirdAppTypeOptions"
                 :key="index"
                 :value="item.value"
                 :label="item.label as string"
