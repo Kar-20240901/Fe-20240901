@@ -93,7 +93,7 @@ export function Download(
   fileName: string = new Date().getTime() + ".xlsx"
 ) {
   if (!blob) {
-    throw new Error("Download 方法的res参数不能为空");
+    throw new Error("Download 方法的blob参数不能为空");
   }
 
   if (!CheckBlobType(blob)) {
