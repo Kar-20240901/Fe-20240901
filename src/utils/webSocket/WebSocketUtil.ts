@@ -137,16 +137,19 @@ export function ConnectWebSocket() {
 
         let recordedChunks: Blob[] = [];
 
-        let endFlag = false;
+        // let endFlag = false;
 
         function requestAudioAccess() {
           navigator.mediaDevices
-            .getUserMedia({ audio: true, video: true })
+            .getUserMedia({ audio: true, video: { frameRate: 30 } })
             .then(
               streamTemp => {
                 stream = streamTemp;
 
-                mediaRecorder = new window.MediaRecorder(stream);
+                mediaRecorder = new window.MediaRecorder(stream, {
+                  // mimeType: "video/webm; codecs=vp9",
+                  videoBitsPerSecond: 250000
+                });
 
                 mediaRecorder.ondataavailable = function (e) {
                   console.log("数据：", e.data);
@@ -155,13 +158,16 @@ export function ConnectWebSocket() {
                 };
 
                 mediaRecorder.onstop = function () {
-                  if (endFlag === false) {
-                    mediaRecorder.start();
+                  // if (endFlag === false) {
+                  //   mediaRecorder.start();
+                  //
+                  //   setTimeout(() => {
+                  //     mediaRecorder.stop();
+                  //   }, 100);
+                  // }
 
-                    setTimeout(() => {
-                      mediaRecorder.stop();
-                    }, 10000);
-                  }
+                  console.log("视频比特：", mediaRecorder.videoBitsPerSecond);
+                  console.log("音频比特：", mediaRecorder.audioBitsPerSecond);
 
                   const blob = new Blob(recordedChunks, {
                     type: mediaRecorder.mimeType
@@ -179,9 +185,15 @@ export function ConnectWebSocket() {
 
                 mediaRecorder.start();
 
-                setTimeout(() => {
-                  mediaRecorder.stop();
-                }, 10000);
+                mediaRecorder.onstart = function () {
+                  setTimeout(() => {
+                    // endFlag = true;
+
+                    mediaRecorder.stop();
+
+                    stream.getTracks().forEach(track => track.stop());
+                  }, 100);
+                };
               },
               () => {
                 alert("出错，请确保已允许浏览器获取音视频权限");
@@ -191,15 +203,15 @@ export function ConnectWebSocket() {
 
         requestAudioAccess();
 
-        setTimeout(() => {
-          endFlag = true;
-
-          // if (mediaRecorder && mediaRecorder.state === "recording") {
-          mediaRecorder.stop();
-          // }
-
-          stream.getTracks().forEach(track => track.stop());
-        }, 30000);
+        // setTimeout(() => {
+        //   endFlag = true;
+        //
+        //   // if (mediaRecorder && mediaRecorder.state === "recording") {
+        //   mediaRecorder.stop();
+        //   // }
+        //
+        //   stream.getTracks().forEach(track => track.stop());
+        // }, 100);
       }, 1000);
     };
 
