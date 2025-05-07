@@ -155,28 +155,19 @@ export function ConnectWebSocket() {
                 };
 
                 mediaRecorder.onstop = function () {
-                  console.log("媒体类型：", mediaRecorder.mimeType);
-                  console.log("视频比特：", mediaRecorder.videoBitsPerSecond);
-                  console.log("音频比特：", mediaRecorder.audioBitsPerSecond);
+                  if (endFlag === false) {
+                    mediaRecorder.start();
+
+                    setTimeout(() => {
+                      mediaRecorder.stop();
+                    }, 10000);
+                  }
 
                   const blob = new Blob(recordedChunks, {
                     type: mediaRecorder.mimeType
                   });
 
                   recordedChunks = [];
-
-                  if (endFlag === false) {
-                    mediaRecorder.start();
-
-                    setTimeout(() => {
-                      if (
-                        mediaRecorder &&
-                        mediaRecorder.state === "recording"
-                      ) {
-                        mediaRecorder.stop();
-                      }
-                    }, 100);
-                  }
 
                   BaseLiveRoomDataAddDataRequest(
                     "250506160235021405",
@@ -189,10 +180,8 @@ export function ConnectWebSocket() {
                 mediaRecorder.start();
 
                 setTimeout(() => {
-                  if (mediaRecorder && mediaRecorder.state === "recording") {
-                    mediaRecorder.stop();
-                  }
-                }, 100);
+                  mediaRecorder.stop();
+                }, 10000);
               },
               () => {
                 alert("出错，请确保已允许浏览器获取音视频权限");
@@ -205,12 +194,12 @@ export function ConnectWebSocket() {
         setTimeout(() => {
           endFlag = true;
 
-          if (mediaRecorder && mediaRecorder.state === "recording") {
-            mediaRecorder.stop();
-          }
+          // if (mediaRecorder && mediaRecorder.state === "recording") {
+          mediaRecorder.stop();
+          // }
 
           stream.getTracks().forEach(track => track.stop());
-        }, 10000);
+        }, 30000);
       }, 1000);
     };
 

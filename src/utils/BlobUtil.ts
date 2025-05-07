@@ -1,4 +1,14 @@
 /**
+ * int转 blob格式
+ */
+export function IntToBlob(num) {
+  const buffer = new ArrayBuffer(4);
+  const view = new DataView(buffer);
+  view.setInt32(0, num, true);
+  return new Blob([buffer], { type: "application/octet-stream" });
+}
+
+/**
  * blob转 base64
  */
 export function BlobToBase64(blob): Promise<string> {
