@@ -103,10 +103,15 @@ export function GetWebSocketId() {
  */
 export function WebSocketSend<T>(
   webSocket: WebSocket | null,
-  webSocketMessage: IWebSocketMessage<T>
+  webSocketMessage: IWebSocketMessage<T> | Blob,
+  originFlag: boolean = false
 ) {
   if (webSocket !== null && webSocket.readyState == webSocket.OPEN) {
-    webSocket.send(JSON.stringify(webSocketMessage));
+    if (originFlag) {
+      webSocket.send(webSocketMessage as Blob);
+    } else {
+      webSocket.send(JSON.stringify(webSocketMessage));
+    }
 
     return true;
   }

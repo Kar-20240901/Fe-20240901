@@ -127,12 +127,12 @@ function operateClick(row: BaseBulletinDO) {
   const status = row.status as any as number;
 
   if (BaseFileStorageTypeEnum.DRAFT.code === status) {
-    baseBulletinPublish({ idSet: [row.id] }).then(res => {
+    baseBulletinPublish({ id: row.id }).then(res => {
       ToastSuccess(res.msg);
       onSearch();
     });
   } else if (BaseFileStorageTypeEnum.PUBLICITY.code === status) {
-    baseBulletinRevoke({ idSet: [row.id] }).then(res => {
+    baseBulletinRevoke({ id: row.id }).then(res => {
       ToastSuccess(res.msg);
       onSearch();
     });

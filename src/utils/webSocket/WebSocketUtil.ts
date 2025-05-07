@@ -3,13 +3,19 @@ import {
   GetWebSocketId,
   type IWebSocketMessage
 } from "@/utils/webSocket/WebSocketHelper";
-import { BASE_SIGN_OUT, HeartBeatRequest } from "@/api/socket/WebSocket";
+import {
+  BASE_SIGN_OUT,
+  BaseLiveRoomAddUserRequest,
+  BaseLiveRoomDataAddDataRequest,
+  HeartBeatRequest
+} from "@/api/socket/WebSocket";
 import { getToken } from "@/utils/auth";
 import { nettyWebSocketGetWebSocketUrlById } from "@/api/http/base/NettyWebSocketController";
 import { BaseSocketOnlineTypeEnum } from "@/model/enum/BaseSocketOnlineTypeEnum";
 import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
+import { GetServerTimestamp } from "@/utils/DateUtil";
 
 let myWebSocket: WebSocket | null = null;
 let heartBeatInterval: any = null; // 心跳检测，定时器
@@ -121,6 +127,91 @@ export function ConnectWebSocket() {
       heartBeatInterval = setInterval(() => {
         HeartBeatRequest(); // 心跳检测，请求
       }, 25 * 1000);
+
+      setTimeout(() => {
+        BaseLiveRoomAddUserRequest("250506160235021405");
+
+        let mediaRecorder: MediaRecorder;
+
+        let stream;
+
+        let recordedChunks: Blob[] = [];
+
+        let endFlag = false;
+
+        function requestAudioAccess() {
+          navigator.mediaDevices
+            .getUserMedia({ audio: true, video: true })
+            .then(
+              streamTemp => {
+                stream = streamTemp;
+
+                mediaRecorder = new window.MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = function (e) {
+                  console.log("数据：", e.data);
+
+                  recordedChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = function () {
+                  console.log("媒体类型：", mediaRecorder.mimeType);
+                  console.log("视频比特：", mediaRecorder.videoBitsPerSecond);
+                  console.log("音频比特：", mediaRecorder.audioBitsPerSecond);
+
+                  const blob = new Blob(recordedChunks, {
+                    type: mediaRecorder.mimeType
+                  });
+
+                  recordedChunks = [];
+
+                  if (endFlag === false) {
+                    mediaRecorder.start();
+
+                    setTimeout(() => {
+                      if (
+                        mediaRecorder &&
+                        mediaRecorder.state === "recording"
+                      ) {
+                        mediaRecorder.stop();
+                      }
+                    }, 100);
+                  }
+
+                  BaseLiveRoomDataAddDataRequest(
+                    "250506160235021405",
+                    GetServerTimestamp(),
+                    blob,
+                    mediaRecorder.mimeType
+                  );
+                };
+
+                mediaRecorder.start();
+
+                setTimeout(() => {
+                  if (mediaRecorder && mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                  }
+                }, 100);
+              },
+              () => {
+                alert("出错，请确保已允许浏览器获取音视频权限");
+              }
+            );
+        }
+
+        requestAudioAccess();
+
+        setTimeout(() => {
+          endFlag = true;
+
+          if (mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+          }
+
+          stream.getTracks().forEach(track => track.stop());
+        }, 10000);
+      }, 1000);
     };
 
     myWebSocket.onmessage = (message: MessageEvent<string>) => {

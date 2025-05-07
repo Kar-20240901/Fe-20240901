@@ -1,3 +1,6 @@
+/**
+ * blob转 base64
+ */
 export function BlobToBase64(blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -11,6 +14,9 @@ export function BlobToBase64(blob): Promise<string> {
   });
 }
 
+/**
+ * base64转 blob
+ */
 export function Base64ToBlob(base64, contentType = "") {
   const sliceSize = 512;
   const byteCharacters = atob(base64);
