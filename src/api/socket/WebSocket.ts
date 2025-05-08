@@ -60,7 +60,7 @@ export function BaseLiveRoomDataAddDataRequest(
   mediaType: string,
   webSocket: WebSocket | null = GetMyWebSocket()
 ) {
-  if (data.size <= 0) {
+  if (data.size <= 0 || data.size > 10 * 10000) {
     return;
   }
 
@@ -71,15 +71,13 @@ export function BaseLiveRoomDataAddDataRequest(
 
   const jsonStr = JSON.stringify(json);
 
-  // console.log("jsonStr：", jsonStr);
-
   const lengthBlob = IntToBlob(jsonStr.length);
 
   const jsonBlob = new Blob([jsonStr], { type: "text/plain" });
 
   const blob = new Blob([lengthBlob, jsonBlob, data]);
 
-  console.log("blob：", blob);
+  // console.log("blob：", blob);
 
   WebSocketSend(webSocket, blob, true);
 }

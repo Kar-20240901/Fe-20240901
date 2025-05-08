@@ -137,37 +137,46 @@ export function ConnectWebSocket() {
 
         let recordedChunks: Blob[] = [];
 
-        // let endFlag = false;
+        let total = 0;
+
+        let gap = 50;
 
         function requestAudioAccess() {
           navigator.mediaDevices
-            .getUserMedia({ audio: true, video: { frameRate: 30 } })
+            .getUserMedia({
+              audio: true,
+              // video: { frameRate: 30, width: 1280, height: 720 }
+              video: { frameRate: 30 }
+            })
             .then(
               streamTemp => {
                 stream = streamTemp;
 
                 mediaRecorder = new window.MediaRecorder(stream, {
-                  // mimeType: "video/webm; codecs=vp9",
-                  videoBitsPerSecond: 250000
+                  videoBitsPerSecond: 500000,
+                  audioBitsPerSecond: 64000
                 });
 
                 mediaRecorder.ondataavailable = function (e) {
-                  console.log("数据：", e.data);
+                  console.log(`数据${new Date().getTime()}：`, e.data);
 
                   recordedChunks.push(e.data);
                 };
 
                 mediaRecorder.onstop = function () {
-                  // if (endFlag === false) {
-                  //   mediaRecorder.start();
-                  //
-                  //   setTimeout(() => {
-                  //     mediaRecorder.stop();
-                  //   }, 100);
-                  // }
+                  console.log(
+                    "停止",
+                    new Date().getTime() + "，total：" + total
+                  );
+                  if (total < (1000 * 10) / gap) {
+                    total = total + gap;
+                    mediaRecorder.start();
+                  } else {
+                    stream.getTracks().forEach(track => track.stop());
+                  }
 
-                  console.log("视频比特：", mediaRecorder.videoBitsPerSecond);
-                  console.log("音频比特：", mediaRecorder.audioBitsPerSecond);
+                  // console.log("视频比特：", mediaRecorder.videoBitsPerSecond);
+                  // console.log("音频比特：", mediaRecorder.audioBitsPerSecond);
 
                   const blob = new Blob(recordedChunks, {
                     type: mediaRecorder.mimeType
@@ -186,13 +195,10 @@ export function ConnectWebSocket() {
                 mediaRecorder.start();
 
                 mediaRecorder.onstart = function () {
+                  console.log("开始", new Date().getTime());
                   setTimeout(() => {
-                    // endFlag = true;
-
                     mediaRecorder.stop();
-
-                    stream.getTracks().forEach(track => track.stop());
-                  }, 100);
+                  }, gap);
                 };
               },
               () => {
