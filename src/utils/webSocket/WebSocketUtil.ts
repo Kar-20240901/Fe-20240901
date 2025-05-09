@@ -137,7 +137,7 @@ export function ConnectWebSocket() {
 
         let recordedChunks: Blob[] = [];
 
-        let gap = 100;
+        let gap = 800;
 
         function requestAudioAccess() {
           navigator.mediaDevices
