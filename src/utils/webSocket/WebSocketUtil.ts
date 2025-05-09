@@ -137,9 +137,9 @@ export function ConnectWebSocket() {
 
         let recordedChunks: Blob[] = [];
 
-        let total = 0;
+        let gap = 100;
 
-        let gap = 50;
+        let time;
 
         function requestAudioAccess() {
           navigator.mediaDevices
@@ -152,24 +152,22 @@ export function ConnectWebSocket() {
               streamTemp => {
                 stream = streamTemp;
 
+                let endTs = new Date().getTime() + 20 * 1000;
+
                 mediaRecorder = new window.MediaRecorder(stream, {
                   videoBitsPerSecond: 500000,
                   audioBitsPerSecond: 64000
                 });
 
                 mediaRecorder.ondataavailable = function (e) {
-                  console.log(`数据${new Date().getTime()}：`, e.data);
+                  console.log(`数据：`, e.data);
 
                   recordedChunks.push(e.data);
                 };
 
                 mediaRecorder.onstop = function () {
-                  console.log(
-                    "停止",
-                    new Date().getTime() + "，total：" + total
-                  );
-                  if (total < (1000 * 10) / gap) {
-                    total = total + gap;
+                  console.log("停止，耗时", new Date().getTime() - time);
+                  if (new Date().getTime() < endTs) {
                     mediaRecorder.start();
                   } else {
                     stream.getTracks().forEach(track => track.stop());
@@ -195,7 +193,7 @@ export function ConnectWebSocket() {
                 mediaRecorder.start();
 
                 mediaRecorder.onstart = function () {
-                  console.log("开始", new Date().getTime());
+                  time = new Date().getTime();
                   setTimeout(() => {
                     mediaRecorder.stop();
                   }, gap);
