@@ -139,20 +139,22 @@ export function ConnectWebSocket() {
 
         let gap = 100;
 
-        let time;
-
         function requestAudioAccess() {
           navigator.mediaDevices
             .getUserMedia({
               audio: true,
-              // video: { frameRate: 30, width: 1280, height: 720 }
-              video: { frameRate: 30 }
+              video: { frameRate: 30, width: 1280, height: 720 }
+              // video: { frameRate: 30 }
             })
             .then(
               streamTemp => {
                 stream = streamTemp;
 
-                let endTs = new Date().getTime() + 20 * 1000;
+                let endTs = new Date().getTime() + 30 * 1000;
+
+                console.log("开始时间：", new Date().getTime());
+
+                let time;
 
                 mediaRecorder = new window.MediaRecorder(stream, {
                   videoBitsPerSecond: 500000,
@@ -160,21 +162,22 @@ export function ConnectWebSocket() {
                 });
 
                 mediaRecorder.ondataavailable = function (e) {
-                  console.log(`数据：`, e.data);
+                  console.log(
+                    `数据${e.data.size > 12 * 10000 ? "丢失" : ""}：`,
+                    e.data
+                  );
 
                   recordedChunks.push(e.data);
                 };
 
                 mediaRecorder.onstop = function () {
-                  console.log("停止，耗时", new Date().getTime() - time);
                   if (new Date().getTime() < endTs) {
+                    console.log("计时-停止-e：", new Date().getTime() - time);
+                    time = new Date().getTime();
                     mediaRecorder.start();
                   } else {
                     stream.getTracks().forEach(track => track.stop());
                   }
-
-                  // console.log("视频比特：", mediaRecorder.videoBitsPerSecond);
-                  // console.log("音频比特：", mediaRecorder.audioBitsPerSecond);
 
                   const blob = new Blob(recordedChunks, {
                     type: mediaRecorder.mimeType
@@ -190,11 +193,19 @@ export function ConnectWebSocket() {
                   );
                 };
 
+                time = new Date().getTime();
+                console.log("计时-开始-s：", time);
+
                 mediaRecorder.start();
 
                 mediaRecorder.onstart = function () {
+                  console.log("计时-开始-e：", new Date().getTime() - time);
                   time = new Date().getTime();
+
                   setTimeout(() => {
+                    console.log("计时-停止-s：", new Date().getTime() - time);
+                    time = new Date().getTime();
+
                     mediaRecorder.stop();
                   }, gap);
                 };

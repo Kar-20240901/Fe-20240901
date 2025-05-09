@@ -60,7 +60,7 @@ export function BaseLiveRoomDataAddDataRequest(
   mediaType: string,
   webSocket: WebSocket | null = GetMyWebSocket()
 ) {
-  if (data.size <= 0 || data.size > 10 * 10000) {
+  if (data.size <= 0 || data.size > 12 * 10000) {
     return;
   }
 
