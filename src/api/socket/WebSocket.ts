@@ -1,6 +1,6 @@
 import { GetMyWebSocket } from "@/utils/webSocket/WebSocketUtil";
 import { WebSocketSend } from "@/utils/webSocket/WebSocketHelper";
-import { IntToBlob } from "@/utils/BlobUtil";
+import { JsonAddByteArr } from "@/utils/BlobUtil";
 
 // 心跳检测
 export const NETTY_WEB_SOCKET_HEART_BEAT = "/netty/webSocket/heartBeat";
@@ -69,15 +69,7 @@ export function BaseLiveRoomDataAddDataRequest(
     data: { roomId, createTs, mediaType }
   };
 
-  const jsonStr = JSON.stringify(json);
-
-  const lengthBlob = IntToBlob(jsonStr.length);
-
-  const jsonBlob = new Blob([jsonStr], { type: "text/plain" });
-
-  const blob = new Blob([lengthBlob, jsonBlob, data]);
-
-  // console.log("blob：", blob);
+  const blob = JsonAddByteArr(json, data);
 
   WebSocketSend(webSocket, blob, true);
 }

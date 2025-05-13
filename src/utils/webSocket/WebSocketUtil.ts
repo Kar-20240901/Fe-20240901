@@ -16,6 +16,7 @@ import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
 import { GetServerTimestamp } from "@/utils/DateUtil";
+import { ToDataAndByteArr } from "@/utils/BlobUtil";
 
 let myWebSocket: WebSocket | null = null;
 let heartBeatInterval: any = null; // 心跳检测，定时器
@@ -135,30 +136,20 @@ export function ConnectWebSocket() {
 
         let stream;
 
-        let recordedChunks: Blob[] = [];
-
-        let gap = 100;
-
         function requestAudioAccess() {
           navigator.mediaDevices
             .getUserMedia({
               audio: true,
-              video: { frameRate: 30, width: 1280, height: 720 }
-              // video: { frameRate: 30 }
+              video: { frameRate: 30 }
             })
             .then(
               streamTemp => {
                 stream = streamTemp;
 
-                let endTs = new Date().getTime() + 30 * 1000;
-
-                console.log("开始时间：", new Date().getTime());
-
-                let time;
-
                 mediaRecorder = new window.MediaRecorder(stream, {
-                  videoBitsPerSecond: 500000,
-                  audioBitsPerSecond: 64000
+                  videoBitsPerSecond: 1000000,
+                  audioBitsPerSecond: 64000,
+                  mimeType: "video/webm; codecs=vp9,opus"
                 });
 
                 mediaRecorder.ondataavailable = function (e) {
@@ -167,48 +158,15 @@ export function ConnectWebSocket() {
                     e.data
                   );
 
-                  recordedChunks.push(e.data);
-                };
-
-                mediaRecorder.onstop = function () {
-                  if (new Date().getTime() < endTs) {
-                    console.log("计时-停止-e：", new Date().getTime() - time);
-                    time = new Date().getTime();
-                    mediaRecorder.start();
-                  } else {
-                    stream.getTracks().forEach(track => track.stop());
-                  }
-
-                  const blob = new Blob(recordedChunks, {
-                    type: mediaRecorder.mimeType
-                  });
-
-                  recordedChunks = [];
-
                   BaseLiveRoomDataAddDataRequest(
                     "250506160235021405",
                     GetServerTimestamp(),
-                    blob,
+                    e.data,
                     mediaRecorder.mimeType
                   );
                 };
 
-                time = new Date().getTime();
-                console.log("计时-开始-s：", time);
-
-                mediaRecorder.start();
-
-                mediaRecorder.onstart = function () {
-                  console.log("计时-开始-e：", new Date().getTime() - time);
-                  time = new Date().getTime();
-
-                  setTimeout(() => {
-                    console.log("计时-停止-s：", new Date().getTime() - time);
-                    time = new Date().getTime();
-
-                    mediaRecorder.stop();
-                  }, gap);
-                };
+                mediaRecorder.start(100);
               },
               () => {
                 alert("出错，请确保已允许浏览器获取音视频权限");
@@ -219,19 +177,28 @@ export function ConnectWebSocket() {
         requestAudioAccess();
 
         // setTimeout(() => {
-        //   endFlag = true;
-        //
-        //   // if (mediaRecorder && mediaRecorder.state === "recording") {
         //   mediaRecorder.stop();
-        //   // }
         //
         //   stream.getTracks().forEach(track => track.stop());
-        // }, 100);
+        // }, 20000);
       }, 1000);
     };
 
-    myWebSocket.onmessage = (message: MessageEvent<string>) => {
-      const webSocketMessage: IWebSocketMessage<any> = JSON.parse(message.data);
+    myWebSocket.onmessage = (message: MessageEvent) => {
+      let webSocketMessage: IWebSocketMessage<any>;
+
+      if (typeof message.data === "string") {
+        webSocketMessage = JSON.parse(message.data);
+      } else if (message.data instanceof ArrayBuffer) {
+        const iToDataAndByteArr = ToDataAndByteArr(message.data);
+        if (iToDataAndByteArr == null) {
+          return;
+        }
+        webSocketMessage = iToDataAndByteArr.data;
+      } else {
+        console.error(new Error("WebSocket收到的数据格式不支持"));
+        return;
+      }
 
       if (webSocketMessage.uri === BASE_SIGN_OUT) {
         ToastError("您已被管理员下线");

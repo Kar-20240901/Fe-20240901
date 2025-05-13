@@ -5,11 +5,12 @@ import {
 } from "@/api/socket/WebSocket";
 
 export interface IWebSocketMessage<T> {
-  uri: string; // 路径
+  uri?: string; // 路径
   data?: T; // 数据
   code?: string; // 响应代码，成功返回：200
   msg?: string; // 响应描述
   service?: string; // 服务名
+  arrayBuffer?: ArrayBuffer; // 备注：该字段只在前端使用
 }
 
 /**
