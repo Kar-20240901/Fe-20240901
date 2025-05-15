@@ -34,13 +34,15 @@ export const useUserStore = defineStore({
     roles: storageLocal().getItem<DataInfo>(userKey)?.roles ?? [],
     // 按钮级别权限
     permissions: storageLocal().getItem<DataInfo>(userKey)?.permissions ?? [],
-    // 按钮级别权限
+    // 是否有密码
     passwordFlag:
       storageLocal().getItem<DataInfo>(userKey)?.passwordFlag ?? false,
-    // 按钮级别权限
+    // 用户创建时间
     createTime: storageLocal().getItem<DataInfo>(userKey)?.createTime ?? "",
-    // 按钮级别权限
+    // 用户邮箱，会脱敏
     email: storageLocal().getItem<DataInfo>(userKey)?.email ?? "",
+    // 用户主键 id
+    id: storageLocal().getItem<DataInfo>(userKey)?.id ?? "",
     // 判断登录页面显示哪个组件（0：登录（默认）、1：邮箱登录、2：邮箱注册、3：用户名注册、4：忘记密码）
     currentPage: 0,
     // 是否勾选了登录页的免登录
@@ -76,6 +78,10 @@ export const useUserStore = defineStore({
     /** 存储是否有密码 */
     SET_PASSWORD_FLAG(passwordFlag: boolean) {
       this.passwordFlag = passwordFlag;
+    },
+    /** 存储用户主键 id */
+    SET_ID(id: string) {
+      this.id = id;
     },
     /** 存储登录页面显示哪个组件 */
     SET_CURRENTPAGE(value: number) {

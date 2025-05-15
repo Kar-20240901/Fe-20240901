@@ -23,6 +23,7 @@ export interface DataInfo<T = string> {
   passwordFlag?: boolean; // 是否有密码，用于前端显示，修改密码/设置密码
   createTime?: string; // 账号注册时间，format：date-time
   email?: string; // 邮箱，会脱敏
+  id?: string; // 用户主键 id
 }
 
 export const userKey = "user-info";

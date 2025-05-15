@@ -1,6 +1,10 @@
 import { GetMyWebSocket } from "@/utils/webSocket/WebSocketUtil";
 import { WebSocketSend } from "@/utils/webSocket/WebSocketHelper";
 import { JsonAddByteArr } from "@/utils/BlobUtil";
+import type {
+  BaseLiveRoomDataAddDataDTO,
+  BaseLiveRoomUserAddUserDTO
+} from "@/views/live/self/liveRoomSelf/types";
 
 // 心跳检测
 export const NETTY_WEB_SOCKET_HEART_BEAT = "/netty/webSocket/heartBeat";
@@ -28,6 +32,19 @@ export const BASE_LIVE_ROOM_USER_ADD_USER = "/base/liveRoomUser/addUser";
 // 实时房间，新增数据
 export const BASE_LIVE_ROOM_DATA_ADD_DATA = "/base/liveRoomData/addData";
 
+// 实时房间有新的数据
+export const BASE_LIVE_ROOM_NEW_DATA = "/base/live/room/newData";
+
+// 实时房间-您已经在其他设备上加入此房间
+export const BASE_LIVE_ROOM_JOIN_ON_OTHER_DEVICE =
+  "/base/live/room/joinOnOtherDevice";
+
+// 实时房间-有新的用户加入房间
+export const BASE_LIVE_ROOM_NEW_USER = "/base/live/room/newUser";
+
+// 实时房间-有用户退出房间
+export const BASE_LIVE_ROOM_REMOVE_USER = "/base/live/room/removeUser";
+
 /**
  * 心跳检测，请求
  */
@@ -40,13 +57,13 @@ export function HeartBeatRequest(
 /**
  * 实时房间，用户加入房间，请求
  */
-export function BaseLiveRoomAddUserRequest(
-  id: string,
+export function BaseLiveRoomUserAddUserRequest(
+  dto: BaseLiveRoomUserAddUserDTO,
   webSocket: WebSocket | null = GetMyWebSocket()
 ) {
   return WebSocketSend(webSocket, {
     uri: BASE_LIVE_ROOM_USER_ADD_USER,
-    data: { id }
+    data: { ...dto }
   });
 }
 
@@ -54,22 +71,23 @@ export function BaseLiveRoomAddUserRequest(
  * 实时房间，新增数据，请求
  */
 export function BaseLiveRoomDataAddDataRequest(
-  roomId: string,
-  createTs: number,
-  data: Blob,
-  mediaType: string,
+  dto: BaseLiveRoomDataAddDataDTO,
   webSocket: WebSocket | null = GetMyWebSocket()
 ) {
-  if (data.size <= 0 || data.size > 12 * 10000) {
+  if (!dto.data || dto.data.size <= 0 || dto.data.size > 12 * 10000) {
     return;
   }
 
   const json = {
     uri: BASE_LIVE_ROOM_DATA_ADD_DATA,
-    data: { roomId, createTs, mediaType }
+    data: {
+      roomId: dto.roomId,
+      createTs: dto.createTs,
+      mediaType: dto.mediaType
+    }
   };
 
-  const blob = JsonAddByteArr(json, data);
+  const blob = JsonAddByteArr(json, dto.data);
 
   WebSocketSend(webSocket, blob, true);
 }

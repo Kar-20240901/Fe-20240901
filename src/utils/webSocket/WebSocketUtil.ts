@@ -3,19 +3,13 @@ import {
   GetWebSocketId,
   type IWebSocketMessage
 } from "@/utils/webSocket/WebSocketHelper";
-import {
-  BASE_SIGN_OUT,
-  BaseLiveRoomAddUserRequest,
-  BaseLiveRoomDataAddDataRequest,
-  HeartBeatRequest
-} from "@/api/socket/WebSocket";
+import { BASE_SIGN_OUT, HeartBeatRequest } from "@/api/socket/WebSocket";
 import { getToken } from "@/utils/auth";
 import { nettyWebSocketGetWebSocketUrlById } from "@/api/http/base/NettyWebSocketController";
 import { BaseSocketOnlineTypeEnum } from "@/model/enum/BaseSocketOnlineTypeEnum";
 import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
-import { GetServerTimestamp } from "@/utils/DateUtil";
 import { ToDataAndByteArr } from "@/utils/BlobUtil";
 
 let myWebSocket: WebSocket | null = null;
@@ -128,60 +122,6 @@ export function ConnectWebSocket() {
       heartBeatInterval = setInterval(() => {
         HeartBeatRequest(); // 心跳检测，请求
       }, 25 * 1000);
-
-      setTimeout(() => {
-        BaseLiveRoomAddUserRequest("250506160235021405");
-
-        let mediaRecorder: MediaRecorder;
-
-        let stream;
-
-        function requestAudioAccess() {
-          navigator.mediaDevices
-            .getUserMedia({
-              audio: true,
-              video: { frameRate: 30 }
-            })
-            .then(
-              streamTemp => {
-                stream = streamTemp;
-
-                mediaRecorder = new window.MediaRecorder(stream, {
-                  videoBitsPerSecond: 1000000,
-                  audioBitsPerSecond: 64000,
-                  mimeType: "video/webm; codecs=vp9,opus"
-                });
-
-                mediaRecorder.ondataavailable = function (e) {
-                  console.log(
-                    `数据${e.data.size > 12 * 10000 ? "丢失" : ""}：`,
-                    e.data
-                  );
-
-                  BaseLiveRoomDataAddDataRequest(
-                    "250506160235021405",
-                    GetServerTimestamp(),
-                    e.data,
-                    mediaRecorder.mimeType
-                  );
-                };
-
-                mediaRecorder.start(100);
-              },
-              () => {
-                alert("出错，请确保已允许浏览器获取音视频权限");
-              }
-            );
-        }
-
-        requestAudioAccess();
-
-        // setTimeout(() => {
-        //   mediaRecorder.stop();
-        //
-        //   stream.getTracks().forEach(track => track.stop());
-        // }, 20000);
-      }, 1000);
     };
 
     myWebSocket.onmessage = (message: MessageEvent) => {
@@ -191,9 +131,11 @@ export function ConnectWebSocket() {
         webSocketMessage = JSON.parse(message.data);
       } else if (message.data instanceof ArrayBuffer) {
         const iToDataAndByteArr = ToDataAndByteArr(message.data);
+
         if (iToDataAndByteArr == null) {
           return;
         }
+
         webSocketMessage = iToDataAndByteArr.data;
       } else {
         console.error(new Error("WebSocket收到的数据格式不支持"));
