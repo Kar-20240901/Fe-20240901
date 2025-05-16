@@ -288,7 +288,8 @@ function getDynamicRoutes(
         username: res.data.username,
         createTime: res.data.createTime,
         passwordFlag: res.data.passwordFlag,
-        email: res.data.email
+        email: res.data.email,
+        id: res.data.id
       });
 
       const avatarFileId = res.data.avatarFileId!;
