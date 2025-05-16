@@ -112,6 +112,7 @@ function startCameraAndStream() {
 function onSearch() {
   baseLiveRoomUserSelfPage({
     ...search.value,
+    roomId: roomId.value,
     current: currentPage.value as any,
     pageSize: pageSize.value as any
   }).then(res => {
