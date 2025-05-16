@@ -82,7 +82,7 @@ function confirmClick() {
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="房间验证码" prop="code">
             <el-input
-              v-model="form.id"
+              v-model="form.code"
               clearable
               placeholder="如果不需要验证码，则不需要填写"
             />

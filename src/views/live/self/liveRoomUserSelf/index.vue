@@ -58,7 +58,6 @@ onMounted(() => {
     return;
   }
   onSearch();
-  startCameraAndStream();
 });
 
 onUnmounted(() => {
@@ -72,6 +71,10 @@ onUnmounted(() => {
 });
 
 function startCameraAndStream() {
+  if (stream) {
+    return;
+  }
+
   navigator.mediaDevices
     .getUserMedia({
       audio: true,
@@ -80,6 +83,16 @@ function startCameraAndStream() {
     .then(
       streamTemp => {
         stream = streamTemp;
+
+        const ele = document.getElementById(
+          userInfo.value.id
+        ) as HTMLVideoElement | null;
+
+        if (ele) {
+          ele.srcObject = stream;
+
+          ele.play();
+        }
 
         mediaRecorder = new window.MediaRecorder(stream, {
           videoBitsPerSecond: 1000000,
@@ -118,6 +131,8 @@ function onSearch() {
   }).then(res => {
     dataList.value = res.data.records;
     total.value = res.data.total;
+
+    startCameraAndStream();
   });
 }
 

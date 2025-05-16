@@ -228,6 +228,7 @@ function onSelectChange(rowArr?: BaseLiveRoomDO[]) {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
+        <el-table-column prop="id" label="编号" />
         <el-table-column prop="name" label="名称" />
         <el-table-column #default="scope" prop="code" label="验证码">
           {{ scope.row.code || "不需要" }}
