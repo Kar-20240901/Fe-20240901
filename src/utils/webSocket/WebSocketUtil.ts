@@ -139,7 +139,7 @@ export function ConnectWebSocket() {
           return;
         }
 
-        webSocketMessage = iToDataAndByteArr.data;
+        webSocketMessage = iToDataAndByteArr;
       } else if (message.data instanceof Blob) {
         const iToDataAndByteArr = await ToDataAndByteArrForBlob(message.data);
 
@@ -147,7 +147,7 @@ export function ConnectWebSocket() {
           return;
         }
 
-        webSocketMessage = iToDataAndByteArr.data;
+        webSocketMessage = iToDataAndByteArr;
       } else {
         console.error(new Error("WebSocket收到的数据格式不支持"));
         return;
