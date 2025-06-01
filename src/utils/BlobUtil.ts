@@ -1,15 +1,9 @@
 import type { IWebSocketMessage } from "@/utils/webSocket/WebSocketHelper";
 
 /**
- * 数组，格式：json长度 + json + byte数组，返回 {data:Object, blob:Blob}
+ * 处理：二进制数据
  */
-export function ToDataAndByteArr(data: ArrayBuffer): IWebSocketMessage<any> {
-  let res: IWebSocketMessage<any> = {};
-
-  if (data === null || data.byteLength <= 0) {
-    return res;
-  }
-
+function handleArrayBuffer(data: ArrayBuffer, res: IWebSocketMessage<any>) {
   // 将接收到的二进制数据转换为Uint8Array
   const uint8Array = new Uint8Array(data);
 
@@ -17,18 +11,68 @@ export function ToDataAndByteArr(data: ArrayBuffer): IWebSocketMessage<any> {
   const intValue = new DataView(uint8Array.buffer, 0, 4).getInt32(0, true);
 
   // 提取UTF-8字符串部分
-  const utf8Bytes = uint8Array.slice(4, intValue);
+  const utf8Bytes = uint8Array.slice(4, intValue + 4);
   const decoder = new TextDecoder("utf-8");
   const utf8String = decoder.decode(utf8Bytes);
 
   // 提取剩余二进制数据
   const binaryArray = uint8Array.slice(4 + intValue);
 
-  res = JSON.parse(utf8String);
+  try {
+    res = JSON.parse(utf8String);
 
-  res.arrayBuffer = binaryArray.buffer;
+    res.arrayBuffer = binaryArray.buffer;
+  } catch (e) {
+    console.log("utf8String", utf8String);
+  }
 
   return res;
+}
+
+/**
+ * 数组，格式：json长度 + json + byte数组，返回 {data:Object, blob:Blob}
+ */
+export function ToDataAndByteArrForArrayBuffer(
+  data: ArrayBuffer
+): IWebSocketMessage<any> {
+  let res: IWebSocketMessage<any> = {};
+
+  if (data === null || data.byteLength <= 0) {
+    return res;
+  }
+
+  handleArrayBuffer(data, res);
+
+  return res;
+}
+
+/**
+ * 数组，格式：json长度 + json + byte数组，返回 {data:Object, blob:Blob}
+ */
+export function ToDataAndByteArrForBlob(
+  data: Blob
+): Promise<IWebSocketMessage<any>> {
+  return new Promise<IWebSocketMessage<any>>((resolve, reject) => {
+    let res: IWebSocketMessage<any> = {};
+
+    if (data === null || data.size <= 0) {
+      return resolve(res);
+    }
+
+    const reader = new FileReader();
+
+    reader.onerror = () => {
+      reject(new Error("读取 Blob 时出错"));
+    };
+
+    reader.onload = e => {
+      res = handleArrayBuffer(e.target.result as ArrayBuffer, res);
+
+      resolve(res);
+    };
+
+    reader.readAsArrayBuffer(data);
+  });
 }
 
 /**

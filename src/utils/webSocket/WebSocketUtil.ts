@@ -10,7 +10,10 @@ import { BaseSocketOnlineTypeEnum } from "@/model/enum/BaseSocketOnlineTypeEnum"
 import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
-import { ToDataAndByteArr } from "@/utils/BlobUtil";
+import {
+  ToDataAndByteArrForArrayBuffer,
+  ToDataAndByteArrForBlob
+} from "@/utils/BlobUtil";
 
 let myWebSocket: WebSocket | null = null;
 let heartBeatInterval: any = null; // 心跳检测，定时器
@@ -124,13 +127,21 @@ export function ConnectWebSocket() {
       }, 25 * 1000);
     };
 
-    myWebSocket.onmessage = (message: MessageEvent) => {
+    myWebSocket.onmessage = async (message: MessageEvent) => {
       let webSocketMessage: IWebSocketMessage<any>;
 
       if (typeof message.data === "string") {
         webSocketMessage = JSON.parse(message.data);
       } else if (message.data instanceof ArrayBuffer) {
-        const iToDataAndByteArr = ToDataAndByteArr(message.data);
+        const iToDataAndByteArr = ToDataAndByteArrForArrayBuffer(message.data);
+
+        if (iToDataAndByteArr == null) {
+          return;
+        }
+
+        webSocketMessage = iToDataAndByteArr.data;
+      } else if (message.data instanceof Blob) {
+        const iToDataAndByteArr = await ToDataAndByteArrForBlob(message.data);
 
         if (iToDataAndByteArr == null) {
           return;

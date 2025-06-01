@@ -18,6 +18,7 @@ import {
   BASE_LIVE_ROOM_JOIN_ON_OTHER_DEVICE,
   BASE_LIVE_ROOM_NEW_DATA,
   BASE_LIVE_ROOM_NEW_USER,
+  BASE_LIVE_ROOM_USER_ADD_USER,
   BaseLiveRoomDataAddDataRequest
 } from "@/api/socket/WebSocket";
 import PathConstant from "@/model/constant/PathConstant";
@@ -25,6 +26,7 @@ import { useRouter } from "vue-router";
 import { BaseLiveRoomDataAddDataDTO } from "@/views/live/self/liveRoomSelf/types";
 import { useLiveRoomStoreHook } from "@/store/modules/liveRoom";
 import { GetServerTimestamp } from "@/utils/DateUtil";
+import CommonConstant from "@/model/constant/CommonConstant";
 
 defineOptions({
   name: "BaseLiveRoomUserSelf"
@@ -61,6 +63,10 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  stopRecorder();
+});
+
+function stopRecorder() {
   if (mediaRecorder) {
     mediaRecorder.stop();
   }
@@ -68,7 +74,7 @@ onUnmounted(() => {
   if (stream) {
     stream.getTracks().forEach(track => track.stop());
   }
-});
+}
 
 function startCameraAndStream() {
   if (stream) {
@@ -100,7 +106,14 @@ function startCameraAndStream() {
           mimeType: "video/webm; codecs=vp9,opus"
         });
 
+        // let total = 1;
+        // let current = 0;
+
         mediaRecorder.ondataavailable = function (e) {
+          // if (current >= total) {
+          //   return;
+          // }
+
           console.log(
             `数据${e.data.size > 12 * 10000 ? "丢失" : ""}：`,
             e.data
@@ -112,6 +125,12 @@ function startCameraAndStream() {
             mediaType: mediaRecorder.mimeType,
             data: e.data
           });
+
+          // current = current + 1;
+          //
+          // if (current >= total) {
+          //   stopRecorder();
+          // }
         };
 
         mediaRecorder.start(100);
@@ -226,6 +245,10 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
     }
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_USER) {
     onSearch();
+  } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_USER_ADD_USER) {
+    if (state.webSocketMessage.code !== CommonConstant.API_OK_CODE) {
+      ToastError(state.webSocketMessage.msg);
+    }
   } else if (
     state.webSocketMessage.uri === BASE_LIVE_ROOM_JOIN_ON_OTHER_DEVICE
   ) {
