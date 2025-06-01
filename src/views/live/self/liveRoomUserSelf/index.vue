@@ -200,10 +200,12 @@ const userInfo = ref<BaseUserSelfInfoVO>({ ...useUserStoreHook().$state });
 
 const router = useRouter();
 
-const dataMap: Record<string, SourceBuffer> = {};
+// const dataMap: Record<string, SourceBuffer> = {};
 
 useWebSocketStoreHook().$subscribe((mutation, state) => {
   if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_DATA) {
+    console.log("收到数据：", state.webSocketMessage);
+
     if (
       !state.webSocketMessage.arrayBuffer ||
       state.webSocketMessage.arrayBuffer.byteLength <= 0
@@ -225,24 +227,24 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       return;
     }
 
-    if (ele.src && dataMap[eleId]) {
-      dataMap[eleId].appendBuffer(state.webSocketMessage.arrayBuffer);
-    } else {
-      // 创建 MediaSource 对象
-      const mediaSource = new MediaSource();
-      ele.src = URL.createObjectURL(mediaSource);
+    // if (ele.src && dataMap[eleId]) {
+    //   dataMap[eleId].appendBuffer(state.webSocketMessage.arrayBuffer);
+    // } else {
+    // 创建 MediaSource 对象
+    const mediaSource = new MediaSource();
+    ele.src = URL.createObjectURL(mediaSource);
 
-      let sourceBuffer = null;
+    let sourceBuffer = null;
 
-      mediaSource.onsourceopen = () => {
-        const mimeType = "video/webm; codecs=vp9,opus";
-        sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+    mediaSource.onsourceopen = () => {
+      const mimeType = "video/webm; codecs=vp9,opus";
+      sourceBuffer = mediaSource.addSourceBuffer(mimeType);
 
-        dataMap[eleId] = sourceBuffer;
+      // dataMap[eleId] = sourceBuffer;
 
-        sourceBuffer.appendBuffer(state.webSocketMessage.arrayBuffer);
-      };
-    }
+      sourceBuffer.appendBuffer(state.webSocketMessage.arrayBuffer);
+      // };
+    };
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_USER) {
     onSearch();
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_USER_ADD_USER) {
