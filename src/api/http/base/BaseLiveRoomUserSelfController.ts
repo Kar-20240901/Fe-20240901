@@ -46,6 +46,7 @@ export interface BaseLiveRoomUserSelfPageVO {
   nickname?: string; // 用户昵称
   id?: string; // 主键 id，format：int64
   userId?: string; // 用户主键 id，format：int64
+  firstBlobStr?: string; //
 }
 
 // 分页排序查询
