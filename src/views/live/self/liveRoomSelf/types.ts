@@ -14,4 +14,5 @@ export interface BaseLiveRoomDataAddDataDTO {
   data: Blob;
   userId?: string; // 后端赋值
   socketRefUserId?: string; // 后端赋值
+  firstBlobFlag?: boolean; // 是否是第一个 blob
 }

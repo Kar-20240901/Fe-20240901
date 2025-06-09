@@ -27,6 +27,7 @@ import { BaseLiveRoomDataAddDataDTO } from "@/views/live/self/liveRoomSelf/types
 import { useLiveRoomStoreHook } from "@/store/modules/liveRoom";
 import { GetServerTimestamp } from "@/utils/DateUtil";
 import CommonConstant from "@/model/constant/CommonConstant";
+import { Base64ToUint8Array } from "@/utils/BlobUtil";
 
 defineOptions({
   name: "BaseLiveRoomUserSelf"
@@ -106,31 +107,25 @@ function startCameraAndStream() {
           mimeType: "video/webm; codecs=vp9,opus"
         });
 
-        // let total = 1;
-        // let current = 0;
+        let count = 0;
 
         mediaRecorder.ondataavailable = function (e) {
-          // if (current >= total) {
-          //   return;
-          // }
-
           console.log(
             `数据${e.data.size > 12 * 10000 ? "丢失" : ""}：`,
             e.data
           );
 
+          if (count < 3) {
+            count = count + 1;
+          }
+
           BaseLiveRoomDataAddDataRequest({
             roomId: roomId.value,
             createTs: GetServerTimestamp(),
             mediaType: mediaRecorder.mimeType,
-            data: e.data
+            data: e.data,
+            firstBlobFlag: count === 2
           });
-
-          // current = current + 1;
-          //
-          // if (current >= total) {
-          //   stopRecorder();
-          // }
         };
 
         mediaRecorder.start(100);
@@ -200,7 +195,7 @@ const userInfo = ref<BaseUserSelfInfoVO>({ ...useUserStoreHook().$state });
 
 const router = useRouter();
 
-// const dataMap: Record<string, SourceBuffer> = {};
+const dataMap: Record<string, SourceBuffer> = {};
 
 useWebSocketStoreHook().$subscribe((mutation, state) => {
   if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_DATA) {
@@ -227,24 +222,37 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       return;
     }
 
-    // if (ele.src && dataMap[eleId]) {
-    //   dataMap[eleId].appendBuffer(state.webSocketMessage.arrayBuffer);
-    // } else {
-    // 创建 MediaSource 对象
-    const mediaSource = new MediaSource();
-    ele.src = URL.createObjectURL(mediaSource);
+    if (ele.src && dataMap[eleId]) {
+      dataMap[eleId].appendBuffer(state.webSocketMessage.arrayBuffer);
+    } else {
+      // 创建 MediaSource 对象
+      const mediaSource = new MediaSource();
+      ele.src = URL.createObjectURL(mediaSource);
 
-    let sourceBuffer = null;
+      let sourceBuffer = null;
 
-    mediaSource.onsourceopen = () => {
-      const mimeType = "video/webm; codecs=vp9,opus";
-      sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+      mediaSource.onsourceopen = () => {
+        const mimeType = "video/webm; codecs=vp9,opus";
+        sourceBuffer = mediaSource.addSourceBuffer(mimeType);
 
-      // dataMap[eleId] = sourceBuffer;
+        dataMap[eleId] = sourceBuffer;
 
-      sourceBuffer.appendBuffer(state.webSocketMessage.arrayBuffer);
-      // };
-    };
+        let roomUserData: BaseLiveRoomUserSelfPageVO;
+
+        for (let i = 0; i < dataList.value.length; i++) {
+          if (dataList.value[i].socketRefUserId === data.socketRefUserId) {
+            roomUserData = dataList.value[i];
+            break;
+          }
+        }
+
+        const firstBlob = Base64ToUint8Array(roomUserData.firstBlobStr);
+
+        sourceBuffer.appendBuffer(firstBlob);
+
+        sourceBuffer.appendBuffer(state.webSocketMessage.arrayBuffer);
+      };
+    }
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_USER) {
     onSearch();
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_USER_ADD_USER) {

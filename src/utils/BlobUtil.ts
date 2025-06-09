@@ -119,9 +119,18 @@ export function BlobToBase64(blob): Promise<string> {
  * base64转 blob
  */
 export function Base64ToBlob(base64, contentType = "") {
+  const resByteArray = Base64ToUint8Array(base64);
+
+  return new Blob(resByteArray, { type: contentType });
+}
+
+/**
+ * base64转 uint8Array
+ */
+export function Base64ToUint8Array(base64) {
   const sliceSize = 512;
   const byteCharacters = atob(base64);
-  const byteArrays = [];
+  const resByteArray = [];
 
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
     const slice = byteCharacters.slice(offset, offset + sliceSize);
@@ -132,8 +141,8 @@ export function Base64ToBlob(base64, contentType = "") {
     }
 
     const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
+    resByteArray.push(byteArray);
   }
 
-  return new Blob(byteArrays, { type: contentType });
+  return resByteArray;
 }
