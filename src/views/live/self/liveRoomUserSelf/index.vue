@@ -216,10 +216,14 @@ const dataMap: Record<string, SourceBuffer> = {};
 const dataArrMap: Record<string, Uint8Array[]> = {};
 const dataAppendingMap: Record<string, boolean> = {};
 
-function appendBufferToSource(buffer: Uint8Array, id: string) {
+function appendBufferToSource(buffer: Uint8Array, id: string, firstFlag) {
   if (dataAppendingMap[id]) {
     if (dataArrMap[id]) {
-      dataArrMap[id].push(buffer);
+      if (firstFlag) {
+        dataArrMap[id].unshift(buffer);
+      } else {
+        dataArrMap[id].push(buffer);
+      }
     } else {
       dataArrMap[id] = [buffer];
     }
@@ -237,7 +241,7 @@ function appendBufferToSource(buffer: Uint8Array, id: string) {
 
 useWebSocketStoreHook().$subscribe((mutation, state) => {
   if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_DATA) {
-    console.log("收到数据：", state.webSocketMessage);
+    // console.log("收到数据：", state.webSocketMessage);
 
     if (
       !state.webSocketMessage.arrayBuffer ||
@@ -262,7 +266,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
 
     if (ele.src && dataMap[eleId]) {
       // dataMap[eleId].appendBuffer(state.webSocketMessage.arrayBuffer);
-      appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId);
+      appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
     } else {
       // 创建 MediaSource 对象
       const mediaSource = new MediaSource();
@@ -285,11 +289,20 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
           }
         }
 
+        sourceBuffer.onupdateend = () => {
+          dataAppendingMap[eleId] = false;
+
+          if (dataArrMap[eleId] && dataArrMap[eleId].length) {
+            const nextBuffer = dataArrMap[eleId].shift();
+            appendBufferToSource(nextBuffer, eleId, true);
+          }
+        };
+
         const firstBlob = Base64ToUint8Array(roomUserData.firstBlobStr);
 
-        appendBufferToSource(firstBlob, eleId);
+        appendBufferToSource(firstBlob, eleId, false);
 
-        appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId);
+        appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
 
         // sourceBuffer.appendBuffer(firstBlob);
         //
