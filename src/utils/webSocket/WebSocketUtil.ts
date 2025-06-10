@@ -10,10 +10,7 @@ import { BaseSocketOnlineTypeEnum } from "@/model/enum/BaseSocketOnlineTypeEnum"
 import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
-import {
-  ToDataAndByteArrForArrayBuffer,
-  ToDataAndByteArrForBlob
-} from "@/utils/BlobUtil";
+import { ToDataAndByteArrForArrayBuffer } from "@/utils/BlobUtil";
 
 let myWebSocket: WebSocket | null = null;
 let heartBeatInterval: any = null; // 心跳检测，定时器
@@ -140,14 +137,14 @@ export function ConnectWebSocket() {
         }
 
         webSocketMessage = iToDataAndByteArr;
-      } else if (message.data instanceof Blob) {
-        const iToDataAndByteArr = await ToDataAndByteArrForBlob(message.data);
-
-        if (iToDataAndByteArr == null) {
-          return;
-        }
-
-        webSocketMessage = iToDataAndByteArr;
+        // } else if (message.data instanceof Blob) {
+        //   const iToDataAndByteArr = await ToDataAndByteArrForBlob(message.data);
+        //
+        //   if (iToDataAndByteArr == null) {
+        //     return;
+        //   }
+        //
+        //   webSocketMessage = iToDataAndByteArr;
       } else {
         console.error(new Error("WebSocket收到的数据格式不支持"));
         return;

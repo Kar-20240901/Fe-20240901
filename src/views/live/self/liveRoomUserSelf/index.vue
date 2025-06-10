@@ -132,7 +132,7 @@ function startCameraAndStream() {
                 type: mediaRecorder.mimeType
               });
               firstBlob = null;
-              console.log("firstBlob-解码前", blobData);
+              // console.log("firstBlob-解码前", blobData);
             }
           }
 
@@ -213,6 +213,27 @@ const userInfo = ref<BaseUserSelfInfoVO>({ ...useUserStoreHook().$state });
 const router = useRouter();
 
 const dataMap: Record<string, SourceBuffer> = {};
+const dataArrMap: Record<string, Uint8Array[]> = {};
+const dataAppendingMap: Record<string, boolean> = {};
+
+function appendBufferToSource(buffer: Uint8Array, id: string) {
+  if (dataAppendingMap[id]) {
+    if (dataArrMap[id]) {
+      dataArrMap[id].push(buffer);
+    } else {
+      dataArrMap[id] = [buffer];
+    }
+    return;
+  }
+
+  dataAppendingMap[id] = true;
+  try {
+    dataMap[id].appendBuffer(buffer);
+  } catch (error) {
+    console.error("Error appending buffer:", error);
+    dataAppendingMap[id] = false;
+  }
+}
 
 useWebSocketStoreHook().$subscribe((mutation, state) => {
   if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_DATA) {
@@ -240,7 +261,8 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
     }
 
     if (ele.src && dataMap[eleId]) {
-      dataMap[eleId].appendBuffer(state.webSocketMessage.arrayBuffer);
+      // dataMap[eleId].appendBuffer(state.webSocketMessage.arrayBuffer);
+      appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId);
     } else {
       // 创建 MediaSource 对象
       const mediaSource = new MediaSource();
@@ -265,11 +287,13 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
 
         const firstBlob = Base64ToUint8Array(roomUserData.firstBlobStr);
 
-        console.log("firstBlob-解码后：", firstBlob);
+        appendBufferToSource(firstBlob, eleId);
 
-        sourceBuffer.appendBuffer(firstBlob);
+        appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId);
 
-        sourceBuffer.appendBuffer(state.webSocketMessage.arrayBuffer);
+        // sourceBuffer.appendBuffer(firstBlob);
+        //
+        // sourceBuffer.appendBuffer(state.webSocketMessage.arrayBuffer);
       };
     }
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_USER) {
