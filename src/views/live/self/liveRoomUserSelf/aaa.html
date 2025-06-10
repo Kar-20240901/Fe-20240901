@@ -9,6 +9,18 @@
   </body>
 
   <script>
+    function Base64ToUint8Array(base64) {
+      // 解码 Base64 字符串
+      const binaryString = atob(base64);
+      // 创建 Uint8Array 数组
+      const uint8Array = new Uint8Array(binaryString.length);
+      // 填充数组
+      for (let i = 0; i < binaryString.length; i++) {
+        uint8Array[i] = binaryString.charCodeAt(i);
+      }
+      return uint8Array;
+    }
+
     var stream;
 
     startCameraAndStream();
@@ -22,12 +34,22 @@
         };
 
         reader.onload = e => {
-          // debugger
-          sourceBuffer.appendBuffer(e.target.result);
+          const result = e.target.result;
+
+          // console.log(`result-${new Date().getTime()}：`, result);
+
+          let base64Str = result.replace(/^data:.*?;base64,/, "");
+
+          console.log(`base64Str-${new Date().getTime()}：`, base64Str);
+
+          const uint8Array = Base64ToUint8Array(base64Str);
+
+          sourceBuffer.appendBuffer(uint8Array);
           resolve();
         };
 
-        reader.readAsArrayBuffer(blob);
+        // reader.readAsArrayBuffer(blob);
+        reader.readAsDataURL(blob);
       });
     }
 
@@ -72,19 +94,14 @@
             var firstBlobArr = [];
 
             mediaRecorder.ondataavailable = async function (e) {
-              console.log(
-                `数据${e.data.size > 12 * 10000 ? "丢失" : ""}：`,
-                e.data
-              );
-
               curr = curr + 1;
 
-              if (curr <= 10) {
-                if (curr <= 2) {
-                  firstBlobArr.push(e.data);
-                }
-
+              if (curr >= 20) {
                 return;
+              }
+
+              if (curr <= 2) {
+                firstBlobArr.push(e.data);
               }
 
               // 如果 sourceBuffer 正在更新，等待更新完成
@@ -102,25 +119,13 @@
                   firstBlobArrTemp.forEach(async item => {
                     await handleBlob(sourceBuffer, item);
                   });
-
-                  // const uint8Array = new Uint8Array(
-                  //   [26, 69, 223, 163, 159, 66, 134, 129, 1, 66, 247, 129, 1, 66, 242, 129, 4, 66, 243,
-                  //     129, 8, 66, 130, 132, 119, 101, 98, 109, 66, 135, 129, 4, 66, 133, 129, 2, 24, 83,
-                  //     128, 103, 1, 255, 255, 255, 255, 255, 255, 255, 21, 73, 169, 102, 153, 42, 215,
-                  //     177, 131, 15, 66, 64, 77, 128, 134, 67, 104, 114, 111, 109, 101, 87, 65, 134, 67,
-                  //     104, 114, 111, 109, 101, 22, 84, 174, 107, 253, 174, 189, 215, 129, 1, 115, 197,
-                  //     135]);
-                  //
-                  // const firstBlob = new Blob([uint8Array]);
-                  //
-                  // await handleBlob(sourceBuffer, firstBlob);
                 }
 
-                handleBlob(sourceBuffer, e.data);
+                await handleBlob(sourceBuffer, e.data);
               }
             };
 
-            mediaRecorder.start(200);
+            mediaRecorder.start(100);
           },
           () => {
             console.error("出错，请确保已允许浏览器获取音视频权限");

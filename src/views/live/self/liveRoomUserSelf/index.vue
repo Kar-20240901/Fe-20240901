@@ -109,21 +109,38 @@ function startCameraAndStream() {
 
         let count = 0;
 
+        let firstBlob: Blob | null = null;
+
         mediaRecorder.ondataavailable = function (e) {
-          console.log(
-            `数据${e.data.size > 12 * 10000 ? "丢失" : ""}：`,
-            e.data
-          );
+          // console.log(
+          //   `数据${e.data.size > 12 * 10000 ? "丢失" : ""}：`,
+          //   e.data
+          // );
+
+          let blobData = e.data;
 
           if (count < 3) {
             count = count + 1;
+
+            if (count === 1) {
+              firstBlob = e.data;
+              return;
+            }
+
+            if (count === 2 && firstBlob && firstBlob.size) {
+              blobData = new Blob([firstBlob, blobData], {
+                type: mediaRecorder.mimeType
+              });
+              firstBlob = null;
+              console.log("firstBlob-解码前", blobData);
+            }
           }
 
           BaseLiveRoomDataAddDataRequest({
             roomId: roomId.value,
             createTs: GetServerTimestamp(),
             mediaType: mediaRecorder.mimeType,
-            data: e.data,
+            data: blobData,
             firstBlobFlag: count === 2
           });
         };
@@ -247,6 +264,8 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         }
 
         const firstBlob = Base64ToUint8Array(roomUserData.firstBlobStr);
+
+        console.log("firstBlob-解码后：", firstBlob);
 
         sourceBuffer.appendBuffer(firstBlob);
 

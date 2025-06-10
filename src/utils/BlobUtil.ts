@@ -20,7 +20,7 @@ function handleArrayBuffer(data: ArrayBuffer, res: IWebSocketMessage<any>) {
 
   try {
     res = JSON.parse(utf8String);
-    console.log("res", res);
+    // console.log("res", res);
 
     res.arrayBuffer = binaryArray.buffer;
   } catch (e) {
@@ -105,13 +105,13 @@ export function IntToBlob(num) {
 export function BlobToBase64(blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.readAsDataURL(blob);
     reader.onload = e => {
-      resolve(e.target.result as string);
+      resolve((e.target.result as string).replace(/^data:.*?;base64,/, ""));
     };
     reader.onerror = () => {
       reject(new Error("读取 Blob 时出错"));
     };
+    reader.readAsDataURL(blob);
   });
 }
 
@@ -119,30 +119,24 @@ export function BlobToBase64(blob): Promise<string> {
  * base64转 blob
  */
 export function Base64ToBlob(base64, contentType = "") {
-  const resByteArray = Base64ToUint8Array(base64);
+  const uint8Array = Base64ToUint8Array(base64);
 
-  return new Blob(resByteArray, { type: contentType });
+  return new Blob([uint8Array], { type: contentType });
 }
 
 /**
  * base64转 uint8Array
  */
 export function Base64ToUint8Array(base64) {
-  const sliceSize = 512;
-  const byteCharacters = atob(base64);
-  const resByteArray = [];
-
-  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-    resByteArray.push(byteArray);
+  // 移除 Base64 字符串的前缀（如果存在）
+  const pureBase64 = base64.replace(/^data:.*?;base64,/, "");
+  // 解码 Base64 字符串
+  const binaryString = atob(pureBase64);
+  // 创建 Uint8Array 数组
+  const uint8Array = new Uint8Array(binaryString.length);
+  // 填充数组
+  for (let i = 0; i < binaryString.length; i++) {
+    uint8Array[i] = binaryString.charCodeAt(i);
   }
-
-  return resByteArray;
+  return uint8Array;
 }
