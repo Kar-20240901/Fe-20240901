@@ -214,12 +214,13 @@ const router = useRouter();
 
 const dataMap: Record<string, SourceBuffer> = {};
 const dataArrMap: Record<string, Uint8Array[]> = {};
-const dataAppendingMap: Record<string, boolean> = {};
+const dataAppendMap: Record<string, boolean> = {};
+const dataInitMap: Record<string, boolean> = {};
 
-function appendBufferToSource(buffer: Uint8Array, id: string, firstFlag) {
-  if (dataAppendingMap[id]) {
+function appendBufferToSource(buffer: Uint8Array, id: string, shiftFlag) {
+  if (dataAppendMap[id]) {
     if (dataArrMap[id]) {
-      if (firstFlag) {
+      if (shiftFlag) {
         dataArrMap[id].unshift(buffer);
       } else {
         dataArrMap[id].push(buffer);
@@ -230,12 +231,12 @@ function appendBufferToSource(buffer: Uint8Array, id: string, firstFlag) {
     return;
   }
 
-  dataAppendingMap[id] = true;
+  dataAppendMap[id] = true;
   try {
     dataMap[id].appendBuffer(buffer);
   } catch (error) {
     console.error("Error appending buffer:", error);
-    dataAppendingMap[id] = false;
+    dataAppendMap[id] = false;
   }
 }
 
@@ -264,7 +265,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       return;
     }
 
-    if (ele.src && dataMap[eleId]) {
+    if (dataInitMap[eleId] && ele.src && dataMap[eleId]) {
       // dataMap[eleId].appendBuffer(state.webSocketMessage.arrayBuffer);
       appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
     } else {
@@ -290,7 +291,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         }
 
         sourceBuffer.onupdateend = () => {
-          dataAppendingMap[eleId] = false;
+          dataAppendMap[eleId] = false;
 
           if (dataArrMap[eleId] && dataArrMap[eleId].length) {
             const nextBuffer = dataArrMap[eleId].shift();
@@ -301,6 +302,8 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         const firstBlob = Base64ToUint8Array(roomUserData.firstBlobStr);
 
         appendBufferToSource(firstBlob, eleId, false);
+
+        dataInitMap[eleId] = true;
 
         appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
 
