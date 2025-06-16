@@ -1,20 +1,20 @@
 import Sortable from "sortablejs";
 import { useEpThemeStoreHook } from "@/store/modules/epTheme";
 import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  nextTick,
   type PropType,
   ref,
-  unref,
-  computed,
-  nextTick,
-  defineComponent,
-  getCurrentInstance
+  unref
 } from "vue";
 import {
-  delay,
   cloneDeep,
+  delay,
+  getKeyList,
   isBoolean,
-  isFunction,
-  getKeyList
+  isFunction
 } from "@pureadmin/utils";
 
 import Fullscreen from "@iconify-icons/ri/fullscreen-fill";
