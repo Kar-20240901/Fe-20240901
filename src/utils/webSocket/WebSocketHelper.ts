@@ -109,6 +109,10 @@ export function WebSocketSend<T>(
 ) {
   if (webSocket !== null && webSocket.readyState == webSocket.OPEN) {
     if (originFlag) {
+      const blob = webSocketMessage as Blob;
+      if (blob.size <= 0 || blob.size > 13 * 10000) {
+        return;
+      }
       webSocket.send(webSocketMessage as Blob);
     } else {
       webSocket.send(JSON.stringify(webSocketMessage));

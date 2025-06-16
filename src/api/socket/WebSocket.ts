@@ -74,10 +74,6 @@ export function BaseLiveRoomDataAddDataRequest(
   dto: BaseLiveRoomDataAddDataDTO,
   webSocket: WebSocket | null = GetMyWebSocket()
 ) {
-  if (!dto.data || dto.data.size <= 0 || dto.data.size > 12 * 10000) {
-    return;
-  }
-
   const json = {
     uri: BASE_LIVE_ROOM_DATA_ADD_DATA,
     data: {

@@ -21,7 +21,7 @@ export function GetMyWebSocket() {
 }
 
 // 备注：开发环境的超时时间设置长一点
-const retryTime = DevFlag() ? 5000 : 2000;
+const retryTime = DevFlag() ? 5000 : 3000;
 
 // 获取：webSocket的连接地址
 async function GetWebSocketUrl(): Promise<string | null> {
@@ -129,14 +129,6 @@ export function ConnectWebSocket() {
 
       if (typeof message.data === "string") {
         webSocketMessage = JSON.parse(message.data);
-        // } else if (message.data instanceof ArrayBuffer) {
-        //   const iToDataAndByteArr = ToDataAndByteArrForArrayBuffer(message.data);
-        //
-        //   if (iToDataAndByteArr == null) {
-        //     return;
-        //   }
-        //
-        //   webSocketMessage = iToDataAndByteArr;
       } else if (message.data instanceof Blob) {
         const iToDataAndByteArr = await ToDataAndByteArrForBlob(message.data);
 
