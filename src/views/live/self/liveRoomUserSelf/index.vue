@@ -14,13 +14,7 @@ import {
 import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
 import { useUserStoreHook } from "@/store/modules/user";
 import { useWebSocketStoreHook } from "@/store/modules/webSocket";
-import {
-  BASE_LIVE_ROOM_JOIN_ON_OTHER_DEVICE,
-  BASE_LIVE_ROOM_NEW_DATA,
-  BASE_LIVE_ROOM_NEW_USER,
-  BASE_LIVE_ROOM_USER_ADD_USER,
-  BaseLiveRoomDataAddDataRequest
-} from "@/api/socket/WebSocket";
+import { BaseLiveRoomDataAddDataRequest } from "@/api/socket/WebSocket";
 import PathConstant from "@/model/constant/PathConstant";
 import { useRouter } from "vue-router";
 import { BaseLiveRoomDataAddDataDTO } from "@/views/live/self/liveRoomSelf/types";
@@ -28,6 +22,12 @@ import { useLiveRoomStoreHook } from "@/store/modules/liveRoom";
 import { GetServerTimestamp } from "@/utils/DateUtil";
 import CommonConstant from "@/model/constant/CommonConstant";
 import { Base64ToUint8Array } from "@/utils/BlobUtil";
+import {
+  BASE_LIVE_ROOM_JOIN_ON_OTHER_DEVICE,
+  BASE_LIVE_ROOM_NEW_DATA,
+  BASE_LIVE_ROOM_NEW_USER
+} from "@/model/constant/websocket/WebSocketReceivePath";
+import { BASE_LIVE_ROOM_USER_ADD_USER } from "@/model/constant/websocket/WebSocketAllPath";
 
 defineOptions({
   name: "BaseLiveRoomUserSelf"

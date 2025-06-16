@@ -14,10 +14,7 @@ import {
   BaseLiveRoomSelfPageDTO
 } from "@/api/http/base/BaseLiveRoomSelfController";
 import { BaseLiveRoomDO } from "@/api/http/base/BaseLiveRoomController";
-import {
-  BASE_LIVE_ROOM_USER_ADD_USER,
-  BaseLiveRoomUserAddUserRequest
-} from "@/api/socket/WebSocket";
+import { BaseLiveRoomUserAddUserRequest } from "@/api/socket/WebSocket";
 import { BaseLiveRoomUserAddUserDTO } from "./types";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import JoinFormEdit from "./joinFormEdit.vue";
@@ -26,6 +23,7 @@ import { useRouter } from "vue-router";
 import PathConstant from "@/model/constant/PathConstant";
 import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { useLiveRoomStoreHook } from "@/store/modules/liveRoom";
+import { BASE_LIVE_ROOM_USER_ADD_USER } from "@/model/constant/websocket/WebSocketAllPath";
 
 defineOptions({
   name: "BaseLiveRoomSelf"
