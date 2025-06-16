@@ -112,11 +112,6 @@ function startCameraAndStream() {
         let firstBlob: Blob | null = null;
 
         mediaRecorder.ondataavailable = function (e) {
-          // console.log(
-          //   `数据${e.data.size > 12 * 10000 ? "丢失" : ""}：`,
-          //   e.data
-          // );
-
           let blobData = e.data;
 
           if (count < 3) {
@@ -132,7 +127,6 @@ function startCameraAndStream() {
                 type: mediaRecorder.mimeType
               });
               firstBlob = null;
-              // console.log("firstBlob-解码前", blobData);
             }
           }
 
@@ -242,8 +236,6 @@ function appendBufferToSource(buffer: Uint8Array, id: string, shiftFlag) {
 
 useWebSocketStoreHook().$subscribe((mutation, state) => {
   if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_DATA) {
-    // console.log("收到数据：", state.webSocketMessage);
-
     if (
       !state.webSocketMessage.arrayBuffer ||
       state.webSocketMessage.arrayBuffer.byteLength <= 0
@@ -266,7 +258,6 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
     }
 
     if (dataInitMap[eleId] && ele.src && dataMap[eleId]) {
-      // dataMap[eleId].appendBuffer(state.webSocketMessage.arrayBuffer);
       appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
     } else {
       // 创建 MediaSource 对象
@@ -306,10 +297,6 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         dataInitMap[eleId] = true;
 
         appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
-
-        // sourceBuffer.appendBuffer(firstBlob);
-        //
-        // sourceBuffer.appendBuffer(state.webSocketMessage.arrayBuffer);
       };
     }
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_USER) {
