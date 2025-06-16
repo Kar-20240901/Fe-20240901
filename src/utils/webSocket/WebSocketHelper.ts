@@ -1,8 +1,6 @@
 import { nettyWebSocketGetAllWebSocketUrl } from "@/api/http/base/NettyWebSocketController";
-import {
-  HeartBeatRequest,
-  NETTY_WEB_SOCKET_HEART_BEAT
-} from "@/api/socket/WebSocket";
+import { HeartBeatRequest } from "@/api/socket/WebSocket";
+import { NETTY_WEB_SOCKET_HEART_BEAT } from "@/model/constant/websocket/WebSocketAllPath";
 
 export interface IWebSocketMessage<T> {
   uri?: string; // 路径

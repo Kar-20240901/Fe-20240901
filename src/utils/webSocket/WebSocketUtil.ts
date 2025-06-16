@@ -3,7 +3,7 @@ import {
   GetWebSocketId,
   type IWebSocketMessage
 } from "@/utils/webSocket/WebSocketHelper";
-import { BASE_SIGN_OUT, HeartBeatRequest } from "@/api/socket/WebSocket";
+import { HeartBeatRequest } from "@/api/socket/WebSocket";
 import { getToken } from "@/utils/auth";
 import { nettyWebSocketGetWebSocketUrlById } from "@/api/http/base/NettyWebSocketController";
 import { BaseSocketOnlineTypeEnum } from "@/model/enum/BaseSocketOnlineTypeEnum";
@@ -11,6 +11,8 @@ import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
 import { ToDataAndByteArrForBlob } from "@/utils/BlobUtil";
+import { BASE_SIGN_OUT } from "@/model/constant/websocket/WebSocketReceivePath";
+import { NETTY_WEB_SOCKET_HEART_BEAT } from "@/model/constant/websocket/WebSocketAllPath";
 
 let myWebSocket: WebSocket | null = null;
 let heartBeatInterval: any = null; // 心跳检测，定时器
@@ -119,6 +121,8 @@ export function ConnectWebSocket() {
         clearInterval(heartBeatInterval);
       }
 
+      HeartBeatRequest(); // 心跳检测，请求
+
       heartBeatInterval = setInterval(() => {
         HeartBeatRequest(); // 心跳检测，请求
       }, 25 * 1000);
@@ -142,6 +146,11 @@ export function ConnectWebSocket() {
         return;
       }
 
+      if (webSocketMessage.uri === NETTY_WEB_SOCKET_HEART_BEAT) {
+        useWebSocketStoreHook().setSocketRefUserId(webSocketMessage.data);
+        return;
+      }
+
       if (webSocketMessage.uri === BASE_SIGN_OUT) {
         ToastError("您已被管理员下线");
         useUserStoreHook().logOut(); // 退出登录
@@ -156,6 +165,8 @@ export function ConnectWebSocket() {
       console.log("WebSocket 关闭");
 
       useWebSocketStoreHook().setWebSocketStatus(false);
+
+      useWebSocketStoreHook().setSocketRefUserId("");
 
       if (heartBeatInterval) {
         clearInterval(heartBeatInterval);
