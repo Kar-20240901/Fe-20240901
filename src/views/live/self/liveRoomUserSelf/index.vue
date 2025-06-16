@@ -11,8 +11,6 @@ import {
   BaseLiveRoomUserSelfPageDTO,
   BaseLiveRoomUserSelfPageVO
 } from "@/api/http/base/BaseLiveRoomUserSelfController";
-import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
-import { useUserStoreHook } from "@/store/modules/user";
 import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { BaseLiveRoomDataAddDataRequest } from "@/api/socket/WebSocket";
 import PathConstant from "@/model/constant/PathConstant";
@@ -77,6 +75,10 @@ function stopRecorder() {
   }
 }
 
+const mimeType = "video/webm; codecs=vp9,opus";
+
+const socketRefUserId = useWebSocketStoreHook().socketRefUserId;
+
 function startCameraAndStream() {
   if (stream) {
     return;
@@ -92,7 +94,7 @@ function startCameraAndStream() {
         stream = streamTemp;
 
         const ele = document.getElementById(
-          userInfo.value.id
+          socketRefUserId
         ) as HTMLVideoElement | null;
 
         if (ele) {
@@ -104,7 +106,7 @@ function startCameraAndStream() {
         mediaRecorder = new window.MediaRecorder(stream, {
           videoBitsPerSecond: 1000000,
           audioBitsPerSecond: 64000,
-          mimeType: "video/webm; codecs=vp9,opus"
+          mimeType: mimeType
         });
 
         let count = 0;
@@ -202,8 +204,6 @@ function onSelectChange(rowArr?: BaseLiveRoomDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 }
 
-const userInfo = ref<BaseUserSelfInfoVO>({ ...useUserStoreHook().$state });
-
 const router = useRouter();
 
 const dataMap: Record<string, SourceBuffer> = {};
@@ -236,6 +236,11 @@ function appendBufferToSource(buffer: Uint8Array, id: string, shiftFlag) {
 
 useWebSocketStoreHook().$subscribe((mutation, state) => {
   if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_DATA) {
+    if (state.webSocketMessage.code !== CommonConstant.API_OK_CODE) {
+      ToastError(state.webSocketMessage.msg);
+      return;
+    }
+
     if (
       !state.webSocketMessage.arrayBuffer ||
       state.webSocketMessage.arrayBuffer.byteLength <= 0
@@ -245,7 +250,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
 
     const data = state.webSocketMessage.data as BaseLiveRoomDataAddDataDTO;
 
-    if (data.userId === userInfo.value.id) {
+    if (data.socketRefUserId === socketRefUserId) {
       return;
     }
 
@@ -267,7 +272,6 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       let sourceBuffer = null;
 
       mediaSource.onsourceopen = () => {
-        const mimeType = "video/webm; codecs=vp9,opus";
         sourceBuffer = mediaSource.addSourceBuffer(mimeType);
 
         dataMap[eleId] = sourceBuffer;
@@ -308,6 +312,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
   } else if (
     state.webSocketMessage.uri === BASE_LIVE_ROOM_JOIN_ON_OTHER_DEVICE
   ) {
+    ToastError("您已经在其他设备上加入此房间");
     router.push(PathConstant.BaseLiveRoomSelf);
   }
 });
@@ -382,15 +387,7 @@ function chooseRoomClick() {
           <el-table-column type="selection" />
           <el-table-column prop="nickname" label="用户昵称" />
           <el-table-column #default="scope" label="用户展示">
-            <video
-              :id="
-                scope.row.userId === userInfo.id
-                  ? scope.row.userId
-                  : scope.row.socketRefUserId
-              "
-              controls
-              autoplay
-            />
+            <video :id="scope.row.socketRefUserId" controls autoplay />
           </el-table-column>
           <el-table-column #default="scope" label="操作">
             <el-button
