@@ -1,6 +1,9 @@
 import { nettyWebSocketGetAllWebSocketUrl } from "@/api/http/base/NettyWebSocketController";
 import { HeartBeatRequest } from "@/api/socket/WebSocket";
-import { NETTY_WEB_SOCKET_HEART_BEAT } from "@/model/constant/websocket/WebSocketAllPath";
+import {
+  NETTY_WEB_SOCKET_HEART_BEAT,
+  type SocketHeartBeatVO
+} from "@/model/constant/websocket/WebSocketAllPath";
 
 export interface IWebSocketMessage<T> {
   uri?: string; // 路径
@@ -49,13 +52,15 @@ function HandleAllWebSocketUrl(
       if (webSocketMessage.uri === NETTY_WEB_SOCKET_HEART_BEAT) {
         const ms = new Date().getTime() - beginTs;
 
-        webSocketIdAndTsObj[webSocketMessage.data] = ms;
+        const socketHeartBeatVO = webSocketMessage.data as SocketHeartBeatVO;
+
+        webSocketIdAndTsObj[socketHeartBeatVO.socketId] = ms;
 
         // 获取：延迟最低的 webSocketId
         if (minMs === -1 || ms < minMs) {
           minMs = ms;
 
-          resWebSocketId = webSocketMessage.data;
+          resWebSocketId = socketHeartBeatVO.socketId;
         }
 
         webSocket.close();

@@ -12,7 +12,10 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
 import { ToDataAndByteArrForBlob } from "@/utils/BlobUtil";
 import { BASE_SIGN_OUT } from "@/model/constant/websocket/WebSocketReceivePath";
-import { NETTY_WEB_SOCKET_HEART_BEAT } from "@/model/constant/websocket/WebSocketAllPath";
+import {
+  NETTY_WEB_SOCKET_HEART_BEAT,
+  type SocketHeartBeatVO
+} from "@/model/constant/websocket/WebSocketAllPath";
 
 let myWebSocket: WebSocket | null = null;
 let heartBeatInterval: any = null; // 心跳检测，定时器
@@ -147,7 +150,9 @@ export function ConnectWebSocket() {
       }
 
       if (webSocketMessage.uri === NETTY_WEB_SOCKET_HEART_BEAT) {
-        useWebSocketStoreHook().setSocketRefUserId(webSocketMessage.data);
+        useWebSocketStoreHook().setSocketRefUserId(
+          (webSocketMessage.data as SocketHeartBeatVO).socketRefUserId
+        );
         return;
       }
 
