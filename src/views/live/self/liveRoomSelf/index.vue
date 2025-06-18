@@ -24,6 +24,7 @@ import PathConstant from "@/model/constant/PathConstant";
 import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { useLiveRoomStoreHook } from "@/store/modules/liveRoom";
 import { BASE_LIVE_ROOM_USER_ADD_USER } from "@/model/constant/websocket/WebSocketAllPath";
+import CommonConstant from "@/model/constant/CommonConstant";
 
 defineOptions({
   name: "BaseLiveRoomSelf"
@@ -105,6 +106,12 @@ function doJoinRoom(dto: BaseLiveRoomUserAddUserDTO) {
 
 useWebSocketStoreHook().$subscribe((mutation, state) => {
   if (state.webSocketMessage.uri === BASE_LIVE_ROOM_USER_ADD_USER) {
+    if (state.webSocketMessage.code !== CommonConstant.API_OK_CODE) {
+      ToastError(state.webSocketMessage.msg);
+
+      return;
+    }
+
     const roomId = state.webSocketMessage.data as string;
 
     if (!roomId) {
