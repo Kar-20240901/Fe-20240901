@@ -151,7 +151,7 @@ export function ConnectWebSocket() {
 
       if (webSocketMessage.uri === NETTY_WEB_SOCKET_HEART_BEAT) {
         useWebSocketStoreHook().setSocketRefUserId(
-          (webSocketMessage.data as SocketHeartBeatVO).socketRefUserId
+          (webSocketMessage.data as SocketHeartBeatVO)?.socketRefUserId || ""
         );
         return;
       }
