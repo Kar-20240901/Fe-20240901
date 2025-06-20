@@ -54,6 +54,8 @@ let mediaRecorder: MediaRecorder;
 
 let stream;
 
+let getUserMedia = false;
+
 onMounted(() => {
   if (!roomId.value) {
     return;
@@ -80,9 +82,11 @@ const mimeType = "video/webm; codecs=vp9,opus";
 const socketRefUserId = useWebSocketStoreHook().socketRefUserId;
 
 function startCameraAndStream() {
-  if (stream) {
+  if (getUserMedia) {
     return;
   }
+
+  getUserMedia = true;
 
   navigator.mediaDevices
     .getUserMedia({
@@ -224,12 +228,15 @@ function appendBufferToSource(buffer: Uint8Array, id: string, shiftFlag) {
     }
     return;
   }
-
-  dataAppendMap[id] = true;
   try {
+    dataAppendMap[id] = true;
+
     dataMap[id].appendBuffer(buffer);
+
+    console.log("已经增加缓冲数据：", id);
   } catch (error) {
     console.error("Error appending buffer:", error);
+
     dataAppendMap[id] = false;
   }
 }
@@ -245,12 +252,16 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       !state.webSocketMessage.arrayBuffer ||
       state.webSocketMessage.arrayBuffer.byteLength <= 0
     ) {
+      console.log("收到无效数据：数据长度为 0");
+
       return;
     }
 
     const data = state.webSocketMessage.data as BaseLiveRoomDataAddDataDTO;
 
     if (data.socketRefUserId === socketRefUserId) {
+      console.log("收到无效数据：", socketRefUserId);
+
       return;
     }
 
@@ -259,17 +270,23 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
     const ele = document.getElementById(eleId) as HTMLVideoElement | null;
 
     if (!ele) {
+      console.log("未找到元素：", eleId);
+
       return;
     }
 
     if (dataInitMap[eleId] && ele.src && dataMap[eleId]) {
       appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
+
+      console.log("收到数据，已经初始化完成：", eleId);
     } else {
       // 创建 MediaSource 对象
       const mediaSource = new MediaSource();
       ele.src = URL.createObjectURL(mediaSource);
 
       let sourceBuffer = null;
+
+      console.log("收到数据，开始初始化：", eleId);
 
       mediaSource.onsourceopen = () => {
         sourceBuffer = mediaSource.addSourceBuffer(mimeType);
@@ -290,7 +307,10 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
 
           if (dataArrMap[eleId] && dataArrMap[eleId].length) {
             const nextBuffer = dataArrMap[eleId].shift();
+
             appendBufferToSource(nextBuffer, eleId, true);
+
+            console.log("开始增加缓冲数据：", eleId);
           }
         };
 
@@ -300,12 +320,20 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
 
         dataInitMap[eleId] = true;
 
+        console.log(
+          `收到数据，初始化完成：${eleId}，大小：${firstBlob.length}`
+        );
+
         appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
       };
     }
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_USER) {
+    console.log("有新用户加入");
+
     onSearch();
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_USER_ADD_USER) {
+    console.log("加入房间的响应");
+
     if (state.webSocketMessage.code !== CommonConstant.API_OK_CODE) {
       ToastError(state.webSocketMessage.msg);
     }
