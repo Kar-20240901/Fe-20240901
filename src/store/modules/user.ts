@@ -21,8 +21,7 @@ import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
 import { Validate } from "@/utils/ValidatorUtil";
 import { signEmailSignInPassword } from "@/api/http/base/SignEmailController";
 
-export const useUserStore = defineStore({
-  id: "pure-user",
+export const useUserStore = defineStore("pure-user", {
   state: (): userType => ({
     // 头像
     avatar: storageLocal().getItem<DataInfo>(userKey)?.avatar ?? "",

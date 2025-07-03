@@ -2,8 +2,7 @@ import { defineStore } from "pinia";
 import { store, type webSocketType } from "../utils";
 import type { IWebSocketMessage } from "@/utils/webSocket/WebSocketHelper";
 
-export const useWebSocketStore = defineStore({
-  id: "kar-webSocket",
+export const useWebSocketStore = defineStore("kar-webSocket", {
   state: (): webSocketType => ({
     webSocketStatus: false, // webSocket连接状态
     webSocketMessage: {} as IWebSocketMessage<any>, // webSocket消息

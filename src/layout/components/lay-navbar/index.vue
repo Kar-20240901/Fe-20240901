@@ -7,8 +7,8 @@ import LaySidebarFullScreen from "../lay-sidebar/components/SidebarFullScreen.vu
 import LaySidebarBreadCrumb from "../lay-sidebar/components/SidebarBreadCrumb.vue";
 import LaySidebarTopCollapse from "../lay-sidebar/components/SidebarTopCollapse.vue";
 
-import AccountSettingsIcon from "@iconify-icons/ri/user-settings-line";
-import LogoutCircleRLine from "@iconify-icons/ri/logout-circle-r-line";
+import AccountSettingsIcon from "~icons/ri/user-settings-line";
+import LogoutCircleRLine from "~icons/ri/logout-circle-r-line";
 
 const {
   layout,
@@ -25,7 +25,7 @@ const {
 </script>
 
 <template>
-  <div class="navbar bg-[#fff] shadow-sm shadow-[rgba(0,21,41,0.08)]">
+  <div class="navbar bg-[#fff] shadow-xs shadow-[rgba(0,21,41,0.08)]">
     <LaySidebarTopCollapse
       v-if="device === 'mobile'"
       class="hamburger-container"
@@ -60,7 +60,10 @@ const {
               账户设置
             </el-dropdown-item>
             <el-dropdown-item @click="logout">
-              <IconifyIconOffline :icon="LogoutCircleRLine" class="m-[5px]" />
+              <IconifyIconOffline
+                :icon="LogoutCircleRLine"
+                style="margin: 5px"
+              />
               退出系统
             </el-dropdown-item>
           </el-dropdown-menu>

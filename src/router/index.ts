@@ -6,7 +6,13 @@ import { buildHierarchyTree } from "@/utils/tree";
 import remainingRouter from "./modules/remaining";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
-import { isAllEmpty, isUrl, openLink, storageLocal } from "@pureadmin/utils";
+import {
+  cloneDeep,
+  isAllEmpty,
+  isUrl,
+  openLink,
+  storageLocal
+} from "@pureadmin/utils";
 import {
   ascending,
   findRouteByPath,
@@ -54,6 +60,9 @@ export const constantRoutes: Array<RouteRecordRaw> = formatTwoStageRoutes(
   formatFlatteningRoutes(buildHierarchyTree(ascending(routes.flat(Infinity))))
 );
 
+/** 初始的静态路由，用于退出登录时重置路由 */
+const initConstantRoutes: Array<RouteRecordRaw> = cloneDeep(constantRoutes);
+
 /** 用于渲染菜单，保持原始层级 */
 export const constantMenus: Array<RouteComponent> = ascending(
   routes.flat(Infinity)
@@ -86,17 +95,13 @@ export const router: Router = createRouter({
 
 /** 重置路由 */
 export function resetRouter() {
-  router.getRoutes().forEach(route => {
-    const { name, meta } = route;
-    if (name && router.hasRoute(name) && meta?.backstage) {
-      router.removeRoute(name);
-      router.options.routes = formatTwoStageRoutes(
-        formatFlatteningRoutes(
-          buildHierarchyTree(ascending(routes.flat(Infinity)))
-        )
-      );
-    }
-  });
+  router.clearRoutes();
+  for (const route of initConstantRoutes.concat(...(remainingRouter as any))) {
+    router.addRoute(route);
+  }
+  router.options.routes = formatTwoStageRoutes(
+    formatFlatteningRoutes(buildHierarchyTree(ascending(routes.flat(Infinity))))
+  );
   usePermissionStoreHook().clearAllCachePage();
 }
 
@@ -126,12 +131,10 @@ router.beforeEach((to: ToRouteType, _from, next) => {
       else document.title = item.meta.title as string;
     });
   }
-
   /** 如果已经登录并存在登录信息后不能跳转到路由白名单，而是继续保持在当前页面 */
   function toCorrectRoute() {
     whiteList.includes(to.fullPath) ? next(_from.fullPath) : next();
   }
-
   if (Cookies.get(multipleTabsKey) && userInfo) {
     // 无权限跳转403页面
     if (to.meta?.roles && !isOneOfArray(to.meta?.roles, userInfo?.roles)) {
