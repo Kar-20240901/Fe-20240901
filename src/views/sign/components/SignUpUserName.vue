@@ -4,8 +4,8 @@ import Motion from "../utils/motion";
 import type { FormInstance } from "element-plus";
 import { useUserStoreHook } from "@/store/modules/user";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Lock from "@iconify-icons/ri/lock-fill";
-import User from "@iconify-icons/ri/user-3-fill";
+import Lock from "~icons/ri/lock-fill";
+import User from "~icons/ri/user-3-fill";
 import {
   signUserNameSignUp,
   SignUserNameSignUpDTO

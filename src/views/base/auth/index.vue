@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
-import AddFill from "@iconify-icons/ri/add-circle-line";
+import AddFill from "~icons/ri/add-circle-line";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
 import { baseRoleDictList, DictVO } from "@/api/http/base/BaseRoleController";
@@ -19,7 +19,7 @@ import FormEdit from "@/views/base/auth/formEdit.vue";
 import FormBatch from "@/views/base/auth/formBatch.vue";
 import { IFormBatch } from "@/views/base/auth/types";
 import type { R } from "@/model/vo/R";
-import MenuAddFill from "@iconify-icons/ri/menu-add-fill";
+import MenuAddFill from "~icons/ri/menu-add-fill";
 
 defineOptions({
   name: "BaseAuth"

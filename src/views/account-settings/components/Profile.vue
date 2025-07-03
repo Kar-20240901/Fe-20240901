@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue";
 import type { FormInstance, FormRules, UploadFile } from "element-plus";
 import { deviceDetection } from "@pureadmin/utils";
-import uploadLine from "@iconify-icons/ri/upload-line";
+import uploadLine from "~icons/ri/upload-line";
 import {
   baseUserSelfInfo,
   BaseUserSelfInfoVO,

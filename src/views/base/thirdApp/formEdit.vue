@@ -7,7 +7,7 @@ import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
 import { BaseThirdAppInsertOrUpdateDTO } from "@/api/http/base/BaseThirdAppController";
 import { BaseThirdAppTypeOptions } from "@/model/enum/BaseThirdAppTypeEnum";
-import Info from "@iconify-icons/ri/information-line";
+import Info from "~icons/ri/information-line";
 import { IThirdAppConfigurationDialogFormProps } from "@/views/base/thirdApp/types";
 
 const form = ref<BaseThirdAppInsertOrUpdateDTO>({});

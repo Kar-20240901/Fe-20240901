@@ -7,14 +7,14 @@ import { deviceDetection, useGlobal } from "@pureadmin/utils";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
 import LaySidebarTopCollapse from "@/layout/components/lay-sidebar/components/SidebarTopCollapse.vue";
 
-import leftLine from "@iconify-icons/ri/arrow-left-s-line";
-import ProfileIcon from "@iconify-icons/ri/user-3-line";
+import leftLine from "~icons/ri/arrow-left-s-line";
+import ProfileIcon from "~icons/ri/user-3-line";
 import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
 import { useUserStoreHook } from "@/store/modules/user";
 import SecurityLog from "@/views/account-settings/components/SecurityLog.vue";
 import AccountManagement from "@/views/account-settings/components/AccountManagement.vue";
-import SecurityLogIcon from "@iconify-icons/ri/window-line";
-import AccountManagementIcon from "@iconify-icons/ri/profile-line";
+import SecurityLogIcon from "~icons/ri/window-line";
+import AccountManagementIcon from "~icons/ri/profile-line";
 import Avatar from "@/assets/user.png";
 
 defineOptions({
@@ -160,8 +160,8 @@ const witchPane = ref("profile");
       &::before {
         position: absolute;
         inset: 0 8px;
-        margin: 4px 0;
         clear: both;
+        margin: 4px 0;
         content: "";
         background: var(--el-color-primary);
         border-radius: 3px;

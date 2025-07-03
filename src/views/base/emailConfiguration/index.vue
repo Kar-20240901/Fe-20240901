@@ -9,7 +9,7 @@ import {
 import { Validate } from "@/utils/ValidatorUtil";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
 import ReSegmented from "@/components/ReSegmented/src";
-import Info from "@iconify-icons/ri/information-line";
+import Info from "~icons/ri/information-line";
 import { ToastSuccess } from "@/utils/ToastUtil";
 
 defineOptions({

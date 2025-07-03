@@ -9,7 +9,7 @@ import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
 import { BasePayConfigurationInsertOrUpdateDTO } from "@/api/http/base/BasePayConfigurationController";
 import { IPayConfigurationDialogFormProps } from "@/views/pay/payConfiguration/types";
 import { BasePayTypeOptions } from "@/model/enum/BasePayTypeEnum";
-import Info from "@iconify-icons/ri/information-line";
+import Info from "~icons/ri/information-line";
 import { Validate } from "@/utils/ValidatorUtil";
 
 const form = ref<BasePayConfigurationInsertOrUpdateDTO>({});
