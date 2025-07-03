@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Refresh from "@iconify-icons/ep/refresh";
+import Refresh from "~icons/ep/refresh";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import {
   baseRequestAllAvgPro,

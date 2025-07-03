@@ -7,7 +7,7 @@ import {
   BaseFileTransferPageDTO
 } from "@/api/http/base/BaseFileTransferController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Delete from "@iconify-icons/ep/delete";
+import Delete from "~icons/ep/delete";
 import { UploadFile, UploadFiles } from "element-plus";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
@@ -22,7 +22,7 @@ import {
 } from "@/api/http/base/BaseFileController";
 import { baseApi } from "@/api/http/utils";
 import { BaseFileUploadTypeEnumEnum } from "@/model/enum/BaseFileUploadTypeEnum";
-import Refresh from "@iconify-icons/ep/refresh";
+import Refresh from "~icons/ep/refresh";
 import { IUploadDialogFormProps } from "@/views/file/fileSystem/types";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { throttle } from "@pureadmin/utils";

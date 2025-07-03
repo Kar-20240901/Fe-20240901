@@ -13,11 +13,11 @@ import {
   baseFileUpdateSelf
 } from "@/api/http/base/BaseFileController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Refresh from "@iconify-icons/ep/refresh";
+import Refresh from "~icons/ep/refresh";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
 import ReSegmented from "@/components/ReSegmented/src";
 import { BaseFileTypeEnum } from "@/model/enum/BaseFileTypeEnum";
-import Delete from "@iconify-icons/ep/delete";
+import Delete from "~icons/ep/delete";
 import CommonConstant from "@/model/constant/CommonConstant";
 import { BaseFilePrivateDownload, GetFileSizeStr } from "@/utils/FileUtil";
 import { IDataList } from "@/views/file/fileSystem/types";
@@ -570,10 +570,10 @@ const uploadDialogRef = ref();
   white-space: nowrap;
   appearance: none;
   cursor: pointer;
+  outline: none;
   background: #fff;
   border: 1px solid #dcdfe6;
   border-radius: 4px;
-  outline: none;
   transition: 0.1s;
 }
 

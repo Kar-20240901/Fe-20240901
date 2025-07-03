@@ -13,11 +13,11 @@ import {
 import formEdit from "@/views/base/post/formEdit.vue";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Refresh from "@iconify-icons/ep/refresh";
+import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
 import MenuAddFill from "~icons/ri/menu-add-fill";
-import EditPen from "@iconify-icons/ep/edit-pen";
-import Delete from "@iconify-icons/ep/delete";
+import EditPen from "~icons/ep/edit-pen";
+import Delete from "~icons/ep/delete";
 import ExpandIcon from "@/assets/table-bar/expand.svg?component";
 import {
   ICON_CLASS,

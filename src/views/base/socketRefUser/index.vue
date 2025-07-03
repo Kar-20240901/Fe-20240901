@@ -2,8 +2,8 @@
 import { onMounted, ref } from "vue";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Refresh from "@iconify-icons/ep/refresh";
-import Delete from "@iconify-icons/ep/delete";
+import Refresh from "~icons/ep/refresh";
+import Delete from "~icons/ep/delete";
 import {
   BaseSocketRefUserDO,
   baseSocketRefUserOfflineByIdSet,
