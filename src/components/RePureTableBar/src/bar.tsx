@@ -1,20 +1,21 @@
 import Sortable from "sortablejs";
+import { transformI18n } from "@/plugins/i18n";
 import { useEpThemeStoreHook } from "@/store/modules/epTheme";
 import {
-  computed,
-  defineComponent,
-  getCurrentInstance,
-  nextTick,
   type PropType,
   ref,
-  unref
+  unref,
+  computed,
+  nextTick,
+  defineComponent,
+  getCurrentInstance
 } from "vue";
 import {
-  cloneDeep,
   delay,
-  getKeyList,
+  cloneDeep,
   isBoolean,
-  isFunction
+  isFunction,
+  getKeyList
 } from "@pureadmin/utils";
 
 import Fullscreen from "~icons/ri/fullscreen-fill";
@@ -147,7 +148,9 @@ export default defineComponent({
     }
 
     function handleCheckColumnListChange(val: boolean, label: string) {
-      dynamicColumns.value.filter(item => item.label === label)[0].hide = !val;
+      dynamicColumns.value.filter(
+        item => transformI18n(item.label) === transformI18n(label)
+      )[0].hide = !val;
     }
 
     async function onReset() {
@@ -220,7 +223,9 @@ export default defineComponent({
     };
 
     const isFixedColumn = (label: string) => {
-      return dynamicColumns.value.filter(item => item.label === label)[0].fixed
+      return dynamicColumns.value.filter(
+        item => transformI18n(item.label) === transformI18n(label)
+      )[0].fixed
         ? true
         : false;
     };
@@ -358,10 +363,10 @@ export default defineComponent({
                                 }
                               >
                                 <span
-                                  title={item}
+                                  title={transformI18n(item)}
                                   class="inline-block w-[120px] truncate hover:text-text_color_primary"
                                 >
-                                  {item}
+                                  {transformI18n(item)}
                                 </span>
                               </el-checkbox>
                             </div>

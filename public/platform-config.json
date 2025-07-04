@@ -1,10 +1,11 @@
 {
   "Version": "6.0.0",
-  "Title": "KarAdmin",
+  "Title": "PureAdmin",
   "FixedHeader": true,
   "HiddenSideBar": false,
   "MultiTagsCache": false,
   "KeepAlive": true,
+  "Locale": "zh",
   "Layout": "vertical",
   "Theme": "light",
   "DarkMode": false,

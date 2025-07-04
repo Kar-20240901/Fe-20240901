@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import { nextTick, onMounted, ref, unref, watch } from "vue";
+import { ref, unref, watch, onMounted, nextTick } from "vue";
 
 defineOptions({
   name: "LayFrame"
@@ -13,6 +14,7 @@ const props = defineProps<{
   };
 }>();
 
+const { t } = useI18n();
 const loading = ref(true);
 const currentRoute = useRoute();
 const frameSrc = ref<string>("");
@@ -66,7 +68,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-loading="loading" class="frame" element-loading-text="加载中...">
+  <div
+    v-loading="loading"
+    class="frame"
+    :element-loading-text="t('status.pureLoad')"
+  >
     <iframe ref="frameRef" :src="frameSrc" class="frame-iframe" />
   </div>
 </template>

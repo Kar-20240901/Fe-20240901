@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { match } from "pinyin-pro";
+import { useI18n } from "vue-i18n";
 import { getConfig } from "@/config";
 import { useRouter } from "vue-router";
 import SearchResult from "./SearchResult.vue";
 import SearchFooter from "./SearchFooter.vue";
 import { useNav } from "@/layout/hooks/useNav";
+import { transformI18n } from "@/plugins/i18n";
 import SearchHistory from "./SearchHistory.vue";
-import type { dragItem, optionsItem } from "../types";
-import { computed, ref, shallowRef, watch } from "vue";
-import { onKeyStroke, useDebounceFn } from "@vueuse/core";
+import type { optionsItem, dragItem } from "../types";
+import { ref, computed, shallowRef, watch } from "vue";
+import { useDebounceFn, onKeyStroke } from "@vueuse/core";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { cloneDeep, isAllEmpty, storageLocal } from "@pureadmin/utils";
 import SearchIcon from "~icons/ri/search-line";
@@ -27,6 +29,7 @@ const emit = defineEmits<Emits>();
 const props = withDefaults(defineProps<Props>(), {});
 
 const router = useRouter();
+const { t, locale } = useI18n();
 
 const HISTORY_TYPE = "history";
 const COLLECT_TYPE = "collect";
@@ -92,14 +95,12 @@ function setStorageItem(key, value) {
 /** 将菜单树形结构扁平化为一维数组，用于菜单查询 */
 function flatTree(arr) {
   const res = [];
-
   function deep(arr) {
     arr.forEach(item => {
       res.push(item);
       item.children && deep(item.children);
     });
   }
-
   deep(arr);
   return res;
 }
@@ -109,15 +110,16 @@ function search() {
   const flatMenusData = flatTree(menusData.value);
   resultOptions.value = flatMenusData.filter(menu =>
     keyword.value
-      ? menu.meta?.title
+      ? transformI18n(menu.meta?.title)
           .toLocaleLowerCase()
           .includes(keyword.value.toLocaleLowerCase().trim()) ||
-        !isAllEmpty(
-          match(
-            menu.meta?.title.toLocaleLowerCase(),
-            keyword.value.toLocaleLowerCase().trim()
-          )
-        )
+        (locale.value === "zh" &&
+          !isAllEmpty(
+            match(
+              transformI18n(menu.meta?.title).toLocaleLowerCase(),
+              keyword.value.toLocaleLowerCase().trim()
+            )
+          ))
       : false
   );
   activePath.value =
@@ -291,7 +293,7 @@ onKeyStroke("ArrowDown", handleDown);
       v-model="keyword"
       size="large"
       clearable
-      placeholder="搜索菜单（支持拼音搜索）"
+      :placeholder="t('search.purePlaceholder')"
       @input="handleSearch"
     >
       <template #prefix>
@@ -303,7 +305,7 @@ onKeyStroke("ArrowDown", handleDown);
     </el-input>
     <div class="search-content">
       <el-scrollbar ref="scrollbarRef" max-height="calc(90vh - 140px)">
-        <el-empty v-if="showEmpty" description="暂无搜索结果" />
+        <el-empty v-if="showEmpty" :description="t('search.pureEmpty')" />
         <SearchHistory
           v-if="showSearchHistory"
           ref="historyRef"

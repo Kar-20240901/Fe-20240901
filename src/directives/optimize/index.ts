@@ -1,9 +1,9 @@
 import {
-  debounce,
   isArray,
-  isFunction,
+  throttle,
+  debounce,
   isObject,
-  throttle
+  isFunction
 } from "@pureadmin/utils";
 import { useEventListener } from "@vueuse/core";
 import type { Directive, DirectiveBinding } from "vue";

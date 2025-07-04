@@ -24,6 +24,5 @@ export type {
   userType,
   multiType,
   cacheType,
-  positionType,
-  webSocketType
+  positionType
 } from "./types";

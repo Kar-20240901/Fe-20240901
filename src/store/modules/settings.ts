@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getConfig, type setType, store } from "../utils";
+import { type setType, store, getConfig } from "../utils";
 
 export const useSettingStore = defineStore("pure-setting", {
   state: (): setType => ({

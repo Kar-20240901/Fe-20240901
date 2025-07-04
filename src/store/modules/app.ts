@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
 import {
   type appType,
-  deviceDetection,
+  store,
   getConfig,
-  responsiveStorageNameSpace,
   storageLocal,
-  store
+  deviceDetection,
+  responsiveStorageNameSpace
 } from "../utils";
 
 export const useAppStore = defineStore("pure-app", {

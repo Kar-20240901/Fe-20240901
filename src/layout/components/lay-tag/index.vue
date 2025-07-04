@@ -1,19 +1,20 @@
 <script setup lang="ts">
+import { $t } from "@/plugins/i18n";
 import { emitter } from "@/utils/mitt";
 import { RouteConfigs } from "../../types";
 import { useTags } from "../../hooks/useTag";
 import { routerArrays } from "@/layout/types";
 import { onClickOutside } from "@vueuse/core";
 import TagChrome from "./components/TagChrome.vue";
-import { getTopMenu, handleAliveRoute } from "@/router/utils";
+import { handleAliveRoute, getTopMenu } from "@/router/utils";
 import { useSettingStoreHook } from "@/store/modules/settings";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
-import { nextTick, onBeforeUnmount, ref, toRaw, unref, watch } from "vue";
+import { ref, watch, unref, toRaw, nextTick, onBeforeUnmount } from "vue";
 import {
   delay,
-  isAllEmpty,
   isEqual,
+  isAllEmpty,
   useResizeObserver
 } from "@pureadmin/utils";
 
@@ -50,6 +51,7 @@ const {
   onMounted,
   onMouseenter,
   onMouseleave,
+  transformI18n,
   onContentFullScreen
 } = useTags();
 
@@ -199,7 +201,6 @@ function dynamicRouteTag(value: string): void {
       });
     }
   }
-
   concatPath(router.options.routes as any, value);
 }
 
@@ -289,13 +290,6 @@ function deleteMenu(item, tag?: string) {
   handleAliveRoute(route as ToRouteType);
 }
 
-function handleMouseClick(item, event: MouseEvent) {
-  if (event.button === 1) {
-    // 如果是点击鼠标中键
-    deleteMenu(item);
-  }
-}
-
 function onClickDrop(key, item, selectRoute?: RouteConfigs) {
   if (item && item.disabled) return;
 
@@ -350,10 +344,10 @@ function onClickDrop(key, item, selectRoute?: RouteConfigs) {
       setTimeout(() => {
         if (pureSetting.hiddenSideBar) {
           tagsViews[6].icon = ExitFullscreen;
-          tagsViews[6].text = "内容区退出全屏";
+          tagsViews[6].text = $t("buttons.pureContentExitFullScreen");
         } else {
           tagsViews[6].icon = Fullscreen;
-          tagsViews[6].text = "内容区全屏";
+          tagsViews[6].text = $t("buttons.pureContentFullScreen");
         }
       }, 100);
       break;
@@ -404,7 +398,6 @@ function showMenuModel(
   } else {
     currentIndex = allRoute.findIndex(v => isEqual(v.query, query));
   }
-
   function fixedTagDisabled() {
     if (allRoute[currentIndex]?.meta?.fixedTag) {
       Array.of(1, 2, 3, 4, 5).forEach(v => {
@@ -593,13 +586,12 @@ onBeforeUnmount(() => {
           @mouseenter.prevent="onMouseenter(index)"
           @mouseleave.prevent="onMouseleave(index)"
           @click="tagOnClick(item)"
-          @mousedown="e => handleMouseClick(item, e)"
         >
           <template v-if="showModel !== 'chrome'">
             <span
               class="tag-title dark:text-text_color_primary! dark:hover:text-primary!"
             >
-              {{ item.meta.title }}
+              {{ transformI18n(item.meta.title) }}
             </span>
             <span
               v-if="
@@ -624,7 +616,7 @@ onBeforeUnmount(() => {
               <TagChrome />
             </div>
             <span class="tag-title">
-              {{ item.meta.title }}
+              {{ transformI18n(item.meta.title) }}
             </span>
             <span
               v-if="isFixedTag(item) ? false : index !== 0"
@@ -657,7 +649,7 @@ onBeforeUnmount(() => {
         >
           <li v-if="item.show" @click="selectTag(key, item)">
             <IconifyIconOffline :icon="item.icon" />
-            {{ item.text }}
+            {{ transformI18n(item.text) }}
           </li>
         </div>
       </ul>
@@ -681,7 +673,7 @@ onBeforeUnmount(() => {
             :disabled="item.disabled"
           >
             <IconifyIconOffline :icon="item.icon" />
-            {{ item.text }}
+            {{ transformI18n(item.text) }}
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>

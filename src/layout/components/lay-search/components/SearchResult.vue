@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { Props } from "../types";
+import { transformI18n } from "@/plugins/i18n";
 import { useResizeObserver } from "@pureadmin/utils";
 import { useEpThemeStoreHook } from "@/store/modules/epTheme";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { computed, getCurrentInstance, onMounted, ref } from "vue";
+import { ref, computed, getCurrentInstance, onMounted } from "vue";
 import EnterOutlined from "@/assets/svg/enter_outlined.svg?component";
 
 interface Emits {
   (e: "update:value", val: string): void;
-
   (e: "enter"): void;
 }
 
@@ -82,7 +82,7 @@ defineExpose({ handleScroll });
     >
       <component :is="useRenderIcon(item.meta?.icon)" />
       <span class="result-item-title">
-        {{ item.meta?.title }}
+        {{ transformI18n(item.meta?.title) }}
       </span>
       <EnterOutlined />
     </div>

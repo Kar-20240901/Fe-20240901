@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { isEqual } from "@pureadmin/utils";
+import { transformI18n } from "@/plugins/i18n";
 import { useRoute, useRouter } from "vue-router";
-import { onMounted, ref, toRaw, watch } from "vue";
-import { findRouteByPath, getParentPaths } from "@/router/utils";
+import { ref, watch, onMounted, toRaw } from "vue";
+import { getParentPaths, findRouteByPath } from "@/router/utils";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 
 const route = useRoute();
@@ -112,7 +113,7 @@ watch(
         class="inline! items-stretch!"
       >
         <a @click.prevent="handleLink(item)">
-          {{ item.meta.title }}
+          {{ transformI18n(item.meta.title) }}
         </a>
       </el-breadcrumb-item>
     </transition-group>

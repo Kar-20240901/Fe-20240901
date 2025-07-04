@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {
+  type EventType,
   type ButtonProps,
-  closeDialog,
   type DialogOptions,
-  dialogStore,
-  type EventType
+  closeDialog,
+  dialogStore
 } from "./index";
-import { computed, ref } from "vue";
+import { ref, computed } from "vue";
 import { isFunction } from "@pureadmin/utils";
 import Fullscreen from "~icons/ri/fullscreen-fill";
 import ExitFullscreen from "~icons/ri/fullscreen-exit-fill";
