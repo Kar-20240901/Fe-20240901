@@ -28,7 +28,7 @@ function HandleAllWebSocketUrl(
 
   let resWebSocketId = ""; // 返回值：webSocketId
 
-  let checkMaxMs = 3000; // 检测时的最大延迟，单位：毫秒
+  const checkMaxMs = 3000; // 检测时的最大延迟，单位：毫秒
 
   // 获取：对应的延迟
   webSocketUrlArr.forEach(item => {
