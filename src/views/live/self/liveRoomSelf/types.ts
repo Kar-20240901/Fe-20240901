@@ -1,6 +1,6 @@
 import type { IDialogFormProps } from "@/model/types/IDialogFormProps";
 
-export interface ILiveRoomSelfDialogFormProps extends IDialogFormProps {}
+export type ILiveRoomSelfDialogFormProps = IDialogFormProps;
 
 export interface BaseLiveRoomUserAddUserDTO {
   id?: string;
