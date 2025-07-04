@@ -18,7 +18,9 @@ const include = [
   "sortablejs",
   "@vueuse/core",
   "@pureadmin/utils",
-  "responsive-storage"
+  "responsive-storage",
+  "vue-tippy",
+  "vue-virtual-scroller"
 ];
 
 /**

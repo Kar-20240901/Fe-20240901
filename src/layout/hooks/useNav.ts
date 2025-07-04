@@ -1,17 +1,17 @@
 import { storeToRefs } from "pinia";
 import { getConfig } from "@/config";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { emitter } from "@/utils/mitt";
 import Avatar from "@/assets/user.jpg";
 import { getTopMenu } from "@/router/utils";
 import { useFullscreen } from "@vueuse/core";
 import type { routeMetaType } from "../types";
 import { transformI18n } from "@/plugins/i18n";
-import { router, remainingPaths } from "@/router";
+import { remainingPaths, router } from "@/router";
 import { computed, type CSSProperties } from "vue";
 import { useAppStoreHook } from "@/store/modules/app";
 import { useUserStoreHook } from "@/store/modules/user";
-import { useGlobal, isAllEmpty } from "@pureadmin/utils";
+import { isAllEmpty, useGlobal } from "@pureadmin/utils";
 import { useEpThemeStoreHook } from "@/store/modules/epTheme";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import ExitFullscreen from "~icons/ri/fullscreen-exit-fill";
@@ -21,6 +21,7 @@ const errorInfo =
   "The current routing configuration is incorrect, please check the configuration";
 
 export function useNav() {
+  const route = useRoute();
   const pureApp = useAppStoreHook();
   const routers = useRouter().options.routes;
   const { isFullscreen, toggle } = useFullscreen();
@@ -109,6 +110,10 @@ export function useNav() {
     emitter.emit("openPanel");
   }
 
+  function toAccountSettings() {
+    router.push({ name: "AccountSettings" });
+  }
+
   function toggleSideBar() {
     pureApp.toggleSideBar();
   }
@@ -144,6 +149,7 @@ export function useNav() {
   }
 
   return {
+    route,
     title,
     device,
     layout,
@@ -169,6 +175,7 @@ export function useNav() {
     userAvatar,
     avatarsStyle,
     tooltipEffect,
+    toAccountSettings,
     getDropdownItemStyle,
     getDropdownItemClass
   };

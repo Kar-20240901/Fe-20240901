@@ -9,8 +9,8 @@ import LaySidebarBreadCrumb from "../lay-sidebar/components/SidebarBreadCrumb.vu
 import LaySidebarTopCollapse from "../lay-sidebar/components/SidebarTopCollapse.vue";
 
 import GlobalizationIcon from "@/assets/svg/globalization.svg?component";
+import AccountSettingsIcon from "~icons/ri/user-settings-line";
 import LogoutCircleRLine from "~icons/ri/logout-circle-r-line";
-import Setting from "~icons/ri/settings-3-line";
 import Check from "~icons/ep/check";
 
 const {
@@ -23,6 +23,7 @@ const {
   userAvatar,
   avatarsStyle,
   toggleSideBar,
+  toAccountSettings,
   getDropdownItemStyle,
   getDropdownItemClass
 } = useNav();
@@ -93,23 +94,24 @@ const { t, locale, translationCh, translationEn } = useTranslationLang();
         </span>
         <template #dropdown>
           <el-dropdown-menu class="logout">
+            <el-dropdown-item @click="toAccountSettings">
+              <IconifyIconOffline :icon="AccountSettingsIcon" class="m-[5px]" />
+              账户设置
+            </el-dropdown-item>
             <el-dropdown-item @click="logout">
-              <IconifyIconOffline
-                :icon="LogoutCircleRLine"
-                style="margin: 5px"
-              />
+              <IconifyIconOffline :icon="LogoutCircleRLine" class="m-[5px]" />
               {{ t("buttons.pureLoginOut") }}
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span
-        class="set-icon navbar-bg-hover"
-        :title="t('buttons.pureOpenSystemSet')"
-        @click="onPanel"
-      >
-        <IconifyIconOffline :icon="Setting" />
-      </span>
+      <!--      <span-->
+      <!--        class="set-icon navbar-bg-hover"-->
+      <!--        :title="t('buttons.pureOpenSystemSet')"-->
+      <!--        @click="onPanel"-->
+      <!--      >-->
+      <!--        <IconifyIconOffline :icon="Setting" />-->
+      <!--      </span>-->
     </div>
   </div>
 </template>

@@ -8,34 +8,34 @@ import remainingRouter from "./modules/remaining";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import {
-  isUrl,
-  openLink,
   cloneDeep,
   isAllEmpty,
+  isUrl,
+  openLink,
   storageLocal
 } from "@pureadmin/utils";
 import {
   ascending,
-  getTopMenu,
-  initRouter,
-  isOneOfArray,
-  getHistoryMode,
   findRouteByPath,
-  handleAliveRoute,
+  formatFlatteningRoutes,
   formatTwoStageRoutes,
-  formatFlatteningRoutes
+  getHistoryMode,
+  getTopMenu,
+  handleAliveRoute,
+  initRouter,
+  isOneOfArray
 } from "./utils";
 import {
-  type Router,
-  type RouteRecordRaw,
+  createRouter,
   type RouteComponent,
-  createRouter
+  type Router,
+  type RouteRecordRaw
 } from "vue-router";
 import {
   type DataInfo,
-  userKey,
+  multipleTabsKey,
   removeToken,
-  multipleTabsKey
+  userKey
 } from "@/utils/auth";
 
 /** 自动导入全部静态路由，无需再手动引入！匹配 src/router/modules 目录（任何嵌套级别）中具有 .ts 扩展名的所有文件，除了 remaining.ts 文件
@@ -106,8 +106,10 @@ export function resetRouter() {
   usePermissionStoreHook().clearAllCachePage();
 }
 
+export const signPath = "/sign";
+
 /** 路由白名单 */
-const whiteList = ["/login"];
+const whiteList = [signPath];
 
 const { VITE_HIDE_HOME } = import.meta.env;
 
@@ -156,7 +158,7 @@ router.beforeEach((to: ToRouteType, _from, next) => {
       // 刷新
       if (
         usePermissionStoreHook().wholeMenus.length === 0 &&
-        to.path !== "/login"
+        to.path !== signPath
       ) {
         initRouter().then((router: Router) => {
           if (!useMultiTagsStoreHook().getMultiTagsCache) {
@@ -193,12 +195,13 @@ router.beforeEach((to: ToRouteType, _from, next) => {
       toCorrectRoute();
     }
   } else {
-    if (to.path !== "/login") {
+    // whiteList里面的路径不登陆就可以直接访问，其他路径则会跳转到登录页
+    if (to.path !== signPath) {
       if (whiteList.indexOf(to.path) !== -1) {
         next();
       } else {
         removeToken();
-        next({ path: "/login" });
+        next({ path: signPath });
       }
     } else {
       next();

@@ -1,4 +1,5 @@
 import type { RouteRecordName } from "vue-router";
+import type { IWebSocketMessage } from "@/utils/webSocket/WebSocketHelper";
 
 export type cacheType = {
   mode: string;
@@ -42,6 +43,21 @@ export type userType = {
   nickname?: string;
   roles?: Array<string>;
   permissions?: Array<string>;
+  passwordFlag?: boolean; // 是否有密码，用于前端显示，修改密码/设置密码
+  createTime?: string; // 账号注册时间，format：date-time
+  email?: string; // 邮箱，会脱敏
+  id?: string; // 用户主键 id
+  currentPage?: number;
   isRemembered?: boolean;
   loginDay?: number;
+};
+
+export type webSocketType = {
+  webSocketStatus: boolean;
+  webSocketMessage: IWebSocketMessage<any>;
+  socketRefUserId: string; // 套接字关联用户的关联 id
+};
+
+export type liveRoomType = {
+  roomId?: string;
 };

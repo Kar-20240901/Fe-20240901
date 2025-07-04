@@ -6,15 +6,15 @@ import { useTags } from "../../hooks/useTag";
 import { routerArrays } from "@/layout/types";
 import { onClickOutside } from "@vueuse/core";
 import TagChrome from "./components/TagChrome.vue";
-import { handleAliveRoute, getTopMenu } from "@/router/utils";
+import { getTopMenu, handleAliveRoute } from "@/router/utils";
 import { useSettingStoreHook } from "@/store/modules/settings";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
-import { ref, watch, unref, toRaw, nextTick, onBeforeUnmount } from "vue";
+import { nextTick, onBeforeUnmount, ref, toRaw, unref, watch } from "vue";
 import {
   delay,
-  isEqual,
   isAllEmpty,
+  isEqual,
   useResizeObserver
 } from "@pureadmin/utils";
 
@@ -288,6 +288,13 @@ function deleteDynamicTag(obj: any, current: any, tag?: string) {
 function deleteMenu(item, tag?: string) {
   deleteDynamicTag(item, item.path, tag);
   handleAliveRoute(route as ToRouteType);
+}
+
+function handleMouseClick(item, event: MouseEvent) {
+  if (event.button === 1) {
+    // 如果是点击鼠标中键
+    deleteMenu(item);
+  }
 }
 
 function onClickDrop(key, item, selectRoute?: RouteConfigs) {
@@ -586,6 +593,7 @@ onBeforeUnmount(() => {
           @mouseenter.prevent="onMouseenter(index)"
           @mouseleave.prevent="onMouseleave(index)"
           @click="tagOnClick(item)"
+          @mousedown="e => handleMouseClick(item, e)"
         >
           <template v-if="showModel !== 'chrome'">
             <span
