@@ -16,7 +16,6 @@ import { useVerifyCode } from "@/utils/verifyCode";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { useUserStoreHook } from "@/store/modules/user";
 import { Validate } from "@/utils/ValidatorUtil";
-import { useVerifyCode2 } from "@/utils/verifyCode2";
 
 const form = ref<SignEmailUpdateEmailDTO>({});
 const formRef = ref();
@@ -38,8 +37,8 @@ defineExpose({
 
 const props = defineProps<IDialogFormProps>();
 
-const { isDisabled, text } = useVerifyCode();
-const { isDisabled2, text2 } = useVerifyCode2();
+const verifyCode1 = useVerifyCode();
+const verifyCode2 = useVerifyCode();
 
 function confirmFun() {
   return signEmailUpdateEmail(form.value);
@@ -61,8 +60,8 @@ function confirmClick() {
 }
 
 onUnmounted(() => {
-  useVerifyCode().end();
-  useVerifyCode2().end();
+  verifyCode1.end();
+  verifyCode2.end();
 });
 </script>
 
@@ -117,17 +116,21 @@ onUnmounted(() => {
                 placeholder="新邮箱验证码"
               />
               <el-button
-                :disabled="isDisabled"
+                :disabled="verifyCode1.isDisabled.value"
                 class="ml-2"
                 @click="
-                  useVerifyCode().start(formRef, 'newEmail', () => {
+                  verifyCode1.start(formRef, 'newEmail', () => {
                     return signEmailUpdateEmailSendCodeNew({
                       email: form.newEmail
                     });
                   })
                 "
               >
-                {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}
+                {{
+                  verifyCode1.text.value.length > 0
+                    ? verifyCode1.text + "秒后重新获取"
+                    : "获取验证码"
+                }}
               </el-button>
             </div>
           </el-form-item>
@@ -152,15 +155,19 @@ onUnmounted(() => {
                 placeholder="旧邮箱验证码"
               />
               <el-button
-                :disabled="isDisabled2"
+                :disabled="verifyCode2.isDisabled.value"
                 class="ml-2"
                 @click="
-                  useVerifyCode2().start(formRef, '', () => {
+                  verifyCode2.start(formRef, '', () => {
                     return signEmailUpdateEmailSendCodeOld();
                   })
                 "
               >
-                {{ text2.length > 0 ? text2 + "秒后重新获取" : "获取验证码" }}
+                {{
+                  verifyCode2.text.value.length > 0
+                    ? verifyCode2.text.value + "秒后重新获取"
+                    : "获取验证码"
+                }}
               </el-button>
             </div>
           </el-form-item>

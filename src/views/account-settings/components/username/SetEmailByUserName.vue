@@ -37,7 +37,7 @@ defineExpose({
 
 const props = defineProps<IDialogFormProps>();
 
-const { isDisabled, text } = useVerifyCode();
+const verifyCode = useVerifyCode();
 
 function confirmFun() {
   const formValue = { ...form.value };
@@ -61,7 +61,7 @@ function confirmClick() {
 }
 
 onUnmounted(() => {
-  useVerifyCode().end();
+  verifyCode.end();
 });
 </script>
 
@@ -112,15 +112,19 @@ onUnmounted(() => {
                 placeholder="邮箱验证码"
               />
               <el-button
-                :disabled="isDisabled"
+                :disabled="verifyCode.isDisabled.value"
                 class="ml-2"
                 @click="
-                  useVerifyCode().start(formRef, 'email', () => {
+                  verifyCode.start(formRef, 'email', () => {
                     return signUserNameSetEmailSendCode({ email: form.email });
                   })
                 "
               >
-                {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}
+                {{
+                  verifyCode.text.value.length > 0
+                    ? verifyCode.text.value + "秒后重新获取"
+                    : "获取验证码"
+                }}
               </el-button>
             </div>
           </el-form-item>

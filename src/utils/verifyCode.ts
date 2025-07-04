@@ -4,11 +4,11 @@ import { ref } from "vue";
 import type { R } from "@/model/vo/R";
 import { ToastSuccess } from "@/utils/ToastUtil";
 
-const isDisabled = ref(false);
-const timer = ref(null);
-const text = ref("");
-
 export const useVerifyCode = () => {
+  const isDisabled = ref(false);
+  const timer = ref(null);
+  const text = ref("");
+
   const start = async (
     formEl: FormInstance | undefined,
     props: FormItemProp,

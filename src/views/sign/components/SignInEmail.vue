@@ -20,7 +20,7 @@ const router = useRouter();
 const loading = ref(false);
 const ruleForm = ref<SignEmailSignInCodeDTO>({});
 const ruleFormRef = ref<FormInstance>();
-const { isDisabled, text } = useVerifyCode();
+const verifyCode = useVerifyCode();
 
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -35,7 +35,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
         // 获取后端路由
         return initRouter()
           .then(() => {
-            useVerifyCode().end();
+            verifyCode.end();
             router.push(getTopMenu(true).path).then(() => {
               ToastSuccess("欢迎回来 ~");
             });
@@ -51,7 +51,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
 };
 
 function onBack() {
-  useVerifyCode().end();
+  verifyCode.end();
   useUserStoreHook().SET_CURRENTPAGE(0);
 }
 </script>
@@ -97,15 +97,19 @@ function onBack() {
             :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
           />
           <el-button
-            :disabled="isDisabled"
+            :disabled="verifyCode.isDisabled.value"
             class="ml-2"
             @click="
-              useVerifyCode().start(ruleFormRef, 'email', () => {
+              verifyCode.start(ruleFormRef, 'email', () => {
                 return signEmailSignInSendCode({ email: ruleForm.email });
               })
             "
           >
-            {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}
+            {{
+              verifyCode.text.value.length > 0
+                ? verifyCode.text.value + "秒后重新获取"
+                : "获取验证码"
+            }}
           </el-button>
         </div>
       </el-form-item>

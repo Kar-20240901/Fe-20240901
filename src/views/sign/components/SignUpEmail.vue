@@ -18,7 +18,7 @@ import { PasswordRSAEncrypt, RSAEncrypt } from "@/utils/RsaUtil";
 const loading = ref(false);
 const ruleForm = ref<SignEmailSignUpDTO>({});
 const ruleFormRef = ref<FormInstance>();
-const { isDisabled, text } = useVerifyCode();
+const verifyCode = useVerifyCode();
 
 const onUpdate = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -42,7 +42,7 @@ const onUpdate = async (formEl: FormInstance | undefined) => {
 };
 
 function onBack() {
-  useVerifyCode().end();
+  verifyCode.end();
   useUserStoreHook().SET_CURRENTPAGE(0);
 }
 </script>
@@ -109,15 +109,19 @@ function onBack() {
             :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
           />
           <el-button
-            :disabled="isDisabled"
+            :disabled="verifyCode.isDisabled.value"
             class="ml-2"
             @click="
-              useVerifyCode().start(ruleFormRef, 'email', () => {
+              verifyCode.start(ruleFormRef, 'email', () => {
                 return signEmailSignUpSendCode({ email: ruleForm.email });
               })
             "
           >
-            {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}
+            {{
+              verifyCode.text.value.length > 0
+                ? verifyCode.text.value + "秒后重新获取"
+                : "获取验证码"
+            }}
           </el-button>
         </div>
       </el-form-item>
