@@ -287,7 +287,7 @@ function renameConfirmFun() {
   });
 }
 
-function breadcrumbClick(index) {
+function breadcrumbClick(index: number) {
   const pidTemp = pidList.value[index];
   if (!pidTemp) {
     return;
