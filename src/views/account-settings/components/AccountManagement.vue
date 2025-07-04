@@ -2,7 +2,6 @@
 import { onMounted, ref } from "vue";
 import { deviceDetection } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
-import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
 import SetUserNameByEmail from "@/views/account-settings/components/email/SetUserNameByEmail.vue";
 import UpdateUserNameByEmail from "@/views/account-settings/components/email/UpdateUserNameByEmail.vue";
 import UpdateUserNameByUserName from "@/views/account-settings/components/username/UpdateUserNameByUserName.vue";
@@ -45,38 +44,37 @@ const list = ref([
   }
 ]);
 
-const userInfo = ref<BaseUserSelfInfoVO>({ ...useUserStoreHook().$state });
+const userInfo = useUserStoreHook();
 
 useUserStoreHook().$subscribe((mutation, state) => {
-  userInfo.value = { ...state };
   handleUserInfo();
 });
 
 function handleUserInfo() {
-  if (userInfo.value.username) {
-    list.value[usernameIndex].illustrate = userInfo.value.username;
+  if (userInfo.username) {
+    list.value[usernameIndex].illustrate = userInfo.username;
     list.value[usernameIndex].button = "修改";
   } else {
     list.value[emailIndex].illustrate = "";
     list.value[usernameIndex].button = "设置";
   }
 
-  if (userInfo.value.passwordFlag) {
+  if (userInfo.passwordFlag) {
     list.value[passwordIndex].button = "修改";
   } else {
     list.value[passwordIndex].button = "设置";
   }
 
-  if (userInfo.value.email) {
-    list.value[emailIndex].illustrate = userInfo.value.email;
+  if (userInfo.email) {
+    list.value[emailIndex].illustrate = userInfo.email;
     list.value[emailIndex].button = "修改";
   } else {
     list.value[emailIndex].illustrate = "";
     list.value[emailIndex].button = "设置";
   }
 
-  if (userInfo.value.createTime) {
-    list.value[signDeleteIndex].illustrate = userInfo.value.createTime;
+  if (userInfo.createTime) {
+    list.value[signDeleteIndex].illustrate = userInfo.createTime;
   } else {
     list.value[signDeleteIndex].illustrate = "";
   }
@@ -103,42 +101,42 @@ const signDeleteByUserNameRef = ref();
 function onClick(index, item) {
   if (index === usernameIndex) {
     if (item.button === "设置") {
-      if (userInfo.value.email) {
+      if (userInfo.email) {
         setUserNameByEmailRef.value.open();
       }
     } else if (item.button === "修改") {
-      if (userInfo.value.email) {
+      if (userInfo.email) {
         updateUserNameByEmailRef.value.open();
-      } else if (userInfo.value.username) {
+      } else if (userInfo.username) {
         updateUserNameByUserNameRef.value.open();
       }
     }
   } else if (index === passwordIndex) {
     if (item.button === "设置") {
-      if (userInfo.value.email) {
+      if (userInfo.email) {
         setPasswordByEmailRef.value.open();
       }
     } else if (item.button === "修改") {
-      if (userInfo.value.email) {
+      if (userInfo.email) {
         updatePasswordByEmailRef.value.open();
-      } else if (userInfo.value.username) {
+      } else if (userInfo.username) {
         updatePasswordByUserNameRef.value.open();
       }
     }
   } else if (index === emailIndex) {
     if (item.button === "设置") {
-      if (userInfo.value.username) {
+      if (userInfo.username) {
         setEmailByUserNameRef.value.open();
       }
     } else if (item.button === "修改") {
-      if (userInfo.value.email) {
+      if (userInfo.email) {
         updateEmailByEmailRef.value.open();
       }
     }
   } else if (index === signDeleteIndex) {
-    if (userInfo.value.email) {
+    if (userInfo.email) {
       signDeleteByEmailRef.value.open();
-    } else if (userInfo.value.username) {
+    } else if (userInfo.username) {
       signDeleteByUserNameRef.value.open();
     }
   }

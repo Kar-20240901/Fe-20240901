@@ -26,6 +26,7 @@ import {
   BASE_LIVE_ROOM_NEW_USER
 } from "@/model/constant/websocket/WebSocketReceivePath";
 import { BASE_LIVE_ROOM_USER_ADD_USER } from "@/model/constant/websocket/WebSocketAllPath";
+import { storeToRefs } from "pinia";
 
 defineOptions({
   name: "BaseLiveRoomUserSelf"
@@ -44,11 +45,7 @@ const tableRef = ref();
 
 const selectIdArr = ref<string[]>([]);
 
-const roomId = ref<string>(useLiveRoomStoreHook().$state.roomId);
-
-useLiveRoomStoreHook().$subscribe((mutation, state) => {
-  roomId.value = state.roomId;
-});
+const { roomId } = storeToRefs(useLiveRoomStoreHook());
 
 let mediaRecorder: MediaRecorder;
 

@@ -9,7 +9,6 @@ import LaySidebarTopCollapse from "@/layout/components/lay-sidebar/components/Si
 
 import leftLine from "~icons/ri/arrow-left-s-line";
 import ProfileIcon from "~icons/ri/user-3-line";
-import { BaseUserSelfInfoVO } from "@/api/http/base/BaseUserController";
 import { useUserStoreHook } from "@/store/modules/user";
 import SecurityLog from "@/views/account-settings/components/SecurityLog.vue";
 import AccountManagement from "@/views/account-settings/components/AccountManagement.vue";
@@ -28,20 +27,7 @@ onBeforeMount(() => {
   useDataThemeChange().dataThemeChange($storage.layout?.overallStyle);
 });
 
-const userInfo = ref<BaseUserSelfInfoVO>({
-  nickname: useUserStoreHook().nickname,
-  username: useUserStoreHook().username
-});
-
-const userAvatarUrl = ref(useUserStoreHook().avatar || "");
-
-useUserStoreHook().$subscribe((mutation, state) => {
-  userInfo.value = {
-    nickname: useUserStoreHook().nickname,
-    username: useUserStoreHook().username
-  };
-  userAvatarUrl.value = state.avatar;
-});
+const userInfo = useUserStoreHook();
 
 const panes = [
   {
@@ -84,7 +70,7 @@ const witchPane = ref("profile");
           </div>
         </el-menu-item>
         <div class="flex items-center ml-8 mt-4 mb-4">
-          <el-avatar :size="48" :src="userAvatarUrl || Avatar" />
+          <el-avatar :size="48" :src="userInfo.avatar || Avatar" />
           <div class="ml-4 flex flex-col max-w-[130px]">
             <ReText class="font-bold !self-baseline">
               {{ userInfo.nickname }}
