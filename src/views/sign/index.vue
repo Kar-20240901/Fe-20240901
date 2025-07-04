@@ -25,6 +25,10 @@ import User from "~icons/ri/user-3-fill";
 import { SignUserNameSignInPasswordDTO } from "@/api/http/base/SignUserNameController";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { operates } from "@/views/sign/utils/enums";
+import SignInEmail from "@/views/sign/components/SignInEmail.vue";
+import SignUpEmail from "@/views/sign/components/SignUpEmail.vue";
+import SignUpUserName from "@/views/sign/components/SignUpUserName.vue";
+import ForgetPassword from "@/views/sign/components/ForgetPassword.vue";
 
 defineOptions({
   name: "Sign"
