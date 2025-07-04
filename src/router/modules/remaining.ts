@@ -4,9 +4,9 @@ const Layout = () => import("@/layout/index.vue");
 
 export default [
   {
-    path: "/login",
-    name: "Login",
-    component: () => import("@/views/login/index.vue"),
+    path: "/sign",
+    name: "Sign",
+    component: () => import("@/views/sign/index.vue"),
     meta: {
       title: $t("menus.pureLogin"),
       showLink: false,

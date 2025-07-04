@@ -515,14 +515,14 @@ const uploadDialogRef = ref();
       </div>
     </div>
 
-    <createFolderFormEdit
+    <CreateFolderFormEdit
       ref="createFolderFormEditRef"
       title="创建文件夹"
       :confirm-after-fun="fileTreeConfirmAfterFun"
       :confirm-fun="createFolderConfirmAfterFun"
     />
 
-    <fileTree
+    <FileTree
       ref="fileTreeRef"
       :title="title"
       :tree="tree"
@@ -530,14 +530,14 @@ const uploadDialogRef = ref();
       :confirm-after-fun="fileTreeConfirmAfterFun"
     />
 
-    <renameFormEdit
+    <RenameFormEdit
       ref="renameRef"
       title="修改文件名称"
       :confirm-fun="() => renameConfirmFun()"
       :confirm-after-fun="fileTreeConfirmAfterFun"
     />
 
-    <uploadDialog
+    <UploadDialog
       ref="uploadDialogRef"
       title="上传"
       :table-search="onSearch"

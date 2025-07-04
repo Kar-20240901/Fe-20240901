@@ -5,11 +5,11 @@ import { setUserKey } from "@/utils/UserUtil";
 
 export interface DataInfo<T = string> {
   /** token */
-  jwt: string;
+  jwt?: string;
   /** `accessToken`的过期时间（时间戳） */
-  jwtExpireTs: T;
+  jwtExpireTs?: T;
   /** 用于调用刷新accessToken的接口时所需的token */
-  jwtRefreshToken: string;
+  jwtRefreshToken?: string;
   /** 头像 */
   avatar?: string;
   /** 用户名 */
