@@ -13,6 +13,10 @@ import {
 } from "@/api/http/base/BaseUserDeleteLogController";
 import Delete from "~icons/ep/delete";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
+import {
+  TempRequestCategoryEnum,
+  TempRequestCategoryMap
+} from "@/model/enum/TempRequestCategoryEnum";
 
 defineOptions({
   name: "BaseUserDeleteLog"
@@ -167,6 +171,12 @@ function deleteBySelectIdArr() {
           label="创建时间"
         >
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.userCreateTime)) }}
+        </el-table-column>
+        <el-table-column #default="scope" label="注册终端">
+          {{
+            TempRequestCategoryMap.get(scope.row.signUpType) ||
+            TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
+          }}
         </el-table-column>
         <el-table-column #default="scope" prop="createTime" label="删除时间">
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}

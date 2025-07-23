@@ -27,6 +27,7 @@ export interface BaseRequestDO {
   count?: string; // 总数量，format：int64
   type?: string; // 请求类型
   uri?: string; // 请求的 uri
+  method?: string; // 请求方式
   successFlag?: boolean; // 请求是否成功
   costMs?: string; // 耗时（毫秒），format：int64
   createTime?: string; // 创建时间，format：date-time

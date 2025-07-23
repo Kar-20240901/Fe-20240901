@@ -2,11 +2,13 @@
 import { ref } from "vue";
 import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
-import { IRequestDialogFormProps } from "@/views/base/request/types";
-import { BaseRequestInfoDO } from "@/api/http/base/BaseRequestInfoController";
+import {
+  IBaseRequestFullInfoDO,
+  IRequestDialogFormProps
+} from "@/views/base/request/types";
 import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
 
-const form = ref<BaseRequestInfoDO>({});
+const form = ref<IBaseRequestFullInfoDO>({});
 const formRef = ref();
 const dialogLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
@@ -58,8 +60,44 @@ const props = defineProps<IRequestDialogFormProps>();
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="请求方式" prop="method">
+            <el-input v-model="form.method" readonly />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="请求路径" prop="uri">
             <el-input v-model="form.uri" readonly />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="请求名称" prop="name">
+            <el-input v-model="form.name" readonly />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="请求地点" prop="region">
+            <el-input v-model="form.region" readonly />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="请求终端" prop="categoryName">
+            <el-input v-model="form.categoryName" readonly />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="请求类型" prop="type">
+            <el-input v-model="form.type" readonly />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="请求用户" prop="createName">
+            <el-input v-model="form.createName" readonly />
           </el-form-item>
         </re-col>
 
@@ -75,6 +113,12 @@ const props = defineProps<IRequestDialogFormProps>();
                 {{ item.label }}
               </el-option>
             </el-select>
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="请求时间" prop="createTime">
+            <el-input v-model="form.createTime" readonly />
           </el-form-item>
         </re-col>
 

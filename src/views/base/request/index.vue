@@ -18,6 +18,7 @@ import {
 } from "@/model/enum/TempRequestCategoryEnum";
 import FormEdit from "@/views/base/request/formEdit.vue";
 import { baseRequestInfoInfoById } from "@/api/http/base/BaseRequestInfoController";
+import { IBaseRequestFullInfoDO } from "@/views/base/request/types";
 
 defineOptions({
   name: "BaseRequest"
@@ -72,6 +73,7 @@ function onSelectChange(rowArr?: BaseRequestDO[]) {
 }
 
 const userDictList = ref<DictVO[]>([]);
+const userDictMap = ref<Record<string, string>>({});
 
 onMounted(() => {
   initUserDictList();
@@ -80,6 +82,12 @@ onMounted(() => {
 function initUserDictList() {
   baseUserDictList().then(res => {
     userDictList.value = res.data.records;
+
+    userDictMap.value = {};
+
+    res.data.records.forEach(item => {
+      userDictMap.value[item.id] = item.name;
+    });
   });
 }
 
@@ -88,7 +96,33 @@ const title = ref<string>("");
 
 function viewClick(row: BaseRequestDO) {
   title.value = "查看请求";
-  formRef.value.editOpen(baseRequestInfoInfoById({ id: row.id }));
+  formRef.value.editOpen(
+    new Promise(resolve => {
+      baseRequestInfoInfoById({ id: row.id }).then(res => {
+        const data = res.data as IBaseRequestFullInfoDO;
+
+        data.method = row.method;
+        data.type = row.type;
+        data.createTime = row.createTime;
+
+        data.createId = row.createId;
+
+        data.createName = userDictMap.value[row.createId] || "";
+
+        data.name = row.name;
+
+        data.category = row.category;
+
+        data.categoryName =
+          TempRequestCategoryMap.get(row.category as any as number) ||
+          TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name;
+
+        data.region = row.region;
+
+        resolve(res);
+      });
+    })
+  );
 }
 </script>
 
@@ -159,9 +193,9 @@ function viewClick(row: BaseRequestDO) {
         <el-table-column prop="uri" label="路径" />
         <el-table-column prop="ip" label="ip" />
         <el-table-column prop="region" label="地点" />
-        <el-table-column #default="scope" prop="type" label="终端">
+        <el-table-column #default="scope" prop="category" label="终端">
           {{
-            TempRequestCategoryMap.get(scope.row.type) ||
+            TempRequestCategoryMap.get(scope.row.category) ||
             TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
           }}
         </el-table-column>
@@ -200,7 +234,7 @@ function viewClick(row: BaseRequestDO) {
       />
     </div>
 
-    <form-edit ref="formRef" :title="title" :user-dict-list="userDictList" />
+    <form-edit ref="formRef" :title="title" :user-dict-map="userDictMap" />
   </div>
 </template>
 
