@@ -49,7 +49,7 @@ const { roomId } = storeToRefs(useLiveRoomStoreHook());
 
 let mediaRecorder: MediaRecorder;
 
-let stream;
+let stream: MediaStream | undefined;
 
 let getUserMedia = false;
 
@@ -412,7 +412,12 @@ function chooseRoomClick() {
           <el-table-column type="selection" />
           <el-table-column prop="nickname" label="用户昵称" />
           <el-table-column #default="scope" label="用户展示">
-            <video :id="scope.row.socketRefUserId" controls autoplay />
+            <video
+              :id="scope.row.socketRefUserId"
+              class="w-[30px] h-[30px]"
+              controls
+              autoplay
+            />
           </el-table-column>
           <el-table-column #default="scope" label="操作">
             <el-button
