@@ -19,7 +19,11 @@ import ReSegmented from "@/components/ReSegmented/src";
 import { BaseFileTypeEnum } from "@/model/enum/BaseFileTypeEnum";
 import Delete from "~icons/ep/delete";
 import CommonConstant from "@/model/constant/CommonConstant";
-import { BaseFilePrivateDownload, GetFileSizeStr } from "@/utils/FileUtil";
+import {
+  BaseFilePrivateDownload,
+  BaseFilePrivateDownloadUrl,
+  GetFileSizeStr
+} from "@/utils/FileUtil";
 import { IDataList } from "@/views/file/fileSystem/types";
 import CreateFolderFormEdit from "@/views/file/fileSystem/createFolderFormEdit.vue";
 import FileTree from "@/views/file/fileSystem/fileTree.vue";
@@ -28,6 +32,8 @@ import UploadDialog from "@/views/file/fileSystem/uploadDialog.vue";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { getToken } from "@/utils/auth";
+import { AUTHORIZATION } from "@/utils/http";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -46,7 +52,9 @@ const title = ref<string>("");
 
 const totalSize = ref<number>(0);
 
-const selectIdArr = ref<Set<string>>(new Set<string>());
+const selectIdSet = ref<Set<string>>(new Set<string>());
+
+const jwt = ref<string>(getToken()!.jwt);
 
 onMounted(() => {
   onSearch();
@@ -54,6 +62,8 @@ onMounted(() => {
 
 const pidList = ref<string[]>([CommonConstant.TOP_PID_STR]); // 例如：[0,1,2]
 const pathList = ref<string[]>([CommonConstant.TOP_FOLDER_NAME]); // 例如：/根目录/测试1
+
+const rowMax = ref<number>(13);
 
 function onSearch(sufFun?: () => void) {
   loading.value = true;
@@ -63,7 +73,7 @@ function onSearch(sufFun?: () => void) {
     pageSize: pageSize.value as any
   })
     .then(res => {
-      selectIdArr.value.clear();
+      selectIdSet.value.clear();
       totalSize.value = 0;
 
       if (search.value.backUpFlag && res.data.backUpPid) {
@@ -78,14 +88,14 @@ function onSearch(sufFun?: () => void) {
         pathList.value = [CommonConstant.TOP_PID_STR];
       }
 
-      let dataListTemp: IDataList[] = [];
+      const dataListTemp: IDataList[] = [];
 
       let dataListItemList = [];
 
       let totalSizeTemp = 0;
 
       res.data.records.forEach((item, index) => {
-        if (index % 13 === 0 && index !== 0) {
+        if (index % rowMax.value === 0 && index !== 0) {
           dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
 
           dataListItemList = [];
@@ -130,7 +140,7 @@ const copyTitle = "复制文件";
 const moveTitle = "移动文件";
 
 function copyClick() {
-  if (!selectIdArr.value.size) {
+  if (!selectIdSet.value.size) {
     ToastError("请勾选数据");
     return;
   }
@@ -139,7 +149,7 @@ function copyClick() {
 }
 
 function moveClick() {
-  if (!selectIdArr.value.size) {
+  if (!selectIdSet.value.size) {
     ToastError("请勾选数据");
     return;
   }
@@ -151,9 +161,9 @@ function fileTreeConfirmFun() {
   const pid = fileTreeRef.value.getForm().value.pid;
 
   if (title.value === copyTitle) {
-    return baseFileCopySelf({ pid, idSet: [...selectIdArr.value] });
+    return baseFileCopySelf({ pid, idSet: [...selectIdSet.value] });
   } else if (title.value === moveTitle) {
-    return baseFileMoveSelf({ pid, idSet: [...selectIdArr.value] });
+    return baseFileMoveSelf({ pid, idSet: [...selectIdSet.value] });
   } else {
     ToastError("类型异常");
     throw new Error("类型异常");
@@ -167,22 +177,22 @@ function fileTreeConfirmAfterFun(res, done) {
 }
 
 function deleteBySelectIdArr() {
-  if (!selectIdArr.value.size) {
+  if (!selectIdSet.value.size) {
     ToastError("请勾选数据");
     return;
   }
   ExecConfirm(
     async () => {
       await baseFileRemoveByFileIdSet({
-        idSet: [...selectIdArr.value]
+        idSet: [...selectIdSet.value]
       }).then(res => {
-        selectIdArr.value.clear();
+        selectIdSet.value.clear();
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
-    `确定删除勾选的【${selectIdArr.value.size}】项数据吗？`
+    `确定删除勾选的【${selectIdSet.value.size}】项数据吗？`
   );
 }
 
@@ -206,20 +216,20 @@ function itemClick(row: BaseFileDO) {
     ToastError("文件传输中，请稍后再试");
     return;
   }
-  if (selectIdArr.value.has(row.id)) {
-    selectIdArr.value.delete(row.id);
+  if (selectIdSet.value.has(row.id)) {
+    selectIdSet.value.delete(row.id);
   } else {
-    selectIdArr.value.add(row.id);
+    selectIdSet.value.add(row.id);
   }
 }
 
 function downClick() {
-  if (!selectIdArr.value.size) {
+  if (!selectIdSet.value.size) {
     ToastError("请勾选数据");
     return;
   }
 
-  selectIdArr.value.forEach(item => {
+  selectIdSet.value.forEach(item => {
     BaseFilePrivateDownload({ id: item });
   });
 }
@@ -229,9 +239,9 @@ function uploadClick() {
 }
 
 function selectAllClick() {
-  if (selectIdArr.value.size === total.value) {
+  if (selectIdSet.value.size === total.value) {
     // 取消全部勾选
-    selectIdArr.value.clear();
+    selectIdSet.value.clear();
   } else {
     // 勾选全部
     const selectIdArrTemp = new Set<string>();
@@ -243,7 +253,7 @@ function selectAllClick() {
         selectIdArrTemp.add(subItem.id);
       });
     });
-    selectIdArr.value = selectIdArrTemp;
+    selectIdSet.value = selectIdArrTemp;
   }
 }
 
@@ -273,7 +283,7 @@ function createFolderConfirmAfterFun() {
 const renameRef = ref();
 
 function renameClick() {
-  if (!selectIdArr.value.size) {
+  if (!selectIdSet.value.size) {
     ToastError("请勾选数据");
     return;
   }
@@ -283,7 +293,7 @@ function renameClick() {
 function renameConfirmFun() {
   return baseFileUpdateSelf({
     ...renameRef.value.getForm().value,
-    idSet: [...selectIdArr.value]
+    idSet: [...selectIdSet.value]
   });
 }
 
@@ -467,26 +477,36 @@ const uploadDialogRef = ref();
                     <el-button
                       text
                       :type="
-                        selectIdArr.has(subItem.id) ? 'primary' : undefined
+                        selectIdSet.has(subItem.id) ? 'primary' : undefined
                       "
                       class="!h-[78px]"
                       @dblclick="itemDblClick(subItem)"
                       @click="itemClick(subItem)"
                     >
                       <div class="flex flex-col items-center">
+                        <el-image
+                          v-if="subItem.type === BaseFileTypeEnum.FILE.code"
+                          :src="`${BaseFilePrivateDownloadUrl}/${subItem.id}?${AUTHORIZATION}=${jwt}`"
+                          fit="cover"
+                          class="w-[45px] h-[45px] mb-[5px]"
+                        >
+                          <template #error>
+                            <IconifyIconOnline
+                              width="50"
+                              :icon="'ri:file-2-line'"
+                            />
+                          </template>
+                        </el-image>
                         <IconifyIconOnline
-                          :icon="
-                            subItem.type === BaseFileTypeEnum.FOLDER.code
-                              ? 'ri:folder-open-fill'
-                              : 'ri:file-2-line'
-                          "
+                          v-else
+                          :icon="'ri:folder-open-fill'"
                           width="50"
                         />
                         <el-text
                           class="text-[13px] w-[80px] h-[18px] text-center"
                           truncated
                           :type="
-                            selectIdArr.has(subItem.id) ? 'primary' : undefined
+                            selectIdSet.has(subItem.id) ? 'primary' : undefined
                           "
                           >{{ subItem.uploadFlag ? "(传输中)" : ""
                           }}{{ subItem.showFileName }}
@@ -510,7 +530,7 @@ const uploadDialogRef = ref();
 
         <div>
           {{ total }} 个项目 | 总大小 {{ GetFileSizeStr(totalSize) }}
-          {{ selectIdArr.size ? ` | 已选择 ${selectIdArr.size} 个项目` : "" }}
+          {{ selectIdSet.size ? ` | 已选择 ${selectIdSet.size} 个项目` : "" }}
         </div>
       </div>
     </div>
@@ -547,11 +567,6 @@ const uploadDialogRef = ref();
 </template>
 
 <style scoped lang="scss">
-:deep(.el-checkbox) {
-  height: 66px;
-  margin-right: 0;
-}
-
 :deep(.el-upload-dragger) {
   padding: 0;
   border: none;

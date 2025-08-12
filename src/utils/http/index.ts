@@ -19,6 +19,8 @@ import CommonConstant from "@/model/constant/CommonConstant";
 import { router, signPath } from "@/router";
 import { ToastError } from "@/utils/ToastUtil";
 
+export const AUTHORIZATION = "Authorization";
+
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
   // 请求超时时间
@@ -59,7 +61,7 @@ class PureHttp {
   private static retryOriginalRequest(config: PureHttpRequestConfig) {
     return new Promise(resolve => {
       PureHttp.requests.push((token: string) => {
-        config.headers["Authorization"] = formatToken(token);
+        config.headers[AUTHORIZATION] = formatToken(token);
         resolve(config);
       });
     });
@@ -100,7 +102,7 @@ class PureHttp {
                       })
                       .then(res => {
                         const token = res.jwt;
-                        config.headers["Authorization"] = formatToken(token);
+                        config.headers[AUTHORIZATION] = formatToken(token);
                         PureHttp.requests.forEach(cb => cb(token));
                         PureHttp.requests = [];
                       })
@@ -110,7 +112,7 @@ class PureHttp {
                   }
                   resolve(PureHttp.retryOriginalRequest(config));
                 } else {
-                  config.headers["Authorization"] = formatToken(data.jwt);
+                  config.headers[AUTHORIZATION] = formatToken(data.jwt);
                   resolve(config);
                 }
               } else {

@@ -145,7 +145,9 @@ export function ExecFileDownload<T>(url: string, form?: T) {
   FileDownload(url, Download, form);
 }
 
-export const BaseFilePrivateDownloadUrl = baseApi("/base/file/privateDownload");
+export const PrivateDownloadUrl = "/base/file/privateDownload";
+
+export const BaseFilePrivateDownloadUrl = baseApi(PrivateDownloadUrl);
 
 // 文件-管理 文件下载
 export function BaseFilePrivateDownload(form: NotNullId) {

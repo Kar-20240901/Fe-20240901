@@ -377,15 +377,3 @@ function composeClick(row: BaseFileTransferDO) {
     </div>
   </el-dialog>
 </template>
-
-<style scoped lang="scss">
-:deep(td.el-table__cell > div) {
-  display: flex;
-  align-items: center;
-}
-
-:deep(.el-upload-dragger) {
-  padding: 0;
-  border: none;
-}
-</style>
