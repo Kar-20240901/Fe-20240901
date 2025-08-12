@@ -65,7 +65,7 @@ function resetSearch() {
     <h3 class="my-8">安全日志</h3>
 
     <div class="flex flex-col">
-      <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
+      <div class="bg-bg_color px-8 pt-[12px] mb-3">
         <el-form ref="searchRef" :inline="true" :model="search">
           <el-form-item label="ip：" prop="ip">
             <el-input
@@ -137,16 +137,3 @@ function resetSearch() {
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-.search-form {
-  :deep(.el-form-item) {
-    margin-bottom: 12px;
-  }
-}
-
-:deep(td.el-table__cell > div) {
-  display: flex;
-  align-items: center;
-}
-</style>

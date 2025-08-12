@@ -248,3 +248,8 @@ div:focus {
     content: " ";
   }
 }
+
+td.el-table__cell > div {
+  display: flex;
+  align-items: center;
+}

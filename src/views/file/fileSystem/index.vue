@@ -301,7 +301,7 @@ const uploadDialogRef = ref();
 
 <template>
   <div class="flex flex-col">
-    <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
+    <div class="bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
         <el-form-item label="文件名称：" prop="showFileName">
           <el-input
@@ -555,31 +555,5 @@ const uploadDialogRef = ref();
 :deep(.el-upload-dragger) {
   padding: 0;
   border: none;
-}
-
-.custom-button {
-  box-sizing: border-box;
-  display: inline-block;
-  padding: 12px 20px;
-  margin: 0;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1;
-  color: #606266;
-  text-align: center;
-  white-space: nowrap;
-  appearance: none;
-  cursor: pointer;
-  outline: none;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  transition: 0.1s;
-}
-
-.custom-button:hover {
-  color: #409eff;
-  background-color: #ecf5ff;
-  border-color: #c6e2ff;
 }
 </style>

@@ -151,8 +151,9 @@ const onSubmit = async () => {
           :auto-upload="false"
           :show-file-list="false"
           :on-change="onChange"
+          class="ml-4"
         >
-          <el-button plain class="ml-4">
+          <el-button plain>
             <IconifyIconOffline :icon="uploadLine" />
             <span class="ml-2">更新头像</span>
           </el-button>
