@@ -45,8 +45,7 @@ export function BaseLiveRoomDataAddDataRequest(
     data: {
       roomId: dto.roomId,
       createTs: dto.createTs,
-      mediaType: dto.mediaType,
-      firstBlobFlag: dto.firstBlobFlag
+      mediaType: dto.mediaType
     }
   };
 

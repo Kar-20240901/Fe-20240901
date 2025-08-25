@@ -19,7 +19,6 @@ import { BaseLiveRoomDataAddDataDTO } from "@/views/live/self/liveRoomSelf/types
 import { useLiveRoomStoreHook } from "@/store/modules/liveRoom";
 import { GetServerTimestamp } from "@/utils/DateUtil";
 import CommonConstant from "@/model/constant/CommonConstant";
-import { Base64ToUint8Array } from "@/utils/BlobUtil";
 import {
   BASE_LIVE_ROOM_JOIN_ON_OTHER_DEVICE,
   BASE_LIVE_ROOM_NEW_DATA,
@@ -47,17 +46,17 @@ const selectIdArr = ref<string[]>([]);
 
 const { roomId } = storeToRefs(useLiveRoomStoreHook());
 
-let mediaRecorder: MediaRecorder;
+let mediaRecorder = ref<MediaRecorder | undefined>();
 
-let stream: MediaStream | undefined;
+let stream = ref<MediaStream | undefined>();
 
-let getUserMedia = false;
+let getUserMedia = ref<boolean>(false);
 
 onMounted(() => {
   if (!roomId.value) {
     return;
   }
-  onSearch();
+  onSearch(false);
 });
 
 onUnmounted(() => {
@@ -65,12 +64,12 @@ onUnmounted(() => {
 });
 
 function stopRecorder() {
-  if (mediaRecorder) {
-    mediaRecorder.stop();
+  if (mediaRecorder.value) {
+    mediaRecorder.value.stop();
   }
 
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
+  if (stream.value) {
+    stream.value.getTracks().forEach(track => track.stop());
   }
 }
 
@@ -78,12 +77,38 @@ const mimeType = "video/webm; codecs=vp9,opus";
 
 const socketRefUserId = useWebSocketStoreHook().socketRefUserId;
 
+/**
+ * 初始化录制对象
+ */
+function initMediaRecorder() {
+  if (mediaRecorder.value) {
+    mediaRecorder.value.stop();
+  }
+
+  mediaRecorder.value = new window.MediaRecorder(stream.value, {
+    videoBitsPerSecond: 1000000,
+    audioBitsPerSecond: 64000,
+    mimeType: mimeType
+  });
+
+  mediaRecorder.value.ondataavailable = e => {
+    BaseLiveRoomDataAddDataRequest({
+      roomId: roomId.value,
+      createTs: GetServerTimestamp(),
+      mediaType: mediaRecorder.value.mimeType,
+      data: e.data
+    });
+  };
+
+  mediaRecorder.value.start(200);
+}
+
 function startCameraAndStream() {
-  if (getUserMedia) {
+  if (getUserMedia.value) {
     return;
   }
 
-  getUserMedia = true;
+  getUserMedia.value = true;
 
   navigator.mediaDevices
     .getUserMedia({
@@ -92,57 +117,21 @@ function startCameraAndStream() {
     })
     .then(
       streamTemp => {
-        stream = streamTemp;
+        stream.value = streamTemp;
 
         const ele = document.getElementById(
           socketRefUserId
         ) as HTMLVideoElement | null;
 
-        if (ele) {
-          ele.srcObject = stream;
-
-          ele.play();
+        if (!ele) {
+          return;
         }
 
-        mediaRecorder = new window.MediaRecorder(stream, {
-          videoBitsPerSecond: 1000000,
-          audioBitsPerSecond: 64000,
-          mimeType: mimeType
-        });
+        ele.srcObject = stream.value;
 
-        let count = 0;
+        ele.play();
 
-        let firstBlob: Blob | null = null;
-
-        mediaRecorder.ondataavailable = function (e) {
-          let blobData = e.data;
-
-          if (count < 3) {
-            count = count + 1;
-
-            if (count === 1) {
-              firstBlob = e.data;
-              return;
-            }
-
-            if (count === 2 && firstBlob && firstBlob.size) {
-              blobData = new Blob([firstBlob, blobData], {
-                type: mediaRecorder.mimeType
-              });
-              firstBlob = null;
-            }
-          }
-
-          BaseLiveRoomDataAddDataRequest({
-            roomId: roomId.value,
-            createTs: GetServerTimestamp(),
-            mediaType: mediaRecorder.mimeType,
-            data: blobData,
-            firstBlobFlag: count === 2
-          });
-        };
-
-        mediaRecorder.start(100);
+        initMediaRecorder();
       },
       () => {
         ToastError("出错，请确保已允许浏览器获取音视频权限");
@@ -150,7 +139,7 @@ function startCameraAndStream() {
     );
 }
 
-function onSearch() {
+function onSearch(initMediaRecorderFlag: boolean) {
   baseLiveRoomUserSelfPage({
     ...search.value,
     roomId: roomId.value,
@@ -161,12 +150,16 @@ function onSearch() {
     total.value = res.data.total;
 
     startCameraAndStream();
+
+    if (initMediaRecorderFlag) {
+      initMediaRecorder();
+    }
   });
 }
 
 function resetSearch() {
   searchRef.value.resetFields();
-  onSearch();
+  onSearch(false);
 }
 
 function deleteClick(row: BaseLiveRoomUserSelfPageVO) {
@@ -174,7 +167,7 @@ function deleteClick(row: BaseLiveRoomUserSelfPageVO) {
     async () => {
       await baseLiveRoomUserSelfDeleteByIdSet({ idSet: [row.id] }).then(res => {
         ToastSuccess(res.msg);
-        onSearch();
+        onSearch(false);
       });
     },
     undefined,
@@ -193,7 +186,7 @@ function deleteBySelectIdArr() {
         idSet: selectIdArr.value
       }).then(res => {
         ToastSuccess(res.msg);
-        onSearch();
+        onSearch(false);
       });
     },
     undefined,
@@ -207,41 +200,45 @@ function onSelectChange(rowArr?: BaseLiveRoomDO[]) {
 
 const router = useRouter();
 
-const dataMap: Record<string, SourceBuffer> = {};
-const dataArrMap: Record<string, Uint8Array[]> = {};
-const dataAppendMap: Record<string, boolean> = {};
-const dataInitMap: Record<string, boolean> = {};
+const dataMap = ref<Record<string, SourceBuffer>>({});
+const dataArrMap = ref<Record<string, Uint8Array[]>>({});
+const dataAppendMap = ref<Record<string, boolean>>({});
+const dataInitMap = ref<Record<string, boolean>>({});
+const dataInitExecFlagMap = ref<Record<string, boolean>>({});
 
-function appendBufferToSource(buffer: Uint8Array, id: string, shiftFlag) {
-  if (dataAppendMap[id]) {
-    if (dataArrMap[id]) {
-      if (shiftFlag) {
-        dataArrMap[id].unshift(buffer);
-      } else {
-        dataArrMap[id].push(buffer);
-      }
-    } else {
-      dataArrMap[id] = [buffer];
-    }
+function appendBufferToSource(
+  buffer: Uint8Array,
+  id: string,
+  shiftFlag: boolean
+) {
+  if (!buffer || buffer.length === 0) {
     return;
   }
-  try {
-    dataAppendMap[id] = true;
 
-    dataMap[id].appendBuffer(buffer);
+  if (dataAppendMap.value[id]) {
+    if (dataArrMap.value[id]) {
+      if (shiftFlag) {
+        dataArrMap.value[id].unshift(buffer);
+      } else {
+        dataArrMap.value[id].push(buffer);
+      }
+    } else {
+      dataArrMap.value[id] = [buffer];
+    }
 
-    console.log("已经增加缓冲数据：", id);
-  } catch (error) {
-    console.error("Error appending buffer:", error);
-
-    dataAppendMap[id] = false;
+    return;
   }
+
+  dataAppendMap.value[id] = true;
+
+  dataMap.value[id].appendBuffer(buffer);
 }
 
 useWebSocketStoreHook().$subscribe((mutation, state) => {
   if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_DATA) {
     if (state.webSocketMessage.code !== CommonConstant.API_OK_CODE) {
       ToastError(state.webSocketMessage.msg);
+
       return;
     }
 
@@ -272,54 +269,39 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       return;
     }
 
-    if (dataInitMap[eleId] && ele.src && dataMap[eleId]) {
+    if (dataInitMap.value[eleId]) {
       appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
-
-      console.log("收到数据，已经初始化完成：", eleId);
     } else {
+      if (dataInitExecFlagMap.value[eleId]) {
+        appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
+
+        return;
+      }
+
+      dataInitExecFlagMap.value[eleId] = true;
+
       // 创建 MediaSource 对象
       const mediaSource = new MediaSource();
       ele.src = URL.createObjectURL(mediaSource);
 
       let sourceBuffer = null;
 
-      console.log("收到数据，开始初始化：", eleId);
-
       mediaSource.onsourceopen = () => {
         sourceBuffer = mediaSource.addSourceBuffer(mimeType);
 
-        dataMap[eleId] = sourceBuffer;
-
-        let roomUserData: BaseLiveRoomUserSelfPageVO;
-
-        for (let i = 0; i < dataList.value.length; i++) {
-          if (dataList.value[i].socketRefUserId === data.socketRefUserId) {
-            roomUserData = dataList.value[i];
-            break;
-          }
-        }
+        dataMap.value[eleId] = sourceBuffer;
 
         sourceBuffer.onupdateend = () => {
-          dataAppendMap[eleId] = false;
+          dataAppendMap.value[eleId] = false;
 
-          if (dataArrMap[eleId] && dataArrMap[eleId].length) {
-            const nextBuffer = dataArrMap[eleId].shift();
+          if (dataArrMap.value[eleId] && dataArrMap.value[eleId].length) {
+            const nextBuffer = dataArrMap.value[eleId].shift();
 
             appendBufferToSource(nextBuffer, eleId, true);
-
-            console.log("开始增加缓冲数据：", eleId);
           }
         };
 
-        const firstBlob = Base64ToUint8Array(roomUserData.firstBlobStr);
-
-        appendBufferToSource(firstBlob, eleId, false);
-
-        dataInitMap[eleId] = true;
-
-        console.log(
-          `收到数据，初始化完成：${eleId}，大小：${firstBlob.length}`
-        );
+        dataInitMap.value[eleId] = true;
 
         appendBufferToSource(state.webSocketMessage.arrayBuffer, eleId, false);
       };
@@ -327,7 +309,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_NEW_USER) {
     console.log("有新用户加入");
 
-    onSearch();
+    onSearch(true);
   } else if (state.webSocketMessage.uri === BASE_LIVE_ROOM_USER_ADD_USER) {
     console.log("加入房间的响应");
 
@@ -338,6 +320,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
     state.webSocketMessage.uri === BASE_LIVE_ROOM_JOIN_ON_OTHER_DEVICE
   ) {
     ToastError("您已经在其他设备上加入此房间");
+
     router.push(PathConstant.BaseLiveRoomSelf);
   }
 });
@@ -369,7 +352,7 @@ function chooseRoomClick() {
               type="primary"
               :icon="useRenderIcon('ri:search-line')"
               :loading="loading"
-              @click="onSearch"
+              @click="() => onSearch(false)"
             >
               搜索
             </el-button>
@@ -438,7 +421,7 @@ function chooseRoomClick() {
           layout="->, prev, pager, next, jumper, sizes, total"
           :total="total"
           :page-sizes="[15, 50, 100]"
-          @change="onSearch"
+          @change="() => onSearch(false)"
         />
       </div>
     </div>

@@ -24,7 +24,7 @@ function handleArrayBuffer(data: ArrayBuffer, res: IWebSocketMessage<any>) {
 
     res.arrayBuffer = binaryArray;
   } catch (e) {
-    console.error("utf8String", utf8String);
+    console.error(`处理：二进制数据错误，utf8String：${utf8String}`, e);
   }
 
   return res;
@@ -36,7 +36,7 @@ function handleArrayBuffer(data: ArrayBuffer, res: IWebSocketMessage<any>) {
 export function ToDataAndByteArrForArrayBuffer(
   data: ArrayBuffer
 ): IWebSocketMessage<any> {
-  let res: IWebSocketMessage<any> = {};
+  const res: IWebSocketMessage<any> = {};
 
   if (data === null || data.byteLength <= 0) {
     return res;
@@ -79,7 +79,7 @@ export function ToDataAndByteArrForBlob(
 /**
  * json和byte数组，组合为新数组，格式：json长度 + json + byte数组
  */
-export function JsonAddByteArr(json: Object, data: Blob) {
+export function JsonAddByteArr(json: any, data: Blob) {
   const jsonStr = JSON.stringify(json);
 
   const lengthBlob = IntToBlob(jsonStr.length);
@@ -92,7 +92,7 @@ export function JsonAddByteArr(json: Object, data: Blob) {
 /**
  * int转 blob格式
  */
-export function IntToBlob(num) {
+export function IntToBlob(num: number) {
   const buffer = new ArrayBuffer(4);
   const view = new DataView(buffer);
   view.setInt32(0, num, true);
@@ -102,7 +102,7 @@ export function IntToBlob(num) {
 /**
  * blob转 base64
  */
-export function BlobToBase64(blob): Promise<string> {
+export function BlobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = e => {
@@ -118,7 +118,7 @@ export function BlobToBase64(blob): Promise<string> {
 /**
  * base64转 blob
  */
-export function Base64ToBlob(base64, contentType = "") {
+export function Base64ToBlob(base64: string, contentType = "") {
   const uint8Array = Base64ToUint8Array(base64);
 
   return new Blob([uint8Array], { type: contentType });
@@ -127,7 +127,7 @@ export function Base64ToBlob(base64, contentType = "") {
 /**
  * base64转 uint8Array
  */
-export function Base64ToUint8Array(base64) {
+export function Base64ToUint8Array(base64: string) {
   // 移除 Base64 字符串的前缀（如果存在）
   const pureBase64 = base64.replace(/^data:.*?;base64,/, "");
   // 解码 Base64 字符串
