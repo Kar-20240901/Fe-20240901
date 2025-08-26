@@ -231,7 +231,7 @@ function appendBufferToSource(
 
   dataAppendMap.value[id] = true;
 
-  dataMap.value[id].appendBuffer(buffer);
+  // dataMap.value[id].appendBuffer(buffer);
 }
 
 useWebSocketStoreHook().$subscribe((mutation, state) => {
