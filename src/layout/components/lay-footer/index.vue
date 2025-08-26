@@ -10,7 +10,7 @@ const TITLE = getConfig("Title");
   >
     Copyright © {{ new Date().getFullYear() }}
     <a
-      class="hover:text-primary"
+      class="hover:text-primary!"
       href="https://github.com/pure-admin"
       target="_blank"
     >
