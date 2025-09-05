@@ -11,12 +11,12 @@ import {
   BaseSocketRefUserPageDTO
 } from "@/api/http/base/BaseSocketRefUserController";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
-import { BaseSocketOnlineTypeMap } from "@/model/enum/BaseSocketOnlineTypeEnum";
+import { BaseSocketOnlineTypeMap } from "@/model/enum/socket/BaseSocketOnlineTypeEnum";
 import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
-} from "@/model/enum/TempRequestCategoryEnum";
-import { BaseSocketTypeMap } from "@/model/enum/BaseSocketTypeEnum";
+} from "@/model/enum/base/TempRequestCategoryEnum";
+import { BaseSocketTypeMap } from "@/model/enum/socket/BaseSocketTypeEnum";
 
 defineOptions({
   name: "BaseSocketRefUser"

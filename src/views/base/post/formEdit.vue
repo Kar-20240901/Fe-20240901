@@ -6,7 +6,7 @@ import { R } from "@/model/vo/R";
 import CommonConstant from "@/model/constant/CommonConstant";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import { IPostDialogTreeFormProps } from "@/views/base/post/types";
 
 const form = ref<BasePostInsertOrUpdateDTO>({});

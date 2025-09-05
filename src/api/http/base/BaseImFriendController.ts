@@ -5,7 +5,7 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 删除好友
@@ -22,17 +22,17 @@ export function baseImFriendRemoveFriend(
 }
 
 export interface BaseImFriendPageDTO {
-  current?: string; // 第几页，format：int64
-  pageSize?: string; // 每页显示条数，format：int64
+  current?: string; // 第几页，格式：int64
+  pageSize?: string; // 每页显示条数，格式：int64
   searchKey?: string; // 搜索关键字
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseImFriendPageVO {
   friendName?: string; // 好友显示名称
-  friendId?: string; // 好友主键 id，format：int64
+  friendId?: string; // 好友主键 id，格式：int64
   avatarUrl?: string; // 好友头像
-  sessionId?: string; // 会话主键 id，format：int64
+  sessionId?: string; // 会话主键 id，格式：int64
 }
 
 // 分页排序查询

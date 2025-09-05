@@ -20,7 +20,7 @@ import {
 import {
   BaseBulletinStatusEnumMap,
   BaseFileStorageTypeEnum
-} from "@/model/enum/BaseBulletinStatusEnum";
+} from "@/model/enum/bulletin/BaseBulletinStatusEnum";
 
 defineOptions({
   name: "PlatformBulletin"

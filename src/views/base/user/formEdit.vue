@@ -6,7 +6,7 @@ import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
 import { BaseUserInsertOrUpdateDTO } from "@/api/http/base/BaseUserController";
 import { IUserDialogFormProps } from "@/views/base/user/types";
-import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
+import { yesOrNoOptions } from "@/model/enum/base/yesOrNoEnum";
 import { enableFlagOptions } from "@/views/base/user/enums";
 import { Validate } from "@/utils/ValidatorUtil";
 

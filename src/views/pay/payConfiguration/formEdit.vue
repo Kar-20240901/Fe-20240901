@@ -4,11 +4,11 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
-import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
+import { yesOrNoOptions } from "@/model/enum/base/yesOrNoEnum";
 import { BasePayConfigurationInsertOrUpdateDTO } from "@/api/http/base/BasePayConfigurationController";
 import { IPayConfigurationDialogFormProps } from "@/views/pay/payConfiguration/types";
-import { BasePayTypeOptions } from "@/model/enum/BasePayTypeEnum";
+import { BasePayTypeOptions } from "@/model/enum/pay/BasePayTypeEnum";
 import Info from "~icons/ri/information-line";
 import { Validate } from "@/utils/ValidatorUtil";
 

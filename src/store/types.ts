@@ -47,6 +47,7 @@ export type userType = {
   createTime?: string; // 账号注册时间，format：date-time
   email?: string; // 邮箱，会脱敏
   id?: string; // 用户主键 id
+  uuid?: string; // 用户 uuid
   currentPage?: number;
   isRemembered?: boolean;
   loginDay?: number;

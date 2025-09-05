@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import {
   baseUserConfigurationInfoById,
   baseUserConfigurationInsertOrUpdate,

@@ -15,7 +15,7 @@ import {
   baseThirdAppPage,
   BaseThirdAppPageDTO
 } from "@/api/http/base/BaseThirdAppController";
-import { BaseThirdAppTypeMap } from "@/model/enum/BaseThirdAppTypeEnum";
+import { BaseThirdAppTypeMap } from "@/model/enum/thirdApp/BaseThirdAppTypeEnum";
 
 defineOptions({
   name: "BaseThirdApp"

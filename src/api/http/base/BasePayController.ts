@@ -3,7 +3,7 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 通过主键id，查看支付状态-本平台

@@ -34,7 +34,7 @@ import CommonConstant from "@/model/constant/CommonConstant";
 import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
-} from "@/model/enum/TempRequestCategoryEnum";
+} from "@/model/enum/base/TempRequestCategoryEnum";
 
 defineOptions({
   name: "BaseUser"

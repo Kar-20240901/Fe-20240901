@@ -5,7 +5,7 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 批量：启用socket
@@ -22,31 +22,31 @@ export function baseSocketEnableByIdSet(
 }
 
 export interface BaseSocketPageDTO {
-  current?: string; // 第几页，format：int64
+  current?: string; // 第几页，格式：int64
   scheme?: string; // 协议
-  port?: number; // 端口，format：int32
+  port?: number; // 端口，格式：int32
   host?: string; // 主机
-  pageSize?: string; // 每页显示条数，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
   remark?: string; // 备注
-  id?: string; // 主键 id，format：int64
-  type?: string; // socket类型
+  id?: string; // 主键 id，格式：int64
+  type?: string; // socket类型，枚举值：101;201
   enableFlag?: boolean; // 是否启用
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseSocketDO {
   scheme?: string; // 协议：例如：ws://，wss:// 等
-  updateTime?: string; // 修改时间，format：date-time
+  updateTime?: string; // 修改时间，格式：date-time
   remark?: string; // 备注
-  type?: string; // socket类型
-  updateId?: string; // 修改人id，format：int64
+  type?: string; // socket类型，枚举值：101;201
+  updateId?: string; // 修改人id，格式：int64
   path?: string; // 路径，备注：以 / 开头
   macAddress?: string; // mac地址，用于：和 port一起判断是否是重复启动，如果是，则需要移除之前的 socket信息
-  createTime?: string; // 创建时间，format：date-time
-  port?: number; // 端口，format：int32
-  createId?: string; // 创建人id，format：int64
+  createTime?: string; // 创建时间，格式：date-time
+  port?: number; // 端口，格式：int32
+  createId?: string; // 创建人id，格式：int64
   host?: string; // 主机
-  id?: string; // 主键 id，format：int64
+  id?: string; // 主键 id，格式：int64
   enableFlag?: boolean; // 是否启用
 }
 

@@ -6,8 +6,8 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseLiveRoomSelfInsertOrUpdateDTO {
   codeFlag?: boolean; // 是否有房间验证码，默认：true，备注：只有在新增的时候才有用
-  name?: string; // 实时房间名，required：true
-  id?: string; // 主键 id，format：int64
+  name?: string; // 实时房间名，是否必传：true
+  id?: string; // 主键 id，格式：int64
 }
 
 // 新增/修改
@@ -24,7 +24,7 @@ export function baseLiveRoomSelfInsertOrUpdate(
 }
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 刷新验证码
@@ -41,19 +41,19 @@ export function baseLiveRoomSelfRefreshCode(
 }
 
 export interface BaseLiveRoomSelfPageDTO {
-  current?: string; // 第几页，format：int64
+  current?: string; // 第几页，格式：int64
   name?: string; // 房间名
-  pageSize?: string; // 每页显示条数，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseLiveRoomDO {
-  belongNickname?: string; // 归属用户昵称，format：date-time
+  belongNickname?: string; // 归属用户昵称，格式：date-time
   code?: string; // 房间验证码
-  createTime?: string; // 创建时间，format：date-time
+  createTime?: string; // 创建时间，格式：date-time
   name?: string; // 实时房间名
-  belongId?: string; // 归属用户主键 id，format：int64
-  id?: string; // 房间主键 id，format：int64
+  belongId?: string; // 归属用户主键 id，格式：int64
+  id?: string; // 房间主键 id，格式：int64
 }
 
 // 分页排序查询
@@ -83,7 +83,7 @@ export function baseLiveRoomSelfInfoById(
 }
 
 export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 批量删除

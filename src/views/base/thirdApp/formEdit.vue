@@ -4,9 +4,9 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import { BaseThirdAppInsertOrUpdateDTO } from "@/api/http/base/BaseThirdAppController";
-import { BaseThirdAppTypeOptions } from "@/model/enum/BaseThirdAppTypeEnum";
+import { BaseThirdAppTypeOptions } from "@/model/enum/thirdApp/BaseThirdAppTypeEnum";
 import Info from "~icons/ri/information-line";
 import { IThirdAppConfigurationDialogFormProps } from "@/views/base/thirdApp/types";
 

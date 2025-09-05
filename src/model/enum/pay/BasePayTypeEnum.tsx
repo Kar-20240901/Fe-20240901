@@ -1,8 +1,8 @@
 import { ToastInfo, ToastSuccess } from "@/utils/ToastUtil";
-import type { IEnum } from "@/model/enum/CommonEnum";
+import type { IEnum } from "@/model/enum/base/CommonEnum";
 import type { BuyVO } from "@/api/http/base/BaseUserWalletController";
 import { GetBrowserCategory } from "@/utils/BrowserCategoryUtil";
-import { TempRequestCategoryEnum } from "@/model/enum/TempRequestCategoryEnum";
+import { TempRequestCategoryEnum } from "@/model/enum/base/TempRequestCategoryEnum";
 import type { OptionsType } from "@/components/ReSegmented";
 
 export interface IBasePayTypeItemEnum extends IEnum<number> {

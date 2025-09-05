@@ -6,7 +6,7 @@ import { R } from "@/model/vo/R";
 import CommonConstant from "@/model/constant/CommonConstant";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import { IDictDialogFormProps } from "@/views/base/dict/types";
 import { dictTypeOptions } from "@/views/base/dict/enums";
 

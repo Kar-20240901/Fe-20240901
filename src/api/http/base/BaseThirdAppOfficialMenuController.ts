@@ -5,34 +5,34 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseThirdAppOfficialMenuPageDTO {
-  current?: string; // 第几页，format：int64
-  buttonType?: string; // 按钮类型
-  thirdAppId?: string; // 所属的，第三方应用相关配置主键 id，format：int64
+  current?: string; // 第几页，格式：int64
+  buttonType?: string; // 按钮类型，枚举值：101;201;301
+  thirdAppId?: string; // 所属的，第三方应用相关配置主键 id，格式：int64
   name?: string; // 菜单名，备注：一级菜单最多4个汉字，二级菜单最多8个汉字，多出来的部分将会以 ... 代替
-  pageSize?: string; // 每页显示条数，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
   remark?: string; // 备注
   replyContent?: string; // 回复的内容，备注：一般是点击按钮之后，回复的内容
-  type?: number; // 类型，format：int32
+  type?: number; // 类型，格式：int32
   value?: string; // 如果是按钮，则表示按钮的 key，如果是链接，则表示是 url
   enableFlag?: boolean; // 是否启用
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseThirdAppOfficialMenuDO {
-  orderNo?: number; // 排序号（值越大越前面，默认为 0），format：int32
-  updateTime?: string; // 修改时间，format：date-time
+  orderNo?: number; // 排序号（值越大越前面，默认为 0），格式：int32
+  updateTime?: string; // 修改时间，格式：date-time
   remark?: string; // 备注
-  pid?: string; // 父节点id（顶级则为0），format：int64
-  type?: number; // 类型，format：int32
+  pid?: string; // 父节点id（顶级则为0），格式：int64
+  type?: number; // 类型，格式：int32
   pagePath?: string; // 小程序的页面路径
-  updateId?: string; // 修改人id，format：int64
-  buttonType?: string; // 按钮类型
-  createTime?: string; // 创建时间，format：date-time
+  updateId?: string; // 修改人id，格式：int64
+  buttonType?: string; // 按钮类型，枚举值：101;201;301
+  createTime?: string; // 创建时间，格式：date-time
   children?: BaseThirdAppOfficialMenuDO[]; // 子节点
-  createId?: string; // 创建人id，format：int64
-  thirdAppId?: string; // 所属的，三方应用配置主键 id，format：int64
+  createId?: string; // 创建人id，格式：int64
+  thirdAppId?: string; // 所属的，三方应用配置主键 id，格式：int64
   name?: string; // 菜单名，备注：一级菜单最多4个汉字，二级菜单最多8个汉字，多出来的部分将会以 ... 代替
-  id?: string; // 主键 id，format：int64
+  id?: string; // 主键 id，格式：int64
   replyContent?: string; // 回复的内容，备注：一般是点击按钮之后，回复的内容
   enableFlag?: boolean; // 是否启用
   value?: string; // 如果是按钮，则表示按钮的 key，如果是链接，则表示是 url，如果是小程序，则表示 appid
@@ -65,7 +65,7 @@ export function baseThirdAppOfficialMenuPage(
 }
 
 export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 批量删除
@@ -82,16 +82,16 @@ export function baseThirdAppOfficialMenuDeleteByIdSet(
 }
 
 export interface BaseThirdAppOfficialMenuInsertOrUpdateDTO {
-  buttonType?: string; // 按钮类型
-  orderNo?: number; // 排序号（值越大越前面，默认为 0），format：int32
-  thirdAppId?: string; // 所属的，第三方应用相关配置主键 id，format：int64
-  name?: string; // 菜单名，备注：一级菜单最多4个汉字，二级菜单最多8个汉字，多出来的部分将会以 ... 代替，required：true
-  pid?: string; // 父节点id（顶级则为0），format：int64
+  buttonType?: string; // 按钮类型，枚举值：101;201;301
+  orderNo?: number; // 排序号（值越大越前面，默认为 0），格式：int32
+  thirdAppId?: string; // 所属的，第三方应用相关配置主键 id，格式：int64
+  name?: string; // 菜单名，备注：一级菜单最多4个汉字，二级菜单最多8个汉字，多出来的部分将会以 ... 代替，是否必传：true
+  pid?: string; // 父节点id（顶级则为0），格式：int64
   remark?: string; // 备注
-  id?: string; // 主键 id，format：int64
+  id?: string; // 主键 id，格式：int64
   replyContent?: string; // 回复的内容，备注：一般是点击按钮之后，回复的内容
   pagePath?: string; // 小程序的页面路径
-  value?: string; // 如果是按钮，则表示按钮的 key，如果是链接，则表示是 url，如果是小程序，则表示 appid，required：true
+  value?: string; // 如果是按钮，则表示按钮的 key，如果是链接，则表示是 url，如果是小程序，则表示 appid，是否必传：true
   enableFlag?: boolean; // 是否启用
 }
 
@@ -109,8 +109,8 @@ export function baseThirdAppOfficialMenuInsertOrUpdate(
 }
 
 export interface ChangeNumberDTO {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
-  number?: string; // 需要改变的数值，required：true，format：int64
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
+  number?: string; // 需要改变的数值，是否必传：true，格式：int64
 }
 
 // 通过主键 idSet，加减排序号
@@ -127,7 +127,7 @@ export function baseThirdAppOfficialMenuAddOrderNo(
 }
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 通过主键id，查看详情

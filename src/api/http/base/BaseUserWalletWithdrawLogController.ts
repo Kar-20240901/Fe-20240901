@@ -6,37 +6,37 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseUserWalletWithdrawLogPageDTO {
   bankCardNo?: string; // 卡号
-  pageSize?: string; // 每页显示条数，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
   endWithdrawMoney?: number; // 提现金额：结束值
-  withdrawStatus?: string; // 提现状态
-  userId?: string; // 用户主键 id，format：int64
+  withdrawStatus?: string; // 提现状态，枚举值：101;201;301;401;501
+  userId?: string; // 用户主键 id，格式：int64
   openBankName?: string; // 开户行
   payeeName?: string; // 收款人姓名
-  current?: string; // 第几页，format：int64
+  current?: string; // 第几页，格式：int64
   rejectReason?: string; // 拒绝理由
   branchBankName?: string; // 支行
-  id?: string; // 提现编号，format：int64
-  ctEndTime?: string; // 结束时间：创建时间，format：date-time
-  ctBeginTime?: string; // 起始时间：创建时间，format：date-time
+  id?: string; // 提现编号，格式：int64
+  ctEndTime?: string; // 结束时间：创建时间，格式：date-time
+  ctBeginTime?: string; // 起始时间：创建时间，格式：date-time
   beginWithdrawMoney?: number; // 提现金额：开始值
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseUserWalletWithdrawLogDO {
   bankCardNo?: string; // 冗余字段：卡号
-  updateTime?: string; // 修改时间，format：date-time
+  updateTime?: string; // 修改时间，格式：date-time
   remark?: string; // 备注
-  userId?: string; // 用户主键 id，format：int64
+  userId?: string; // 用户主键 id，格式：int64
   withdrawMoney?: number; // 提现金额
-  withdrawStatus?: string; // 提现状态
-  openBankName?: string; // 冗余字段：开户行
-  updateId?: string; // 修改人id，format：int64
+  withdrawStatus?: string; // 提现状态，枚举值：101;201;301;401;501
+  openBankName?: string; // 冗余字段：开户行，枚举值：深圳农村商业银行;广西北部湾银行;上海农村商业银行;北京银行;威海市商业银行;周口银行;库尔勒市商业银行;平安银行;顺德农商银行;湖北省农村信用社;无锡农村商业银行;朝阳银行;浙商银行;邯郸银行;中国银行;东莞银行;中国建设银行;遵义市商业银行;绍兴银行;贵州省农村信用社;张家口市商业银行;锦州银行;平顶山银行;汉口银行;上海浦东发展银行;宁夏黄河农村商业银行;广东南粤银行;广州农商银行;苏州银行;杭州银行;衡水银行;湖北银行;嘉兴银行;华融湘江银行;丹东银行;安阳银行;恒丰银行;国家开发银行;江苏太仓农村商业银行;南京银行;郑州银行;德阳商业银行;宜宾市商业银行;四川省农村信用;昆仑银行;莱商银行;尧都农商行;重庆三峡银行;富滇银行;江苏省农村信用联合社;济宁银行;招商银行;晋城银行JCBANK;阜新银行;武汉农村商业银行;湖北银行宜昌分行;台州银行;泰安市商业银行;许昌银行;中国光大银行;宁夏银行;徽商银行;九江银行;农信银清算中心;浙江民泰商业银行;廊坊银行;鞍山银行;昆山农村商业银行;玉溪市商业银行;大连银行;东莞农村商业银行;广州银行;宁波银行;营口银行;陕西信合;桂林银行;青海银行;成都农商银行;青岛银行;东亚银行;湖北银行黄石分行;温州银行;天津农商银行;齐鲁银行;广东省农村信用社联合社;浙江泰隆商业银行;赣州银行;贵阳市商业银行;重庆银行;龙江银行;南充市商业银行;三门峡银行;常熟农村商业银行;上海银行;吉林银行;常州农村信用联社;潍坊银行;张家港农村商业银行;福建海峡银行;浙江省农村信用社联合社;兰州银行;晋商银行;渤海银行;浙江稠州商业银行;阳泉银行;盛京银行;西安银行;包商银行;江苏银行;抚顺银行;河南省农村信用;交通银行;邢台银行;中信银行;华夏银行;湖南省农村信用社;东营市商业银行;鄂尔多斯银行;北京农村商业银行;信阳银行;自贡市商业银行;成都银行;韩亚银行;中国民生银行;洛阳银行;广东发展银行;齐商银行;开封市商业银行;内蒙古银行;兴业银行;重庆农村商业银行;石嘴山银行;德州银行;上饶银行;乐山市商业银行;江西省农村信用;中国工商银行;晋中市商业银行;湖州市商业银行;南海农村信用联社;新乡银行;江苏江阴农村商业银行;云南省农村信用社;中国农业银行;广西省农村信用;中国邮政储蓄银行;驻马店银行;安徽省农村信用社;甘肃省农村信用;辽阳市商业银行;吉林农信;乌鲁木齐市商业银行;中山小榄村镇银行;长沙银行;金华银行;河北银行;鄞州银行;临商银行;承德银行;山东农信;南昌银行;天津银行;吴江农商银行;城市商业银行资金清算中心;河北省农村信用社
+  updateId?: string; // 修改人id，格式：int64
   payeeName?: string; // 冗余字段：收款人姓名
   rejectReason?: string; // 拒绝理由
-  createTime?: string; // 创建时间，format：date-time
-  createId?: string; // 创建人id，format：int64
+  createTime?: string; // 创建时间，格式：date-time
+  createId?: string; // 创建人id，格式：int64
   branchBankName?: string; // 冗余字段：支行
-  id?: string; // 主键 id，format：int64
+  id?: string; // 主键 id，格式：int64
   enableFlag?: boolean; // 是否启用
 }
 
@@ -54,7 +54,7 @@ export function baseUserWalletWithdrawLogPage(
 }
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 取消-用户
@@ -84,8 +84,8 @@ export function baseUserWalletWithdrawLogSuccess(
 }
 
 export interface BaseUserWalletWithdrawLogInsertOrUpdateDTO {
-  withdrawMoney?: number; // 提现金额，required：true
-  userId?: string; // 用户主键 id，format：int64
+  withdrawMoney?: number; // 提现金额，是否必传：true
+  userId?: string; // 用户主键 id，格式：int64
 }
 
 // 新增/修改
@@ -102,7 +102,7 @@ export function baseUserWalletWithdrawLogInsertOrUpdate(
 }
 
 export interface BaseUserWalletWithdrawLogInsertOrUpdateUserSelfDTO {
-  withdrawMoney?: number; // 提现金额，required：true
+  withdrawMoney?: number; // 提现金额，是否必传：true
 }
 
 // 新增/修改-用户
@@ -132,7 +132,7 @@ export function baseUserWalletWithdrawLogInfoById(
 }
 
 export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 受理-用户的提现记录
@@ -149,8 +149,8 @@ export function baseUserWalletWithdrawLogAccept(
 }
 
 export interface NotNullIdAndStringValue {
-  id?: string; // 主键 id，required：true，format：int64
-  value?: string; // 值，required：true
+  id?: string; // 主键 id，是否必传：true，格式：int64
+  value?: string; // 值，是否必传：true
 }
 
 // 拒绝-用户的提现记录
@@ -168,7 +168,7 @@ export function baseUserWalletWithdrawLogReject(
 
 export interface DictIntegerVO {
   name?: string; // 显示用
-  id?: number; // 传值用，format：int32
+  id?: number; // 传值用，格式：int32
 }
 
 // 下拉列表-提现状态
@@ -185,17 +185,17 @@ export function baseUserWalletWithdrawLogDictListWithdrawStatus(
 
 export interface BaseUserWalletWithdrawLogPageUserSelfDTO {
   bankCardNo?: string; // 卡号
-  pageSize?: string; // 每页显示条数，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
   endWithdrawMoney?: number; // 提现金额：结束值
-  withdrawStatus?: string; // 提现状态
+  withdrawStatus?: string; // 提现状态，枚举值：101;201;301;401;501
   openBankName?: string; // 开户行
   payeeName?: string; // 收款人姓名
-  current?: string; // 第几页，format：int64
+  current?: string; // 第几页，格式：int64
   rejectReason?: string; // 拒绝理由
   branchBankName?: string; // 支行
-  id?: string; // 提现编号，format：int64
-  ctEndTime?: string; // 结束时间：创建时间，format：date-time
-  ctBeginTime?: string; // 起始时间：创建时间，format：date-time
+  id?: string; // 提现编号，格式：int64
+  ctEndTime?: string; // 结束时间：创建时间，格式：date-time
+  ctBeginTime?: string; // 起始时间：创建时间，格式：date-time
   beginWithdrawMoney?: number; // 提现金额：开始值
   order?: MyOrderDTO; // 排序字段
 }

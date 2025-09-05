@@ -42,6 +42,8 @@ export const useUserStore = defineStore("pure-user", {
     email: storageLocal().getItem<DataInfo>(userKey)?.email ?? "",
     // 用户主键 id
     id: storageLocal().getItem<DataInfo>(userKey)?.id ?? "",
+    // 用户 uuid
+    uuid: storageLocal().getItem<DataInfo>(userKey)?.uuid ?? "",
     // 判断登录页面显示哪个组件（0：登录（默认）、1：邮箱登录、2：邮箱注册、3：用户名注册、4：忘记密码）
     currentPage: 0,
     // 是否勾选了登录页的免登录
@@ -81,6 +83,10 @@ export const useUserStore = defineStore("pure-user", {
     /** 存储用户主键 id */
     SET_ID(id: string) {
       this.id = id;
+    },
+    /** 存储用户 uuid */
+    SET_UUID(uuid: string) {
+      this.uuid = uuid;
     },
     /** 存储登录页面显示哪个组件 */
     SET_CURRENTPAGE(value: number) {

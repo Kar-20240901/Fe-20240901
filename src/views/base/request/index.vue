@@ -15,7 +15,7 @@ import { baseUserDictList } from "@/api/http/base/BaseUserController";
 import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
-} from "@/model/enum/TempRequestCategoryEnum";
+} from "@/model/enum/base/TempRequestCategoryEnum";
 import FormEdit from "@/views/base/request/formEdit.vue";
 import { baseRequestInfoInfoById } from "@/api/http/base/BaseRequestInfoController";
 import { IBaseRequestFullInfoDO } from "@/views/base/request/types";

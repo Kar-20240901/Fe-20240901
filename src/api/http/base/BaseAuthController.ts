@@ -5,11 +5,11 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseAuthInsertOrUpdateDTO {
-  auth?: string; // 权限，例子：base:menu:edit，required：true
-  name?: string; // 权限名，不能重复，required：true
-  roleIdSet?: string[]; // 角色idSet，format：int64
+  auth?: string; // 权限，例子：base:menu:edit，是否必传：true
+  name?: string; // 权限名，不能重复，是否必传：true
+  roleIdSet?: string[]; // 角色idSet，格式：int64
   remark?: string; // 备注
-  id?: string; // 主键 id，format：int64
+  id?: string; // 主键 id，格式：int64
   enableFlag?: boolean; // 是否启用
 }
 
@@ -27,24 +27,24 @@ export function baseAuthInsertOrUpdate(
 }
 
 export interface BaseAuthPageDTO {
-  current?: string; // 第几页，format：int64
+  current?: string; // 第几页，格式：int64
   auth?: string; // 权限，例子：base:menu:edit
   name?: string; // 权限名（不能重复）
-  pageSize?: string; // 每页显示条数，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
   remark?: string; // 备注
   enableFlag?: boolean; // 是否启用
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseAuthDO {
-  updateId?: string; // 修改人id，format：int64
-  createTime?: string; // 创建时间，format：date-time
+  updateId?: string; // 修改人id，格式：int64
+  createTime?: string; // 创建时间，格式：date-time
   auth?: string; // 权限，例子：base:menu:edit
-  createId?: string; // 创建人id，format：int64
+  createId?: string; // 创建人id，格式：int64
   name?: string; // 角色名（不能重复）
-  updateTime?: string; // 修改时间，format：date-time
+  updateTime?: string; // 修改时间，格式：date-time
   remark?: string; // 备注
-  id?: string; // 主键 id，format：int64
+  id?: string; // 主键 id，格式：int64
   enableFlag?: boolean; // 是否启用
 }
 
@@ -62,19 +62,19 @@ export function baseAuthPage(
 }
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 export interface BaseAuthInfoByIdVO {
-  updateId?: string; // 修改人id，format：int64
-  createTime?: string; // 创建时间，format：date-time
+  updateId?: string; // 修改人id，格式：int64
+  createTime?: string; // 创建时间，格式：date-time
   auth?: string; // 权限，例子：base:menu:edit
-  createId?: string; // 创建人id，format：int64
+  createId?: string; // 创建人id，格式：int64
   name?: string; // 角色名（不能重复）
-  roleIdSet?: string[]; // 角色idSet，format：int64
-  updateTime?: string; // 修改时间，format：date-time
+  roleIdSet?: string[]; // 角色idSet，格式：int64
+  updateTime?: string; // 修改时间，格式：date-time
   remark?: string; // 备注
-  id?: string; // 主键 id，format：int64
+  id?: string; // 主键 id，格式：int64
   enableFlag?: boolean; // 是否启用
 }
 
@@ -93,7 +93,7 @@ export function baseAuthInfoById(
 
 export interface DictVO {
   name?: string; // 显示用
-  id?: string; // 传值用，format：int64
+  id?: string; // 传值用，格式：int64
 }
 
 // 下拉列表
@@ -107,7 +107,7 @@ export function baseAuthDictList(config?: PureHttpRequestConfig) {
 }
 
 export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 批量删除

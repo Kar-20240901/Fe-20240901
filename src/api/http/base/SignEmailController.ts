@@ -3,7 +3,7 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface SignEmailUpdateEmailSendCodeNewDTO {
-  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
+  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，是否必传：true
 }
 
 // 修改邮箱：0发送新邮箱验证码
@@ -32,7 +32,7 @@ export function signEmailUpdateEmailSendCodeOld(
 }
 
 export interface EmailNotBlankDTO {
-  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
+  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，是否必传：true
 }
 
 // 注册：发送验证码
@@ -49,9 +49,9 @@ export function signEmailSignUpSendCode(
 }
 
 export interface SignEmailSetPasswordDTO {
-  password?: string; // 前端加密之后的密码，required：true
-  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
-  originPassword?: string; // 前端加密之后的原始密码，required：true
+  password?: string; // 前端加密之后的密码，是否必传：true
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
+  originPassword?: string; // 前端加密之后的原始密码，是否必传：true
 }
 
 // 设置密码
@@ -93,7 +93,7 @@ export function signEmailUpdatePasswordSendCode(
 }
 
 export interface SignEmailSetPhoneSendCodePhoneDTO {
-  phone?: string; // 手机号码，正则表达式：^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$，required：true
+  phone?: string; // 手机号码，正则表达式：^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$，是否必传：true
 }
 
 // 设置手机：发送手机验证码
@@ -110,8 +110,8 @@ export function signEmailSetPhoneSendCodePhone(
 }
 
 export interface GetQrCodeVO {
-  expireTs?: string; // 二维码过期时间戳，format：int64
-  qrCodeId?: string; // 二维码 id，format：int64
+  expireTs?: string; // 二维码过期时间戳，格式：int64
+  qrCodeId?: string; // 二维码 id，格式：int64
   qrCodeUrl?: string; // 二维码的 url地址
 }
 
@@ -126,7 +126,7 @@ export function signEmailSetWxGetQrCodeUrl(config?: PureHttpRequestConfig) {
 }
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 export interface BaseQrCodeSceneBindVO {
@@ -158,9 +158,9 @@ export function signEmailSetWxSendCode(config?: PureHttpRequestConfig) {
 }
 
 export interface SignEmailUpdatePasswordDTO {
-  originNewPassword?: string; // 前端加密之后的原始新密码，required：true
-  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
-  newPassword?: string; // 前端加密之后的新密码，required：true
+  originNewPassword?: string; // 前端加密之后的原始新密码，是否必传：true
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
+  newPassword?: string; // 前端加密之后的新密码，是否必传：true
 }
 
 // 修改密码
@@ -177,7 +177,7 @@ export function signEmailUpdatePassword(
 }
 
 export interface SignEmailUpdateUserNameSendCodeDTO {
-  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
+  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，是否必传：true
 }
 
 // 修改用户名：发送验证码
@@ -204,9 +204,9 @@ export function signEmailSetPhoneSendCodeEmail(config?: PureHttpRequestConfig) {
 }
 
 export interface SignEmailSetPhoneDTO {
-  emailCode?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
-  phone?: string; // 手机号码，正则表达式：^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$，required：true
-  phoneCode?: string; // 手机验证码，正则表达式：^[0-9]{6}$，required：true
+  emailCode?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
+  phone?: string; // 手机号码，正则表达式：^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$，是否必传：true
+  phoneCode?: string; // 手机验证码，正则表达式：^[0-9]{6}$，是否必传：true
 }
 
 // 设置手机
@@ -233,12 +233,12 @@ export function signEmailSetPasswordSendCode(config?: PureHttpRequestConfig) {
 }
 
 export interface SignEmailSignInCodeDTO {
-  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
-  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
+  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，是否必传：true
 }
 
 export interface SignInVO {
-  jwtExpireTs?: string; // jwt过期时间戳，format：int64
+  jwtExpireTs?: string; // jwt过期时间戳，格式：int64
   jwt?: string; // jwt
   jwtRefreshToken?: string; // jwtRefreshToken
 }
@@ -257,8 +257,8 @@ export function signEmailSignInCode(
 }
 
 export interface SignEmailSignInPasswordDTO {
-  password?: string; // 密码，required：true
-  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
+  password?: string; // 密码，是否必传：true
+  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，是否必传：true
 }
 
 // 邮箱：账号密码登录
@@ -275,8 +275,8 @@ export function signEmailSignInPassword(
 }
 
 export interface SignEmailUpdateUserNameDTO {
-  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
-  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
+  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，是否必传：true
 }
 
 // 修改用户名
@@ -293,10 +293,10 @@ export function signEmailUpdateUserName(
 }
 
 export interface SignEmailForgetPasswordDTO {
-  originNewPassword?: string; // 前端加密之后的原始新密码，required：true
-  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
-  newPassword?: string; // 前端加密之后的新密码，required：true
-  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
+  originNewPassword?: string; // 前端加密之后的原始新密码，是否必传：true
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
+  newPassword?: string; // 前端加密之后的新密码，是否必传：true
+  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，是否必传：true
 }
 
 // 忘记密码
@@ -326,10 +326,10 @@ export function signEmailForgetPasswordSendCode(
 }
 
 export interface SignEmailSignUpDTO {
-  password?: string; // 前端加密之后的密码，required：true
-  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
-  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
-  originPassword?: string; // 前端加密之后的原始密码，required：true
+  password?: string; // 前端加密之后的密码，是否必传：true
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
+  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，是否必传：true
+  originPassword?: string; // 前端加密之后的原始密码，是否必传：true
 }
 
 // 注册
@@ -356,8 +356,8 @@ export function signEmailSignDeleteSendCode(config?: PureHttpRequestConfig) {
 }
 
 export interface SignEmailSetWxDTO {
-  qrCodeId?: string; // 二维码 id，required：true，format：int64
-  emailCode?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
+  qrCodeId?: string; // 二维码 id，是否必传：true，格式：int64
+  emailCode?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
 }
 
 // 设置微信
@@ -374,8 +374,8 @@ export function signEmailSetWx(
 }
 
 export interface SignEmailSetUserNameDTO {
-  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
-  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
+  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，是否必传：true
 }
 
 // 设置用户名
@@ -392,7 +392,7 @@ export function signEmailSetUserName(
 }
 
 export interface SignEmailSetUserNameSendCodeDTO {
-  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
+  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，是否必传：true
 }
 
 // 设置用户名：发送验证码
@@ -409,9 +409,9 @@ export function signEmailSetUserNameSendCode(
 }
 
 export interface SignEmailUpdateEmailDTO {
-  newEmailCode?: string; // 新邮箱验证码，正则表达式：^[0-9]{6}$，required：true
-  newEmail?: string; // 新邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
-  oldEmailCode?: string; // 旧邮箱验证码，正则表达式：^[0-9]{6}$，required：true
+  newEmailCode?: string; // 新邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
+  newEmail?: string; // 新邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，是否必传：true
+  oldEmailCode?: string; // 旧邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
 }
 
 // 修改邮箱
@@ -428,7 +428,7 @@ export function signEmailUpdateEmail(
 }
 
 export interface NotBlankCodeDTO {
-  code?: string; // 验证码，正则表达式：^[0-9]{6}$，required：true
+  code?: string; // 验证码，正则表达式：^[0-9]{6}$，是否必传：true
 }
 
 // 账号注销

@@ -14,9 +14,9 @@ import {
 } from "@/api/http/base/BaseFileController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "~icons/ep/refresh";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import ReSegmented from "@/components/ReSegmented/src";
-import { BaseFileTypeEnum } from "@/model/enum/BaseFileTypeEnum";
+import { BaseFileTypeEnum } from "@/model/enum/file/BaseFileTypeEnum";
 import Delete from "~icons/ep/delete";
 import CommonConstant from "@/model/constant/CommonConstant";
 import {
@@ -447,6 +447,7 @@ const uploadDialogRef = ref();
             v-if="dataList.length"
             :items="dataList"
             :min-item-size="90"
+            key-field="id"
           >
             <template #default="{ item }">
               <div class="flex h-[90px]">

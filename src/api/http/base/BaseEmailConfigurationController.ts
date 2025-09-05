@@ -3,11 +3,11 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseEmailConfigurationInsertOrUpdateDTO {
-  port?: number; // 端口，required：true，format：int32
+  port?: number; // 端口，是否必传：true，格式：int32
   pass?: string; // 发送人密码，备注：如果为 null，则表示不修改，但是新增的时候，必须有值
-  sslFlag?: boolean; //  是否使用：SSL，required：true
+  sslFlag?: boolean; //  是否使用：SSL，是否必传：true
   contentPre?: string; // 正文前缀
-  fromEmail?: string; // 发送人邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
+  fromEmail?: string; // 发送人邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，是否必传：true
 }
 
 // 新增/修改
@@ -24,10 +24,10 @@ export function baseEmailConfigurationInsertOrUpdate(
 }
 
 export interface BaseEmailConfigurationDO {
-  port?: number; // 端口，format：int32
+  port?: number; // 端口，格式：int32
   pass?: string; // 发送人密码
   sslFlag?: boolean; //  是否使用：SSL
-  id?: string; // 主键 id，format：int64
+  id?: string; // 主键 id，格式：int64
   contentPre?: string; // 正文前缀
   fromEmail?: string; // 发送人邮箱
 }

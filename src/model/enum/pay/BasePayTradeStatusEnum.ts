@@ -1,4 +1,4 @@
-import type { IEnum } from "@/model/enum/CommonEnum";
+import type { IEnum } from "@/model/enum/base/CommonEnum";
 
 export interface IBasePayTradeStatusEnum {
   NOT_EXIST: IEnum<number>;

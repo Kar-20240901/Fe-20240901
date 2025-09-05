@@ -1,4 +1,4 @@
-import type { IEnum } from "@/model/enum/CommonEnum";
+import type { IEnum } from "@/model/enum/base/CommonEnum";
 import type { OptionsType } from "@/components/ReSegmented";
 
 export interface IBaseBulletinStatusEnum {
@@ -8,7 +8,7 @@ export interface IBaseBulletinStatusEnum {
 }
 
 // 公告状态，枚举类
-export const BaseFileStorageTypeEnum: IBaseBulletinStatusEnum = {
+export const BaseBulletinStatusEnum: IBaseBulletinStatusEnum = {
   DRAFT: {
     code: 101,
     name: "草稿"
@@ -24,8 +24,8 @@ export const BaseBulletinStatusEnumOptions: Array<OptionsType> = [];
 
 export const BaseBulletinStatusEnumMap = new Map<number, string>();
 
-Object.keys(BaseFileStorageTypeEnum).forEach(key => {
-  const item = BaseFileStorageTypeEnum[key] as IEnum<number>;
+Object.keys(BaseBulletinStatusEnum).forEach(key => {
+  const item = BaseBulletinStatusEnum[key] as IEnum<number>;
 
   BaseBulletinStatusEnumOptions.push({ label: item.name, value: item.code });
 

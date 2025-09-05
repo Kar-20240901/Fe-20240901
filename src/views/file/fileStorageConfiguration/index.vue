@@ -15,7 +15,7 @@ import {
   baseFileStorageConfigurationPage,
   BaseFileStorageConfigurationPageDTO
 } from "@/api/http/base/BaseFileStorageConfigurationController";
-import { BaseFileStorageTypeMap } from "@/model/enum/BaseFileStorageTypeEnum";
+import { BaseFileStorageTypeMap } from "@/model/enum/file/BaseFileStorageTypeEnum";
 
 defineOptions({
   name: "BaseFileStorageConfiguration"

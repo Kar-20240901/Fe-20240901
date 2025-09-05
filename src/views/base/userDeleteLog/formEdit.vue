@@ -4,7 +4,7 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import { BaseUserDeleteLogDO } from "@/api/http/base/BaseUserDeleteLogController";
 import { IUserDeleteLogDialogFormProps } from "@/views/base/userDeleteLog/types";
-import { TempRequestCategoryOptions } from "@/model/enum/TempRequestCategoryEnum";
+import { TempRequestCategoryOptions } from "@/model/enum/base/TempRequestCategoryEnum";
 
 const form = ref<BaseUserDeleteLogDO>({});
 const formRef = ref();

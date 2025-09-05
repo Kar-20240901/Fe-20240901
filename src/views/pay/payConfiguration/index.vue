@@ -15,7 +15,7 @@ import {
   basePayConfigurationPage,
   BasePayConfigurationPageDTO
 } from "@/api/http/base/BasePayConfigurationController";
-import { BasePayTypeMap } from "@/model/enum/BasePayTypeEnum";
+import { BasePayTypeMap } from "@/model/enum/pay/BasePayTypeEnum";
 
 defineOptions({
   name: "BasePayConfiguration"

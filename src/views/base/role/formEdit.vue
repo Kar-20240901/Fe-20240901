@@ -4,10 +4,10 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import { BaseRoleInsertOrUpdateDTO } from "@/api/http/base/BaseRoleController";
 import { IRoleDialogFormProps } from "@/views/base/role/types";
-import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
+import { yesOrNoOptions } from "@/model/enum/base/yesOrNoEnum";
 
 const form = ref<BaseRoleInsertOrUpdateDTO>({});
 const formRef = ref();

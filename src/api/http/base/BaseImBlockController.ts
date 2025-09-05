@@ -5,8 +5,8 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseImBlockGroupAddUserDTO {
-  groupId?: string; // 群组主键 id，required：true，format：int64
-  userId?: string; // 用户主键 id，required：true，format：int64
+  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
+  userId?: string; // 用户主键 id，是否必传：true，格式：int64
 }
 
 // 取消群组拉黑用户
@@ -23,18 +23,18 @@ export function baseImBlockGroupCancelUser(
 }
 
 export interface BaseImBlockGroupPageDTO {
-  current?: string; // 第几页，format：int64
-  groupId?: string; // 群组主键 id，format：int64
-  pageSize?: string; // 每页显示条数，format：int64
-  userId?: string; // 用户主键 id，format：int64
+  current?: string; // 第几页，格式：int64
+  groupId?: string; // 群组主键 id，格式：int64
+  pageSize?: string; // 每页显示条数，格式：int64
+  userId?: string; // 用户主键 id，格式：int64
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseImBlockGroupPageVO {
-  createTime?: string; // 拉黑时间，format：date-time
+  createTime?: string; // 拉黑时间，格式：date-time
   avatarUrl?: string; // 头像地址
   nickname?: string; // 用户昵称
-  userId?: string; // 用户主键 id，format：int64
+  userId?: string; // 用户主键 id，格式：int64
 }
 
 // 群组分页排序查询拉黑用户
@@ -51,7 +51,7 @@ export function baseImBlockGroupPage(
 }
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 取消拉黑好友

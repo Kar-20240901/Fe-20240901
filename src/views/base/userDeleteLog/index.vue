@@ -16,7 +16,7 @@ import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
-} from "@/model/enum/TempRequestCategoryEnum";
+} from "@/model/enum/base/TempRequestCategoryEnum";
 
 defineOptions({
   name: "BaseUserDeleteLog"

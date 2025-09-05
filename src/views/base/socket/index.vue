@@ -13,7 +13,7 @@ import {
   BaseSocketPageDTO
 } from "@/api/http/base/BaseSocketController";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
-import { BaseSocketTypeMap } from "@/model/enum/BaseSocketTypeEnum";
+import { BaseSocketTypeMap } from "@/model/enum/socket/BaseSocketTypeEnum";
 
 defineOptions({
   name: "BaseSocket"

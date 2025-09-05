@@ -5,7 +5,7 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 export interface BaseUserConfigurationDO {
   emailSignUpEnable?: boolean; // 是否启用：邮箱注册功能，默认启用
   userNameSignUpEnable?: boolean; // 是否启用：用户名注册功能，默认启用
-  id?: string; // 主键 id，format：int64
+  id?: string; // 主键 id，格式：int64
   phoneSignUpEnable?: boolean; // 是否启用：手机号码注册功能，默认启用
 }
 

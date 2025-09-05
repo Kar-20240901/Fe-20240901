@@ -3,8 +3,8 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface SignUserNameUpdateUserNameDTO {
-  newUserName?: string; // 新用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
-  currentPassword?: string; // 前端加密之后的密码，required：true
+  newUserName?: string; // 新用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，是否必传：true
+  currentPassword?: string; // 前端加密之后的密码，是否必传：true
 }
 
 // 修改用户名
@@ -21,9 +21,9 @@ export function signUserNameUpdateUserName(
 }
 
 export interface SignUserNameSignUpDTO {
-  password?: string; // 前端加密之后的密码，required：true
-  originPassword?: string; // 前端加密之后的原始密码，required：true
-  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
+  password?: string; // 前端加密之后的密码，是否必传：true
+  originPassword?: string; // 前端加密之后的原始密码，是否必传：true
+  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，是否必传：true
 }
 
 // 注册
@@ -40,7 +40,7 @@ export function signUserNameSignUp(
 }
 
 export interface SignUserNameSignDeleteDTO {
-  currentPassword?: string; // 前端加密之后的密码，required：true
+  currentPassword?: string; // 前端加密之后的密码，是否必传：true
 }
 
 // 账号注销
@@ -57,7 +57,7 @@ export function signUserNameSignDelete(
 }
 
 export interface SignUserNameSetEmailSendCodeDTO {
-  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
+  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，是否必传：true
 }
 
 // 设置邮箱：发送验证码
@@ -74,9 +74,9 @@ export function signUserNameSetEmailSendCode(
 }
 
 export interface SignUserNameSetEmailDTO {
-  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，required：true
-  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，required：true
-  currentPassword?: string; // 前端加密之后的密码，required：true
+  code?: string; // 邮箱验证码，正则表达式：^[0-9]{6}$，是否必传：true
+  email?: string; // 邮箱，正则表达式：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$，是否必传：true
+  currentPassword?: string; // 前端加密之后的密码，是否必传：true
 }
 
 // 设置邮箱
@@ -93,12 +93,12 @@ export function signUserNameSetEmail(
 }
 
 export interface SignUserNameSignInPasswordDTO {
-  password?: string; // 前端加密之后的密码，required：true
-  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，required：true
+  password?: string; // 前端加密之后的密码，是否必传：true
+  username?: string; // 用户名，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{2,20}$，是否必传：true
 }
 
 export interface SignInVO {
-  jwtExpireTs?: string; // jwt过期时间戳，format：int64
+  jwtExpireTs?: string; // jwt过期时间戳，格式：int64
   jwt?: string; // jwt
   jwtRefreshToken?: string; // jwtRefreshToken
 }
@@ -117,7 +117,7 @@ export function signUserNameSignInPassword(
 }
 
 export interface SignUserNameJwtRefreshTokenDTO {
-  jwtRefreshToken?: string; // jwtRefreshToken，required：true
+  jwtRefreshToken?: string; // jwtRefreshToken，是否必传：true
 }
 
 // 刷新token
@@ -134,9 +134,9 @@ export function signUserNameJwtRefreshToken(
 }
 
 export interface SignUserNameUpdatePasswordDTO {
-  originNewPassword?: string; // 前端加密之后的原始新密码，required：true
-  oldPassword?: string; // 前端加密之后的旧密码，required：true
-  newPassword?: string; // 前端加密之后的新密码，required：true
+  originNewPassword?: string; // 前端加密之后的原始新密码，是否必传：true
+  oldPassword?: string; // 前端加密之后的旧密码，是否必传：true
+  newPassword?: string; // 前端加密之后的新密码，是否必传：true
 }
 
 // 修改密码

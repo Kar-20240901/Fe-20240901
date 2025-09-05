@@ -4,11 +4,11 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import { BaseFileStorageConfigurationInsertOrUpdateDTO } from "@/api/http/base/BaseFileStorageConfigurationController";
 import { IFileStorageConfigurationDialogFormProps } from "@/views/file/fileStorageConfiguration/types";
-import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
-import { BaseFileStorageTypeOptions } from "@/model/enum/BaseFileStorageTypeEnum";
+import { yesOrNoOptions } from "@/model/enum/base/yesOrNoEnum";
+import { BaseFileStorageTypeOptions } from "@/model/enum/file/BaseFileStorageTypeEnum";
 
 const form = ref<BaseFileStorageConfigurationInsertOrUpdateDTO>({});
 const formRef = ref();

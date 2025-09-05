@@ -5,21 +5,21 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 export interface BaseBulletinDO {
-  updateId?: string; // 修改人id，format：int64
-  publishTime?: string; // 发布时间，format：date-time
-  createTime?: string; // 创建时间，format：date-time
-  createId?: string; // 创建人id，format：int64
-  updateTime?: string; // 修改时间，format：date-time
+  updateId?: string; // 修改人id，格式：int64
+  publishTime?: string; // 发布时间，格式：date-time
+  createTime?: string; // 创建时间，格式：date-time
+  createId?: string; // 创建人id，格式：int64
+  updateTime?: string; // 修改时间，格式：date-time
   remark?: string; // 备注
-  id?: string; // 主键 id，format：int64
+  id?: string; // 主键 id，格式：int64
   title?: string; // 标题
   enableFlag?: boolean; // 是否启用
   content?: string; // 公告内容（富文本）
-  status?: string; // 公告状态：101 草稿 201 公示
+  status?: string; // 公告状态：101 草稿 201 公示，枚举值：101;201
 }
 
 // 通过主键id，查看详情
@@ -62,11 +62,11 @@ export function baseBulletinRevoke(
 }
 
 export interface BaseBulletinInsertOrUpdateDTO {
-  publishTime?: string; // 发布时间，required：true，format：date-time
-  id?: string; // 主键 id，format：int64
-  title?: string; // 标题，required：true
+  publishTime?: string; // 发布时间，是否必传：true，格式：date-time
+  id?: string; // 主键 id，格式：int64
+  title?: string; // 标题，是否必传：true
   enableFlag?: boolean; // 是否启用
-  content?: string; // 公告内容（富文本），required：true
+  content?: string; // 公告内容（富文本），是否必传：true
 }
 
 // 新增/修改
@@ -95,7 +95,7 @@ export function baseBulletinUserSelfUpdateReadTime(
 }
 
 export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 批量删除
@@ -112,16 +112,16 @@ export function baseBulletinDeleteByIdSet(
 }
 
 export interface BaseBulletinPageDTO {
-  ptEndTime?: string; // 发布时间范围查询：结束时间，format：date-time
-  current?: string; // 第几页，format：int64
+  ptEndTime?: string; // 发布时间范围查询：结束时间，格式：date-time
+  current?: string; // 第几页，格式：int64
   userSelfFlag?: boolean; // 是否是用户自我查询，默认：false
-  ptBeginTime?: string; // 发布时间范围查询：起始时间，format：date-time
-  pageSize?: string; // 每页显示条数，format：int64
+  ptBeginTime?: string; // 发布时间范围查询：起始时间，格式：date-time
+  pageSize?: string; // 每页显示条数，格式：int64
   title?: string; // 标题
   enableFlag?: boolean; // 是否启用
   content?: string; // 公告内容（富文本）
   order?: MyOrderDTO; // 排序字段
-  status?: string; // 公告状态：101 草稿 201 公示
+  status?: string; // 公告状态：101 草稿 201 公示，枚举值：101;201
 }
 
 // 分页排序查询
@@ -138,10 +138,10 @@ export function baseBulletinPage(
 }
 
 export interface BaseBulletinUserSelfPageDTO {
-  ptEndTime?: string; // 发布时间范围查询：结束时间，format：date-time
-  current?: string; // 第几页，format：int64
-  ptBeginTime?: string; // 发布时间范围查询：起始时间，format：date-time
-  pageSize?: string; // 每页显示条数，format：int64
+  ptEndTime?: string; // 发布时间范围查询：结束时间，格式：date-time
+  current?: string; // 第几页，格式：int64
+  ptBeginTime?: string; // 发布时间范围查询：起始时间，格式：date-time
+  pageSize?: string; // 每页显示条数，格式：int64
   title?: string; // 标题
   content?: string; // 公告内容（富文本）
   order?: MyOrderDTO; // 排序字段

@@ -15,7 +15,7 @@ import {
   baseSmsConfigurationPage,
   BaseSmsConfigurationPageDTO
 } from "@/api/http/base/BaseSmsConfigurationController";
-import { BaseSmsTypeMap } from "@/model/enum/BaseSmsTypeEnum";
+import { BaseSmsTypeMap } from "@/model/enum/sms/BaseSmsTypeEnum";
 
 defineOptions({
   name: "BaseSmsConfiguration"

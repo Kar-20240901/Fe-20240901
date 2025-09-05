@@ -4,7 +4,7 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import { BaseAuthInsertOrUpdateDTO } from "@/api/http/base/BaseAuthController";
 import { IAuthDialogFormProps } from "@/views/base/auth/types";
 

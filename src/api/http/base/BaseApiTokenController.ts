@@ -5,22 +5,22 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseApiTokenPageDTO {
-  current?: string; // 第几页，format：int64
+  current?: string; // 第几页，格式：int64
   name?: string; // 名称
-  pageSize?: string; // 每页显示条数，format：int64
-  userId?: string; // 用户主键id，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
+  userId?: string; // 用户主键id，格式：int64
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseApiTokenDO {
-  createTime?: string; // 创建时间，format：date-time
-  lastUseTime?: string; // 最近使用时间，format：date-time
+  createTime?: string; // 创建时间，格式：date-time
+  lastUseTime?: string; // 最近使用时间，格式：date-time
   name?: string; // apiToken名
-  updateTime?: string; // 修改时间，format：date-time
-  id?: string; // null，format：int64
-  userId?: string; // 用户 id，format：int64
+  updateTime?: string; // 修改时间，格式：date-time
+  id?: string; // null，格式：int64
+  userId?: string; // 用户 id，格式：int64
   enableFlag?: boolean; // 是否启用
-  token?: string; // 调用 api时，传递的 token，格式：uuid
+  token?: string; // 调用 api时，传递的 token，格式：uuid，在 header头里传递：BE-API-TOKEN
 }
 
 // 分页排序查询
@@ -37,7 +37,7 @@ export function baseApiTokenPage(
 }
 
 export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，required：true，format：int64
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 批量删除
@@ -54,9 +54,9 @@ export function baseApiTokenDeleteByIdSet(
 }
 
 export interface BaseApiTokenInsertOrUpdateDTO {
-  name?: string; // 名称，required：true
-  id?: string; // 主键 id，format：int64
-  userId?: string; // 用户主键id，format：int64
+  name?: string; // 名称，是否必传：true
+  id?: string; // 主键 id，格式：int64
+  userId?: string; // 用户主键id，格式：int64
   enableFlag?: boolean; // 是否启用
 }
 
@@ -74,7 +74,7 @@ export function baseApiTokenInsertOrUpdate(
 }
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 通过主键id，查看详情

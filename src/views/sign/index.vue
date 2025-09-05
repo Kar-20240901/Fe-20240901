@@ -64,7 +64,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
       })
       .then(() => {
         // 获取后端路由
-        return initRouter().then(() => {
+        initRouter().then(() => {
           disabled.value = true;
           router
             .push(getTopMenu(true).path)

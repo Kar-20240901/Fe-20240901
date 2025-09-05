@@ -6,7 +6,7 @@ import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
-} from "@/model/enum/TempRequestCategoryEnum";
+} from "@/model/enum/base/TempRequestCategoryEnum";
 import {
   BaseRequestDO,
   baseRequestSelfLoginRecord,

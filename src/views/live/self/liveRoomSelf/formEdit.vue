@@ -4,7 +4,7 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import { BaseLiveRoomSelfInsertOrUpdateDTO } from "@/api/http/base/BaseLiveRoomSelfController";
 import { ILiveRoomSelfDialogFormProps } from "@/views/live/self/liveRoomSelf/types";
 

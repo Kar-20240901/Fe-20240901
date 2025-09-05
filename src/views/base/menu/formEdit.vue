@@ -8,7 +8,7 @@ import { IconSelect } from "@/components/ReIcon";
 import { showFlagOptions } from "@/views/base/menu/enums";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import { IMenuDialogTreeFormProps } from "@/views/base/menu/types";
 
 const form = ref<BaseMenuInsertOrUpdateDTO>({});

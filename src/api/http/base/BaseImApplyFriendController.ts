@@ -5,22 +5,22 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseImApplyFriendPageDTO {
-  current?: string; // 第几页，format：int64
+  current?: string; // 第几页，格式：int64
   applyContent?: string; // 申请内容
   nickname?: string; // 用户昵称
-  pageSize?: string; // 每页显示条数，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
   searchKey?: string; // 搜索关键字
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseImApplyFriendPageVO {
   avatarUrl?: string; // 目标用户头像
-  avatarFileId?: string; // 目标用户头像文件 id，format：int64
+  avatarFileId?: string; // 目标用户头像文件 id，格式：int64
   applyContent?: string; // 申请内容
   nickname?: string; // 目标用户昵称
-  id?: string; // 主键 id，format：int64
-  applyTime?: string; // 申请时间，format：date-time
-  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝
+  id?: string; // 主键 id，格式：int64
+  applyTime?: string; // 申请时间，格式：date-time
+  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301
 }
 
 // 分页排序查询
@@ -37,17 +37,18 @@ export function baseImApplyFriendPage(
 }
 
 export interface BaseImApplyFriendSearchApplyFriendDTO {
-  current?: string; // 第几页，format：int64
+  current?: string; // 第几页，格式：int64
   nickname?: string; // 用户昵称
-  pageSize?: string; // 每页显示条数，format：int64
-  userId?: string; // 用户主键 id，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
+  userId?: string; // 用户主键 id，格式：int64
+  uuid?: string; // 用户 uuid
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseImApplyFriendSearchApplyFriendVO {
   avatarUrl?: string; // 头像地址
   nickname?: string; // 用户昵称
-  userId?: string; // 用户主键 id，format：int64
+  userId?: string; // 用户主键 id，格式：int64
 }
 
 // 搜索要添加的好友
@@ -65,7 +66,7 @@ export function baseImApplyFriendSearchApplyFriend(
 
 export interface BaseImApplyFriendSendDTO {
   applyContent?: string; // 申请内容
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 发送好友申请
@@ -83,7 +84,7 @@ export function baseImApplyFriendSend(
 
 export interface BaseImApplyFriendRejectDTO {
   rejectReason?: string; // 拒绝理由
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 拒绝
@@ -100,7 +101,7 @@ export function baseImApplyFriendReject(
 }
 
 export interface NotNullId {
-  id?: string; // 主键 id，required：true，format：int64
+  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 隐藏

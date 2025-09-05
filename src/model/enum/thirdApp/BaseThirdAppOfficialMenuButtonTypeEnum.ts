@@ -1,4 +1,4 @@
-import type { IEnum } from "@/model/enum/CommonEnum";
+import type { IEnum } from "@/model/enum/base/CommonEnum";
 import type { OptionsType } from "@/components/ReSegmented";
 
 export interface IBaseThirdAppOfficialMenuButtonTypeEnum {

@@ -4,24 +4,24 @@ import { http } from "@/utils/http";
 import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
-export interface BaseImGroupRefUserPageDTO {
-  current?: string; // 第几页，format：int64
-  groupId?: string; // 群组主键 id，format：int64
+export interface BaseImGroupRefUserMutePageDTO {
+  current?: string; // 第几页，格式：int64
+  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
   nickname?: string; // 用户昵称
-  pageSize?: string; // 每页显示条数，format：int64
-  userId?: string; // 用户主键 id，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
+  userId?: string; // 用户主键 id，格式：int64
   order?: MyOrderDTO; // 排序字段
 }
 
 export interface BaseImGroupRefUserPageVO {
   avatarUrl?: string; // 头像地址
   nickname?: string; // 用户昵称
-  userId?: string; // 用户主键 id，format：int64
+  userId?: string; // 用户主键 id，格式：int64
 }
 
-// 群组分页排序查询禁言用户
+// 群组分页排序查询-禁言用户
 export function baseImGroupRefUserPageMute(
-  form: BaseImGroupRefUserPageDTO,
+  form: BaseImGroupRefUserMutePageDTO,
   config?: PureHttpRequestConfig
 ) {
   return http.request<Page<BaseImGroupRefUserPageVO>>(
@@ -32,18 +32,18 @@ export function baseImGroupRefUserPageMute(
   );
 }
 
-export interface BaseImGroupRefUserMutePageDTO {
-  current?: string; // 第几页，format：int64
-  groupId?: string; // 群组主键 id，required：true，format：int64
+export interface BaseImGroupRefUserPageDTO {
+  current?: string; // 第几页，格式：int64
+  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
   nickname?: string; // 用户昵称
-  pageSize?: string; // 每页显示条数，format：int64
-  userId?: string; // 用户主键 id，format：int64
+  pageSize?: string; // 每页显示条数，格式：int64
+  userId?: string; // 用户主键 id，格式：int64
   order?: MyOrderDTO; // 排序字段
 }
 
 // 群组分页排序查询群员
 export function baseImGroupRefUserPage(
-  form: BaseImGroupRefUserMutePageDTO,
+  form: BaseImGroupRefUserPageDTO,
   config?: PureHttpRequestConfig
 ) {
   return http.request<Page<BaseImGroupRefUserPageVO>>(
@@ -55,8 +55,8 @@ export function baseImGroupRefUserPage(
 }
 
 export interface BaseImGroupRefUserAddMuteDTO {
-  groupId?: string; // 群组主键 id，required：true，format：int64
-  userId?: string; // 需要禁言的人员主键 id，format：int64
+  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
+  userId?: string; // 需要禁言的人员主键 id，格式：int64
 }
 
 // 新增禁言
@@ -73,8 +73,8 @@ export function baseImGroupRefUserAddMute(
 }
 
 export interface BaseImGroupRefUserDeleteMuteDTO {
-  groupId?: string; // 群组主键 id，required：true，format：int64
-  userId?: string; // 需要解除禁言的人员主键 id，format：int64
+  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
+  userId?: string; // 需要解除禁言的人员主键 id，格式：int64
 }
 
 // 解除禁言

@@ -13,7 +13,7 @@ import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
   BaseFileTransferStatusEnum,
   BaseFileTransferStatusMap
-} from "@/model/enum/BaseFileTransferStatusEnum";
+} from "@/model/enum/file/BaseFileTransferStatusEnum";
 import { FileUpload } from "@/utils/FileUtil";
 import {
   baseFileUploadFileSystemChunkCompose,
@@ -21,7 +21,7 @@ import {
   baseFileUploadFileSystemPre
 } from "@/api/http/base/BaseFileController";
 import { baseApi } from "@/api/http/utils";
-import { BaseFileUploadTypeEnumEnum } from "@/model/enum/BaseFileUploadTypeEnum";
+import { BaseFileUploadTypeEnumEnum } from "@/model/enum/file/BaseFileUploadTypeEnum";
 import Refresh from "~icons/ep/refresh";
 import { IUploadDialogFormProps } from "@/views/file/fileSystem/types";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";

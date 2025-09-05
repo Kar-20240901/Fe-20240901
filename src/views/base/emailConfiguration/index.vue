@@ -7,7 +7,7 @@ import {
   baseEmailConfigurationInsertOrUpdate
 } from "@/api/http/base/BaseEmailConfigurationController";
 import { Validate } from "@/utils/ValidatorUtil";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
 import ReSegmented from "@/components/ReSegmented/src";
 import Info from "~icons/ri/information-line";
 import { ToastSuccess } from "@/utils/ToastUtil";

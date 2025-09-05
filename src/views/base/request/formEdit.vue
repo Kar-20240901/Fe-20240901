@@ -6,7 +6,7 @@ import {
   IBaseRequestFullInfoDO,
   IRequestDialogFormProps
 } from "@/views/base/request/types";
-import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
+import { yesOrNoOptions } from "@/model/enum/base/yesOrNoEnum";
 
 const form = ref<IBaseRequestFullInfoDO>({});
 const formRef = ref();

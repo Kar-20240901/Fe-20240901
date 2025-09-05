@@ -4,11 +4,11 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
-import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
+import { enableFlagOptions } from "@/model/enum/base/enableFlagEnum";
+import { yesOrNoOptions } from "@/model/enum/base/yesOrNoEnum";
 import { BaseSmsConfigurationInsertOrUpdateDTO } from "@/api/http/base/BaseSmsConfigurationController";
 import { ISmsConfigurationDialogFormProps } from "@/views/base/smsConfiguration/types";
-import { BaseSmsTypeOptions } from "@/model/enum/BaseSmsTypeEnum";
+import { BaseSmsTypeOptions } from "@/model/enum/sms/BaseSmsTypeEnum";
 
 const form = ref<BaseSmsConfigurationInsertOrUpdateDTO>({});
 const formRef = ref();
