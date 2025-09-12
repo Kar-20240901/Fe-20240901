@@ -103,16 +103,15 @@ const props = defineProps<IRequestDialogFormProps>();
 
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="成功" prop="successFlag">
-            <el-select v-model="form.successFlag" class="w-full" disabled>
-              <el-option
-                v-for="(item, index) in yesOrNoOptions"
-                :key="index"
-                :value="item.value"
-                :label="item.label as string"
-              >
-                {{ item.label }}
-              </el-option>
-            </el-select>
+            <el-segmented
+              v-model="form.successFlag"
+              :options="yesOrNoOptions"
+              disabled
+            >
+              <template #default="scope">
+                <div>{{ scope.item.label }}</div>
+              </template>
+            </el-segmented>
           </el-form-item>
         </re-col>
 

@@ -28,6 +28,7 @@ import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { throttle } from "@pureadmin/utils";
 import CommonConstant from "@/model/constant/CommonConstant";
 import * as CryptoJS from "crypto-js";
+import EpUpload from "~icons/ep/upload";
 
 const search = ref<BaseFileTransferPageDTO>({});
 
@@ -289,7 +290,7 @@ function composeClick(row: BaseFileTransferDO) {
             :file-list="uploadFilesRef"
             drag
           >
-            <el-button type="primary" :icon="useRenderIcon('ep:upload')">
+            <el-button type="primary" :icon="useRenderIcon(EpUpload)">
               上传
             </el-button>
           </el-upload>

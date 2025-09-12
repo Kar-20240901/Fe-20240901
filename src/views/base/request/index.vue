@@ -19,6 +19,7 @@ import {
 import FormEdit from "@/views/base/request/formEdit.vue";
 import { baseRequestInfoInfoById } from "@/api/http/base/BaseRequestInfoController";
 import { IBaseRequestFullInfoDO } from "@/views/base/request/types";
+import EpView from "~icons/ep/view";
 
 defineOptions({
   name: "BaseRequest"
@@ -215,7 +216,7 @@ function viewClick(row: BaseRequestDO) {
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon('ep:view')"
+            :icon="useRenderIcon(EpView)"
             @click="viewClick(scope.row)"
           >
             查看

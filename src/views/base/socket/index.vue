@@ -14,6 +14,8 @@ import {
 } from "@/api/http/base/BaseSocketController";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { BaseSocketTypeMap } from "@/model/enum/socket/BaseSocketTypeEnum";
+import EpCircleCheck from "~icons/ep/circle-check";
+import EpCircleClose from "~icons/ep/circle-close";
 
 defineOptions({
   name: "BaseSocket"
@@ -187,14 +189,14 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
         <div>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ep:circle-check')"
+            :icon="useRenderIcon(EpCircleCheck)"
             @click="enableBySelectIdArr"
           >
             批量启用
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ep:circle-close')"
+            :icon="useRenderIcon(EpCircleClose)"
             @click="disableBySelectIdArr"
           >
             批量禁用
@@ -247,7 +249,7 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon('ep:circle-check')"
+            :icon="useRenderIcon(EpCircleCheck)"
             @click="enableClick(scope.row)"
           >
             启用
@@ -255,7 +257,7 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon('ep:circle-close')"
+            :icon="useRenderIcon(EpCircleClose)"
             @click="disableClick(scope.row)"
           >
             禁用

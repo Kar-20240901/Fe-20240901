@@ -14,6 +14,8 @@ import { ToastSuccess } from "@/utils/ToastUtil";
 import { Validate } from "@/utils/ValidatorUtil";
 import { useVerifyCode } from "@/utils/verifyCode";
 import { PasswordRSAEncrypt, RSAEncrypt } from "@/utils/RsaUtil";
+import RiEmail from "~icons/ri/mail-fill";
+import RiShieldKeyholeLine from "~icons/ri/shield-keyhole-line";
 
 const loading = ref(false);
 const ruleForm = ref<SignEmailSignUpDTO>({});
@@ -64,7 +66,7 @@ function onBack() {
           v-model="ruleForm.email"
           clearable
           placeholder="邮箱"
-          :prefix-icon="useRenderIcon('ri:mail-fill')"
+          :prefix-icon="useRenderIcon(RiEmail)"
         />
       </el-form-item>
     </Motion>
@@ -106,7 +108,7 @@ function onBack() {
             v-model="ruleForm.code"
             clearable
             placeholder="邮箱验证码"
-            :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
+            :prefix-icon="useRenderIcon(RiShieldKeyholeLine)"
           />
           <el-button
             :disabled="verifyCode.isDisabled.value"

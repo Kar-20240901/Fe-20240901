@@ -35,6 +35,16 @@ import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { getToken } from "@/utils/auth";
 import { AUTHORIZATION } from "@/utils/http";
 import RiFile2Line from "~icons/ri/file-2-line";
+import RiFolderOpenFill from "~icons/ri/folder-open-fill";
+import EpUpload from "~icons/ep/upload";
+
+import RiArrowGoBackFill from "~icons/ri/arrow-go-back-fill";
+import EpCheck from "~icons/ep/check";
+import RiFolderAddFill from "~icons/ri/folder-add-fill";
+import EpCopyDocument from "~icons/ep/copy-document";
+import RiDragMove2Fill from "~icons/ri/drag-move-2-fill";
+import RiFontColor from "~icons/ri/font-color";
+import EpDownload from "~icons/ep/download";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -357,42 +367,42 @@ const uploadDialogRef = ref();
               search.pid !== CommonConstant.TOP_PID_STR && !search.globalFlag
             "
             type="primary"
-            :icon="useRenderIcon('ri:arrow-go-back-fill')"
+            :icon="useRenderIcon(RiArrowGoBackFill)"
             @click="backUpClick"
           >
             返回上一级
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ep:check')"
+            :icon="useRenderIcon(EpCheck)"
             @click="selectAllClick"
           >
             全选
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri:folder-add-fill')"
+            :icon="useRenderIcon(RiFolderAddFill)"
             @click="createFolderClick"
           >
             创建文件夹
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ep:copy-document')"
+            :icon="useRenderIcon(EpCopyDocument)"
             @click="copyClick"
           >
             复制
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri:drag-move-2-fill')"
+            :icon="useRenderIcon(RiDragMove2Fill)"
             @click="moveClick"
           >
             移动
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri:font-color')"
+            :icon="useRenderIcon(RiFontColor)"
             @click="renameClick"
           >
             重命名
@@ -416,7 +426,7 @@ const uploadDialogRef = ref();
         <div class="flex">
           <el-button
             type="primary"
-            :icon="useRenderIcon('ep:upload')"
+            :icon="useRenderIcon(EpUpload)"
             @click="uploadClick"
           >
             上传
@@ -424,7 +434,7 @@ const uploadDialogRef = ref();
 
           <el-button
             type="primary"
-            :icon="useRenderIcon('ep:download')"
+            :icon="useRenderIcon(EpDownload)"
             @click="downClick"
           >
             下载
@@ -493,13 +503,24 @@ const uploadDialogRef = ref();
                           class="w-[45px] h-[45px] mb-[5px]"
                         >
                           <template #error>
-                            <IconifyIconOnline width="50" :icon="RiFile2Line" />
+                            <component
+                              :is="
+                                useRenderIcon(RiFile2Line, {
+                                  width: '45px',
+                                  height: '45px'
+                                })
+                              "
+                            />
                           </template>
                         </el-image>
-                        <IconifyIconOnline
+                        <component
+                          :is="
+                            useRenderIcon(RiFolderOpenFill, {
+                              width: '45px',
+                              height: '45px'
+                            })
+                          "
                           v-else
-                          :icon="'ri:folder-open-fill'"
-                          width="50"
                         />
                         <el-text
                           class="text-[13px] w-[80px] h-[18px] text-center"

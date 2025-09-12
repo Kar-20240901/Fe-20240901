@@ -15,6 +15,8 @@ import { Validate } from "@/utils/ValidatorUtil";
 import { getTopMenu, initRouter } from "@/router/utils";
 import { useRouter } from "vue-router";
 import { setToken } from "@/utils/auth";
+import RiEmail from "~icons/ri/mail-fill";
+import RiShieldKeyholeLine from "~icons/ri/shield-keyhole-line";
 
 const router = useRouter();
 const loading = ref(false);
@@ -73,7 +75,7 @@ function onBack() {
           v-model="ruleForm.email"
           clearable
           placeholder="邮箱"
-          :prefix-icon="useRenderIcon('ri:mail-fill')"
+          :prefix-icon="useRenderIcon(RiEmail)"
         />
       </el-form-item>
     </Motion>
@@ -94,7 +96,7 @@ function onBack() {
             v-model="ruleForm.code"
             clearable
             placeholder="邮箱验证码"
-            :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
+            :prefix-icon="useRenderIcon(RiShieldKeyholeLine)"
           />
           <el-button
             :disabled="verifyCode.isDisabled.value"

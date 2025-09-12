@@ -82,7 +82,7 @@ onMounted(() => {
       class="w-full rounded flex justify-center items-center"
       @click="searchClick"
     >
-      <IconifyIconOffline width="22" :icon="'ep:search'" />
+      <IconifyIconOffline width="22" :icon="'ri/search-line'" />
       <div class="ml-1">搜索</div>
     </div>
     <div class="flex-1">
@@ -103,7 +103,7 @@ onMounted(() => {
                     class="w-[45px] h-[45px] mb-[5px]"
                   >
                     <template #error>
-                      <IconifyIconOnline width="50" :icon="'ri:file-2-line'" />
+                      <IconifyIconOnline width="45" :icon="'ri:file-2-line'" />
                     </template>
                   </el-image>
                 </el-badge>
