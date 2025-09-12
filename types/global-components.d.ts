@@ -117,6 +117,8 @@ declare module "vue" {
     ElTour: (typeof import("element-plus"))["ElTour"];
     ElTourStep: (typeof import("element-plus"))["ElTourStep"];
     ElSegmented: (typeof import("element-plus"))["ElSegmented"];
+    ElSplitter: (typeof import("element-plus"))["ElSplitter"];
+    ElSplitterPanel: (typeof import("element-plus"))["ElSplitterPanel"];
   }
 
   interface ComponentCustomProperties {

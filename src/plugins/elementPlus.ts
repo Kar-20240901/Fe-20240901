@@ -108,6 +108,8 @@ import {
   ElTour,
   ElTourStep,
   ElSegmented,
+  ElSplitter,
+  ElSplitterPanel,
   /**
    * 为了方便演示平台将 element-plus 导出的所有插件引入，实际使用中如果你没用到哪个插件，将其注释掉就行
    * 导出来源：https://github.com/element-plus/element-plus/blob/dev/packages/element-plus/plugin.ts#L11-L16
@@ -223,7 +225,9 @@ const components = [
   ElWatermark,
   ElTour,
   ElTourStep,
-  ElSegmented
+  ElSegmented,
+  ElSplitter,
+  ElSplitterPanel
 ];
 
 const plugins = [
