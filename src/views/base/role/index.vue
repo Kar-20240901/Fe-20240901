@@ -22,6 +22,7 @@ import {
   BaseMenuDO
 } from "@/api/http/base/BaseMenuController";
 import { baseUserDictList } from "@/api/http/base/BaseUserController";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseRole"
@@ -106,7 +107,7 @@ function confirmFun() {
   return baseRoleInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

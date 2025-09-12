@@ -28,6 +28,7 @@ import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
 import { DictVO } from "@/api/http/base/BaseRoleController";
 import { CalcOrderNo } from "@/utils/TreeUtil";
 import { baseUserDictList } from "@/api/http/base/BaseUserController";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseDept"
@@ -98,7 +99,7 @@ function confirmFun() {
   return baseDeptInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

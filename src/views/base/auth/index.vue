@@ -90,7 +90,7 @@ function confirmFun() {
   return baseAuthInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

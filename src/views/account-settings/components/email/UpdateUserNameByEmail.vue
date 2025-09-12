@@ -15,6 +15,7 @@ import { useVerifyCode } from "@/utils/verifyCode";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import { useUserStoreHook } from "@/store/modules/user";
 import { Validate } from "@/utils/ValidatorUtil";
+import { R } from "@/model/vo/R";
 
 const form = ref<SignEmailUpdateUserNameDTO>({});
 const formRef = ref();
@@ -42,7 +43,7 @@ function confirmFun() {
   return signEmailUpdateUserName(form.value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   useUserStoreHook().logOut(); // 退出登录

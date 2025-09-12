@@ -28,6 +28,7 @@ import {
   RendTippyProps,
   ToggleRowExpansionAll
 } from "@/utils/TableUtil";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseArea"
@@ -98,7 +99,7 @@ function confirmFun() {
   return baseAreaInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

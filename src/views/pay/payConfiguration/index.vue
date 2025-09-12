@@ -16,6 +16,7 @@ import {
   BasePayConfigurationPageDTO
 } from "@/api/http/base/BasePayConfigurationController";
 import { BasePayTypeMap } from "@/model/enum/pay/BasePayTypeEnum";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BasePayConfiguration"
@@ -76,7 +77,7 @@ function confirmFun() {
   return basePayConfigurationInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

@@ -15,7 +15,7 @@ export const BaseImLeftSegmentedEnum: IBaseImLeftSegmentedEnum = {
   },
 
   CONTACT: {
-    code: "session",
+    code: "contact",
     name: "联系人"
   }
 };

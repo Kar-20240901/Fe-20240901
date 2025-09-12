@@ -17,6 +17,7 @@ export interface BaseImSessionContentRefUserPageVO {
   contentId?: string; // 主键 id，格式：int64
   createTs?: string; // 创建时间的时间戳，UTC+8，格式：int64
   refId?: string; // 引用的内容主键 id，不引用时为 -1，格式：int64
+  sessionId?: string; // 会话主键 id，格式：int64
   type?: number; // 内容类型，格式：int32
   content?: string; // 会话内容
 }

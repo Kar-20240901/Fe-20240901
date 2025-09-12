@@ -2,6 +2,8 @@ import type { IEnum } from "@/model/enum/base/CommonEnum";
 import type { OptionsType } from "@/components/ReSegmented";
 
 export interface IBaseImTypeEnum {
+  ALL: IEnum<number>;
+
   FRIEND: IEnum<number>;
 
   GROUP: IEnum<number>;
@@ -9,6 +11,11 @@ export interface IBaseImTypeEnum {
 
 // 聊天类型，枚举类
 export const BaseImTypeEnum: IBaseImTypeEnum = {
+  ALL: {
+    code: 1,
+    name: "全部"
+  },
+
   FRIEND: {
     code: 101,
     name: "好友"

@@ -12,8 +12,9 @@ import {
   signUserNameUpdatePassword,
   SignUserNameUpdatePasswordDTO
 } from "@/api/http/base/SignUserNameController";
-import { Validate } from "@/utils/ValidatorUtil";
 import { PasswordRSAEncrypt, RSAEncrypt } from "@/utils/RsaUtil";
+import { Validate } from "@/utils/ValidatorUtil";
+import { R } from "@/model/vo/R";
 
 const form = ref<SignUserNameUpdatePasswordDTO>({});
 const formRef = ref();
@@ -43,7 +44,7 @@ function confirmFun() {
   return signUserNameUpdatePassword(formValue);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   useUserStoreHook().logOut(); // 退出登录
@@ -96,11 +97,7 @@ function confirmClick() {
             label="当前密码"
             prop="oldPassword"
             :rules="[
-              {
-                required: true,
-                trigger: 'blur',
-                asyncValidator: Validate.password.validator
-              }
+              { required: true, message: '当前密码为必填项', trigger: 'blur' }
             ]"
           >
             <el-input

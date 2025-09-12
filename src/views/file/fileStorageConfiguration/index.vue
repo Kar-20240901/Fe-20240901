@@ -16,6 +16,7 @@ import {
   BaseFileStorageConfigurationPageDTO
 } from "@/api/http/base/BaseFileStorageConfigurationController";
 import { BaseFileStorageTypeMap } from "@/model/enum/file/BaseFileStorageTypeEnum";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseFileStorageConfiguration"
@@ -78,7 +79,7 @@ function confirmFun() {
   );
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

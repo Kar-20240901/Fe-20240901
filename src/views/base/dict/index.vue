@@ -27,6 +27,7 @@ import {
 import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
 import { CalcOrderNo } from "@/utils/TreeUtil";
 import { dictTypeOptions } from "@/views/base/dict/enums";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseDict"
@@ -95,7 +96,7 @@ function confirmFun() {
   return baseDictInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

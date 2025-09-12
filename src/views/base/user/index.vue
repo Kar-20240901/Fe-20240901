@@ -35,6 +35,7 @@ import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
 } from "@/model/enum/base/TempRequestCategoryEnum";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseUser"
@@ -120,7 +121,7 @@ function confirmFun() {
   return baseUserInsertOrUpdate(formValue);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

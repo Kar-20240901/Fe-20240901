@@ -16,6 +16,7 @@ import {
 } from "@/api/http/base/BaseApiTokenController";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import FormEdit from "./formEdit.vue";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseApiToken"
@@ -76,7 +77,7 @@ function confirmFun() {
   return baseApiTokenInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

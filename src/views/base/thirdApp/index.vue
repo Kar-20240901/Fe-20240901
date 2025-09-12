@@ -16,6 +16,7 @@ import {
   BaseThirdAppPageDTO
 } from "@/api/http/base/BaseThirdAppController";
 import { BaseThirdAppTypeMap } from "@/model/enum/thirdApp/BaseThirdAppTypeEnum";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseThirdApp"
@@ -76,7 +77,7 @@ function confirmFun() {
   return baseThirdAppInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

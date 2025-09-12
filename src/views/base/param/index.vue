@@ -15,6 +15,7 @@ import {
   BaseParamPageDTO
 } from "@/api/http/base/BaseParamController";
 import FormEdit from "@/views/base/param/formEdit.vue";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseParam"
@@ -75,7 +76,7 @@ function confirmFun() {
   return baseParamInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

@@ -27,6 +27,7 @@ import {
 import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
 import { baseRoleDictList, DictVO } from "@/api/http/base/BaseRoleController";
 import { CalcOrderNo } from "@/utils/TreeUtil";
+import { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseMenu"
@@ -97,7 +98,7 @@ function confirmFun() {
   return baseMenuInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res, done) {
+function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();
