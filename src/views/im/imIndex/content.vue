@@ -8,6 +8,8 @@ import {
   baseImSessionContentRefUserScroll,
   ScrollListDTO
 } from "@/api/http/base/BaseImSessionContentRefUserController";
+import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import RiFile2Line from "~icons/ri/file-2-line";
 
 const props = defineProps<IImContentProps>();
 
@@ -43,7 +45,7 @@ defineExpose({ doSearch });
 
 <template>
   <div class="flex flex-col">
-    <div>{{ props.session.sessionName }}</div>
+    <div>{{ props.session.showName }}</div>
     <div class="flex-1">
       <el-scrollbar
         v-loading="sessionContentLoading"
@@ -66,7 +68,7 @@ defineExpose({ doSearch });
                   class="w-[45px] h-[45px] mb-[5px]"
                 >
                   <template #error>
-                    <IconifyIconOnline width="50" :icon="'ri:file-2-line'" />
+                    <IconifyIconOnline width="50" :icon="RiFile2Line" />
                   </template>
                 </el-image>
               </div>
@@ -84,7 +86,10 @@ defineExpose({ doSearch });
             </div>
           </template>
         </RecycleScroller>
-        <div v-else class="text-[15px] flex w-full justify-center">
+        <div
+          v-else
+          class="text-[15px] flex w-full h-full justify-center items-center"
+        >
           暂无消息。
         </div>
       </el-scrollbar>

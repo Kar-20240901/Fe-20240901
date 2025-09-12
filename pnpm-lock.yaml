@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@pureadmin/descriptions':
         specifier: ^1.2.1
-        version: 1.2.1(echarts@5.6.0)(element-plus@2.10.5(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)
+        version: 1.2.1(echarts@5.6.0)(element-plus@2.11.2(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)
       '@pureadmin/table':
         specifier: ^3.3.0
-        version: 3.3.0(element-plus@2.10.5(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)
+        version: 3.3.0(element-plus@2.11.2(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)
       '@pureadmin/utils':
         specifier: ^2.6.2
         version: 2.6.2(echarts@5.6.0)(vue@3.5.18(typescript@5.9.2))
@@ -42,8 +42,8 @@ importers:
         specifier: ^5.6.0
         version: 5.6.0
       element-plus:
-        specifier: ^2.10.4
-        version: 2.10.5(vue@3.5.18(typescript@5.9.2))
+        specifier: ^2.11.2
+        version: 2.11.2(vue@3.5.18(typescript@5.9.2))
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -1979,8 +1979,8 @@ packages:
   electron-to-chromium@1.5.198:
     resolution: {integrity: sha512-G5COfnp3w+ydVu80yprgWSfmfQaYRh9DOxfhAxstLyetKaLyl55QrNjx8C38Pc/C+RaDmb1M0Lk8wPEMQ+bGgQ==}
 
-  element-plus@2.10.5:
-    resolution: {integrity: sha512-O9wTDu3Tm51ACVByWrThtBhH4Ygefg1HGY5pyAaxnoIrj8uMN0GtZ4IREwR3Yw/6sM2HyxjrsGI/D46iUVP97A==}
+  element-plus@2.11.2:
+    resolution: {integrity: sha512-sTMDXtgeqy17TUsBSH/DL3h1/5sqIOVUUgXFoVbdD8lWWYssKrDX50CEYy4k29tYJhPHKZyFSwcLJsIajr+dDA==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -4706,19 +4706,19 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-  '@pureadmin/descriptions@1.2.1(echarts@5.6.0)(element-plus@2.10.5(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)':
+  '@pureadmin/descriptions@1.2.1(echarts@5.6.0)(element-plus@2.11.2(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)':
     dependencies:
       '@element-plus/icons-vue': 2.3.2(vue@3.5.18(typescript@5.9.2))
       '@pureadmin/utils': 2.6.2(echarts@5.6.0)(vue@3.5.18(typescript@5.9.2))
-      element-plus: 2.10.5(vue@3.5.18(typescript@5.9.2))
+      element-plus: 2.11.2(vue@3.5.18(typescript@5.9.2))
       vue: 3.5.18(typescript@5.9.2)
     transitivePeerDependencies:
       - echarts
       - typescript
 
-  '@pureadmin/table@3.3.0(element-plus@2.10.5(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)':
+  '@pureadmin/table@3.3.0(element-plus@2.11.2(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)':
     dependencies:
-      element-plus: 2.10.5(vue@3.5.18(typescript@5.9.2))
+      element-plus: 2.11.2(vue@3.5.18(typescript@5.9.2))
       vue: 3.5.18(typescript@5.9.2)
     transitivePeerDependencies:
       - typescript
@@ -5654,7 +5654,7 @@ snapshots:
 
   electron-to-chromium@1.5.198: {}
 
-  element-plus@2.10.5(vue@3.5.18(typescript@5.9.2)):
+  element-plus@2.11.2(vue@3.5.18(typescript@5.9.2)):
     dependencies:
       '@ctrl/tinycolor': 3.6.1
       '@element-plus/icons-vue': 2.3.2(vue@3.5.18(typescript@5.9.2))

@@ -112,7 +112,7 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri:search-line')"
+            :icon="useRenderIcon('ri/search-line')"
             :loading="loading"
             @click="onSearch"
           >

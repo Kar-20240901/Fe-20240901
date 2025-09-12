@@ -84,7 +84,7 @@ function doUpdateAvatarAndNickname(idSet?: string[]) {
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col h-full">
     <div class="flex-1">
       <session
         v-if="
@@ -113,16 +113,17 @@ function doUpdateAvatarAndNickname(idSet?: string[]) {
 
       <contact v-if="segmentedValue === BaseImLeftSegmentedEnum.CONTACT.code" />
     </div>
-    <div>
+    <div class="flex justify-center w-full">
       <el-segmented
         v-model="segmentedValue"
         :options="SegmentedOptionArr"
         direction="horizontal"
         size="default"
+        class="w-full"
       >
         <template #default="scope">
-          <div class="flex flex-col items-center p-2">
-            <IconifyIconOnline width="50" :icon="scope.item['icon']" />
+          <div class="flex flex-col items-center p-1">
+            <IconifyIconOnline width="20" :icon="scope.item['icon']" />
             <div>{{ scope.item["label"] }}</div>
           </div>
         </template>

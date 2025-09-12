@@ -78,9 +78,12 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col">
-    <div class="bg-bg_color rounded flex align-center" @click="searchClick">
-      <IconifyIconOnline width="50" :icon="'ep:search'" />
-      <div>搜索</div>
+    <div
+      class="w-full rounded flex justify-center items-center"
+      @click="searchClick"
+    >
+      <IconifyIconOffline width="22" :icon="'ep:search'" />
+      <div class="ml-1">搜索</div>
     </div>
     <div class="flex-1">
       <el-scrollbar v-loading="loading" view-class="flex flex-col h-full">

@@ -34,6 +34,7 @@ import { RecycleScroller } from "vue-virtual-scroller";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { getToken } from "@/utils/auth";
 import { AUTHORIZATION } from "@/utils/http";
+import RiFile2Line from "~icons/ri/file-2-line";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -335,7 +336,7 @@ const uploadDialogRef = ref();
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri:search-line')"
+            :icon="useRenderIcon('ri/search-line')"
             :loading="loading"
             @click="onSearch()"
           >
@@ -492,10 +493,7 @@ const uploadDialogRef = ref();
                           class="w-[45px] h-[45px] mb-[5px]"
                         >
                           <template #error>
-                            <IconifyIconOnline
-                              width="50"
-                              :icon="'ri:file-2-line'"
-                            />
+                            <IconifyIconOnline width="50" :icon="RiFile2Line" />
                           </template>
                         </el-image>
                         <IconifyIconOnline

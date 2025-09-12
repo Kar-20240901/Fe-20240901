@@ -5,9 +5,7 @@ import {
   IImSession,
   IImShowInfoMap
 } from "@/views/im/imIndex/types";
-import Manage from "@/views/im/imIndex/manage.vue";
 import { ref } from "vue";
-import Content from "@/views/im/imIndex/content.vue";
 import {
   BaseImSessionRefUserPageVO,
   baseImSessionRefUserUpdateAvatarAndNickname
@@ -20,6 +18,8 @@ import {
   BaseImSearchBaseGroupVO
 } from "@/api/http/base/BaseImSearchController";
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
+import Manage from "@/views/im/imIndex/manage.vue";
+import Content from "@/views/im/imIndex/content.vue";
 
 defineOptions({
   name: "ImIndex"
@@ -130,27 +130,29 @@ function doBaseImGroupRefUserPage(groupId: string) {
 </script>
 
 <template>
-  <el-splitter>
-    <el-splitter-panel :min="200">
-      <manage
-        :searchBaseContentVO="searchBaseContentVO"
-        @updateSessionUserMap="updateSessionUserMap"
-        @sessionClick="sessionClick"
-        @searchFriendClick="searchFriendClick"
-        @searchGroupClick="searchGroupClick"
-        @searchContentClick="searchContentClick"
-        @searchContentInfoClick="searchContentInfoClick"
-        @doUpdateAvatarAndNickname="doUpdateAvatarAndNickname"
-        @doBaseImGroupRefUserPage="doBaseImGroupRefUserPage"
-      />
-    </el-splitter-panel>
+  <div class="w-full h-full bg-bg_color">
+    <el-splitter layout="horizontal">
+      <el-splitter-panel min="20%" size="30%">
+        <manage
+          :searchBaseContentVO="searchBaseContentVO"
+          @updateSessionUserMap="updateSessionUserMap"
+          @sessionClick="sessionClick"
+          @searchFriendClick="searchFriendClick"
+          @searchGroupClick="searchGroupClick"
+          @searchContentClick="searchContentClick"
+          @searchContentInfoClick="searchContentInfoClick"
+          @doUpdateAvatarAndNickname="doUpdateAvatarAndNickname"
+          @doBaseImGroupRefUserPage="doBaseImGroupRefUserPage"
+        />
+      </el-splitter-panel>
 
-    <el-splitter-panel>
-      <content
-        ref="contentRef"
-        :sessionUserMap="sessionUserMap"
-        :session="session"
-      />
-    </el-splitter-panel>
-  </el-splitter>
+      <el-splitter-panel>
+        <content
+          ref="contentRef"
+          :sessionUserMap="sessionUserMap"
+          :session="session"
+        />
+      </el-splitter-panel>
+    </el-splitter>
+  </div>
 </template>
