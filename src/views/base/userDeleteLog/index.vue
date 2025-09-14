@@ -17,6 +17,7 @@ import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
 } from "@/model/enum/base/TempRequestCategoryEnum";
+import EpView from "~icons/ep/view";
 
 defineOptions({
   name: "BaseUserDeleteLog"
@@ -185,7 +186,7 @@ function deleteBySelectIdArr() {
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon('ep:view')"
+            :icon="useRenderIcon(EpView)"
             @click="viewClick(scope.row)"
           >
             查看

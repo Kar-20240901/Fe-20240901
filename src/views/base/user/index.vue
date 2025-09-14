@@ -6,6 +6,10 @@ import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
 import EditPen from "~icons/ep/edit-pen";
 import Delete from "~icons/ep/delete";
+import EpUnlock from "~icons/ep/un-lock";
+import EpLock from "~icons/ep/lock";
+import RiImage2Line from "~icons/ep/image-2-line";
+import RiLockPasswordLine from "~icons/ep/lock-password-line";
 import { baseRoleDictList, DictVO } from "@/api/http/base/BaseRoleController";
 import FormEdit from "@/views/base/user/formEdit.vue";
 import {
@@ -293,28 +297,28 @@ function thawClick() {
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri:lock-password-line')"
+            :icon="useRenderIcon(RiLockPasswordLine)"
             @click="updatePasswordClick"
           >
             批量修改密码
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri:image-2-line')"
+            :icon="useRenderIcon(RiImage2Line)"
             @click="resetAvatarClick"
           >
             批量重置头像
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ep:lock')"
+            :icon="useRenderIcon(EpLock)"
             @click="freezeClick"
           >
             批量冻结
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ep:unlock')"
+            :icon="useRenderIcon(EpUnlock)"
             @click="thawClick"
           >
             批量解冻

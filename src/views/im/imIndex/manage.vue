@@ -12,17 +12,20 @@ import {
 } from "@/api/http/base/BaseImSearchController";
 import { IImManageProps, IImShowInfoMap } from "@/views/im/imIndex/types";
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
+import EpMessage from "~icons/ep/message";
+import EpUser from "~icons/ep/user";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
 const SegmentedOptionArr = [
   {
     label: BaseImLeftSegmentedEnum.SESSION.name,
     value: BaseImLeftSegmentedEnum.SESSION.code,
-    icon: "ep:message"
+    icon: EpMessage
   },
   {
     label: BaseImLeftSegmentedEnum.CONTACT.name,
     value: BaseImLeftSegmentedEnum.CONTACT.code,
-    icon: "ep:user"
+    icon: EpUser
   }
 ];
 
@@ -123,7 +126,14 @@ function doUpdateAvatarAndNickname(idSet?: string[]) {
       >
         <template #default="scope">
           <div class="flex flex-col items-center p-1">
-            <IconifyIconOnline width="20" :icon="scope.item['icon']" />
+            <component
+              :is="
+                useRenderIcon(scope.item.icon, {
+                  width: '20px',
+                  height: '20px'
+                })
+              "
+            />
             <div>{{ scope.item["label"] }}</div>
           </div>
         </template>
