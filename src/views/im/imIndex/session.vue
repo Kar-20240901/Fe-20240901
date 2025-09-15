@@ -9,6 +9,8 @@ import {
 } from "@/api/http/base/BaseImSessionRefUserController";
 import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
 import { IImShowInfoMap } from "@/views/im/imIndex/types";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import RiFile2Line from "~icons/ri/file-2-line";
 
 const loading = ref<boolean>(false);
 const dataList = ref<BaseImSessionRefUserPageVO[]>([]);
@@ -103,7 +105,14 @@ onMounted(() => {
                     class="w-[45px] h-[45px] mb-[5px]"
                   >
                     <template #error>
-                      <IconifyIconOnline width="45" :icon="'ri:file-2-line'" />
+                      <component
+                        :is="
+                          useRenderIcon(RiFile2Line, {
+                            width: '50px',
+                            height: '50px'
+                          })
+                        "
+                      />
                     </template>
                   </el-image>
                 </el-badge>

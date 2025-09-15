@@ -179,7 +179,7 @@ function deleteBySelectIdArr() {
             TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
           }}
         </el-table-column>
-        <el-table-column #default="scope" prop="createTime" label="删除时间">
+        <el-table-column #default="scope" prop="createTime" label="注销时间">
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">

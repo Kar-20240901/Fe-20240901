@@ -18,9 +18,12 @@ import {
   baseBulletinRevoke
 } from "@/api/http/base/BaseBulletinController";
 import {
-  BaseBulletinStatusEnumMap,
-  BaseFileStorageTypeEnum
+  BaseBulletinStatusEnum,
+  BaseBulletinStatusEnumMap
 } from "@/model/enum/bulletin/BaseBulletinStatusEnum";
+import { R } from "@/model/vo/R";
+import RiSendPlaneFill from "~icons/ri/send-plane-fill";
+import FaSolidUndo from "~icons/fa-solid/undo";
 
 defineOptions({
   name: "PlatformBulletin"
@@ -126,12 +129,12 @@ function onSelectChange(rowArr?: BaseBulletinDO[]) {
 function operateClick(row: BaseBulletinDO) {
   const status = row.status as any as number;
 
-  if (BaseFileStorageTypeEnum.DRAFT.code === status) {
+  if (BaseBulletinStatusEnum.DRAFT.code === status) {
     baseBulletinPublish({ id: row.id }).then(res => {
       ToastSuccess(res.msg);
       onSearch();
     });
-  } else if (BaseFileStorageTypeEnum.PUBLICITY.code === status) {
+  } else if (BaseBulletinStatusEnum.PUBLICITY.code === status) {
     baseBulletinRevoke({ id: row.id }).then(res => {
       ToastSuccess(res.msg);
       onSearch();
@@ -142,10 +145,10 @@ function operateClick(row: BaseBulletinDO) {
 function getOperateIcon(row: BaseBulletinDO) {
   const status = row.status as any as number;
 
-  if (BaseFileStorageTypeEnum.DRAFT.code === status) {
-    return "ri:send-plane-fill";
-  } else if (BaseFileStorageTypeEnum.PUBLICITY.code === status) {
-    return "fa-solid:undo";
+  if (BaseBulletinStatusEnum.DRAFT.code === status) {
+    return RiSendPlaneFill;
+  } else if (BaseBulletinStatusEnum.PUBLICITY.code === status) {
+    return FaSolidUndo;
   }
   return "";
 }
@@ -153,9 +156,9 @@ function getOperateIcon(row: BaseBulletinDO) {
 function getOperateName(row: BaseBulletinDO) {
   const status = row.status as any as number;
 
-  if (BaseFileStorageTypeEnum.DRAFT.code === status) {
+  if (BaseBulletinStatusEnum.DRAFT.code === status) {
     return "发布";
-  } else if (BaseFileStorageTypeEnum.PUBLICITY.code === status) {
+  } else if (BaseBulletinStatusEnum.PUBLICITY.code === status) {
     return "撤回";
   }
   return "";

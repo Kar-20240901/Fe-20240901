@@ -115,7 +115,7 @@ const props = defineProps<IUserDeleteLogDialogFormProps>();
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="删除时间" prop="createTime">
+          <el-form-item label="注销时间" prop="createTime">
             <el-input v-model="form.createTime" readonly />
           </el-form-item>
         </re-col>

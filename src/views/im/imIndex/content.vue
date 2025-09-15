@@ -10,6 +10,7 @@ import {
 } from "@/api/http/base/BaseImSessionContentRefUserController";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import RiFile2Line from "~icons/ri/file-2-line";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
 const props = defineProps<IImContentProps>();
 
@@ -68,7 +69,14 @@ defineExpose({ doSearch });
                   class="w-[45px] h-[45px] mb-[5px]"
                 >
                   <template #error>
-                    <IconifyIconOnline width="50" :icon="RiFile2Line" />
+                    <component
+                      :is="
+                        useRenderIcon(RiFile2Line, {
+                          width: '50px',
+                          height: '50px'
+                        })
+                      "
+                    />
                   </template>
                 </el-image>
               </div>
