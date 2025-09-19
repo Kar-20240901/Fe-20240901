@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { RecycleScroller } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import { onMounted, ref } from "vue";
@@ -11,6 +10,7 @@ import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
 import { IImShowInfoMap } from "@/views/im/imIndex/types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import RiFile2Line from "~icons/ri/file-2-line";
+import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 
 const loading = ref<boolean>(false);
 const dataList = ref<BaseImSessionRefUserPageVO[]>([]);
@@ -28,8 +28,12 @@ function searchClick() {
   emit("searchClick");
 }
 
+const activeSessionId = ref<string>("");
+
 function sessionClick(item: BaseImSessionRefUserPageVO) {
-  emit("sessionClick", item);
+  // emit("sessionClick", item);
+
+  activeSessionId.value = item.sessionId;
 }
 
 const pageSize = "20";
@@ -80,29 +84,42 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col">
-    <div
-      class="w-full rounded flex justify-center items-center"
-      @click="searchClick"
-    >
-      <IconifyIconOffline width="22" :icon="'ri/search-line'" />
-      <div class="ml-1">搜索</div>
+    <div class="w-full flex p-4 border-b border-gray-200" @click="searchClick">
+      <div
+        class="w-full py-2 justify-center items-center flex rounded-full bg-gray-100"
+      >
+        <IconifyIconOffline
+          width="22"
+          :icon="'ri/search-line'"
+          class="text-gray-400"
+        />
+        <div class="ml-1 text-gray-400">搜索</div>
+      </div>
     </div>
+
     <div class="flex-1">
       <el-scrollbar v-loading="loading" view-class="flex flex-col h-full">
         <RecycleScroller
           v-if="dataList.length"
           :items="dataList"
-          :min-item-size="90"
+          :min-item-size="80"
           key-field="sessionId"
         >
           <template #default="{ item }">
-            <div class="flex" @click="sessionClick(item)">
+            <div
+              :class="`h-[80px] flex items-center p-4 ${activeSessionId === item.sessionId ? 'bg-secondary border-l-4 border-l-primary hover:bg-secondary/80' : 'hover:bg-gray-50 border-b border-b-gray-100'} cursor-pointer transition-colors`"
+              @click="sessionClick(item)"
+            >
               <div>
-                <el-badge :value="item.unReadCount" :max="99">
+                <el-badge
+                  :value="item.unReadCount"
+                  :max="999"
+                  :show-zero="false"
+                >
                   <el-image
                     :src="item.avatarUrl"
                     fit="cover"
-                    class="w-[45px] h-[45px] mb-[5px]"
+                    class="w-12 h-12 rounded-full"
                   >
                     <template #error>
                       <component
@@ -117,10 +134,12 @@ onMounted(() => {
                   </el-image>
                 </el-badge>
               </div>
-              <div class="flex flex-col">
-                <div class="flex justify-around">
-                  <div>{{ item.sessionName }}</div>
-                  <div>
+              <div class="ml-4 flex-1 min-w-0">
+                <div class="flex justify-between items-center">
+                  <div class="text-sm font-semibold truncate">
+                    {{ item.sessionName }}
+                  </div>
+                  <div class="text-xs text-gray-400">
                     {{
                       FormatDateTimeForCurrentDay(
                         new Date(item.lastContentCreateTime)
@@ -128,13 +147,14 @@ onMounted(() => {
                     }}
                   </div>
                 </div>
-                <div class="flex h-[90px]">
-                  <div>{{ item.lastContent }}</div>
+                <div class="text-xs text-gray-400 truncate mt-1">
+                  {{ item.lastContent }}
                 </div>
               </div>
             </div>
           </template>
         </RecycleScroller>
+
         <div v-else class="text-[15px] flex w-full justify-center">
           暂无消息。
         </div>

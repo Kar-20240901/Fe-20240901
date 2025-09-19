@@ -11,6 +11,10 @@ import {
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import RiFile2Line from "~icons/ri/file-2-line";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import FaSearch from "~icons/fa/search";
+import FaPhone from "~icons/fa/phone";
+import FaVideoCamera from "~icons/fa/video-camera";
+import FaEllipsisV from "~icons/fa/ellipsis-v";
 
 const props = defineProps<IImContentProps>();
 
@@ -45,8 +49,53 @@ defineExpose({ doSearch });
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <div>{{ props.session.showName }}</div>
+  <div class="flex flex-col bg-gray-50">
+    <div
+      class="bg-white p-4 border-b border-gray-200 flex items-center justify-between"
+    >
+      <div class="flex items-center">
+        <div class="ml-3">
+          <div class="text-sm font-semibold">{{ props.session.showName }}</div>
+          <!--          <div class="text-xs text-gray-400">正在输入...</div>-->
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <component
+          :is="
+            useRenderIcon(FaSearch, {
+              class:
+                'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+            })
+          "
+        />
+        <component
+          :is="
+            useRenderIcon(FaPhone, {
+              class:
+                'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+            })
+          "
+        />
+        <component
+          :is="
+            useRenderIcon(FaVideoCamera, {
+              class:
+                'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+            })
+          "
+        />
+        <component
+          :is="
+            useRenderIcon(FaEllipsisV, {
+              class:
+                'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+            })
+          "
+        />
+      </div>
+    </div>
+
     <div class="flex-1">
       <el-scrollbar
         v-loading="sessionContentLoading"

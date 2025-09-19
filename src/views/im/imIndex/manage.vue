@@ -12,26 +12,19 @@ import {
 } from "@/api/http/base/BaseImSearchController";
 import { IImManageProps, IImShowInfoMap } from "@/views/im/imIndex/types";
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
-import EpMessage from "~icons/ep/message";
-import EpUser from "~icons/ep/user";
-import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
 const SegmentedOptionArr = [
   {
     label: BaseImLeftSegmentedEnum.SESSION.name,
-    value: BaseImLeftSegmentedEnum.SESSION.code,
-    icon: EpMessage
+    value: BaseImLeftSegmentedEnum.SESSION.code
   },
   {
     label: BaseImLeftSegmentedEnum.CONTACT.name,
-    value: BaseImLeftSegmentedEnum.CONTACT.code,
-    icon: EpUser
+    value: BaseImLeftSegmentedEnum.CONTACT.code
   }
 ];
 
 const props = defineProps<IImManageProps>();
-
-const segmentedValue = ref<string>(SegmentedOptionArr[0].value);
 
 const emit = defineEmits<{
   (e: "sessionClick", item: BaseImSessionRefUserPageVO): void;
@@ -84,15 +77,38 @@ function doBaseImGroupRefUserPage(groupId: string) {
 function doUpdateAvatarAndNickname(idSet?: string[]) {
   emit("doUpdateAvatarAndNickname", idSet);
 }
+
+const menuIndex = ref<string>(SegmentedOptionArr[0].value);
+
+function menuSelect(index: string) {
+  menuIndex.value = index;
+}
 </script>
 
 <template>
   <div class="flex flex-col h-full">
-    <div class="flex-1">
+    <div class="flex justify-center w-full">
+      <el-menu
+        :default-active="menuIndex"
+        mode="horizontal"
+        class="w-full"
+        @select="menuSelect"
+      >
+        <el-menu-item
+          v-for="item in SegmentedOptionArr"
+          :key="item.value"
+          :index="item.value"
+        >
+          <div>{{ item.label }}</div>
+        </el-menu-item>
+      </el-menu>
+    </div>
+
+    <div class="flex-1 pt-1">
       <session
         v-if="
           !showSessionSearch &&
-          segmentedValue === BaseImLeftSegmentedEnum.SESSION.code
+          menuIndex === BaseImLeftSegmentedEnum.SESSION.code
         "
         @searchClick="searchClick"
         @sessionClick="sessionClick"
@@ -103,7 +119,7 @@ function doUpdateAvatarAndNickname(idSet?: string[]) {
       <search-overview-pre
         v-if="
           showSessionSearch &&
-          segmentedValue === BaseImLeftSegmentedEnum.SESSION.code
+          menuIndex === BaseImLeftSegmentedEnum.SESSION.code
         "
         :searchBaseContentVO="props.searchBaseContentVO"
         @searchFriendClick="searchFriendClick"
@@ -114,30 +130,7 @@ function doUpdateAvatarAndNickname(idSet?: string[]) {
         @doBaseImGroupRefUserPage="doBaseImGroupRefUserPage"
       />
 
-      <contact v-if="segmentedValue === BaseImLeftSegmentedEnum.CONTACT.code" />
-    </div>
-    <div class="flex justify-center w-full">
-      <el-segmented
-        v-model="segmentedValue"
-        :options="SegmentedOptionArr"
-        direction="horizontal"
-        size="default"
-        class="w-full"
-      >
-        <template #default="scope">
-          <div class="flex flex-col items-center p-1">
-            <component
-              :is="
-                useRenderIcon(scope.item.icon, {
-                  width: '20px',
-                  height: '20px'
-                })
-              "
-            />
-            <div>{{ scope.item["label"] }}</div>
-          </div>
-        </template>
-      </el-segmented>
+      <contact v-if="menuIndex === BaseImLeftSegmentedEnum.CONTACT.code" />
     </div>
   </div>
 </template>
