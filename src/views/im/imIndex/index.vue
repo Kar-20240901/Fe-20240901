@@ -5,7 +5,7 @@ import {
   IImSession,
   IImShowInfoMap
 } from "@/views/im/imIndex/types";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import {
   BaseImSessionRefUserPageVO,
   baseImSessionRefUserUpdateAvatarAndNickname
@@ -59,7 +59,9 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
 
   session.value = sessionTemp;
 
-  contentRef.value.doSearch();
+  nextTick(() => {
+    contentRef.value.doSearch({ refId: sessionTemp.sessionId });
+  });
 }
 
 function searchFriendClick(item: BaseImSearchBaseFriendVO) {

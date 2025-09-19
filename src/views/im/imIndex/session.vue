@@ -11,6 +11,7 @@ import { IImShowInfoMap } from "@/views/im/imIndex/types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import RiFile2Line from "~icons/ri/file-2-line";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import FaSearch from "~icons/fa/search";
 
 const loading = ref<boolean>(false);
 const dataList = ref<BaseImSessionRefUserPageVO[]>([]);
@@ -31,7 +32,7 @@ function searchClick() {
 const activeSessionId = ref<string>("");
 
 function sessionClick(item: BaseImSessionRefUserPageVO) {
-  // emit("sessionClick", item);
+  emit("sessionClick", item);
 
   activeSessionId.value = item.sessionId;
 }
@@ -84,14 +85,19 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col">
-    <div class="w-full flex p-4 border-b border-gray-200" @click="searchClick">
+    <div
+      class="w-full flex p-4 border-b border-gray-200 cursor-default"
+      @click="searchClick"
+    >
       <div
         class="w-full py-2 justify-center items-center flex rounded-full bg-gray-100"
       >
-        <IconifyIconOffline
-          width="22"
-          :icon="'ri/search-line'"
-          class="text-gray-400"
+        <component
+          :is="
+            useRenderIcon(FaSearch, {
+              class: 'text-gray-400 w-[16px] h-[16px]'
+            })
+          "
         />
         <div class="ml-1 text-gray-400">搜索</div>
       </div>
@@ -125,8 +131,7 @@ onMounted(() => {
                       <component
                         :is="
                           useRenderIcon(RiFile2Line, {
-                            width: '50px',
-                            height: '50px'
+                            class: 'w-12 h-12'
                           })
                         "
                       />

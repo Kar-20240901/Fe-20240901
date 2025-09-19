@@ -8,6 +8,23 @@ export function FormatDateTime(date: Date = new Date()) {
 }
 
 /**
+ * 格式化时间戳，如果是今天，则不显示年月日
+ */
+export function FormatTsForCurrentDay(ts?: string) {
+  if (!ts) {
+    return "未知时间";
+  }
+
+  const date = new Date(Number(ts));
+
+  if (date.toString() === "Invalid Date") {
+    return "无效时间";
+  }
+
+  return FormatDateTimeForCurrentDay(date);
+}
+
+/**
  * 格式化时间，如果是今天，则不显示年月日
  */
 export function FormatDateTimeForCurrentDay(date: Date = new Date()) {
