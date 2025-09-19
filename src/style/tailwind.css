@@ -1,13 +1,17 @@
 @layer theme, base, components, utilities;
+
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  --el-color-secondary: #e8f3ff;
   --color-bg_color: var(--el-bg-color);
   --color-primary: var(--el-color-primary);
+  --color-secondary: var(--el-color-secondary);
   --color-text_color_primary: var(--el-text-color-primary);
+  --color-text_color_secondary: var(--el-text-color-secondary);
   --color-text_color_regular: var(--el-text-color-regular);
 }
 
