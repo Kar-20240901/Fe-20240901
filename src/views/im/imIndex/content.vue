@@ -15,6 +15,7 @@ import FaSearch from "~icons/fa/search";
 import FaPhone from "~icons/fa/phone";
 import FaVideoCamera from "~icons/fa/video-camera";
 import FaEllipsisV from "~icons/fa/ellipsis-v";
+import { useUserStoreHook } from "@/store/modules/user";
 
 const props = defineProps<IImContentProps>();
 
@@ -46,6 +47,8 @@ function doSearch(form?: ScrollListDTO) {
 }
 
 defineExpose({ doSearch });
+
+const selfUserId = ref(useUserStoreHook().id || "");
 </script>
 
 <template>
@@ -111,50 +114,53 @@ defineExpose({ doSearch });
             key-field="contentId"
           >
             <template #default="{ item }">
-              <div class="flex">
-                <div>
-                  <el-image
-                    v-if="props.sessionUserMap[item.createId]"
-                    :src="props.sessionUserMap[item.createId].avatarUrl"
-                    fit="cover"
-                    class="w-[45px] h-[45px] mb-[5px]"
-                  >
-                    <template #error>
-                      <component
-                        :is="
-                          useRenderIcon(RiFile2Line, {
-                            width: '45px',
-                            height: '45px'
-                          })
-                        "
-                      />
-                    </template>
-                  </el-image>
-                  <component
-                    :is="
-                      useRenderIcon(RiFile2Line, {
-                        width: '45px',
-                        height: '45px'
-                      })
-                    "
-                    v-else
-                  />
+              <div
+                v-if="item.createId === selfUserId"
+                class="flex items-end justify-end space-x-2 space-x-reverse max-w-[85%] ml-auto animate-fadeIn"
+              >
+                <div class="text-xs text-gray-400 self-end">
+                  {{ FormatTsForCurrentDay(item.createTs) }}
                 </div>
-                <div class="flex flex-col">
-                  <div class="flex justify-around">
-                    <div>
-                      {{
-                        props.sessionUserMap[item.createId]?.showName ||
-                        "未知昵称"
-                      }}
-                    </div>
-                    <div>
-                      {{ FormatTsForCurrentDay(item.createTs) }}
-                    </div>
-                  </div>
-                  <div class="flex h-[90px]">
-                    <div>{{ item.content }}</div>
-                  </div>
+                <div
+                  class="bg-primary text-white p-3 message-bubble-right shadow-sm"
+                >
+                  <p class="text-sm">{{ item.content }}</p>
+                </div>
+              </div>
+
+              <div
+                v-else
+                class="flex items-end space-x-2 max-w-[85%] animate-fadeIn"
+              >
+                <el-image
+                  v-if="props.sessionUserMap[item.createId]"
+                  :src="props.sessionUserMap[item.createId].avatarUrl"
+                  fit="cover"
+                  class="w-8 h-8 rounded-full"
+                >
+                  <template #error>
+                    <component
+                      :is="
+                        useRenderIcon(RiFile2Line, {
+                          class: 'w-8 h-8 rounded-full'
+                        })
+                      "
+                    />
+                  </template>
+                </el-image>
+                <component
+                  :is="
+                    useRenderIcon(RiFile2Line, {
+                      class: 'w-8 h-8 rounded-full'
+                    })
+                  "
+                  v-else
+                />
+                <div class="bg-white p-3 message-bubble-left shadow-sm">
+                  <p class="text-sm">{{ item.content }}</p>
+                </div>
+                <div class="text-xs text-gray-400 self-end">
+                  {{ FormatTsForCurrentDay(item.createTs) }}
                 </div>
               </div>
             </template>
@@ -178,3 +184,13 @@ defineExpose({ doSearch });
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.message-bubble-left {
+  border-radius: 18px 18px 18px 0;
+}
+
+.message-bubble-right {
+  border-radius: 18px 18px 0;
+}
+</style>

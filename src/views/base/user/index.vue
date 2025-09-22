@@ -6,10 +6,10 @@ import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
 import EditPen from "~icons/ep/edit-pen";
 import Delete from "~icons/ep/delete";
-import EpUnlock from "~icons/ep/un-lock";
+import EpUnlock from "~icons/ep/unlock";
 import EpLock from "~icons/ep/lock";
-import RiImage2Line from "~icons/ep/image-2-line";
-import RiLockPasswordLine from "~icons/ep/lock-password-line";
+import RiUser4Line from "~icons/ri/user-4-line";
+import RiLockPasswordLine from "~icons/ri/lock-password-line";
 import { baseRoleDictList, DictVO } from "@/api/http/base/BaseRoleController";
 import FormEdit from "@/views/base/user/formEdit.vue";
 import {
@@ -22,6 +22,8 @@ import {
   BaseUserPageDTO,
   BaseUserPageVO,
   baseUserResetAvatar,
+  baseUserSignOutAll,
+  baseUserSignOutByIdSet,
   baseUserThaw,
   baseUserUpdatePassword
 } from "@/api/http/base/BaseUserController";
@@ -34,12 +36,13 @@ import {
   GetMyOrderDTO
 } from "@/model/dto/MyOrderDTO";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
-import CommonConstant from "@/model/constant/CommonConstant";
 import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
 } from "@/model/enum/base/TempRequestCategoryEnum";
 import { R } from "@/model/vo/R";
+import LogoutCircleRLine from "~icons/ri/logout-circle-r-line";
+import LogoutBoxRLine from "~icons/ri/logout-box-r-line";
 
 defineOptions({
   name: "BaseUser"
@@ -158,6 +161,36 @@ function deleteBySelectIdArr() {
     },
     undefined,
     `确定删除勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function signOutBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  ExecConfirm(
+    async () => {
+      await baseUserSignOutByIdSet({ idSet: selectIdArr.value }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定登出勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function signOutAll() {
+  ExecConfirm(
+    async () => {
+      await baseUserSignOutAll().then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定登出所有用户吗？`
   );
 }
 
@@ -304,7 +337,7 @@ function thawClick() {
           </el-button>
           <el-button
             type="primary"
-            :icon="useRenderIcon(RiImage2Line)"
+            :icon="useRenderIcon(RiUser4Line)"
             @click="resetAvatarClick"
           >
             批量重置头像
@@ -330,6 +363,20 @@ function thawClick() {
           >
             批量删除
           </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(LogoutCircleRLine)"
+            @click="signOutBySelectIdArr"
+          >
+            批量登出
+          </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(LogoutBoxRLine)"
+            @click="signOutAll"
+          >
+            全部登出
+          </el-button>
         </div>
       </div>
 
@@ -349,14 +396,7 @@ function thawClick() {
         @selection-change="onSelectChange"
         @sort-change="onSortChange"
       >
-        <el-table-column
-          :selectable="
-            (row: BaseUserPageVO) => {
-              return row.id !== CommonConstant.ADMIN_USER_ID_STR;
-            }
-          "
-          type="selection"
-        />
+        <el-table-column type="selection" />
         <el-table-column prop="nickname" label="用户昵称" />
         <el-table-column
           #default="scope"
@@ -391,7 +431,6 @@ function thawClick() {
         </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button
-            v-if="scope.row.id !== CommonConstant.ADMIN_USER_ID_STR"
             link
             type="primary"
             :icon="useRenderIcon(EditPen)"
@@ -400,7 +439,6 @@ function thawClick() {
             修改
           </el-button>
           <el-button
-            v-if="scope.row.id !== CommonConstant.ADMIN_USER_ID_STR"
             link
             type="primary"
             :icon="useRenderIcon(Delete)"

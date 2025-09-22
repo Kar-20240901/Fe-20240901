@@ -107,6 +107,34 @@ function confirmClick() {
       </re-col>
 
       <re-col :value="24" :xs="24" :sm="24">
+        <el-form-item label="管理员操作" prop="manageOperateEnable">
+          <re-segmented
+            :modelValue="form.manageOperateEnable ? 0 : 1"
+            :options="enableFlagOptions"
+            @change="
+              ({ option: { value } }) => {
+                form.manageOperateEnable = value;
+              }
+            "
+          />
+        </el-form-item>
+      </re-col>
+
+      <re-col :value="24" :xs="24" :sm="24">
+        <el-form-item label="用户操作" prop="normalOperateEnable">
+          <re-segmented
+            :modelValue="form.normalOperateEnable ? 0 : 1"
+            :options="enableFlagOptions"
+            @change="
+              ({ option: { value } }) => {
+                form.normalOperateEnable = value;
+              }
+            "
+          />
+        </el-form-item>
+      </re-col>
+
+      <re-col :value="24" :xs="24" :sm="24">
         <el-form-item>
           <el-button
             :loading="confirmLoading"

@@ -4,8 +4,10 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseUserConfigurationDO {
   emailSignUpEnable?: boolean; // 是否启用：邮箱注册功能，默认启用
+  normalOperateEnable?: boolean; // 普通用户是否可以操作，备注：管理员和超级管理员除外
   userNameSignUpEnable?: boolean; // 是否启用：用户名注册功能，默认启用
   id?: string; // 主键 id，格式：int64
+  manageOperateEnable?: boolean; // 管理员用户是否可以操作，备注：超级管理员除外
   phoneSignUpEnable?: boolean; // 是否启用：手机号码注册功能，默认启用
 }
 
@@ -21,7 +23,9 @@ export function baseUserConfigurationInfoById(config?: PureHttpRequestConfig) {
 
 export interface BaseUserConfigurationInsertOrUpdateDTO {
   emailSignUpEnable?: boolean; // 是否启用：邮箱注册功能
+  normalOperateEnable?: boolean; // 普通用户是否可以操作，备注：管理员和超级管理员除外
   userNameSignUpEnable?: boolean; // 是否启用：用户名注册功能
+  manageOperateEnable?: boolean; // 管理员用户是否可以操作，备注：超级管理员除外
   phoneSignUpEnable?: boolean; // 是否启用：手机号码注册功能
 }
 

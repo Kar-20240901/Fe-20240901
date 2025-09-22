@@ -171,6 +171,16 @@ export function baseUserThaw(
   return http.request<string>("post", baseApi("/base/user/thaw"), form, config);
 }
 
+// 全部退出登录
+export function baseUserSignOutAll(config?: PureHttpRequestConfig) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/user/signOutAll"),
+    undefined,
+    config
+  );
+}
+
 export interface BaseUserSelfUpdateInfoDTO {
   nickname?: string; // 昵称，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{1,20}$
   bio?: string; // 个人简介
@@ -219,6 +229,19 @@ export function baseUserSelfInfo(config?: PureHttpRequestConfig) {
     "post",
     baseApi("/base/user/self/info"),
     undefined,
+    config
+  );
+}
+
+// 批量：退出登录
+export function baseUserSignOutByIdSet(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/user/signOutByIdSet"),
+    form,
     config
   );
 }
