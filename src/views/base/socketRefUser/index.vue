@@ -4,7 +4,9 @@ import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "~icons/ep/refresh";
 import Delete from "~icons/ep/delete";
+import RiComputerLine from "~icons/ri/computer-line";
 import {
+  baseSocketRefUserChangeConsoleFlagByIdSet,
   BaseSocketRefUserDO,
   baseSocketRefUserOfflineByIdSet,
   baseSocketRefUserPage,
@@ -73,6 +75,40 @@ function offlineClick(row: BaseSocketRefUserDO) {
   );
 }
 
+function consoleClick(row: BaseSocketRefUserDO) {
+  ExecConfirm(
+    async () => {
+      await baseSocketRefUserChangeConsoleFlagByIdSet({ idSet: [row.id] }).then(
+        res => {
+          ToastSuccess(res.msg);
+          onSearch();
+        }
+      );
+    },
+    undefined,
+    `确定开闭控制台【${row.id}】吗？`
+  );
+}
+
+function consoleBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  ExecConfirm(
+    async () => {
+      await baseSocketRefUserChangeConsoleFlagByIdSet({
+        idSet: selectIdArr.value
+      }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定开闭控制台勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
 function offlineBySelectIdArr() {
   if (!selectIdArr.value.length) {
     ToastError("请勾选数据");
@@ -137,6 +173,14 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
           >
             批量下线
           </el-button>
+
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(RiComputerLine)"
+            @click="offlineBySelectIdArr"
+          >
+            批量控制台
+          </el-button>
         </div>
       </div>
 
@@ -183,6 +227,14 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
             @click="offlineClick(scope.row)"
           >
             下线
+          </el-button>
+          <el-button
+            link
+            type="primary"
+            :icon="useRenderIcon(RiComputerLine)"
+            @click="consoleClick(scope.row)"
+          >
+            控制台
           </el-button>
         </el-table-column>
       </el-table>

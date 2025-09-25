@@ -11,11 +11,17 @@ import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
 import { ToDataAndByteArrForBlob } from "@/utils/BlobUtil";
-import { BASE_SIGN_OUT } from "@/model/constant/websocket/WebSocketReceivePath";
+import {
+  BASE_SIGN_OUT,
+  BASE_SOCKET_REF_USER_CHANGE_CONSOLE_FLAG_BY_ID_SET
+} from "@/model/constant/websocket/WebSocketReceivePath";
 import {
   NETTY_WEB_SOCKET_HEART_BEAT,
   type SocketHeartBeatVO
 } from "@/model/constant/websocket/WebSocketAllPath";
+import { storageLocal } from "@/store/utils";
+import LocalStorageKey from "@/model/constant/LocalStorageKey";
+import { DestroyVConsole, OpenVConsole } from "@/utils/VConsoleUtil";
 
 let myWebSocket: WebSocket | null = null;
 let heartBeatInterval: any = null; // 心跳检测，定时器
@@ -159,6 +165,26 @@ export function ConnectWebSocket() {
       if (webSocketMessage.uri === BASE_SIGN_OUT) {
         ToastError("您已被管理员下线");
         useUserStoreHook().logOut(); // 退出登录
+        return;
+      }
+
+      if (
+        webSocketMessage.uri ===
+        BASE_SOCKET_REF_USER_CHANGE_CONSOLE_FLAG_BY_ID_SET
+      ) {
+        const consoleOpenFlag = storageLocal().getItem(
+          LocalStorageKey.CONSOLE_OPEN_FLAG
+        );
+
+        if (consoleOpenFlag === "1") {
+          storageLocal().setItem(LocalStorageKey.CONSOLE_OPEN_FLAG, "0");
+
+          DestroyVConsole(); // 销毁控制台
+        } else {
+          storageLocal().setItem(LocalStorageKey.CONSOLE_OPEN_FLAG, "1");
+
+          OpenVConsole(); // 打开控制台
+        }
         return;
       }
 

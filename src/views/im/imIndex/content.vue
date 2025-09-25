@@ -9,13 +9,13 @@ import {
   ScrollListDTO
 } from "@/api/http/base/BaseImSessionContentRefUserController";
 import { FormatTsForCurrentDay } from "@/utils/DateUtil";
-import RiFile2Line from "~icons/ri/file-2-line";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import FaSearch from "~icons/fa/search";
 import FaPhone from "~icons/fa/phone";
 import FaVideoCamera from "~icons/fa/video-camera";
 import FaEllipsisV from "~icons/fa/ellipsis-v";
 import { useUserStoreHook } from "@/store/modules/user";
+import Avatar from "@/assets/user.png";
 
 const props = defineProps<IImContentProps>();
 
@@ -64,7 +64,7 @@ const selfUserId = ref(useUserStoreHook().id || "");
           </div>
         </div>
 
-        <div class="ml-auto flex items-center space-x-4">
+        <div class="flex items-center space-x-4">
           <component
             :is="
               useRenderIcon(FaSearch, {
@@ -116,7 +116,7 @@ const selfUserId = ref(useUserStoreHook().id || "");
             <template #default="{ item }">
               <div
                 v-if="item.createId === selfUserId"
-                class="flex items-end justify-end space-x-2 space-x-reverse max-w-[85%] ml-auto animate-fadeIn"
+                class="flex items-end justify-end space-x-2 space-x-reverse max-w-[85%] animate-fadeIn"
               >
                 <div class="text-xs text-gray-400 self-end">
                   {{ FormatTsForCurrentDay(item.createTs) }}
@@ -141,7 +141,7 @@ const selfUserId = ref(useUserStoreHook().id || "");
                   <template #error>
                     <component
                       :is="
-                        useRenderIcon(RiFile2Line, {
+                        useRenderIcon(Avatar, {
                           class: 'w-8 h-8 rounded-full'
                         })
                       "
@@ -150,7 +150,7 @@ const selfUserId = ref(useUserStoreHook().id || "");
                 </el-image>
                 <component
                   :is="
-                    useRenderIcon(RiFile2Line, {
+                    useRenderIcon(Avatar, {
                       class: 'w-8 h-8 rounded-full'
                     })
                   "

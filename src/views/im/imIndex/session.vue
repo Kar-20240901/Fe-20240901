@@ -9,9 +9,9 @@ import {
 import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
 import { IImShowInfoMap } from "@/views/im/imIndex/types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import RiFile2Line from "~icons/ri/file-2-line";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import FaSearch from "~icons/fa/search";
+import Avatar from "@/assets/user.png";
 
 const loading = ref<boolean>(false);
 const dataList = ref<BaseImSessionRefUserPageVO[]>([]);
@@ -130,8 +130,8 @@ onMounted(() => {
                     <template #error>
                       <component
                         :is="
-                          useRenderIcon(RiFile2Line, {
-                            class: 'w-12 h-12'
+                          useRenderIcon(Avatar, {
+                            class: 'w-12 h-12 rounded-full'
                           })
                         "
                       />

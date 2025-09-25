@@ -11,6 +11,7 @@ import { ElConfigProvider } from "element-plus";
 import { ReDialog } from "@/components/ReDialog";
 import en from "element-plus/es/locale/lang/en";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
+import { InitVConsole } from "@/utils/VConsoleUtil";
 
 export default defineComponent({
   name: "app",
@@ -22,6 +23,9 @@ export default defineComponent({
     currentLocale() {
       return this.$storage.locale?.locale === "zh" ? zhCn : en;
     }
+  },
+  mounted() {
+    InitVConsole();
   }
 });
 </script>
