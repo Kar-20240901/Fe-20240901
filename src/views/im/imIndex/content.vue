@@ -54,7 +54,9 @@ const selfUserId = ref(useUserStoreHook().id || "");
 <template>
   <div class="bg-gray-50 w-full h-full">
     <div v-if="props.session.showName" class="flex flex-col w-full h-full">
-      <div class="bg-white p-4 border-b border-gray-200 flex items-center">
+      <div
+        class="bg-white w-full p-4 border-b border-gray-200 flex items-center justify-between"
+      >
         <div class="flex items-center">
           <div>
             <div class="text-sm font-semibold">
