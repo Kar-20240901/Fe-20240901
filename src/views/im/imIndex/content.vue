@@ -16,6 +16,11 @@ import FaPhone from "~icons/fa/phone";
 import FaVideoCamera from "~icons/fa/video-camera";
 import FaEllipsisV from "~icons/fa/ellipsis-v";
 import FaSearch from "~icons/fa/search";
+import FaSmileO from "~icons/fa/smile-o";
+import FaPaperclip from "~icons/fa/paperclip";
+import FaPictureO from "~icons/fa/picture-o";
+import FaMicrophone from "~icons/fa/microphone";
+import FaPaperPlane from "~icons/fa/paper-plane";
 
 const props = defineProps<IImContentProps>();
 
@@ -81,6 +86,8 @@ onUnmounted(() => {
     resizeObserver.disconnect();
   }
 });
+
+const textarea = ref<string>("");
 </script>
 
 <template>
@@ -198,6 +205,75 @@ onUnmounted(() => {
             暂无消息。
           </div>
         </el-scrollbar>
+      </div>
+
+      <div class="bg-white p-4 border-t border-gray-200 flex flex-col">
+        <div class="flex items-center mb-4">
+          <div class="p-2">
+            <component
+              :is="
+                useRenderIcon(FaSmileO, {
+                  class:
+                    'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                })
+              "
+            />
+          </div>
+          <div class="p-2">
+            <component
+              :is="
+                useRenderIcon(FaPaperclip, {
+                  class:
+                    'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                })
+              "
+            />
+          </div>
+          <div class="p-2">
+            <component
+              :is="
+                useRenderIcon(FaPictureO, {
+                  class:
+                    'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                })
+              "
+            />
+          </div>
+          <div class="p-2">
+            <component
+              :is="
+                useRenderIcon(FaMicrophone, {
+                  class:
+                    'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                })
+              "
+            />
+          </div>
+        </div>
+        <div class="flex items-center">
+          <el-input
+            v-model="textarea"
+            :rows="2"
+            type="textarea"
+            placeholder="输入消息..."
+            show-word-limit
+            :maxlength="1000"
+            resize="none"
+            word-limit-position="outside"
+            input-style="padding-top: 0.75rem;padding-bottom: 0.75rem;padding-left: 1rem;padding-right: 1rem;border-width: 1px;border-color: #e5e7eb;border-radius: 9999px;"
+          />
+          <div
+            class="ml-3 mr-5 bg-primary rounded-full w-12 h-12 flex items-center justify-center hover:bg-primary/90 transition-colors transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
+          >
+            <component
+              :is="
+                useRenderIcon(FaPaperPlane, {
+                  class: 'text-white w-[20px] h-[20px]'
+                })
+              "
+            />
+          </div>
+        </div>
       </div>
     </div>
 
