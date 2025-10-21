@@ -199,7 +199,7 @@ const textarea = ref<string>("");
           </RecycleScroller>
 
           <div
-            v-else
+            v-if="!sessionContentList.length && !sessionContentLoading"
             class="text-[15px] flex w-full h-full justify-center items-center"
           >
             暂无消息。

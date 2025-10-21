@@ -95,11 +95,11 @@ onMounted(() => {
         <component
           :is="
             useRenderIcon(FaSearch, {
-              class: 'text-gray-400 w-[16px] h-[16px]'
+              class: 'text-gray-400 w-[14px] h-[14px]'
             })
           "
         />
-        <div class="ml-1 text-gray-400">搜索</div>
+        <div class="ml-2 text-gray-400 text-sm">搜索</div>
       </div>
     </div>
 
@@ -159,7 +159,10 @@ onMounted(() => {
           </template>
         </RecycleScroller>
 
-        <div v-else class="text-[15px] flex w-full justify-center">
+        <div
+          v-if="!dataList.length && !loading"
+          class="text-[15px] flex w-full justify-center"
+        >
           暂无消息。
         </div>
       </el-scrollbar>
