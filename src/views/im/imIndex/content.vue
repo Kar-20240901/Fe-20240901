@@ -98,7 +98,7 @@ const textarea = ref<string>("");
       >
         <div class="flex items-center">
           <div>
-            <div class="text-sm font-semibold">
+            <div class="text-sm">
               {{ props.session.showName }}
             </div>
             <!--          <div class="text-xs text-gray-400">正在输入...</div>-->
@@ -110,7 +110,7 @@ const textarea = ref<string>("");
             :is="
               useRenderIcon(FaSearch, {
                 class:
-                  'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                  'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
               })
             "
           />
@@ -118,7 +118,7 @@ const textarea = ref<string>("");
             :is="
               useRenderIcon(FaPhone, {
                 class:
-                  'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                  'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
               })
             "
           />
@@ -126,7 +126,7 @@ const textarea = ref<string>("");
             :is="
               useRenderIcon(FaVideoCamera, {
                 class:
-                  'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                  'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
               })
             "
           />
@@ -134,7 +134,7 @@ const textarea = ref<string>("");
             :is="
               useRenderIcon(FaEllipsisV, {
                 class:
-                  'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                  'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
               })
             "
           />
@@ -214,7 +214,7 @@ const textarea = ref<string>("");
               :is="
                 useRenderIcon(FaSmileO, {
                   class:
-                    'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                    'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
                 })
               "
             />
@@ -224,7 +224,7 @@ const textarea = ref<string>("");
               :is="
                 useRenderIcon(FaPaperclip, {
                   class:
-                    'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                    'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
                 })
               "
             />
@@ -234,7 +234,7 @@ const textarea = ref<string>("");
               :is="
                 useRenderIcon(FaPictureO, {
                   class:
-                    'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                    'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
                 })
               "
             />
@@ -244,7 +244,7 @@ const textarea = ref<string>("");
               :is="
                 useRenderIcon(FaMicrophone, {
                   class:
-                    'text-gray-400 hover:text-primary transition-colors w-[16px] h-[16px] cursor-pointer'
+                    'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
                 })
               "
             />
@@ -268,7 +268,7 @@ const textarea = ref<string>("");
             <component
               :is="
                 useRenderIcon(FaPaperPlane, {
-                  class: 'text-white w-[20px] h-[20px]'
+                  class: 'text-white w-[20px] h-[20px] mr-[2px]'
                 })
               "
             />

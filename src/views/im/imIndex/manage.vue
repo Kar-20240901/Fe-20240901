@@ -88,23 +88,26 @@ function menuSelect(index: string) {
 <template>
   <div class="flex flex-col w-full h-full">
     <div class="flex justify-center w-full">
-      <el-menu
-        :default-active="menuIndex"
-        mode="horizontal"
-        :ellipsis="false"
-        @select="menuSelect"
-      >
-        <el-menu-item
-          v-for="item in SegmentedOptionArr"
-          :key="item.value"
-          :index="item.value"
+      <template v-for="(item, index) in SegmentedOptionArr" :key="index">
+        <div
+          :class="
+            'flex-1 flex justify-center py-4 border-b-2 cursor-pointer text-sm transition-all ' +
+            (menuIndex === item.value
+              ? 'text-primary border-primary'
+              : 'border-gray-200 text-gray-400 hover:text-gray-800')
+          "
+          @click="
+            () => {
+              menuSelect(item.value);
+            }
+          "
         >
-          <div>{{ item.label }}</div>
-        </el-menu-item>
-      </el-menu>
+          {{ item.label }}
+        </div>
+      </template>
     </div>
 
-    <div class="flex-1 pt-1">
+    <div class="flex-1">
       <session
         v-if="
           !showSessionSearch &&
