@@ -128,12 +128,10 @@ onMounted(() => {
                     class="w-12 h-12 rounded-full"
                   >
                     <template #error>
-                      <component
-                        :is="
-                          useRenderIcon(Avatar, {
-                            class: 'w-12 h-12 rounded-full'
-                          })
-                        "
+                      <el-image
+                        :src="Avatar"
+                        fit="cover"
+                        class="w-12 h-12 rounded-full"
                       />
                     </template>
                   </el-image>
