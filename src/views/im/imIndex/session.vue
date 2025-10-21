@@ -113,7 +113,7 @@ onMounted(() => {
         >
           <template #default="{ item }">
             <div
-              :class="`h-[80px] flex items-center p-4 ${activeSessionId === item.sessionId ? 'bg-secondary border-l-4 border-l-primary hover:bg-secondary/80' : 'hover:bg-gray-50 border-b border-b-gray-100'} cursor-pointer transition-colors`"
+              :class="`h-[80px] flex items-center p-4 border-b border-l-4 ${activeSessionId === item.sessionId ? 'bg-secondary border-b-secondary  border-l-primary hover:bg-secondary/70 hover:border-b-secondary/70' : 'hover:bg-gray-50 hover:border-l-gray-50 border-l-white border-b-gray-100'} cursor-pointer transition-colors`"
               @click="sessionClick(item)"
             >
               <div>
@@ -121,6 +121,7 @@ onMounted(() => {
                   :value="item.unReadCount"
                   :max="999"
                   :show-zero="false"
+                  badge-class="mt-1 mr-1"
                 >
                   <el-image
                     :src="item.avatarUrl"
@@ -137,12 +138,12 @@ onMounted(() => {
                   </el-image>
                 </el-badge>
               </div>
-              <div class="ml-4 flex-1 min-w-0">
+              <div class="ml-4 flex-1">
                 <div class="flex justify-between items-center">
-                  <div class="text-sm font-semibold truncate">
+                  <div class="text-sm font-semibold truncate pr-1">
                     {{ item.sessionName }}
                   </div>
-                  <div class="text-xs text-gray-400">
+                  <div class="text-xs text-gray-400 shrink-0">
                     {{
                       FormatDateTimeForCurrentDay(
                         new Date(item.lastContentCreateTime)

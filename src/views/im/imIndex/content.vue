@@ -87,7 +87,7 @@ onUnmounted(() => {
   <div class="bg-gray-50 w-full h-full">
     <div v-if="props.session.showName" class="flex flex-col w-full h-full">
       <div
-        class="flex items-center justify-between bg-white w-full pl-4 py-5 border-b border-gray-200"
+        class="flex items-center justify-between bg-white w-full pl-4 py-4 border-b border-gray-200"
       >
         <div class="flex items-center">
           <div>
@@ -138,7 +138,7 @@ onUnmounted(() => {
         <el-scrollbar
           v-loading="sessionContentLoading"
           view-class="flex flex-col h-full"
-          :height="'calc(' + scrollbarHeight + 'px - var(--spacing) * 13)'"
+          :height="'calc(' + scrollbarHeight + 'px - var(--spacing) * 12)'"
         >
           <RecycleScroller
             v-if="sessionContentList.length"
