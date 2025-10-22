@@ -40,10 +40,14 @@ const emit = defineEmits<{
   (e: "doBaseImGroupRefUserPage", groupId: string): void;
 }>();
 
-const showSessionSearch = ref<boolean>(false);
+const showSearchOverviewPre = ref<boolean>(false);
 
 function searchClick() {
-  showSessionSearch.value = true;
+  showSearchOverviewPre.value = true;
+}
+
+function searchOverviewPreBackClick() {
+  showSearchOverviewPre.value = false;
 }
 
 function sessionClick(item: BaseImSessionRefUserPageVO) {
@@ -110,7 +114,7 @@ function menuSelect(index: string) {
     <div class="flex-1">
       <session
         v-if="
-          !showSessionSearch &&
+          !showSearchOverviewPre &&
           menuIndex === BaseImLeftSegmentedEnum.SESSION.code
         "
         @searchClick="searchClick"
@@ -121,7 +125,7 @@ function menuSelect(index: string) {
 
       <search-overview-pre
         v-if="
-          showSessionSearch &&
+          showSearchOverviewPre &&
           menuIndex === BaseImLeftSegmentedEnum.SESSION.code
         "
         :searchBaseContentVO="props.searchBaseContentVO"
@@ -131,6 +135,7 @@ function menuSelect(index: string) {
         @searchContentInfoClick="searchContentInfoClick"
         @updateSessionUserMap="updateSessionUserMap"
         @doBaseImGroupRefUserPage="doBaseImGroupRefUserPage"
+        @searchOverviewPreBackClick="searchOverviewPreBackClick"
       />
 
       <contact v-if="menuIndex === BaseImLeftSegmentedEnum.CONTACT.code" />

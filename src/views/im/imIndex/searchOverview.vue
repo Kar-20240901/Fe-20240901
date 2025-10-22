@@ -54,9 +54,9 @@ function searchGroupClick(item: BaseImSearchBaseGroupVO) {
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col cursor-default p-4">
     <div class="flex flex-col">
-      <div>联系人</div>
+      <div class="text-sm">联系人</div>
       <template v-for="item in searchFriendList" :key="item.sessionId">
         <div class="flex" @click="searchFriendClick(item)">
           <el-image
@@ -80,7 +80,7 @@ function searchGroupClick(item: BaseImSearchBaseGroupVO) {
       </template>
     </div>
     <div class="flex flex-col">
-      <div>群聊</div>
+      <div class="text-sm">群聊</div>
       <template v-for="item in searchGroupList" :key="item.sessionId">
         <div class="flex" @click="searchGroupClick(item)">
           <el-image
@@ -104,7 +104,7 @@ function searchGroupClick(item: BaseImSearchBaseGroupVO) {
       </template>
     </div>
     <div class="flex flex-col">
-      <div>聊天记录</div>
+      <div class="text-sm">聊天记录</div>
       <template v-for="item in searchContentList" :key="item.sessionId">
         <div class="flex" @click="searchContentClick(item)">
           <el-image

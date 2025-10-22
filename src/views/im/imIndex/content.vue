@@ -253,14 +253,14 @@ const textarea = ref<string>("");
         <div class="flex items-center">
           <el-input
             v-model="textarea"
+            autofocus
             :rows="2"
             type="textarea"
             placeholder="输入消息..."
             show-word-limit
             :maxlength="1000"
             resize="none"
-            word-limit-position="outside"
-            input-style="padding-top: 0.75rem;padding-bottom: 0.75rem;padding-left: 1rem;padding-right: 1rem;border-width: 1px;border-color: #e5e7eb;border-radius: 9999px;"
+            input-style="padding-top: 0.75rem;padding-bottom: 0.75rem;padding-left: 1rem;padding-right: 1rem;border-radius: 9999px;"
           />
           <div
             class="ml-3 mr-5 bg-primary rounded-full w-12 h-12 flex items-center justify-center hover:bg-primary/90 transition-colors transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
