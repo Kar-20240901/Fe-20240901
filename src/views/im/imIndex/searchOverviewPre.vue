@@ -12,14 +12,15 @@ import {
 } from "@/api/http/base/BaseImSearchController";
 import { ToastSuccess } from "@/utils/ToastUtil";
 import SearchOverview from "@/views/im/imIndex/searchOverview.vue";
-import SearchContentInfo from "@/views/im/imIndex/searchContentInfo.vue";
-import searchContentInfo from "@/views/im/imIndex/searchContentInfo.vue";
 import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
 import {
   IImSearchOverviewPreProps,
   IImShowInfoMap
 } from "@/views/im/imIndex/types";
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
+import FaSearch from "~icons/fa/search";
+import SearchOverviewMore from "@/views/im/imIndex/searchOverviewMore.vue";
+import SearchOverviewMoreContentInfo from "@/views/im/imIndex/searchOverviewMoreContentInfo.vue";
 
 const props = defineProps<IImSearchOverviewPreProps>();
 
@@ -29,19 +30,21 @@ function onSearchKeyClear() {
   searchHistory();
 }
 
+function onSearchKeyKeydown() {
+  onSearchKeyChangeDebounce();
+}
+
 function onSearchKeyChange(val: string) {
   searchKey.value = val;
   onSearchKeyChangeDebounce();
 }
 
 const onSearchKeyChangeDebounce: () => void = debounce(
-  onSearchKeyChangeDebounceFun,
-  1000,
-  true
+  onSearchKeyChangeDebounceFun
 );
 
 function onSearchKeyChangeDebounceFun() {
-  searchOverviewRef.value.doBaseImSearchBase();
+  searchOverviewRef.value?.doBaseImSearchBase();
 }
 
 const searchHistoryCloseFlag = ref<boolean>(false);
@@ -92,9 +95,13 @@ const emit = defineEmits<{
   (e: "searchOverviewPreBackClick"): void;
 }>();
 
-const showSearchContentInfoFlag = ref<boolean>(false);
+const showSearchOverviewMoreFriendFlag = ref<boolean>(false);
+const showSearchOverviewMoreGroupFlag = ref<boolean>(false);
+const showSearchOverviewMoreContentFlag = ref<boolean>(false);
+const showSearchOverviewMoreContentInfoFlag = ref<boolean>(false);
 
-const searchContentInfoRef = ref();
+const searchOverviewMoreRef = ref();
+const searchOverviewMoreContentInfoRef = ref();
 
 function searchContentClick(item: BaseImSearchBaseContentVO) {
   emit("searchContentClick", item);
@@ -110,10 +117,13 @@ function searchContentClick(item: BaseImSearchBaseContentVO) {
     emit("doBaseImGroupRefUserPage", item.targetId);
   }
 
-  showSearchContentInfoFlag.value = true;
+  showSearchOverviewMoreFriendFlag.value = false;
+  showSearchOverviewMoreGroupFlag.value = false;
+  showSearchOverviewMoreContentFlag.value = false;
+  showSearchOverviewMoreContentInfoFlag.value = true;
 
   nextTick(() => {
-    searchContentInfoRef.value.doSearch();
+    searchOverviewMoreContentInfoRef.value?.doSearch();
   });
 }
 
@@ -132,33 +142,58 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
 function searchOverviewPreBackClick() {
   emit("searchOverviewPreBackClick");
 }
+
+const searchInputRef = ref();
+
+onMounted(() => {
+  searchInputRef.value?.focus();
+});
+
+function searchMoreFriendClick() {
+  showSearchOverviewMoreFriendFlag.value = true;
+  showSearchOverviewMoreGroupFlag.value = false;
+  showSearchOverviewMoreContentFlag.value = false;
+  showSearchOverviewMoreContentInfoFlag.value = false;
+}
+
+function searchMoreGroupClick() {
+  showSearchOverviewMoreFriendFlag.value = false;
+  showSearchOverviewMoreGroupFlag.value = true;
+  showSearchOverviewMoreContentFlag.value = false;
+  showSearchOverviewMoreContentInfoFlag.value = false;
+}
+
+function searchMoreContentClick() {
+  showSearchOverviewMoreFriendFlag.value = false;
+  showSearchOverviewMoreGroupFlag.value = false;
+  showSearchOverviewMoreContentFlag.value = true;
+  showSearchOverviewMoreContentInfoFlag.value = false;
+}
+
+function getShowSearchOverviewMoreFlag() {
+  return (
+    showSearchOverviewMoreFriendFlag.value ||
+    showSearchOverviewMoreGroupFlag.value ||
+    showSearchOverviewMoreContentFlag.value
+  );
+}
 </script>
 
 <template>
   <div class="flex flex-col p-4 cursor-default">
-    <search-content-info
-      v-if="showSearchContentInfoFlag"
-      ref="searchContentInfoRef"
-      :search-key="searchKey"
-      :searchBaseContentVO="props.searchBaseContentVO"
-      @searchContentInfoClick="searchContentInfoClick"
-    />
-
-    <div
-      v-if="!showSearchContentInfoFlag"
-      class="flex justify-between items-center mt-1"
-    >
+    <div class="flex justify-between items-center mt-1">
       <el-input
+        ref="searchInputRef"
         v-model="searchKey"
-        :autosize="{ minRows: 1, maxRows: 2 }"
         placeholder="请输入搜索内容"
         clearable
         class="w-full"
         autofocus
-        type="textarea"
         resize="none"
-        @change="onSearchKeyChange"
+        :prefix-icon="FaSearch"
+        @input="onSearchKeyChange"
         @clear="onSearchKeyClear"
+        @keydown.enter="onSearchKeyKeydown"
       />
 
       <div
@@ -169,63 +204,99 @@ function searchOverviewPreBackClick() {
       </div>
     </div>
 
-    <search-overview
-      v-if="!showSearchContentInfoFlag && searchKey"
-      ref="searchOverviewRef"
+    <search-overview-more
+      v-if="
+        getShowSearchOverviewMoreFlag() &&
+        !showSearchOverviewMoreContentInfoFlag
+      "
+      ref="searchOverviewMoreRef"
       :search-key="searchKey"
       @searchFriendClick="searchFriendClick"
       @searchGroupClick="searchGroupClick"
       @searchContentClick="searchContentClick"
     />
 
-    <template v-if="!showSearchContentInfoFlag && !searchKey">
-      <div class="flex justify-between text-sm mt-4 mb-4">
-        <div class="text-gray-400">最近搜索</div>
-        <div>
+    <search-overview-more-content-info
+      v-if="
+        !getShowSearchOverviewMoreFlag() &&
+        showSearchOverviewMoreContentInfoFlag
+      "
+      ref="searchOverviewMoreContentInfoRef"
+      :search-key="searchKey"
+      :searchBaseContentVO="props.searchBaseContentVO"
+      @searchContentInfoClick="searchContentInfoClick"
+    />
+
+    <search-overview
+      v-show="
+        !getShowSearchOverviewMoreFlag() &&
+        !showSearchOverviewMoreContentInfoFlag &&
+        searchKey
+      "
+      ref="searchOverviewRef"
+      :search-key="searchKey"
+      @searchMoreFriendClick="searchMoreFriendClick"
+      @searchMoreGroupClick="searchMoreGroupClick"
+      @searchMoreContentClick="searchMoreContentClick"
+      @searchFriendClick="searchFriendClick"
+      @searchGroupClick="searchGroupClick"
+      @searchContentClick="searchContentClick"
+    />
+
+    <div
+      v-show="
+        !getShowSearchOverviewMoreFlag() &&
+        !showSearchOverviewMoreContentInfoFlag &&
+        !searchKey
+      "
+      class="flex justify-between text-sm mt-4 mb-4"
+    >
+      <div class="text-gray-400">最近搜索</div>
+      <div>
+        <div
+          v-if="!searchHistoryCloseFlag"
+          class="cursor-pointer text-gray-400 hover:text-gray-800"
+          @click="searchHistoryCloseFlag = true"
+        >
+          删除
+        </div>
+        <div v-else class="flex items-center space-x-2">
           <div
-            v-if="!searchHistoryCloseFlag"
             class="cursor-pointer text-gray-400 hover:text-gray-800"
-            @click="searchHistoryCloseFlag = true"
+            @click="searchHistoryDeleteAllClick()"
           >
-            删除
+            清空
           </div>
-          <div v-else class="flex items-center space-x-2">
-            <div
-              class="cursor-pointer text-gray-400 hover:text-gray-800"
-              @click="searchHistoryDeleteAllClick()"
-            >
-              清空
-            </div>
-            <div
-              class="cursor-pointer text-gray-400 hover:text-gray-800"
-              @click="searchHistoryCloseFlag = false"
-            >
-              完成
-            </div>
+          <div
+            class="cursor-pointer text-gray-400 hover:text-gray-800"
+            @click="searchHistoryCloseFlag = false"
+          >
+            完成
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="grid grid-cols-2 gap-2">
-        <template v-for="item in searchHistoryList" :key="item.id">
-          <el-tag
-            :disable-transitions="true"
-            :closable="searchHistoryCloseFlag"
-            effect="plain"
-            @close="searchHistoryDeleteClick(item.id)"
-            @click="
-              () => {
-                onSearchKeyChange(item.searchHistory);
-              }
-            "
-          >
-            <div class="flex justify-center w-20 truncate">
-              {{ item.searchHistory }}
-            </div>
-          </el-tag>
-        </template>
-      </div>
-    </template>
+    <div class="grid grid-cols-2 gap-2">
+      <template v-for="item in searchHistoryList" :key="item.id">
+        <el-tag
+          :disable-transitions="true"
+          :closable="searchHistoryCloseFlag"
+          effect="plain"
+          type="info"
+          @close="searchHistoryDeleteClick(item.id)"
+          @click="
+            () => {
+              onSearchKeyChange(item.searchHistory);
+            }
+          "
+        >
+          <div class="flex justify-center w-20 truncate cursor-pointer">
+            {{ item.searchHistory }}
+          </div>
+        </el-tag>
+      </template>
+    </div>
   </div>
 </template>
 

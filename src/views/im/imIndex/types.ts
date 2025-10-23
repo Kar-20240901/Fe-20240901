@@ -34,7 +34,13 @@ export interface IImSearchOverviewPreProps {
   searchBaseContentVO?: BaseImSearchBaseContentVO;
 }
 
-export interface IImSearchContentInfoProps {
+export interface IImSearchOverviewMoreProps {
+  showSearchOverviewMoreFriendFlag?: boolean;
+  showSearchOverviewMoreGroupFlag?: boolean;
+  showSearchOverviewMoreContentFlag?: boolean;
+}
+
+export interface IImSearchOverviewMoreContentInfoProps {
   searchBaseContentVO?: BaseImSearchBaseContentVO;
   sessionUserMap?: Record<string, IImShowInfoMap>;
   searchKey?: string;

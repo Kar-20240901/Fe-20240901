@@ -20,6 +20,8 @@ import {
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import Manage from "@/views/im/imIndex/manage.vue";
 import Content from "@/views/im/imIndex/content.vue";
+import { useResizeObserver } from "@pureadmin/utils";
+import CommonConstant from "@/model/constant/CommonConstant";
 
 defineOptions({
   name: "ImIndex"
@@ -129,12 +131,24 @@ function doBaseImGroupRefUserPage(groupId: string) {
     });
   });
 }
+
+const splitterSize = ref<string>("22%");
+
+useResizeObserver(".main-content", entries => {
+  const entry = entries[0];
+  const [{ inlineSize }] = entry.borderBoxSize;
+  if (inlineSize < CommonConstant.PAD_WIDTH) {
+    splitterSize.value = "30%";
+  } else {
+    splitterSize.value = "20%";
+  }
+});
 </script>
 
 <template>
   <div class="w-full h-full bg-bg_color">
     <el-splitter layout="horizontal">
-      <el-splitter-panel min="20%" size="30%">
+      <el-splitter-panel min="10%" :size="splitterSize">
         <manage
           :searchBaseContentVO="searchBaseContentVO"
           @updateSessionUserMap="updateSessionUserMap"

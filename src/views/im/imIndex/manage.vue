@@ -92,7 +92,7 @@ function menuSelect(index: string) {
 <template>
   <div class="flex flex-col w-full h-full">
     <div class="flex justify-center w-full">
-      <template v-for="(item, index) in SegmentedOptionArr" :key="index">
+      <template v-for="item in SegmentedOptionArr" :key="item.value">
         <div
           :class="
             'flex-1 flex justify-center py-4 border-b-2 cursor-pointer text-sm transition-all ' +
@@ -113,7 +113,7 @@ function menuSelect(index: string) {
 
     <div class="flex-1">
       <session
-        v-if="
+        v-show="
           !showSearchOverviewPre &&
           menuIndex === BaseImLeftSegmentedEnum.SESSION.code
         "
@@ -124,7 +124,7 @@ function menuSelect(index: string) {
       />
 
       <search-overview-pre
-        v-if="
+        v-show="
           showSearchOverviewPre &&
           menuIndex === BaseImLeftSegmentedEnum.SESSION.code
         "
@@ -138,7 +138,7 @@ function menuSelect(index: string) {
         @searchOverviewPreBackClick="searchOverviewPreBackClick"
       />
 
-      <contact v-if="menuIndex === BaseImLeftSegmentedEnum.CONTACT.code" />
+      <contact v-show="menuIndex === BaseImLeftSegmentedEnum.CONTACT.code" />
     </div>
   </div>
 </template>

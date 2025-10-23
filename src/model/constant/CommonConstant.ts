@@ -61,7 +61,9 @@ export default {
 
   BPMN_FILE_ACCEPT_TYPE: ".bpmn20.xml,.bpmn", // bpmn文件的类型
 
-  MOBILE_WIDTH: 768, // 小于这个数值，就是移动端
+  MOBILE_WIDTH: 768, // 小于这个数值，就是移动端，备注：是小于，不是小于等于
+
+  PAD_WIDTH: 1200, // 小于这个数值，就是 pad端，备注：是小于，不是小于等于
 
   TOOLTIP_STR_LENGTH: 500, // tooltip字符串的长度
 

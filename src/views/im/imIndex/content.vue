@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RecycleScroller } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 import { IImContentProps } from "@/views/im/imIndex/types";
 import {
   BaseImSessionContentRefUserPageVO,
@@ -21,6 +21,7 @@ import FaPaperclip from "~icons/fa/paperclip";
 import FaPictureO from "~icons/fa/picture-o";
 import FaMicrophone from "~icons/fa/microphone";
 import FaPaperPlane from "~icons/fa/paper-plane";
+import { useResizeObserver } from "@pureadmin/utils";
 
 const props = defineProps<IImContentProps>();
 
@@ -31,6 +32,8 @@ const sessionContentList = ref<BaseImSessionContentRefUserPageVO[]>([]);
 const sessionContentRecycleScrollerRef = ref();
 
 function doSearch(form?: ScrollListDTO) {
+  textareaInputRef.value?.focus();
+
   sessionContentLoading.value = true;
 
   baseImSessionContentRefUserScroll({
@@ -55,11 +58,9 @@ defineExpose({ doSearch });
 
 const selfUserId = ref(useUserStoreHook().id || "");
 
-const scrollbarParentDiv = ref<HTMLElement | null>(null);
+const scrollbarParentDiv = ref();
 
 const scrollbarHeight = ref<number>(0);
-
-let resizeObserver: ResizeObserver | null = null;
 
 const syncHeight = () => {
   if (scrollbarParentDiv.value) {
@@ -67,27 +68,17 @@ const syncHeight = () => {
   }
 };
 
-onMounted(() => {
-  // 监听 ref 直到元素加载完成
-  const stopWatch = watch(
-    () => scrollbarParentDiv.value,
-    newVal => {
-      if (newVal) {
-        syncHeight();
-        stopWatch();
-      }
-    }
-  );
-});
-
-onUnmounted(() => {
-  if (resizeObserver && scrollbarParentDiv.value) {
-    resizeObserver.unobserve(scrollbarParentDiv.value);
-    resizeObserver.disconnect();
-  }
+useResizeObserver(scrollbarParentDiv, () => {
+  syncHeight();
 });
 
 const textarea = ref<string>("");
+
+const textareaInputRef = ref();
+
+onMounted(() => {
+  textareaInputRef.value?.focus();
+});
 </script>
 
 <template>
@@ -200,7 +191,7 @@ const textarea = ref<string>("");
 
           <div
             v-if="!sessionContentList.length && !sessionContentLoading"
-            class="text-[15px] flex w-full h-full justify-center items-center"
+            class="text-[15px] flex w-full h-full justify-center items-center text-gray-400"
           >
             暂无消息。
           </div>
@@ -252,6 +243,7 @@ const textarea = ref<string>("");
         </div>
         <div class="flex items-center">
           <el-input
+            ref="textareaInputRef"
             v-model="textarea"
             autofocus
             :rows="2"
@@ -279,7 +271,7 @@ const textarea = ref<string>("");
 
     <div
       v-else
-      class="text-[15px] flex w-full h-full justify-center items-center"
+      class="text-[15px] flex w-full h-full justify-center items-center text-gray-400"
     >
       请选择会话。
     </div>

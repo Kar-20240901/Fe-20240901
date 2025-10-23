@@ -140,7 +140,7 @@ onMounted(() => {
               </div>
               <div class="ml-4 flex-1">
                 <div class="flex justify-between items-center">
-                  <div class="text-sm font-semibold truncate pr-1">
+                  <div class="text-sm truncate pr-1">
                     {{ item.sessionName }}
                   </div>
                   <div class="text-xs text-gray-400 shrink-0">
@@ -161,9 +161,9 @@ onMounted(() => {
 
         <div
           v-if="!dataList.length && !loading"
-          class="text-[15px] flex w-full justify-center"
+          class="text-[15px] flex w-full justify-center text-gray-400"
         >
-          暂无消息。
+          暂无会话。
         </div>
       </el-scrollbar>
     </div>

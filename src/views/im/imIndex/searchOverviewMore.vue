@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import Avatar from "@/assets/user.png";
 import {
-  baseImSearchBase,
   BaseImSearchBaseContentVO,
   BaseImSearchBaseFriendVO,
   BaseImSearchBaseGroupVO
 } from "@/api/http/base/BaseImSearchController";
-import { IImSearchOverviewProps } from "@/views/im/imIndex/types";
-import Avatar from "@/assets/user.png";
+import { IImSearchOverviewMoreProps } from "@/views/im/imIndex/types";
 
 const searchFriendList = ref<BaseImSearchBaseFriendVO[]>([]);
 
@@ -15,23 +14,9 @@ const searchGroupList = ref<BaseImSearchBaseGroupVO[]>([]);
 
 const searchContentList = ref<BaseImSearchBaseContentVO[]>([]);
 
-const props = defineProps<IImSearchOverviewProps>();
+const searchContentInfoLoading = ref<boolean>(false);
 
-function doBaseImSearchBase() {
-  searchFriendList.value = [];
-  searchGroupList.value = [];
-  searchContentList.value = [];
-
-  baseImSearchBase({ searchKey: props.searchKey }).then(res => {
-    searchFriendList.value = res.data.friendList;
-    searchGroupList.value = res.data.groupList;
-    searchContentList.value = res.data.contentList;
-  });
-}
-
-defineExpose({
-  doBaseImSearchBase
-});
+const props = defineProps<IImSearchOverviewMoreProps>();
 
 const emit = defineEmits<{
   (e: "searchFriendClick", item: BaseImSearchBaseFriendVO): void;
@@ -50,11 +35,23 @@ function searchFriendClick(item: BaseImSearchBaseFriendVO) {
 function searchGroupClick(item: BaseImSearchBaseGroupVO) {
   emit("searchGroupClick", item);
 }
+
+function doSearch() {}
+
+defineExpose({
+  doSearch
+});
 </script>
 
 <template>
-  <div class="flex flex-col cursor-default bg-gray-100 space-y-1">
-    <div class="flex flex-col bg-white pt-3">
+  <div
+    v-loading="searchContentInfoLoading"
+    class="flex flex-col cursor-default bg-gray-100 space-y-1"
+  >
+    <div
+      v-if="props.showSearchOverviewMoreFriendFlag"
+      class="flex flex-col bg-white pt-3"
+    >
       <div class="text-sm text-gray-400 mb-1">联系人</div>
       <template v-for="item in searchFriendList" :key="item.sessionId">
         <div
@@ -78,8 +75,10 @@ function searchGroupClick(item: BaseImSearchBaseGroupVO) {
         </div>
       </template>
     </div>
-
-    <div class="flex flex-col bg-white pt-3">
+    <div
+      v-if="props.showSearchOverviewMoreGroupFlag"
+      class="flex flex-col bg-white pt-3"
+    >
       <div class="text-sm text-gray-400 mb-1">群聊</div>
       <template v-for="item in searchGroupList" :key="item.sessionId">
         <div
@@ -103,7 +102,10 @@ function searchGroupClick(item: BaseImSearchBaseGroupVO) {
         </div>
       </template>
     </div>
-    <div class="flex flex-col bg-white pt-3">
+    <div
+      v-if="props.showSearchOverviewMoreContentFlag"
+      class="flex flex-col bg-white pt-3"
+    >
       <div class="text-sm text-gray-400 mb-1">聊天记录</div>
       <template v-for="item in searchContentList" :key="item.sessionId">
         <div

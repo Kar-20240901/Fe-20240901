@@ -1,5 +1,5 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div />
+  <div>联系人</div>
 </template>
