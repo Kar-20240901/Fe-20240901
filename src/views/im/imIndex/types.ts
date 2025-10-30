@@ -28,10 +28,12 @@ export interface IImSearchOverviewProps {
 
 export interface IImManageProps {
   searchBaseContentVO?: BaseImSearchBaseContentVO;
+  sessionUserMap?: Record<string, IImShowInfoMap>;
 }
 
 export interface IImSearchOverviewPreProps {
   searchBaseContentVO?: BaseImSearchBaseContentVO;
+  sessionUserMap?: Record<string, IImShowInfoMap>;
 }
 
 export interface IImSearchOverviewMoreProps {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
 import { debounce } from "@pureadmin/utils";
 import {
   BaseImSearchBaseContentVO,
@@ -20,7 +20,9 @@ import {
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import FaSearch from "~icons/fa/search";
 import SearchOverviewMore from "@/views/im/imIndex/searchOverviewMore.vue";
-import SearchOverviewMoreContentInfo from "@/views/im/imIndex/searchOverviewMoreContentInfo.vue";
+import SearchOverviewMoreContentInfo from "@/views/im/imIndex/searchOverviewContentInfo.vue";
+import EpBack from "~icons/ep/back";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
 const props = defineProps<IImSearchOverviewPreProps>();
 
@@ -36,7 +38,12 @@ function onSearchKeyKeydown() {
 
 function onSearchKeyChange(val: string) {
   searchKey.value = val;
-  onSearchKeyChangeDebounce();
+
+  if (val) {
+    onSearchKeyChangeDebounce();
+  } else {
+    resetSearchOverview();
+  }
 }
 
 const onSearchKeyChangeDebounce: () => void = debounce(
@@ -45,6 +52,10 @@ const onSearchKeyChangeDebounce: () => void = debounce(
 
 function onSearchKeyChangeDebounceFun() {
   searchOverviewRef.value?.doBaseImSearchBase();
+}
+
+function resetSearchOverview() {
+  searchOverviewRef.value?.reset();
 }
 
 const searchHistoryCloseFlag = ref<boolean>(false);
@@ -98,12 +109,19 @@ const emit = defineEmits<{
 const showSearchOverviewMoreFriendFlag = ref<boolean>(false);
 const showSearchOverviewMoreGroupFlag = ref<boolean>(false);
 const showSearchOverviewMoreContentFlag = ref<boolean>(false);
-const showSearchOverviewMoreContentInfoFlag = ref<boolean>(false);
+
+const showSearchOverviewContentInfoFlag = ref<boolean>(false);
+
+// true：从SearchOverviewMore跳转到聊天详情页 false：从SearchOverview跳转到聊天详情页
+const contentInfoMoreClickFlag = ref<boolean>(false);
 
 const searchOverviewMoreRef = ref();
 const searchOverviewMoreContentInfoRef = ref();
 
-function searchContentClick(item: BaseImSearchBaseContentVO) {
+function searchContentClick(
+  item: BaseImSearchBaseContentVO,
+  contentInfoMoreClickFlagTemp: boolean
+) {
   emit("searchContentClick", item);
 
   if (item.targetType === BaseImTypeEnum.FRIEND.code) {
@@ -120,7 +138,8 @@ function searchContentClick(item: BaseImSearchBaseContentVO) {
   showSearchOverviewMoreFriendFlag.value = false;
   showSearchOverviewMoreGroupFlag.value = false;
   showSearchOverviewMoreContentFlag.value = false;
-  showSearchOverviewMoreContentInfoFlag.value = true;
+  showSearchOverviewContentInfoFlag.value = true;
+  contentInfoMoreClickFlag.value = contentInfoMoreClickFlagTemp;
 
   nextTick(() => {
     searchOverviewMoreContentInfoRef.value?.doSearch();
@@ -145,51 +164,95 @@ function searchOverviewPreBackClick() {
 
 const searchInputRef = ref();
 
-onMounted(() => {
+function setSearchInputFocus() {
   searchInputRef.value?.focus();
-});
+}
+
+defineExpose({ setSearchInputFocus });
 
 function searchMoreFriendClick() {
   showSearchOverviewMoreFriendFlag.value = true;
   showSearchOverviewMoreGroupFlag.value = false;
   showSearchOverviewMoreContentFlag.value = false;
-  showSearchOverviewMoreContentInfoFlag.value = false;
+  showSearchOverviewContentInfoFlag.value = false;
+  contentInfoMoreClickFlag.value = false;
 }
 
 function searchMoreGroupClick() {
   showSearchOverviewMoreFriendFlag.value = false;
   showSearchOverviewMoreGroupFlag.value = true;
   showSearchOverviewMoreContentFlag.value = false;
-  showSearchOverviewMoreContentInfoFlag.value = false;
+  showSearchOverviewContentInfoFlag.value = false;
+  contentInfoMoreClickFlag.value = false;
 }
 
 function searchMoreContentClick() {
   showSearchOverviewMoreFriendFlag.value = false;
   showSearchOverviewMoreGroupFlag.value = false;
   showSearchOverviewMoreContentFlag.value = true;
-  showSearchOverviewMoreContentInfoFlag.value = false;
+  showSearchOverviewContentInfoFlag.value = false;
+  contentInfoMoreClickFlag.value = false;
 }
 
-function getShowSearchOverviewMoreFlag() {
+const getShowSearchOverviewMoreFlag = computed(() => {
   return (
     showSearchOverviewMoreFriendFlag.value ||
     showSearchOverviewMoreGroupFlag.value ||
     showSearchOverviewMoreContentFlag.value
   );
+});
+
+function backClick() {
+  if (getShowSearchOverviewMoreFlag.value) {
+    showSearchOverviewMoreFriendFlag.value = false;
+    showSearchOverviewMoreGroupFlag.value = false;
+    showSearchOverviewMoreContentFlag.value = false;
+    showSearchOverviewContentInfoFlag.value = false;
+    contentInfoMoreClickFlag.value = false;
+  } else if (showSearchOverviewContentInfoFlag.value) {
+    if (contentInfoMoreClickFlag.value) {
+      showSearchOverviewMoreFriendFlag.value = false;
+      showSearchOverviewMoreGroupFlag.value = false;
+      showSearchOverviewMoreContentFlag.value = true;
+      showSearchOverviewContentInfoFlag.value = false;
+      contentInfoMoreClickFlag.value = false;
+    } else {
+      showSearchOverviewMoreFriendFlag.value = false;
+      showSearchOverviewMoreGroupFlag.value = false;
+      showSearchOverviewMoreContentFlag.value = false;
+      showSearchOverviewContentInfoFlag.value = false;
+      contentInfoMoreClickFlag.value = false;
+    }
+  }
 }
 </script>
 
 <template>
   <div class="flex flex-col p-4 cursor-default">
     <div class="flex justify-between items-center mt-1">
+      <div
+        v-show="
+          getShowSearchOverviewMoreFlag || showSearchOverviewContentInfoFlag
+        "
+        class="flex items-center shrink-0 mr-2 text-sm text-gray-400 cursor-pointer hover:text-gray-800"
+        @click="backClick()"
+      >
+        <component
+          :is="
+            useRenderIcon(EpBack, {
+              class: 'w-[14px] h-[14px] mr-[2px]'
+            })
+          "
+        />
+        返回
+      </div>
+
       <el-input
         ref="searchInputRef"
         v-model="searchKey"
         placeholder="请输入搜索内容"
         clearable
         class="w-full"
-        autofocus
-        resize="none"
         :prefix-icon="FaSearch"
         @input="onSearchKeyChange"
         @clear="onSearchKeyClear"
@@ -197,7 +260,7 @@ function getShowSearchOverviewMoreFlag() {
       />
 
       <div
-        class="ml-2 text-sm shrink-0 text-gray-400 shrink-0 cursor-pointer hover:text-gray-800"
+        class="ml-2 text-sm shrink-0 text-gray-400 cursor-pointer hover:text-gray-800"
         @click="searchOverviewPreBackClick()"
       >
         取消
@@ -205,32 +268,32 @@ function getShowSearchOverviewMoreFlag() {
     </div>
 
     <search-overview-more
-      v-if="
-        getShowSearchOverviewMoreFlag() &&
-        !showSearchOverviewMoreContentInfoFlag
-      "
+      v-if="getShowSearchOverviewMoreFlag && !showSearchOverviewContentInfoFlag"
       ref="searchOverviewMoreRef"
       :search-key="searchKey"
+      :showSearchOverviewMoreFriendFlag="showSearchOverviewMoreFriendFlag"
+      :showSearchOverviewMoreGroupFlag="showSearchOverviewMoreGroupFlag"
+      :showSearchOverviewMoreContentFlag="showSearchOverviewMoreContentFlag"
       @searchFriendClick="searchFriendClick"
       @searchGroupClick="searchGroupClick"
-      @searchContentClick="searchContentClick"
+      @searchContentClick="
+        (item: BaseImSearchBaseContentVO) => searchContentClick(item, true)
+      "
     />
 
     <search-overview-more-content-info
-      v-if="
-        !getShowSearchOverviewMoreFlag() &&
-        showSearchOverviewMoreContentInfoFlag
-      "
+      v-if="!getShowSearchOverviewMoreFlag && showSearchOverviewContentInfoFlag"
       ref="searchOverviewMoreContentInfoRef"
       :search-key="searchKey"
       :searchBaseContentVO="props.searchBaseContentVO"
+      :sessionUserMap="props.sessionUserMap"
       @searchContentInfoClick="searchContentInfoClick"
     />
 
     <search-overview
       v-show="
-        !getShowSearchOverviewMoreFlag() &&
-        !showSearchOverviewMoreContentInfoFlag &&
+        !getShowSearchOverviewMoreFlag &&
+        !showSearchOverviewContentInfoFlag &&
         searchKey
       "
       ref="searchOverviewRef"
@@ -240,62 +303,65 @@ function getShowSearchOverviewMoreFlag() {
       @searchMoreContentClick="searchMoreContentClick"
       @searchFriendClick="searchFriendClick"
       @searchGroupClick="searchGroupClick"
-      @searchContentClick="searchContentClick"
+      @searchContentClick="
+        (item: BaseImSearchBaseContentVO) => searchContentClick(item, false)
+      "
     />
 
     <div
       v-show="
-        !getShowSearchOverviewMoreFlag() &&
-        !showSearchOverviewMoreContentInfoFlag &&
+        !getShowSearchOverviewMoreFlag &&
+        !showSearchOverviewContentInfoFlag &&
         !searchKey
       "
-      class="flex justify-between text-sm mt-4 mb-4"
     >
-      <div class="text-gray-400">最近搜索</div>
-      <div>
-        <div
-          v-if="!searchHistoryCloseFlag"
-          class="cursor-pointer text-gray-400 hover:text-gray-800"
-          @click="searchHistoryCloseFlag = true"
-        >
-          删除
-        </div>
-        <div v-else class="flex items-center space-x-2">
+      <div class="flex justify-between text-sm mt-4 mb-4">
+        <div class="text-gray-400">最近搜索</div>
+        <div>
           <div
+            v-if="!searchHistoryCloseFlag"
             class="cursor-pointer text-gray-400 hover:text-gray-800"
-            @click="searchHistoryDeleteAllClick()"
+            @click="searchHistoryCloseFlag = true"
           >
-            清空
+            删除
           </div>
-          <div
-            class="cursor-pointer text-gray-400 hover:text-gray-800"
-            @click="searchHistoryCloseFlag = false"
-          >
-            完成
+          <div v-else class="flex items-center space-x-2">
+            <div
+              class="cursor-pointer text-gray-400 hover:text-gray-800"
+              @click="searchHistoryDeleteAllClick()"
+            >
+              清空
+            </div>
+            <div
+              class="cursor-pointer text-gray-400 hover:text-gray-800"
+              @click="searchHistoryCloseFlag = false"
+            >
+              完成
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="grid grid-cols-2 gap-2">
-      <template v-for="item in searchHistoryList" :key="item.id">
-        <el-tag
-          :disable-transitions="true"
-          :closable="searchHistoryCloseFlag"
-          effect="plain"
-          type="info"
-          @close="searchHistoryDeleteClick(item.id)"
-          @click="
-            () => {
-              onSearchKeyChange(item.searchHistory);
-            }
-          "
-        >
-          <div class="flex justify-center w-20 truncate cursor-pointer">
-            {{ item.searchHistory }}
-          </div>
-        </el-tag>
-      </template>
+      <div class="grid grid-cols-2 gap-2">
+        <template v-for="item in searchHistoryList" :key="item.id">
+          <el-tag
+            :disable-transitions="true"
+            :closable="searchHistoryCloseFlag"
+            effect="plain"
+            type="info"
+            @close="searchHistoryDeleteClick(item.id)"
+            @click="
+              () => {
+                onSearchKeyChange(item.searchHistory);
+              }
+            "
+          >
+            <div class="flex justify-center w-20 truncate cursor-pointer">
+              {{ item.searchHistory }}
+            </div>
+          </el-tag>
+        </template>
+      </div>
     </div>
   </div>
 </template>

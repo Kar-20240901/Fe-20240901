@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BaseImLeftSegmentedEnum } from "@/model/enum/im/BaseImLeftSegmentedEnum";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import Session from "@/views/im/imIndex/session.vue";
 import Contact from "@/views/im/imIndex/contact.vue";
 import { BaseImSessionRefUserPageVO } from "@/api/http/base/BaseImSessionRefUserController";
@@ -42,8 +42,14 @@ const emit = defineEmits<{
 
 const showSearchOverviewPre = ref<boolean>(false);
 
+const searchOverviewPreRef = ref();
+
 function searchClick() {
   showSearchOverviewPre.value = true;
+
+  nextTick(() => {
+    searchOverviewPreRef.value.setSearchInputFocus();
+  });
 }
 
 function searchOverviewPreBackClick() {
@@ -128,7 +134,9 @@ function menuSelect(index: string) {
           showSearchOverviewPre &&
           menuIndex === BaseImLeftSegmentedEnum.SESSION.code
         "
+        ref="searchOverviewPreRef"
         :searchBaseContentVO="props.searchBaseContentVO"
+        :sessionUserMap="props.sessionUserMap"
         @searchFriendClick="searchFriendClick"
         @searchGroupClick="searchGroupClick"
         @searchContentClick="searchContentClick"

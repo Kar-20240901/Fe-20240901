@@ -151,6 +151,7 @@ useResizeObserver(".main-content", entries => {
       <el-splitter-panel min="10%" :size="splitterSize">
         <manage
           :searchBaseContentVO="searchBaseContentVO"
+          :sessionUserMap="sessionUserMap"
           @updateSessionUserMap="updateSessionUserMap"
           @sessionClick="sessionClick"
           @searchFriendClick="searchFriendClick"

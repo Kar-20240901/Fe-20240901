@@ -245,7 +245,6 @@ onMounted(() => {
           <el-input
             ref="textareaInputRef"
             v-model="textarea"
-            autofocus
             :rows="2"
             type="textarea"
             placeholder="输入消息..."

@@ -22,6 +22,10 @@ function doBaseImSearchBase() {
   searchGroupList.value = [];
   searchContentList.value = [];
 
+  if (!props.searchKey) {
+    return;
+  }
+
   baseImSearchBase({ searchKey: props.searchKey }).then(res => {
     searchFriendList.value = res.data.friendList;
     searchGroupList.value = res.data.groupList;
@@ -29,14 +33,25 @@ function doBaseImSearchBase() {
   });
 }
 
+function reset() {
+  searchFriendList.value = [];
+  searchGroupList.value = [];
+  searchContentList.value = [];
+}
+
 defineExpose({
-  doBaseImSearchBase
+  doBaseImSearchBase,
+  reset
 });
 
 const emit = defineEmits<{
   (e: "searchFriendClick", item: BaseImSearchBaseFriendVO): void;
   (e: "searchGroupClick", item: BaseImSearchBaseGroupVO): void;
   (e: "searchContentClick", item: BaseImSearchBaseContentVO): void;
+
+  (e: "searchMoreFriendClick"): void;
+  (e: "searchMoreGroupClick"): void;
+  (e: "searchMoreContentClick"): void;
 }>();
 
 function searchContentClick(item: BaseImSearchBaseContentVO) {
@@ -50,62 +65,121 @@ function searchFriendClick(item: BaseImSearchBaseFriendVO) {
 function searchGroupClick(item: BaseImSearchBaseGroupVO) {
   emit("searchGroupClick", item);
 }
+
+function searchMoreFriendClick() {
+  emit("searchMoreFriendClick");
+}
+
+function searchMoreGroupClick() {
+  emit("searchMoreGroupClick");
+}
+
+function searchMoreContentClick() {
+  emit("searchMoreContentClick");
+}
 </script>
 
 <template>
   <div class="flex flex-col cursor-default bg-gray-100 space-y-1">
-    <div class="flex flex-col bg-white pt-3">
-      <div class="text-sm text-gray-400 mb-1">联系人</div>
-      <template v-for="item in searchFriendList" :key="item.sessionId">
+    <div v-show="searchFriendList.length" class="flex flex-col bg-white pt-3">
+      <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
+        <div>联系人</div>
+        <div
+          v-if="searchFriendList.length > 1"
+          class="text-gray-400 cursor-pointer hover:text-gray-800"
+          @click="searchMoreFriendClick"
+        >
+          更多
+        </div>
+      </div>
+      <template
+        v-for="item in searchFriendList.slice(0, 3)"
+        :key="item.sessionId"
+      >
         <div
           class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
           @click="searchFriendClick(item)"
         >
-          <el-image
-            :src="item.avatarUrl"
-            fit="cover"
-            class="w-12 h-12 rounded-full"
-          >
-            <template #error>
-              <el-image
-                :src="Avatar"
-                fit="cover"
-                class="w-12 h-12 rounded-full"
-              />
-            </template>
-          </el-image>
-          <div class="truncate text-sm ml-2">{{ item.friendName }}</div>
+          <div class="shrink-0">
+            <el-image
+              :src="item.avatarUrl"
+              fit="cover"
+              class="w-12 h-12 rounded-full"
+            >
+              <template #error>
+                <el-image
+                  :src="Avatar"
+                  fit="cover"
+                  class="w-12 h-12 rounded-full"
+                />
+              </template>
+            </el-image>
+          </div>
+          <div class="text-sm ml-2 shrink-0">{{ item.friendName }}</div>
+          <div class="truncate text-sm text-gray-400">
+            （{{ item.friendId }}）
+          </div>
         </div>
       </template>
     </div>
 
-    <div class="flex flex-col bg-white pt-3">
-      <div class="text-sm text-gray-400 mb-1">群聊</div>
-      <template v-for="item in searchGroupList" :key="item.sessionId">
+    <div v-show="searchGroupList.length" class="flex flex-col bg-white pt-3">
+      <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
+        <div>群聊</div>
+        <div
+          v-if="searchGroupList.length > 1"
+          class="text-gray-400 cursor-pointer hover:text-gray-800"
+          @click="searchMoreGroupClick"
+        >
+          更多
+        </div>
+      </div>
+      <template
+        v-for="item in searchGroupList.slice(0, 3)"
+        :key="item.sessionId"
+      >
         <div
           class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
           @click="searchGroupClick(item)"
         >
-          <el-image
-            :src="item.avatarUrl"
-            fit="cover"
-            class="w-12 h-12 rounded-full"
-          >
-            <template #error>
-              <el-image
-                :src="Avatar"
-                fit="cover"
-                class="w-12 h-12 rounded-full"
-              />
-            </template>
-          </el-image>
-          <div class="truncate text-sm ml-2">{{ item.groupName }}</div>
+          <div class="shrink-0">
+            <el-image
+              :src="item.avatarUrl"
+              fit="cover"
+              class="w-12 h-12 rounded-full"
+            >
+              <template #error>
+                <el-image
+                  :src="Avatar"
+                  fit="cover"
+                  class="w-12 h-12 rounded-full"
+                />
+              </template>
+            </el-image>
+          </div>
+          <div class="text-sm ml-2 shrink-0">{{ item.groupName }}</div>
+          <div class="truncate text-sm text-gray-400">
+            （{{ item.groupId }}）
+          </div>
         </div>
       </template>
     </div>
-    <div class="flex flex-col bg-white pt-3">
-      <div class="text-sm text-gray-400 mb-1">聊天记录</div>
-      <template v-for="item in searchContentList" :key="item.sessionId">
+
+    <div v-show="searchContentList.length" class="flex flex-col bg-white pt-3">
+      <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
+        <div>聊天记录</div>
+        <div
+          v-if="searchContentList.length > 1"
+          class="text-gray-400 cursor-pointer hover:text-gray-800"
+          @click="searchMoreContentClick"
+        >
+          更多
+        </div>
+      </div>
+      <template
+        v-for="item in searchContentList.slice(0, 3)"
+        :key="item.sessionId"
+      >
         <div
           class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
           @click="searchContentClick(item)"
