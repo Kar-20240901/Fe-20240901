@@ -37,8 +37,6 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   activeSessionId.value = item.sessionId;
 }
 
-const pageSize = "20";
-
 function onSearch() {
   loading.value = true;
 
@@ -46,7 +44,7 @@ function onSearch() {
     id: dataList.value.length
       ? dataList.value[dataList.value.length - 1].sessionId
       : undefined,
-    pageSize
+    pageSize: "20"
   })
     .then(res => {
       dataList.value = res.data;

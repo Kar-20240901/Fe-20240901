@@ -25,7 +25,12 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
 function doSearch() {
   baseImSessionContentRefUserScroll({
     refId: props.searchBaseContentVO.sessionId,
-    searchKey: props.searchKey
+    searchKey: props.searchKey,
+    pageSize: "20",
+    id: searchContentInfoList.value.length
+      ? searchContentInfoList.value[searchContentInfoList.value.length - 1]
+          .contentId
+      : undefined
   })
     .then(res => {
       searchContentInfoList.value = res.data;

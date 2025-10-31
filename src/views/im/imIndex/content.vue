@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RecycleScroller } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { nextTick, onMounted, ref } from "vue";
+import { nextTick, ref } from "vue";
 import { IImContentProps } from "@/views/im/imIndex/types";
 import {
   BaseImSessionContentRefUserPageVO,
@@ -39,6 +39,7 @@ function doSearch(form?: ScrollListDTO) {
   baseImSessionContentRefUserScroll({
     refId: form?.refId || props.session.sessionId,
     backwardFlag: form?.backwardFlag || false,
+    containsCurrentIdFlag: form?.containsCurrentIdFlag || false,
     id: form?.id
   })
     .then(res => {
@@ -76,10 +77,6 @@ useResizeObserver(scrollbarParentDiv, () => {
 const textarea = ref<string>("");
 
 const textareaInputRef = ref();
-
-onMounted(() => {
-  textareaInputRef.value?.focus();
-});
 </script>
 
 <template>

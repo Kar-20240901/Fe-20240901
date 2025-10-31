@@ -99,6 +99,7 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
   nextTick(() => {
     contentRef.value.doSearch({
       backwardFlag: false,
+      containsCurrentIdFlag: true,
       id: item.contentId,
       refId: session.value.sessionId
     });

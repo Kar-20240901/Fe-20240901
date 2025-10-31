@@ -74,13 +74,11 @@ function searchHistoryDeleteAllClick() {
   });
 }
 
-const pageSize = "20";
-
 const searchHistoryList = ref<BaseImSearchHistoryVO[]>([]);
 
 function searchHistory() {
   baseImSearchHistoryPage({
-    pageSize
+    pageSize: "20"
   }).then(res => {
     searchHistoryList.value = res.data.records;
   });

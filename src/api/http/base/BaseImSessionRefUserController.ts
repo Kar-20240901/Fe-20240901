@@ -112,6 +112,7 @@ export interface ScrollListDTO {
   id?: string; // 主键 id，如果为 null，则根据 backwardFlag，来查询最大 id或者最小 id，注意：不会查询该 id的数据，格式：int64
   searchKey?: string; // 搜索内容
   refId?: string; // 关联其他主键 id，格式：int64
+  containsCurrentIdFlag?: boolean; // 是否包含当前主键 id，默认：false
 }
 
 export interface BaseImSessionRefUserPageVO {
