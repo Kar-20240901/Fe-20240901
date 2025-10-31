@@ -84,7 +84,7 @@ onMounted(() => {
 
 <template>
   <div class="bg-gray-50 w-full h-full">
-    <div v-if="props.session.showName" class="flex flex-col w-full h-full">
+    <div v-show="props.session.showName" class="flex flex-col w-full h-full">
       <div
         class="flex items-center justify-between bg-white w-full pl-4 py-4 border-b border-gray-200"
       >
@@ -270,7 +270,7 @@ onMounted(() => {
     </div>
 
     <div
-      v-else
+      v-if="!props.session.showName"
       class="text-[15px] flex w-full h-full justify-center items-center text-gray-400"
     >
       请选择会话。

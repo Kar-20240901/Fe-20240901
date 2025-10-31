@@ -8,6 +8,7 @@ import {
 } from "@/api/http/base/BaseImSearchController";
 import { IImSearchOverviewProps } from "@/views/im/imIndex/types";
 import Avatar from "@/assets/user.png";
+import { processText } from "@/utils/StrUtil";
 
 const searchFriendList = ref<BaseImSearchBaseFriendVO[]>([]);
 
@@ -115,9 +116,31 @@ function searchMoreContentClick() {
               </template>
             </el-image>
           </div>
-          <div class="text-sm ml-2 shrink-0">{{ item.friendShowName }}</div>
-          <div class="truncate text-sm text-gray-400">
-            （{{ item.friendShowId }}）
+          <div class="text-sm ml-2 shrink-0 flex">
+            <div
+              v-for="(part, index) in processText(
+                item.friendShowName,
+                props.searchKey
+              )"
+              :key="index"
+              :class="part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'"
+            >
+              {{ part.text }}
+            </div>
+          </div>
+          <div class="truncate text-sm text-gray-400 flex">
+            （
+            <div
+              v-for="(part, index) in processText(
+                item.friendShowId,
+                props.searchKey
+              )"
+              :key="index"
+              :class="part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'"
+            >
+              {{ part.text }}
+            </div>
+            ）
           </div>
         </div>
       </template>
@@ -157,9 +180,31 @@ function searchMoreContentClick() {
               </template>
             </el-image>
           </div>
-          <div class="text-sm ml-2 shrink-0">{{ item.groupShowName }}</div>
-          <div class="truncate text-sm text-gray-400">
-            （{{ item.groupShowId }}）
+          <div class="text-sm ml-2 shrink-0 flex">
+            <div
+              v-for="(part, index) in processText(
+                item.groupShowName,
+                props.searchKey
+              )"
+              :key="index"
+              :class="part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'"
+            >
+              {{ part.text }}
+            </div>
+          </div>
+          <div class="truncate text-sm text-gray-400 flex">
+            （
+            <div
+              v-for="(part, index) in processText(
+                item.groupShowId,
+                props.searchKey
+              )"
+              :key="index"
+              :class="part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'"
+            >
+              {{ part.text }}
+            </div>
+            ）
           </div>
         </div>
       </template>

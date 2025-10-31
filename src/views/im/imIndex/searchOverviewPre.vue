@@ -307,7 +307,7 @@ const getShowContentInfoFlag = computed(() => {
     </div>
 
     <search-overview-more
-      v-if="getShowOverviewMoreFlag"
+      v-show="getShowOverviewMoreFlag"
       ref="searchOverviewMoreRef"
       :search-key="searchKey"
       :showSearchOverviewMoreFriendFlag="showSearchOverviewMoreFriendFlag"
@@ -321,7 +321,7 @@ const getShowContentInfoFlag = computed(() => {
     />
 
     <search-overview-content-info
-      v-if="getShowContentInfoFlag"
+      v-show="getShowContentInfoFlag"
       ref="searchOverviewMoreContentInfoRef"
       :search-key="searchKey"
       :searchBaseContentVO="props.searchBaseContentVO"
@@ -358,13 +358,16 @@ const getShowContentInfoFlag = computed(() => {
         <div class="text-gray-400">最近搜索</div>
         <div>
           <div
-            v-if="!searchHistoryCloseFlag"
+            v-show="!searchHistoryCloseFlag"
             class="cursor-pointer text-gray-400 hover:text-gray-800"
             @click="searchHistoryCloseFlag = true"
           >
             删除
           </div>
-          <div v-else class="flex items-center space-x-2">
+          <div
+            v-show="searchHistoryCloseFlag"
+            class="flex items-center space-x-2"
+          >
             <div
               class="cursor-pointer text-gray-400 hover:text-gray-800"
               @click="searchHistoryDeleteAllClick()"
