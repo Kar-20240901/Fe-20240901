@@ -219,6 +219,7 @@ export interface BaseUserSelfInfoVO {
   wxAppId?: string; // 微信 appId，会脱敏
   bio?: string; // 个人简介
   id?: string; // 用户主键 id，格式：int64
+  uuid?: string; // 该用户的 uuid，本系统目前只有即时聊天使用该字段，备注：不能重复
   email?: string; // 邮箱，会脱敏
   username?: string; // 用户名，会脱敏
 }
@@ -284,6 +285,23 @@ export function baseUserInfoById(
   return http.request<TempUserInfoByIdVO>(
     "post",
     baseApi("/base/user/infoById"),
+    form,
+    config
+  );
+}
+
+export interface NotBlankString {
+  value?: string; // 值，是否必传：true
+}
+
+// 当前用户：修改uuid
+export function baseUserSelfUpdateUuid(
+  form: NotBlankString,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/user/self/updateUuid"),
     form,
     config
   );

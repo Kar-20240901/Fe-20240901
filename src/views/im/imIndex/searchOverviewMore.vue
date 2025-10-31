@@ -71,7 +71,7 @@ defineExpose({
               />
             </template>
           </el-image>
-          <div class="truncate text-sm ml-2">{{ item.friendName }}</div>
+          <div class="truncate text-sm ml-2">{{ item.friendShowName }}</div>
         </div>
       </template>
     </div>
@@ -98,7 +98,7 @@ defineExpose({
               />
             </template>
           </el-image>
-          <div class="truncate text-sm ml-2">{{ item.groupName }}</div>
+          <div class="truncate text-sm ml-2">{{ item.groupShowName }}</div>
         </div>
       </template>
     </div>

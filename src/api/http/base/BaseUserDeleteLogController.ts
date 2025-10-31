@@ -12,7 +12,7 @@ export interface BaseUserDeleteLogPageDTO {
   nickname?: string; // 昵称
   pageSize?: string; // 每页显示条数，格式：int64
   id?: string; // 用户主键 id，格式：int64
-  uuid?: string; // 该用户的 uuid，本系统使用 id，不使用此字段（uuid），备注：不允许修改
+  uuid?: string; // 该用户的 uuid
   email?: string; // 邮箱，可以为空
   order?: MyOrderDTO; // 排序字段
   username?: string; // 用户名，可以为空
@@ -26,7 +26,7 @@ export interface BaseUserDeleteLogDO {
   wxAppId?: string; // 微信 appId，可以为空
   bio?: string; // 个人简介
   updateTime?: string; // 修改时间，格式：date-time
-  uuid?: string; // 该用户的 uuid，本系统使用 id，不使用此字段（uuid），备注：不允许修改
+  uuid?: string; // 该用户的 uuid
   updateId?: string; // 修改人id，格式：int64
   password?: string; // 密码，可为空，如果为空，则登录时需要提示【进行忘记密码操作】
   createTime?: string; // 创建时间，格式：date-time

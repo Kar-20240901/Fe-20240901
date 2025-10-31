@@ -22,7 +22,7 @@ function doBaseImSearchBase() {
   searchGroupList.value = [];
   searchContentList.value = [];
 
-  if (!props.searchKey) {
+  if (!props.searchKey || !props.searchKey.trim()) {
     return;
   }
 
@@ -115,9 +115,9 @@ function searchMoreContentClick() {
               </template>
             </el-image>
           </div>
-          <div class="text-sm ml-2 shrink-0">{{ item.friendName }}</div>
+          <div class="text-sm ml-2 shrink-0">{{ item.friendShowName }}</div>
           <div class="truncate text-sm text-gray-400">
-            （{{ item.friendId }}）
+            （{{ item.friendShowId }}）
           </div>
         </div>
       </template>
@@ -157,9 +157,9 @@ function searchMoreContentClick() {
               </template>
             </el-image>
           </div>
-          <div class="text-sm ml-2 shrink-0">{{ item.groupName }}</div>
+          <div class="text-sm ml-2 shrink-0">{{ item.groupShowName }}</div>
           <div class="truncate text-sm text-gray-400">
-            （{{ item.groupId }}）
+            （{{ item.groupShowId }}）
           </div>
         </div>
       </template>

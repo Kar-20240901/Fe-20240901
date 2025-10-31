@@ -72,8 +72,8 @@ export function baseImApplyGroupPageSelf(
 }
 
 export interface BaseImApplyFriendSearchApplyGroupDTO {
+  groupShowId?: string; // 群组展示的id，格式：int64
   current?: string; // 第几页，格式：int64
-  groupId?: string; // 群组主键 id，格式：int64
   name?: string; // 群组名称
   pageSize?: string; // 每页显示条数，格式：int64
   order?: MyOrderDTO; // 排序字段

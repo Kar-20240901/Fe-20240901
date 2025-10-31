@@ -84,9 +84,10 @@ export interface BaseImGroupPageDTO {
 }
 
 export interface BaseImGroupPageVO {
-  groupName?: string; // 显示的名称
+  groupShowId?: string; // 群组显示的 id
+  groupShowName?: string; // 显示的名称
   avatarUrl?: string; // 头像地址
-  groupId?: string; // 群组主键 id，格式：int64
+  groupId?: string; // 群组主键 id
   sessionId?: string; // 会话主键 id，格式：int64
 }
 

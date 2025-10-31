@@ -50,16 +50,18 @@ export interface BaseImSearchBaseDTO {
 }
 
 export interface BaseImSearchBaseGroupVO {
-  groupName?: string; // 显示的名称
+  groupShowId?: string; // 群组显示的 id
+  groupShowName?: string; // 显示的名称
   avatarUrl?: string; // 头像地址
-  groupId?: string; // 群组主键 id，格式：int64
+  groupId?: string; // 群组主键 id
   sessionId?: string; // 会话主键 id，格式：int64
 }
 
 export interface BaseImSearchBaseFriendVO {
-  friendName?: string; // 好友显示名称
-  friendId?: string; // 好友主键 id，格式：int64
   avatarUrl?: string; // 好友头像
+  friendShowId?: string; // 好友显示的 id
+  friendUserId?: string; // 好友用户主键 id
+  friendShowName?: string; // 好友显示名称
   sessionId?: string; // 会话主键 id，格式：int64
 }
 

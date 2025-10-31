@@ -38,6 +38,7 @@ function doSearch(form?: ScrollListDTO) {
 
   baseImSessionContentRefUserScroll({
     refId: form?.refId || props.session.sessionId,
+    backwardFlag: form?.backwardFlag || false,
     id: form?.id
   })
     .then(res => {

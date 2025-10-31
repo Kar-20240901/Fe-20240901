@@ -29,9 +29,10 @@ export interface BaseImFriendPageDTO {
 }
 
 export interface BaseImFriendPageVO {
-  friendName?: string; // 好友显示名称
-  friendId?: string; // 好友主键 id，格式：int64
   avatarUrl?: string; // 好友头像
+  friendShowId?: string; // 好友显示的 id
+  friendUserId?: string; // 好友用户主键 id
+  friendShowName?: string; // 好友显示名称
   sessionId?: string; // 会话主键 id，格式：int64
 }
 

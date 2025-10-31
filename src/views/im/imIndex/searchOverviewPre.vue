@@ -20,7 +20,7 @@ import {
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import FaSearch from "~icons/fa/search";
 import SearchOverviewMore from "@/views/im/imIndex/searchOverviewMore.vue";
-import SearchOverviewMoreContentInfo from "@/views/im/imIndex/searchOverviewContentInfo.vue";
+import SearchOverviewContentInfo from "@/views/im/imIndex/searchOverviewContentInfo.vue";
 import EpBack from "~icons/ep/back";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
@@ -39,7 +39,7 @@ function onSearchKeyKeydown() {
 function onSearchKeyChange(val: string) {
   searchKey.value = val;
 
-  if (val) {
+  if (val.trim()) {
     onSearchKeyChangeDebounce();
   } else {
     resetSearchOverview();
@@ -52,6 +52,10 @@ const onSearchKeyChangeDebounce: () => void = debounce(
 
 function onSearchKeyChangeDebounceFun() {
   searchOverviewRef.value?.doBaseImSearchBase();
+
+  if (getShowContentInfoFlag.value) {
+    searchOverviewMoreContentInfoRef.value?.doSearch();
+  }
 }
 
 function resetSearchOverview() {
@@ -142,6 +146,7 @@ function searchContentClick(
   contentInfoMoreClickFlag.value = contentInfoMoreClickFlagTemp;
 
   nextTick(() => {
+    setSearchInputFocus();
     searchOverviewMoreContentInfoRef.value?.doSearch();
   });
 }
@@ -160,6 +165,9 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
 
 function searchOverviewPreBackClick() {
   emit("searchOverviewPreBackClick");
+  searchKey.value = "";
+  resetShowFlag();
+  resetSearchOverview();
 }
 
 const searchInputRef = ref();
@@ -176,6 +184,9 @@ function searchMoreFriendClick() {
   showSearchOverviewMoreContentFlag.value = false;
   showSearchOverviewContentInfoFlag.value = false;
   contentInfoMoreClickFlag.value = false;
+  nextTick(() => {
+    setSearchInputFocus();
+  });
 }
 
 function searchMoreGroupClick() {
@@ -184,6 +195,9 @@ function searchMoreGroupClick() {
   showSearchOverviewMoreContentFlag.value = false;
   showSearchOverviewContentInfoFlag.value = false;
   contentInfoMoreClickFlag.value = false;
+  nextTick(() => {
+    setSearchInputFocus();
+  });
 }
 
 function searchMoreContentClick() {
@@ -192,6 +206,9 @@ function searchMoreContentClick() {
   showSearchOverviewMoreContentFlag.value = true;
   showSearchOverviewContentInfoFlag.value = false;
   contentInfoMoreClickFlag.value = false;
+  nextTick(() => {
+    setSearchInputFocus();
+  });
 }
 
 const getShowSearchOverviewMoreFlag = computed(() => {
@@ -201,6 +218,14 @@ const getShowSearchOverviewMoreFlag = computed(() => {
     showSearchOverviewMoreContentFlag.value
   );
 });
+
+function resetShowFlag() {
+  showSearchOverviewMoreFriendFlag.value = false;
+  showSearchOverviewMoreGroupFlag.value = false;
+  showSearchOverviewMoreContentFlag.value = false;
+  showSearchOverviewContentInfoFlag.value = false;
+  contentInfoMoreClickFlag.value = false;
+}
 
 function backClick() {
   if (getShowSearchOverviewMoreFlag.value) {
@@ -217,14 +242,20 @@ function backClick() {
       showSearchOverviewContentInfoFlag.value = false;
       contentInfoMoreClickFlag.value = false;
     } else {
-      showSearchOverviewMoreFriendFlag.value = false;
-      showSearchOverviewMoreGroupFlag.value = false;
-      showSearchOverviewMoreContentFlag.value = false;
-      showSearchOverviewContentInfoFlag.value = false;
-      contentInfoMoreClickFlag.value = false;
+      resetShowFlag();
     }
   }
+  nextTick(() => {
+    setSearchInputFocus();
+  });
 }
+
+const getShowContentInfoFlag = computed(() => {
+  return (
+    !getShowSearchOverviewMoreFlag.value &&
+    showSearchOverviewContentInfoFlag.value
+  );
+});
 </script>
 
 <template>
@@ -281,8 +312,8 @@ function backClick() {
       "
     />
 
-    <search-overview-more-content-info
-      v-if="!getShowSearchOverviewMoreFlag && showSearchOverviewContentInfoFlag"
+    <search-overview-content-info
+      v-if="getShowContentInfoFlag"
       ref="searchOverviewMoreContentInfoRef"
       :search-key="searchKey"
       :searchBaseContentVO="props.searchBaseContentVO"
@@ -294,7 +325,7 @@ function backClick() {
       v-show="
         !getShowSearchOverviewMoreFlag &&
         !showSearchOverviewContentInfoFlag &&
-        searchKey
+        searchKey.trim()
       "
       ref="searchOverviewRef"
       :search-key="searchKey"
@@ -312,7 +343,7 @@ function backClick() {
       v-show="
         !getShowSearchOverviewMoreFlag &&
         !showSearchOverviewContentInfoFlag &&
-        !searchKey
+        !searchKey.trim()
       "
     >
       <div class="flex justify-between text-sm mt-4 mb-4">

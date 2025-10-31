@@ -40,7 +40,6 @@ export interface BaseImApplyFriendSearchApplyFriendDTO {
   current?: string; // 第几页，格式：int64
   nickname?: string; // 用户昵称
   pageSize?: string; // 每页显示条数，格式：int64
-  userId?: string; // 用户主键 id，格式：int64
   uuid?: string; // 用户 uuid
   order?: MyOrderDTO; // 排序字段
 }

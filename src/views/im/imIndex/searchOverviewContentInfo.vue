@@ -6,6 +6,7 @@ import {
 } from "@/api/http/base/BaseImSessionContentRefUserController";
 import { IImSearchOverviewMoreContentInfoProps } from "@/views/im/imIndex/types";
 import Avatar from "@/assets/user.png";
+import { processText } from "@/utils/StrUtil";
 
 const searchContentInfoList = ref<BaseImSessionContentRefUserPageVO[]>([]);
 
@@ -52,7 +53,7 @@ defineExpose({
           @click="searchContentInfoClick(item)"
         >
           <el-image
-            :src="props.sessionUserMap[searchBaseContentVO.targetId]?.avatarUrl"
+            :src="props.sessionUserMap[item.createId]?.avatarUrl"
             fit="cover"
             class="w-12 h-12 rounded-full"
           >
@@ -64,12 +65,23 @@ defineExpose({
               />
             </template>
           </el-image>
-          <div class="flex flex-col">
-            <div>
-              {{ props.sessionUserMap[searchBaseContentVO.targetId]?.showName }}
+          <div class="flex flex-col text-sm ml-2">
+            <div class="truncate">
+              {{ props.sessionUserMap[item.createId]?.showName }}
             </div>
-            <div class="flex h-[90px]">
-              <div>{{ item.content }}</div>
+            <div class="flex">
+              <div
+                v-for="(part, index) in processText(
+                  item.content,
+                  props.searchKey
+                )"
+                :key="index"
+                :class="
+                  part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
+                "
+              >
+                {{ part.text }}
+              </div>
             </div>
           </div>
         </div>

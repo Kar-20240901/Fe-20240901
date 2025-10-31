@@ -20,7 +20,7 @@ export interface BaseApiTokenDO {
   id?: string; // null，格式：int64
   userId?: string; // 用户 id，格式：int64
   enableFlag?: boolean; // 是否启用
-  token?: string; // 调用 api时，传递的 token，格式：uuid，在 header头里传递：BE-API-TOKEN
+  token?: string; // 调用 api时，传递的 token，格式：uuid，在 header头或者url里传递：BeApiToken
 }
 
 // 分页排序查询

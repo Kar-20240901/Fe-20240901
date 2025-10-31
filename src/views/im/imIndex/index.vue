@@ -49,7 +49,7 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
     sessionUserMapItem.avatarUrl = item.avatarUrl;
     sessionUserMapItem.showName = item.sessionName;
 
-    sessionUserMap.value[sessionUserMapItem.targetId] = sessionUserMapItem;
+    updateSessionUserMap(sessionUserMapItem);
   } else if (item.targetType === BaseImTypeEnum.GROUP.code) {
     doBaseImGroupRefUserPage(item.targetId);
   }
@@ -70,8 +70,8 @@ function searchFriendClick(item: BaseImSearchBaseFriendVO) {
   sessionClick({
     sessionId: item.sessionId,
     targetType: BaseImTypeEnum.FRIEND.code,
-    targetId: item.friendId,
-    sessionName: item.friendName
+    targetId: item.friendUserId,
+    sessionName: item.friendShowName
   });
 }
 
@@ -80,7 +80,7 @@ function searchGroupClick(item: BaseImSearchBaseGroupVO) {
     sessionId: item.sessionId,
     targetType: BaseImTypeEnum.GROUP.code,
     targetId: item.groupId,
-    sessionName: item.groupName
+    sessionName: item.groupShowName
   });
 }
 
@@ -96,7 +96,13 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
 
   session.value = sessionTemp;
 
-  contentRef.value.doSearch({ id: item.contentId });
+  nextTick(() => {
+    contentRef.value.doSearch({
+      backwardFlag: false,
+      id: item.contentId,
+      refId: session.value.sessionId
+    });
+  });
 }
 
 function doUpdateAvatarAndNickname(idSet?: string[]) {
@@ -112,7 +118,7 @@ function doUpdateAvatarAndNickname(idSet?: string[]) {
       sessionUserMapItem.showName = item.showName;
 
       if (item.targetType === BaseImTypeEnum.FRIEND.code) {
-        sessionUserMap.value[sessionUserMapItem.targetId] = sessionUserMapItem;
+        updateSessionUserMap(sessionUserMapItem);
       } else if (item.targetType === BaseImTypeEnum.GROUP.code) {
       }
     });
@@ -127,7 +133,7 @@ function doBaseImGroupRefUserPage(groupId: string) {
       sessionUserMapItem.avatarUrl = item.avatarUrl;
       sessionUserMapItem.showName = item.nickname;
 
-      sessionUserMap.value[sessionUserMapItem.targetId] = sessionUserMapItem;
+      updateSessionUserMap(sessionUserMapItem);
     });
   });
 }
