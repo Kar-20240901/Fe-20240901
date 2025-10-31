@@ -40,6 +40,7 @@ export interface IImSearchOverviewMoreProps {
   showSearchOverviewMoreFriendFlag?: boolean;
   showSearchOverviewMoreGroupFlag?: boolean;
   showSearchOverviewMoreContentFlag?: boolean;
+  searchKey?: string;
 }
 
 export interface IImSearchOverviewMoreContentInfoProps {

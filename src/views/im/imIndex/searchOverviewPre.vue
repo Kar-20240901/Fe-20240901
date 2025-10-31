@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { debounce } from "@pureadmin/utils";
 import {
   BaseImSearchBaseContentVO,
@@ -55,6 +55,8 @@ function onSearchKeyChangeDebounceFun() {
 
   if (getShowContentInfoFlag.value) {
     searchOverviewMoreContentInfoRef.value?.doSearch();
+  } else if (getShowOverviewMoreFlag.value) {
+    searchOverviewMoreRef.value?.doSearch();
   }
 }
 
@@ -90,10 +92,6 @@ function searchHistoryDeleteClick(id?: string) {
     ToastSuccess(res.msg);
   });
 }
-
-onMounted(() => {
-  searchHistory();
-});
 
 const searchOverviewRef = ref();
 
@@ -176,7 +174,7 @@ function setSearchInputFocus() {
   searchInputRef.value?.focus();
 }
 
-defineExpose({ setSearchInputFocus });
+defineExpose({ setSearchInputFocus, searchHistory });
 
 function searchMoreFriendClick() {
   showSearchOverviewMoreFriendFlag.value = true;
@@ -186,6 +184,7 @@ function searchMoreFriendClick() {
   contentInfoMoreClickFlag.value = false;
   nextTick(() => {
     setSearchInputFocus();
+    searchOverviewMoreRef.value?.doSearch();
   });
 }
 
@@ -197,6 +196,7 @@ function searchMoreGroupClick() {
   contentInfoMoreClickFlag.value = false;
   nextTick(() => {
     setSearchInputFocus();
+    searchOverviewMoreRef.value?.doSearch();
   });
 }
 
@@ -208,6 +208,7 @@ function searchMoreContentClick() {
   contentInfoMoreClickFlag.value = false;
   nextTick(() => {
     setSearchInputFocus();
+    searchOverviewMoreRef.value?.doSearch();
   });
 }
 
@@ -249,6 +250,13 @@ function backClick() {
     setSearchInputFocus();
   });
 }
+
+const getShowOverviewMoreFlag = computed(() => {
+  return (
+    getShowSearchOverviewMoreFlag.value &&
+    !showSearchOverviewContentInfoFlag.value
+  );
+});
 
 const getShowContentInfoFlag = computed(() => {
   return (
@@ -299,7 +307,7 @@ const getShowContentInfoFlag = computed(() => {
     </div>
 
     <search-overview-more
-      v-if="getShowSearchOverviewMoreFlag && !showSearchOverviewContentInfoFlag"
+      v-if="getShowOverviewMoreFlag"
       ref="searchOverviewMoreRef"
       :search-key="searchKey"
       :showSearchOverviewMoreFriendFlag="showSearchOverviewMoreFriendFlag"

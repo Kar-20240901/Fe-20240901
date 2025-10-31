@@ -46,7 +46,10 @@ export function baseImSearchHistoryDelete(
 }
 
 export interface BaseImSearchBaseDTO {
+  searchGroupFlag?: boolean; // 是否搜索群组，默认：true
+  searchContentFlag?: boolean; // 是否搜索聊天记录，默认：true
   searchKey?: string; // 搜索内容，是否必传：true
+  searchFriendFlag?: boolean; // 是否搜索好友，默认：true
 }
 
 export interface BaseImSearchBaseGroupVO {

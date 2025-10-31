@@ -32,7 +32,7 @@ export function GetMyWebSocket() {
 }
 
 // 备注：开发环境的超时时间设置长一点
-const retryTime = DevFlag() ? 10000 : 3000;
+const retryTime = DevFlag() ? 30000 : 3000;
 
 // 获取：webSocket的连接地址
 async function GetWebSocketUrl(): Promise<string | null> {

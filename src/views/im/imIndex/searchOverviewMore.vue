@@ -2,7 +2,9 @@
 import { ref } from "vue";
 import Avatar from "@/assets/user.png";
 import {
+  baseImSearchBase,
   BaseImSearchBaseContentVO,
+  BaseImSearchBaseDTO,
   BaseImSearchBaseFriendVO,
   BaseImSearchBaseGroupVO
 } from "@/api/http/base/BaseImSearchController";
@@ -36,7 +38,33 @@ function searchGroupClick(item: BaseImSearchBaseGroupVO) {
   emit("searchGroupClick", item);
 }
 
-function doSearch() {}
+function doSearch() {
+  searchFriendList.value = [];
+  searchGroupList.value = [];
+  searchContentList.value = [];
+
+  const reqBody: BaseImSearchBaseDTO = { searchKey: props.searchKey };
+
+  if (props.showSearchOverviewMoreFriendFlag) {
+    reqBody.searchFriendFlag = true;
+    reqBody.searchGroupFlag = false;
+    reqBody.searchContentFlag = false;
+  } else if (props.showSearchOverviewMoreGroupFlag) {
+    reqBody.searchFriendFlag = false;
+    reqBody.searchGroupFlag = true;
+    reqBody.searchContentFlag = false;
+  } else if (props.showSearchOverviewMoreContentFlag) {
+    reqBody.searchFriendFlag = false;
+    reqBody.searchGroupFlag = false;
+    reqBody.searchContentFlag = true;
+  }
+
+  baseImSearchBase(reqBody).then(res => {
+    searchFriendList.value = res.data.friendList || [];
+    searchGroupList.value = res.data.groupList || [];
+    searchContentList.value = res.data.contentList || [];
+  });
+}
 
 defineExpose({
   doSearch

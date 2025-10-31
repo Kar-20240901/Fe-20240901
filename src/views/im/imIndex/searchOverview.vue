@@ -27,9 +27,9 @@ function doBaseImSearchBase() {
   }
 
   baseImSearchBase({ searchKey: props.searchKey }).then(res => {
-    searchFriendList.value = res.data.friendList;
-    searchGroupList.value = res.data.groupList;
-    searchContentList.value = res.data.contentList;
+    searchFriendList.value = res.data.friendList || [];
+    searchGroupList.value = res.data.groupList || [];
+    searchContentList.value = res.data.contentList || [];
   });
 }
 

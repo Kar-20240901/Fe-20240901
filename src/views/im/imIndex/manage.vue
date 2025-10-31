@@ -48,7 +48,8 @@ function searchClick() {
   showSearchOverviewPre.value = true;
 
   nextTick(() => {
-    searchOverviewPreRef.value.setSearchInputFocus();
+    searchOverviewPreRef.value?.searchHistory();
+    searchOverviewPreRef.value?.setSearchInputFocus();
   });
 }
 
