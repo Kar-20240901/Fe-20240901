@@ -102,7 +102,7 @@ function menuSelect(index: string) {
       <template v-for="item in SegmentedOptionArr" :key="item.value">
         <div
           :class="
-            'flex-1 flex justify-center py-4 border-b-2 cursor-pointer text-sm transition-all ' +
+            'flex-1 flex justify-center items-center h-13 border-b-2 cursor-pointer text-sm transition-all ' +
             (menuIndex === item.value
               ? 'text-primary border-primary'
               : 'border-gray-200 text-gray-400 hover:text-gray-800')

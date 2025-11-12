@@ -26,9 +26,7 @@ const defaultConfig: AxiosRequestConfig = {
   // 请求超时时间
   timeout: 30 * 60 * 1000, // 默认 30分钟
   headers: {
-    Accept: "application/json, text/plain, */*",
-    "Content-Type": "application/json",
-    "X-Requested-With": "XMLHttpRequest"
+    "Content-Type": "application/json"
   },
   responseType: "json",
   // 数组格式参数序列化（https://github.com/axios/axios/issues/5142）

@@ -14,6 +14,7 @@ export interface ScrollListDTO {
 }
 
 export interface BaseImSessionContentRefUserPageVO {
+  orderNo?: number; // 排序号（值越大越前面，默认为 0），格式：int32
   createId?: string; // 创建人id，格式：int64
   contentId?: string; // 主键 id，格式：int64
   createTs?: string; // 创建时间的时间戳，UTC+8，格式：int64

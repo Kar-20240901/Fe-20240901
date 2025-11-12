@@ -58,11 +58,13 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
 
   sessionTemp.sessionId = item.sessionId;
   sessionTemp.showName = item.sessionName;
+  sessionTemp.targetType = item.targetType;
 
   session.value = sessionTemp;
 
   nextTick(() => {
-    contentRef.value.doSearch({ refId: sessionTemp.sessionId });
+    contentRef.value?.textareaInputRefFocus();
+    contentRef.value?.doSearch({ refId: sessionTemp.sessionId });
   });
 }
 
@@ -93,11 +95,13 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
 
   sessionTemp.sessionId = searchBaseContentVO.value.sessionId;
   sessionTemp.showName = searchBaseContentVO.value.showName;
+  sessionTemp.targetType = searchBaseContentVO.value.targetType;
 
   session.value = sessionTemp;
 
   nextTick(() => {
-    contentRef.value.doSearch({
+    contentRef.value?.textareaInputRefFocus();
+    contentRef.value?.doSearch({
       backwardFlag: false,
       containsCurrentIdFlag: true,
       id: item.contentId,

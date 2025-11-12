@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { RecycleScroller } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { nextTick, ref } from "vue";
-import { IImContentProps } from "@/views/im/imIndex/types";
+import { nextTick, onMounted, onUnmounted, ref } from "vue";
+import {
+  BaseImSessionContentInsertTxtVO,
+  IImContentProps,
+  ISessionContentBO
+} from "@/views/im/imIndex/types";
 import {
   BaseImSessionContentRefUserPageVO,
   baseImSessionContentRefUserScroll,
   ScrollListDTO
 } from "@/api/http/base/BaseImSessionContentRefUserController";
-import { FormatTsForCurrentDay } from "@/utils/DateUtil";
+import { FormatTsForCurrentDay, GetServerTimestamp } from "@/utils/DateUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { useUserStoreHook } from "@/store/modules/user";
 import Avatar from "@/assets/user.png";
@@ -21,20 +25,139 @@ import FaPaperclip from "~icons/fa/paperclip";
 import FaPictureO from "~icons/fa/picture-o";
 import FaMicrophone from "~icons/fa/microphone";
 import FaPaperPlane from "~icons/fa/paper-plane";
-import { useResizeObserver } from "@pureadmin/utils";
+import { throttle, useResizeObserver } from "@pureadmin/utils";
+import {
+  baseImSessionContentInsertTxt,
+  BaseImSessionContentInsertTxtDTO,
+  baseImSessionContentUpdateTargetInputFlag
+} from "@/api/http/base/BaseImSessionContentController";
+import { BaseImSessionContentTypeEnum } from "@/model/enum/im/BaseImSessionContentTypeEnum";
+import type { IEnum } from "@/model/enum/base/CommonEnum";
+import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
+import { useWebSocketStoreHook } from "@/store/modules/webSocket";
+import {
+  BASE_IM_SESSION_CONTENT_SEND,
+  BASE_IM_SESSION_CONTENT_UPDATE_TARGET_INPUT_FLAG
+} from "@/model/constant/websocket/WebSocketReceivePath";
+import { storageLocal } from "@/store/utils";
+import CommonConstant from "@/model/constant/CommonConstant";
 
 const props = defineProps<IImContentProps>();
 
 const sessionContentLoading = ref<boolean>(false);
 
-const sessionContentList = ref<BaseImSessionContentRefUserPageVO[]>([]);
+const sessionContentShowList = ref<ISessionContentBO[]>([]);
+
+const sessionContentCalcList = ref<ISessionContentBO[]>([]);
+
+function getObjId(item?: BaseImSessionContentRefUserPageVO) {
+  return `${item.createId}-${item.createTs}-${item.orderNo}`;
+}
+
+const objIdSet: Set<string> = new Set();
+
+// key：objId
+const todoSendMap: Map<string, ISessionContentBO> = new Map();
+
+function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
+  if (!sessionContentListTemp || !sessionContentListTemp.length) {
+    return;
+  }
+
+  let addFlag = false;
+
+  sessionContentListTemp.forEach(item => {
+    if (item.contentId) {
+      setTodoSendMap(item, true); // 如果已经在后台处理过了，则在 map里面移除
+    }
+
+    let objId = item.objId;
+
+    if (!objId) {
+      objId = getObjId(item);
+      item.objId = objId;
+    }
+
+    if (objIdSet.has(objId)) {
+      return;
+    }
+
+    objIdSet.add(objId);
+    sessionContentCalcList.value.push(item);
+
+    addFlag = true;
+  });
+
+  if (!addFlag) {
+    return;
+  }
+
+  // 排序
+  sessionContentCalcList.value.sort((a, b) => {
+    const createTsOne = Number(a.createTs);
+
+    const createTsTwo = Number(b.createTs);
+
+    if (createTsOne === createTsTwo) {
+      if (a.orderNo === b.orderNo) {
+        if (a.contentId && b.contentId) {
+          return Number(a.contentId) > Number(b.contentId) ? 1 : -1;
+        } else {
+          return Number(a.createId) > Number(b.createId) ? 1 : -1;
+        }
+      } else {
+        return a.orderNo > b.orderNo ? 1 : -1;
+      }
+    } else {
+      return createTsOne > createTsTwo ? 1 : -1;
+    }
+  });
+
+  sessionContentShowList.value = [...sessionContentCalcList.value];
+}
+
+const IM_SESSION_CONTENT_TODO_SEND_MAP_KEY = "ImSessionContentTodoSendMap:";
+
+function setTodoSendMap(item: ISessionContentBO, removeFlag: boolean) {
+  const objId = getObjId(item);
+
+  if (removeFlag) {
+    if (!todoSendMap.has(objId)) {
+      return;
+    }
+
+    todoSendMap.delete(objId);
+  } else {
+    if (todoSendMap.has(objId)) {
+      return;
+    }
+
+    todoSendMap.set(objId, item);
+  }
+
+  storageLocal().setItem<Map<string, ISessionContentBO>>(
+    IM_SESSION_CONTENT_TODO_SEND_MAP_KEY + props.session.sessionId,
+    todoSendMap
+  );
+}
 
 const sessionContentRecycleScrollerRef = ref();
 
-function doSearch(form?: ScrollListDTO) {
+function textareaInputRefFocus() {
   textareaInputRef.value?.focus();
+}
 
-  sessionContentLoading.value = true;
+const doSearchThrottle = throttle(
+  (form?: ScrollListDTO, loadingFlag?: boolean) => {
+    doSearch(form, loadingFlag);
+  },
+  1000
+) as (form?: ScrollListDTO, loadingFlag?: boolean) => void;
+
+function doSearch(form?: ScrollListDTO, loadingFlag?: boolean) {
+  if (loadingFlag) {
+    sessionContentLoading.value = true;
+  }
 
   baseImSessionContentRefUserScroll({
     refId: form?.refId || props.session.sessionId,
@@ -43,20 +166,40 @@ function doSearch(form?: ScrollListDTO) {
     id: form?.id
   })
     .then(res => {
-      sessionContentList.value = res.data;
+      setSessionContentList(res.data);
 
-      if (form?.id) {
-        nextTick(() => {
-          sessionContentRecycleScrollerRef.value.scrollToItem(form.id);
-        });
-      }
+      hasMore.value = res.data.length === 20;
+
+      nextTick(() => {
+        if (form?.id) {
+          sessionContentRecycleScrollerRef.value?.scrollToItem(form.id);
+        } else {
+          if (shouldAutoScroll.value) {
+            scrollToBottom();
+          }
+        }
+      });
     })
     .finally(() => {
-      sessionContentLoading.value = false;
+      if (loadingFlag) {
+        sessionContentLoading.value = false;
+      }
     });
 }
 
-defineExpose({ doSearch });
+function scrollToBottom() {
+  if (!sessionContentRecycleScrollerRef.value) {
+    return;
+  }
+  sessionContentRecycleScrollerRef.value.scrollTop =
+    sessionContentRecycleScrollerRef.value.scrollHeight;
+}
+
+function setShouldAutoScroll(shouldAutoScrollTemp?: boolean) {
+  shouldAutoScroll.value = shouldAutoScrollTemp;
+}
+
+defineExpose({ doSearch, textareaInputRefFocus, setShouldAutoScroll });
 
 const selfUserId = ref(useUserStoreHook().id || "");
 
@@ -77,20 +220,256 @@ useResizeObserver(scrollbarParentDiv, () => {
 const textarea = ref<string>("");
 
 const textareaInputRef = ref();
+
+const targetInputFlag = ref<boolean>(false);
+
+function textareaInput(value: string) {
+  textarea.value = value;
+
+  if (props.session.targetType === BaseImTypeEnum.FRIEND.code) {
+    updateTargetInputFlagThrottle();
+  }
+}
+
+const updateTargetInputFlagThrottle = throttle(() => {
+  updateTargetInputFlag();
+}, 1000);
+
+function updateTargetInputFlag() {
+  if (props.session.targetType !== BaseImTypeEnum.FRIEND.code) {
+    return;
+  }
+
+  baseImSessionContentUpdateTargetInputFlag(
+    {
+      sessionId: props.session.sessionId
+    },
+    {
+      headers: {
+        hiddenErrorMsg: true
+      } as any
+    }
+  );
+}
+
+let timer: number | null = null;
+
+onMounted(() => {
+  timer = window.setInterval(() => {
+    doSendTodoSendMap();
+  }, 3000);
+});
+
+onUnmounted(() => {
+  if (timer) {
+    window.clearInterval(timer);
+  }
+});
+
+function doSendTodoSendMap() {
+  const todoSendMapTemp = storageLocal().getItem<
+    Map<string, ISessionContentBO>
+  >(IM_SESSION_CONTENT_TODO_SEND_MAP_KEY + props.session.sessionId);
+
+  if (!todoSendMapTemp) {
+    return;
+  }
+
+  const checkTimestamp =
+    GetServerTimestamp() - CommonConstant.SECOND_10_EXPIRE_TIME;
+
+  Object.keys(todoSendMapTemp).forEach(key => {
+    const item: ISessionContentBO = todoSendMapTemp[key];
+
+    if (Number(item.createTs) > checkTimestamp) {
+      return;
+    }
+
+    const form: BaseImSessionContentInsertTxtDTO = {
+      sessionId: item.sessionId,
+      txt: item.content,
+      createTs: item.createTs,
+      orderNo: item.orderNo,
+      type: item.type
+    };
+
+    doSendToServer(form);
+  });
+}
+
+function sendClick() {
+  const txt = textarea.value;
+
+  if (!txt) {
+    return;
+  }
+
+  doSendClick(txt, undefined, undefined, true);
+}
+
+function doSendClick(
+  txt: string,
+  refId?: string,
+  type?: IEnum<number>,
+  clearTxtFlag?: boolean
+) {
+  if (!props.session.sessionId) {
+    return;
+  }
+
+  if (clearTxtFlag) {
+    textarea.value = "";
+  }
+
+  if (!refId) {
+    refId = "-1";
+  }
+
+  if (!type) {
+    type = BaseImSessionContentTypeEnum.TEXT;
+  }
+
+  const sessionId = props.session.sessionId;
+
+  const createTs = String(GetServerTimestamp());
+
+  const orderNo = 0;
+
+  const objId = getObjId({ createId: selfUserId.value, createTs, orderNo });
+
+  const item: ISessionContentBO = {
+    createId: selfUserId.value,
+    createTs,
+    orderNo,
+    refId,
+    sessionId,
+    content: txt,
+    type: type.code,
+    objId
+  };
+
+  setTodoSendMap(item, false);
+
+  setSessionContentList([item]);
+
+  const form: BaseImSessionContentInsertTxtDTO = {
+    sessionId,
+    txt,
+    createTs,
+    orderNo,
+    type: type.code
+  };
+
+  doSendToServer(form);
+}
+
+function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
+  baseImSessionContentInsertTxt(form, {
+    headers: {
+      hiddenErrorMsg: true
+    } as any
+  })
+    .then(() => {
+      doSearchThrottle({
+        id: sessionContentShowList.value[
+          sessionContentShowList.value.length - 1
+        ]?.contentId,
+        backwardFlag: true
+      });
+    })
+    .catch(() => {
+      // 设置：发送失败
+    });
+}
+
+let setTargetInputFlagFalseTimeout: number | null = null;
+
+useWebSocketStoreHook().$subscribe((mutation, state) => {
+  if (
+    state.webSocketMessage.uri ===
+    BASE_IM_SESSION_CONTENT_UPDATE_TARGET_INPUT_FLAG
+  ) {
+    const sessionId = state.webSocketMessage.data as string;
+
+    if (props.session.sessionId === sessionId) {
+      targetInputFlag.value = true;
+
+      if (setTargetInputFlagFalseTimeout) {
+        clearTimeout(setTargetInputFlagFalseTimeout);
+      }
+      setTargetInputFlagFalseTimeout = window.setTimeout(() => {
+        targetInputFlag.value = false;
+      }, 3000);
+    }
+  } else if (state.webSocketMessage.uri === BASE_IM_SESSION_CONTENT_SEND) {
+    const baseImSessionContentInsertTxtVO = state.webSocketMessage
+      .data as BaseImSessionContentInsertTxtVO;
+
+    if (baseImSessionContentInsertTxtVO.sessionId === props.session.sessionId) {
+      const objId = getObjId({
+        createId: baseImSessionContentInsertTxtVO.createId,
+        createTs: baseImSessionContentInsertTxtVO.createTs,
+        orderNo: baseImSessionContentInsertTxtVO.orderNo
+      });
+
+      const item: ISessionContentBO = {
+        createId: selfUserId.value,
+        createTs: baseImSessionContentInsertTxtVO.createTs,
+        orderNo: baseImSessionContentInsertTxtVO.orderNo,
+        refId: baseImSessionContentInsertTxtVO.refId,
+        sessionId: baseImSessionContentInsertTxtVO.sessionId,
+        content: baseImSessionContentInsertTxtVO.txt,
+        type: baseImSessionContentInsertTxtVO.type,
+        objId
+      };
+
+      setSessionContentList([item]);
+
+      doSearchThrottle({
+        id: sessionContentShowList.value[
+          sessionContentShowList.value.length - 1
+        ]?.contentId,
+        backwardFlag: true
+      });
+    }
+  }
+});
+
+const hasMore = ref<boolean>(true);
+
+const shouldAutoScroll = ref<boolean>(true);
+
+function handleScroll(event: Event) {
+  const scrollerEl = event.target as HTMLElement;
+
+  if (!scrollerEl) return;
+
+  const { scrollTop, scrollHeight, clientHeight } = scrollerEl;
+
+  const bottomThreshold = 20;
+  const distanceToBottom = scrollHeight - clientHeight - scrollTop;
+  shouldAutoScroll.value = distanceToBottom <= bottomThreshold;
+
+  if (scrollTop < 50 && !sessionContentLoading.value && hasMore.value) {
+    doSearchThrottle({ id: sessionContentShowList.value[0]?.contentId });
+  }
+}
 </script>
 
 <template>
   <div class="bg-gray-50 w-full h-full">
     <div v-show="props.session.showName" class="flex flex-col w-full h-full">
       <div
-        class="flex items-center justify-between bg-white w-full pl-4 py-4 border-b border-gray-200"
+        class="flex items-center justify-between bg-white w-full pl-4 h-13 border-b border-gray-200"
       >
         <div class="flex items-center">
           <div>
             <div class="text-sm">
               {{ props.session.showName }}
             </div>
-            <!--          <div class="text-xs text-gray-400">正在输入...</div>-->
+            <div v-show="targetInputFlag" class="text-xs text-gray-400 h-4">
+              正在输入...
+            </div>
           </div>
         </div>
 
@@ -110,6 +489,7 @@ const textareaInputRef = ref();
                   'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
               })
             "
+            v-if="false"
           />
           <component
             :is="
@@ -118,6 +498,7 @@ const textareaInputRef = ref();
                   'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
               })
             "
+            v-if="false"
           />
           <component
             :is="
@@ -137,31 +518,32 @@ const textareaInputRef = ref();
           :height="'calc(' + scrollbarHeight + 'px - var(--spacing) * 12)'"
         >
           <RecycleScroller
-            v-if="sessionContentList.length"
+            v-if="sessionContentShowList.length"
             ref="sessionContentRecycleScrollerRef"
-            :items="sessionContentList"
+            :items="sessionContentShowList"
             :min-item-size="90"
-            key-field="contentId"
+            key-field="objId"
+            @scroll="handleScroll"
           >
             <template #default="{ item }">
               <div class="w-full pl-4 py-4">
                 <div
                   v-if="item.createId === selfUserId"
-                  class="w-full flex items-end justify-end pr-10 space-x-2 animate-fadeIn"
+                  class="w-full flex items-end justify-end pr-9 space-x-2 animate-fadeIn"
                 >
                   <div class="text-xs text-gray-400 self-end">
                     {{ FormatTsForCurrentDay(item.createTs) }}
                   </div>
                   <div
-                    class="bg-primary text-white p-3 message-bubble-right shadow-sm"
+                    class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
                   >
-                    <p class="text-sm">{{ item.content }}</p>
+                    <div class="text-sm">{{ item.content }}</div>
                   </div>
                 </div>
 
                 <div
                   v-else
-                  class="w-full flex items-end space-x-2 animate-fadeIn"
+                  class="w-full min-h-11 flex items-end space-x-2 animate-fadeIn"
                 >
                   <el-image
                     :src="props.sessionUserMap[item.createId]?.avatarUrl"
@@ -176,8 +558,10 @@ const textareaInputRef = ref();
                       />
                     </template>
                   </el-image>
-                  <div class="bg-white p-3 message-bubble-left shadow-sm">
-                    <p class="text-sm">{{ item.content }}</p>
+                  <div
+                    class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
+                  >
+                    <div class="text-sm">{{ item.content }}</div>
                   </div>
                   <div class="text-xs text-gray-400 self-end">
                     {{ FormatTsForCurrentDay(item.createTs) }}
@@ -188,7 +572,7 @@ const textareaInputRef = ref();
           </RecycleScroller>
 
           <div
-            v-if="!sessionContentList.length && !sessionContentLoading"
+            v-if="!sessionContentShowList.length && !sessionContentLoading"
             class="text-[15px] flex w-full h-full justify-center items-center text-gray-400"
           >
             暂无消息。
@@ -198,7 +582,7 @@ const textareaInputRef = ref();
 
       <div class="bg-white p-4 border-t border-gray-200 flex flex-col">
         <div class="flex items-center mb-4">
-          <div class="p-2">
+          <div v-if="false" class="p-2">
             <component
               :is="
                 useRenderIcon(FaSmileO, {
@@ -228,7 +612,7 @@ const textareaInputRef = ref();
               "
             />
           </div>
-          <div class="p-2">
+          <div v-if="false" class="p-2">
             <component
               :is="
                 useRenderIcon(FaMicrophone, {
@@ -250,9 +634,11 @@ const textareaInputRef = ref();
             :maxlength="1000"
             resize="none"
             input-style="padding-top: 0.75rem;padding-bottom: 0.75rem;padding-left: 1rem;padding-right: 1rem;border-radius: 9999px;"
+            @input="textareaInput"
           />
           <div
             class="ml-3 mr-5 bg-primary rounded-full w-12 h-12 flex items-center justify-center hover:bg-primary/90 transition-colors transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
+            @click="sendClick()"
           >
             <component
               :is="

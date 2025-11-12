@@ -117,6 +117,7 @@ export interface ScrollListDTO {
 
 export interface BaseImSessionRefUserPageVO {
   lastContentType?: number; // 最新消息类型，格式：int32
+  notDisturbFlag?: boolean; // 是否是免打扰：true 是 false 否
   lastContentCreateTime?: string; // 最新消息创建时间
   targetId?: string; // 目标 id，可以查询到好友用户主键 id，或者群组主键 id，一定有值，格式：int64
   avatarUrl?: string; // 冗余字段：头像 url，一定有值

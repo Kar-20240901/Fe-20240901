@@ -1,4 +1,16 @@
 import type { BaseImSearchBaseContentVO } from "@/api/http/base/BaseImSearchController";
+import type { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
+import type { BaseImSessionContentInsertTxtDTO } from "@/api/http/base/BaseImSessionContentController";
+
+export interface BaseImSessionContentInsertTxtVO
+  extends BaseImSessionContentInsertTxtDTO {
+  createId?: string; // 创建者用户主键 id，格式：int64
+  notDisturbFlagUserIdSet?: string[]; // 开启了免打扰的用户主键 id集合，格式：int64
+}
+
+export interface ISessionContentBO extends BaseImSessionContentRefUserPageVO {
+  objId?: string; // 唯一标识：userId-createTs-orderNo，通过横杠连接
+}
 
 export interface IImShowInfoMap {
   targetId?: string; // 用户主键 id或者 群组主键 id
@@ -15,6 +27,7 @@ export interface IImSession {
 export interface IImContentSession {
   sessionId?: string;
   showName?: string;
+  targetType?: number;
 }
 
 export interface IImContentProps {
