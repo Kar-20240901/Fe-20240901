@@ -25,6 +25,7 @@ import FaPaperclip from "~icons/fa/paperclip";
 import FaPictureO from "~icons/fa/picture-o";
 import FaMicrophone from "~icons/fa/microphone";
 import FaPaperPlane from "~icons/fa/paper-plane";
+import EpWarning from "~icons/ep/Warning";
 import { throttle, useResizeObserver } from "@pureadmin/utils";
 import {
   baseImSessionContentInsertTxt,
@@ -57,7 +58,7 @@ function getObjId(item?: BaseImSessionContentRefUserPageVO) {
 const objIdSet: Set<string> = new Set();
 
 // key：objId
-const todoSendMap: Map<string, ISessionContentBO> = new Map();
+const todoSendMap = ref<Map<string, ISessionContentBO>>(new Map());
 
 function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
   if (!sessionContentListTemp || !sessionContentListTemp.length) {
@@ -67,15 +68,15 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
   let addFlag = false;
 
   sessionContentListTemp.forEach(item => {
-    if (item.contentId) {
-      setTodoSendMap(item, true); // 如果已经在后台处理过了，则在 map里面移除
-    }
-
     let objId = item.objId;
 
     if (!objId) {
       objId = getObjId(item);
       item.objId = objId;
+    }
+
+    if (item.contentId) {
+      setTodoSendMap(item, true); // 如果已经在后台处理过了，则在 map里面移除
     }
 
     if (objIdSet.has(objId)) {
@@ -118,26 +119,38 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
 
 const IM_SESSION_CONTENT_TODO_SEND_MAP_KEY = "ImSessionContentTodoSendMap:";
 
+function showTodoSendMap() {
+  const todoSendMapTemp = storageLocal().getItem<
+    Map<string, ISessionContentBO>
+  >(IM_SESSION_CONTENT_TODO_SEND_MAP_KEY + props.session.sessionId);
+
+  if (!todoSendMapTemp || !todoSendMapTemp.size) {
+    return;
+  }
+
+  setSessionContentList([...todoSendMapTemp.values()]);
+}
+
 function setTodoSendMap(item: ISessionContentBO, removeFlag: boolean) {
-  const objId = getObjId(item);
+  const objId = item.objId;
 
   if (removeFlag) {
-    if (!todoSendMap.has(objId)) {
+    if (!todoSendMap.value.has(objId)) {
       return;
     }
 
-    todoSendMap.delete(objId);
+    todoSendMap.value.delete(objId);
   } else {
-    if (todoSendMap.has(objId)) {
+    if (todoSendMap.value.has(objId)) {
       return;
     }
 
-    todoSendMap.set(objId, item);
+    todoSendMap.value.set(objId, item);
   }
 
   storageLocal().setItem<Map<string, ISessionContentBO>>(
     IM_SESSION_CONTENT_TODO_SEND_MAP_KEY + props.session.sessionId,
-    todoSendMap
+    todoSendMap.value
   );
 }
 
@@ -148,13 +161,21 @@ function textareaInputRefFocus() {
 }
 
 const doSearchThrottle = throttle(
-  (form?: ScrollListDTO, loadingFlag?: boolean) => {
-    doSearch(form, loadingFlag);
+  (form?: ScrollListDTO, loadingFlag?: boolean, scrollToItemFlag?: boolean) => {
+    doSearch(form, loadingFlag, scrollToItemFlag);
   },
   1000
-) as (form?: ScrollListDTO, loadingFlag?: boolean) => void;
+) as (
+  form?: ScrollListDTO,
+  loadingFlag?: boolean,
+  scrollToItemFlag?: boolean
+) => void;
 
-function doSearch(form?: ScrollListDTO, loadingFlag?: boolean) {
+function doSearch(
+  form?: ScrollListDTO,
+  loadingFlag?: boolean,
+  scrollToItemFlag?: boolean
+) {
   if (loadingFlag) {
     sessionContentLoading.value = true;
   }
@@ -171,7 +192,7 @@ function doSearch(form?: ScrollListDTO, loadingFlag?: boolean) {
       hasMore.value = res.data.length === 20;
 
       nextTick(() => {
-        if (form?.id) {
+        if (form?.id && scrollToItemFlag) {
           sessionContentRecycleScrollerRef.value?.scrollToItem(form.id);
         } else {
           if (shouldAutoScroll.value) {
@@ -255,6 +276,10 @@ function updateTargetInputFlag() {
 let timer: number | null = null;
 
 onMounted(() => {
+  showTodoSendMap();
+
+  doSendTodoSendMap();
+
   timer = window.setInterval(() => {
     doSendTodoSendMap();
   }, 3000);
@@ -266,21 +291,36 @@ onUnmounted(() => {
   }
 });
 
+function showSendFailFlag(item: ISessionContentBO) {
+  const value = todoSendMap.value.get(item.objId);
+
+  if (!value) {
+    return false;
+  }
+
+  const checkTimestamp =
+    GetServerTimestamp() - CommonConstant.SECOND_10_EXPIRE_TIME;
+
+  if (Number(item.createTs) > checkTimestamp) {
+    return false;
+  }
+
+  return true;
+}
+
 function doSendTodoSendMap() {
   const todoSendMapTemp = storageLocal().getItem<
     Map<string, ISessionContentBO>
   >(IM_SESSION_CONTENT_TODO_SEND_MAP_KEY + props.session.sessionId);
 
-  if (!todoSendMapTemp) {
+  if (!todoSendMapTemp || !todoSendMapTemp.size) {
     return;
   }
 
   const checkTimestamp =
     GetServerTimestamp() - CommonConstant.SECOND_10_EXPIRE_TIME;
 
-  Object.keys(todoSendMapTemp).forEach(key => {
-    const item: ISessionContentBO = todoSendMapTemp[key];
-
+  todoSendMapTemp.values().forEach(item => {
     if (Number(item.createTs) > checkTimestamp) {
       return;
     }
@@ -363,23 +403,43 @@ function doSendClick(
   doSendToServer(form);
 }
 
+function resendToServerClick(item: ISessionContentBO) {
+  const form: BaseImSessionContentInsertTxtDTO = {
+    sessionId: props.session.sessionId,
+    txt: item.content,
+    createTs: item.createTs,
+    orderNo: item.orderNo,
+    type: item.type
+  };
+
+  doSendToServer(form);
+}
+
 function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
   baseImSessionContentInsertTxt(form, {
     headers: {
       hiddenErrorMsg: true
     } as any
-  })
-    .then(() => {
-      doSearchThrottle({
+  }).then(() => {
+    const objId = getObjId({
+      createId: selfUserId.value,
+      createTs: form.createTs,
+      orderNo: form.orderNo
+    });
+
+    setTodoSendMap({ objId: objId }, true);
+
+    doSearchThrottle(
+      {
         id: sessionContentShowList.value[
           sessionContentShowList.value.length - 1
         ]?.contentId,
         backwardFlag: true
-      });
-    })
-    .catch(() => {
-      // 设置：发送失败
-    });
+      },
+      false,
+      false
+    );
+  });
 }
 
 let setTargetInputFlagFalseTimeout: number | null = null;
@@ -425,12 +485,16 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
 
       setSessionContentList([item]);
 
-      doSearchThrottle({
-        id: sessionContentShowList.value[
-          sessionContentShowList.value.length - 1
-        ]?.contentId,
-        backwardFlag: true
-      });
+      doSearchThrottle(
+        {
+          id: sessionContentShowList.value[
+            sessionContentShowList.value.length - 1
+          ]?.contentId,
+          backwardFlag: true
+        },
+        false,
+        false
+      );
     }
   }
 });
@@ -451,7 +515,11 @@ function handleScroll(event: Event) {
   shouldAutoScroll.value = distanceToBottom <= bottomThreshold;
 
   if (scrollTop < 50 && !sessionContentLoading.value && hasMore.value) {
-    doSearchThrottle({ id: sessionContentShowList.value[0]?.contentId });
+    doSearchThrottle(
+      { id: sessionContentShowList.value[0]?.contentId },
+      true,
+      false
+    );
   }
 }
 </script>
@@ -558,6 +626,18 @@ function handleScroll(event: Event) {
                       />
                     </template>
                   </el-image>
+                  <div
+                    v-if="showSendFailFlag(item)"
+                    @click="resendToServerClick(item)"
+                  >
+                    <component
+                      :is="
+                        useRenderIcon(EpWarning, {
+                          class: 'text-red-500 w-[20px] h-[20px] mr-[2px]'
+                        })
+                      "
+                    />
+                  </div>
                   <div
                     class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
                   >
