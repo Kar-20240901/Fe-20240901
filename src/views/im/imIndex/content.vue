@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RecycleScroller } from "vue-virtual-scroller";
+import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import {
@@ -202,7 +202,7 @@ function doSearch(
 
       nextTick(() => {
         if (scrollFlag) {
-          scrollDoSearchSuf(form?.id);
+          scrollSearchSuf(form?.id);
         } else if (form?.id && scrollToItemFlag) {
           scrollToItemByContentId(form.id);
         } else {
@@ -217,8 +217,7 @@ function doSearch(
     });
 }
 
-function scrollDoSearchSuf(contentId?: string) {
-  console.log("滚动条下移", contentId);
+function scrollSearchSuf(contentId?: string) {
   if (!contentId || !sessionContentRecycleScrollerRef.value) {
     return;
   }
@@ -229,12 +228,10 @@ function scrollDoSearchSuf(contentId?: string) {
 
   if (findIndex !== -1 && findIndex >= 1) {
     sessionContentRecycleScrollerRef.value.scrollToItem(findIndex - 2);
-    console.log("滚动条下移成功", findIndex - 2);
   }
 }
 
 function scrollToItemByContentId(contentId?: string) {
-  console.log("滚动到元素", contentId);
   if (!contentId || !sessionContentRecycleScrollerRef.value) {
     return;
   }
@@ -245,12 +242,10 @@ function scrollToItemByContentId(contentId?: string) {
 
   if (findIndex !== -1) {
     sessionContentRecycleScrollerRef.value.scrollToItem(findIndex);
-    console.log("滚动到元素成功", contentId);
   }
 }
 
 function scrollToBottom() {
-  console.log("滚动到底部", sessionContentShowList.value.length - 1);
   if (!sessionContentRecycleScrollerRef.value) {
     return;
   }
@@ -258,7 +253,6 @@ function scrollToBottom() {
   sessionContentRecycleScrollerRef.value.scrollToItem(
     sessionContentShowList.value.length - 1
   );
-  console.log("滚动到底部成功", sessionContentShowList.value.length - 1);
 }
 
 function setShouldAutoScroll(shouldAutoScrollTemp?: boolean) {
@@ -391,6 +385,8 @@ function sendClick() {
   if (!txt) {
     return;
   }
+
+  textareaInputRefFocus();
 
   doSendClick(txt, undefined, undefined, true);
 }
@@ -526,7 +522,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       });
 
       const item: ISessionContentBO = {
-        createId: selfUserId.value,
+        createId: baseImSessionContentInsertTxtVO.createId,
         createTs: baseImSessionContentInsertTxtVO.createTs,
         orderNo: baseImSessionContentInsertTxtVO.orderNo,
         refId: baseImSessionContentInsertTxtVO.refId,
@@ -566,13 +562,7 @@ function handleScroll(event: Event) {
 
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
 
-  const oldVal = shouldAutoScroll;
-
   shouldAutoScroll = distanceToBottom <= 20;
-
-  if (oldVal !== shouldAutoScroll) {
-    console.log("shouldAutoScroll", shouldAutoScroll);
-  }
 
   if (
     scrollTop <= CommonConstant.SCROLL_CHECK_HEIGHT &&
@@ -601,7 +591,6 @@ watch(
   () => props.session.sessionId,
   (newVal, oldVal) => {
     if (newVal !== oldVal) {
-      console.log("重置");
       reset();
     }
   }
@@ -669,71 +658,78 @@ watch(
           view-class="flex flex-col h-full"
           :height="'calc(' + scrollbarHeight + 'px - var(--spacing) * 12)'"
         >
-          <RecycleScroller
+          <DynamicScroller
             v-show="sessionContentShowList.length"
             ref="sessionContentRecycleScrollerRef"
             :items="sessionContentShowList"
-            :min-item-size="90"
+            :min-item-size="84"
             key-field="objId"
             @scroll="handleScroll"
           >
-            <template #default="{ item }">
-              <div class="w-full pl-4 py-4">
-                <div
-                  v-if="item.createId === selfUserId"
-                  class="w-full flex items-end justify-end pr-9 space-x-2 animate-fadeIn"
-                >
-                  <div class="text-xs text-gray-400 self-end">
-                    {{ FormatTsForCurrentDay(item.createTs) }}
-                  </div>
+            <template #default="{ item, index, active }">
+              <DynamicScrollerItem
+                :item="item"
+                :active="active"
+                :data-index="index"
+                :data-active="active"
+              >
+                <div class="w-full pl-4 py-5">
                   <div
-                    class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
+                    v-if="item.createId === selfUserId"
+                    class="w-full flex items-end justify-end pr-9 space-x-2 animate-fadeIn"
                   >
-                    <div class="text-sm">{{ item.content }}</div>
+                    <div class="text-xs text-gray-400 self-end">
+                      {{ FormatTsForCurrentDay(item.createTs) }}
+                    </div>
+                    <div
+                      class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
+                    >
+                      <div class="text-sm">{{ item.content }}</div>
+                    </div>
                   </div>
-                </div>
 
-                <div
-                  v-else
-                  class="w-full min-h-11 flex items-end space-x-2 animate-fadeIn"
-                >
-                  <el-image
-                    :src="props.sessionUserMap[item.createId]?.avatarUrl"
-                    fit="cover"
-                    class="w-8 h-8 rounded-full"
+                  <div
+                    v-else
+                    class="w-full min-h-11 flex items-end space-x-2 animate-fadeIn"
                   >
-                    <template #error>
-                      <el-image
-                        :src="Avatar"
-                        fit="cover"
-                        class="w-8 h-8 rounded-full"
+                    <el-image
+                      :src="props.sessionUserMap[item.createId]?.avatarUrl"
+                      fit="cover"
+                      class="w-8 h-8 rounded-full"
+                    >
+                      <template #error>
+                        <el-image
+                          :src="Avatar"
+                          fit="cover"
+                          class="w-8 h-8 rounded-full"
+                        />
+                      </template>
+                    </el-image>
+                    <div
+                      v-if="showSendFailFlag(item)"
+                      @click="resendToServerClick(item)"
+                    >
+                      <component
+                        :is="
+                          useRenderIcon(EpWarning, {
+                            class: 'text-red-500 w-[20px] h-[20px] mr-[2px]'
+                          })
+                        "
                       />
-                    </template>
-                  </el-image>
-                  <div
-                    v-if="showSendFailFlag(item)"
-                    @click="resendToServerClick(item)"
-                  >
-                    <component
-                      :is="
-                        useRenderIcon(EpWarning, {
-                          class: 'text-red-500 w-[20px] h-[20px] mr-[2px]'
-                        })
-                      "
-                    />
-                  </div>
-                  <div
-                    class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
-                  >
-                    <div class="text-sm">{{ item.content }}</div>
-                  </div>
-                  <div class="text-xs text-gray-400 self-end">
-                    {{ FormatTsForCurrentDay(item.createTs) }}
+                    </div>
+                    <div
+                      class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
+                    >
+                      <div class="text-sm">{{ item.content }}</div>
+                    </div>
+                    <div class="text-xs text-gray-400 self-end">
+                      {{ FormatTsForCurrentDay(item.createTs) }}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </DynamicScrollerItem>
             </template>
-          </RecycleScroller>
+          </DynamicScroller>
 
           <div
             v-if="!sessionContentShowList.length && !sessionContentLoading"
