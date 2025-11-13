@@ -65,7 +65,12 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   nextTick(() => {
     contentRef.value?.textareaInputRefFocus();
     contentRef.value?.setShouldAutoScroll(true);
-    contentRef.value?.doSearch({ refId: sessionTemp.sessionId }, true);
+    contentRef.value?.doSearch(
+      { refId: sessionTemp.sessionId },
+      true,
+      false,
+      false
+    );
   });
 }
 
@@ -102,14 +107,18 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
 
   nextTick(() => {
     contentRef.value?.textareaInputRefFocus();
-    contentRef.value?.setShouldAutoScroll(true);
-    contentRef.value?.doSearch({
-      backwardFlag: false,
-      containsCurrentIdFlag: true,
-      id: item.contentId,
-      refId: session.value.sessionId,
-      scrollToItemFlag: true
-    });
+    contentRef.value?.setShouldAutoScroll(false);
+    contentRef.value?.doSearch(
+      {
+        backwardFlag: false,
+        containsCurrentIdFlag: true,
+        id: item.contentId,
+        refId: session.value.sessionId
+      },
+      true,
+      true,
+      false
+    );
   });
 }
 

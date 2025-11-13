@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RecycleScroller } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { nextTick, onMounted, onUnmounted, ref } from "vue";
+import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import {
   BaseImSessionContentInsertTxtVO,
   IImContentProps,
@@ -49,7 +49,7 @@ const sessionContentLoading = ref<boolean>(false);
 
 const sessionContentShowList = ref<ISessionContentBO[]>([]);
 
-const sessionContentCalcList = ref<ISessionContentBO[]>([]);
+let sessionContentCalcList: ISessionContentBO[] = [];
 
 function getObjId(item?: BaseImSessionContentRefUserPageVO) {
   return `${item.createId}-${item.createTs}-${item.orderNo}`;
@@ -84,7 +84,7 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
     }
 
     objIdSet.add(objId);
-    sessionContentCalcList.value.push(item);
+    sessionContentCalcList.push(item);
 
     addFlag = true;
   });
@@ -94,7 +94,7 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
   }
 
   // 排序
-  sessionContentCalcList.value.sort((a, b) => {
+  sessionContentCalcList.sort((a, b) => {
     const createTsOne = Number(a.createTs);
 
     const createTsTwo = Number(b.createTs);
@@ -114,7 +114,7 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
     }
   });
 
-  sessionContentShowList.value = [...sessionContentCalcList.value];
+  sessionContentShowList.value = [...sessionContentCalcList];
 }
 
 const IM_SESSION_CONTENT_TODO_SEND_MAP_KEY = "ImSessionContentTodoSendMap:";
@@ -161,20 +161,27 @@ function textareaInputRefFocus() {
 }
 
 const doSearchThrottle = throttle(
-  (form?: ScrollListDTO, loadingFlag?: boolean, scrollToItemFlag?: boolean) => {
-    doSearch(form, loadingFlag, scrollToItemFlag);
+  (
+    form?: ScrollListDTO,
+    loadingFlag?: boolean,
+    scrollToItemFlag?: boolean,
+    scrollFlag?: boolean
+  ) => {
+    doSearch(form, loadingFlag, scrollToItemFlag, scrollFlag);
   },
   1000
 ) as (
   form?: ScrollListDTO,
   loadingFlag?: boolean,
-  scrollToItemFlag?: boolean
+  scrollToItemFlag?: boolean,
+  scrollFlag?: boolean
 ) => void;
 
 function doSearch(
   form?: ScrollListDTO,
   loadingFlag?: boolean,
-  scrollToItemFlag?: boolean
+  scrollToItemFlag?: boolean,
+  scrollFlag?: boolean
 ) {
   if (loadingFlag) {
     sessionContentLoading.value = true;
@@ -192,8 +199,10 @@ function doSearch(
       hasMore.value = res.data.length === 20;
 
       nextTick(() => {
-        if (form?.id && scrollToItemFlag) {
-          sessionContentRecycleScrollerRef.value?.scrollToItem(form.id);
+        if (scrollFlag) {
+          scrollDoSearchSuf();
+        } else if (form?.id && scrollToItemFlag) {
+          scrollToItemByContentId(form.id);
         } else {
           if (shouldAutoScroll.value) {
             scrollToBottom();
@@ -202,18 +211,52 @@ function doSearch(
       });
     })
     .finally(() => {
-      if (loadingFlag) {
-        sessionContentLoading.value = false;
-      }
+      sessionContentLoading.value = false;
     });
 }
 
+function scrollDoSearchSuf(contentId?: string) {
+  console.log("滚动条下移", contentId);
+  if (!contentId || !sessionContentRecycleScrollerRef.value) {
+    return;
+  }
+
+  const findIndex = sessionContentCalcList.findIndex(
+    item => item.contentId === contentId
+  );
+
+  if (findIndex !== -1 && findIndex >= 1) {
+    sessionContentRecycleScrollerRef.value.scrollToItem(findIndex - 1);
+    console.log("滚动条下移成功", contentId);
+  }
+}
+
+function scrollToItemByContentId(contentId?: string) {
+  console.log("滚动到元素", contentId);
+  if (!contentId || !sessionContentRecycleScrollerRef.value) {
+    return;
+  }
+
+  const findIndex = sessionContentCalcList.findIndex(
+    item => item.contentId === contentId
+  );
+
+  if (findIndex !== -1) {
+    sessionContentRecycleScrollerRef.value.scrollToItem(findIndex);
+    console.log("滚动到元素成功", contentId);
+  }
+}
+
 function scrollToBottom() {
+  console.log("滚动到底部", sessionContentShowList.value.length - 1);
   if (!sessionContentRecycleScrollerRef.value) {
     return;
   }
-  sessionContentRecycleScrollerRef.value.scrollTop =
-    sessionContentRecycleScrollerRef.value.scrollHeight;
+
+  sessionContentRecycleScrollerRef.value.scrollToItem(
+    sessionContentShowList.value.length - 1
+  );
+  console.log("滚动到底部成功", sessionContentShowList.value.length - 1);
 }
 
 function setShouldAutoScroll(shouldAutoScrollTemp?: boolean) {
@@ -231,12 +274,19 @@ const scrollbarHeight = ref<number>(0);
 const syncHeight = () => {
   if (scrollbarParentDiv.value) {
     scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
+
+    if (scrollbarHeight.value) {
+      scrollbarParentDivResizeObserver.stop();
+    }
   }
 };
 
-useResizeObserver(scrollbarParentDiv, () => {
-  syncHeight();
-});
+const scrollbarParentDivResizeObserver = useResizeObserver(
+  scrollbarParentDiv,
+  () => {
+    syncHeight();
+  }
+);
 
 const textarea = ref<string>("");
 
@@ -400,6 +450,8 @@ function doSendClick(
     type: type.code
   };
 
+  setShouldAutoScroll(true);
+
   doSendToServer(form);
 }
 
@@ -411,6 +463,8 @@ function resendToServerClick(item: ISessionContentBO) {
     orderNo: item.orderNo,
     type: item.type
   };
+
+  setShouldAutoScroll(true);
 
   doSendToServer(form);
 }
@@ -510,18 +564,34 @@ function handleScroll(event: Event) {
 
   const { scrollTop, scrollHeight, clientHeight } = scrollerEl;
 
-  const bottomThreshold = 20;
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
-  shouldAutoScroll.value = distanceToBottom <= bottomThreshold;
+  console.log("distanceToBottom", distanceToBottom);
+  shouldAutoScroll.value = distanceToBottom <= 20;
 
-  if (scrollTop < 50 && !sessionContentLoading.value && hasMore.value) {
+  if (
+    scrollTop <= CommonConstant.SCROLL_CHECK_HEIGHT &&
+    !sessionContentLoading.value &&
+    hasMore.value
+  ) {
     doSearchThrottle(
-      { id: sessionContentShowList.value[0]?.contentId },
+      { id: sessionContentShowList.value[0]?.contentId, backwardFlag: false },
       true,
       false
     );
   }
 }
+
+function reset() {
+  sessionContentCalcList = [];
+  sessionContentShowList.value = [];
+}
+
+watch(
+  () => props.session.sessionId,
+  () => {
+    reset();
+  }
+);
 </script>
 
 <template>
@@ -580,18 +650,18 @@ function handleScroll(event: Event) {
       </div>
 
       <div ref="scrollbarParentDiv" class="flex-1">
-        <el-scrollbar
+        <div
           v-loading="sessionContentLoading"
-          view-class="flex flex-col h-full"
-          :height="'calc(' + scrollbarHeight + 'px - var(--spacing) * 12)'"
+          class="overflow-auto"
+          :style="`height: calc( ${scrollbarHeight}px - var(--spacing) * 12)`"
+          @scroll="handleScroll"
         >
           <RecycleScroller
-            v-if="sessionContentShowList.length"
+            v-show="sessionContentShowList.length"
             ref="sessionContentRecycleScrollerRef"
             :items="sessionContentShowList"
             :min-item-size="90"
             key-field="objId"
-            @scroll="handleScroll"
           >
             <template #default="{ item }">
               <div class="w-full pl-4 py-4">
@@ -657,7 +727,7 @@ function handleScroll(event: Event) {
           >
             暂无消息。
           </div>
-        </el-scrollbar>
+        </div>
       </div>
 
       <div class="bg-white p-4 border-t border-gray-200 flex flex-col">
