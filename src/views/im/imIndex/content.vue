@@ -128,6 +128,8 @@ function showTodoSendMap() {
     return;
   }
 
+  todoSendMap.value = todoSendMapTemp;
+
   setSessionContentList([...todoSendMapTemp.values()]);
 }
 
@@ -196,15 +198,15 @@ function doSearch(
     .then(res => {
       setSessionContentList(res.data);
 
-      hasMore.value = res.data.length === 20;
+      hasMore = res.data.length === 20;
 
       nextTick(() => {
         if (scrollFlag) {
-          scrollDoSearchSuf();
+          scrollDoSearchSuf(form?.id);
         } else if (form?.id && scrollToItemFlag) {
           scrollToItemByContentId(form.id);
         } else {
-          if (shouldAutoScroll.value) {
+          if (shouldAutoScroll) {
             scrollToBottom();
           }
         }
@@ -226,8 +228,8 @@ function scrollDoSearchSuf(contentId?: string) {
   );
 
   if (findIndex !== -1 && findIndex >= 1) {
-    sessionContentRecycleScrollerRef.value.scrollToItem(findIndex - 1);
-    console.log("滚动条下移成功", contentId);
+    sessionContentRecycleScrollerRef.value.scrollToItem(findIndex - 2);
+    console.log("滚动条下移成功", findIndex - 2);
   }
 }
 
@@ -260,7 +262,7 @@ function scrollToBottom() {
 }
 
 function setShouldAutoScroll(shouldAutoScrollTemp?: boolean) {
-  shouldAutoScroll.value = shouldAutoScrollTemp;
+  shouldAutoScroll = shouldAutoScrollTemp;
 }
 
 defineExpose({ doSearch, textareaInputRefFocus, setShouldAutoScroll });
@@ -351,11 +353,7 @@ function showSendFailFlag(item: ISessionContentBO) {
   const checkTimestamp =
     GetServerTimestamp() - CommonConstant.SECOND_10_EXPIRE_TIME;
 
-  if (Number(item.createTs) > checkTimestamp) {
-    return false;
-  }
-
-  return true;
+  return Number(item.createTs) <= checkTimestamp;
 }
 
 function doSendTodoSendMap() {
@@ -491,6 +489,7 @@ function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
         backwardFlag: true
       },
       false,
+      false,
       false
     );
   });
@@ -547,15 +546,16 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
           backwardFlag: true
         },
         false,
+        false,
         false
       );
     }
   }
 });
 
-const hasMore = ref<boolean>(true);
+let hasMore: boolean = true;
 
-const shouldAutoScroll = ref<boolean>(true);
+let shouldAutoScroll: boolean = true;
 
 function handleScroll(event: Event) {
   const scrollerEl = event.target as HTMLElement;
@@ -565,18 +565,25 @@ function handleScroll(event: Event) {
   const { scrollTop, scrollHeight, clientHeight } = scrollerEl;
 
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
-  console.log("distanceToBottom", distanceToBottom);
-  shouldAutoScroll.value = distanceToBottom <= 20;
+
+  const oldVal = shouldAutoScroll;
+
+  shouldAutoScroll = distanceToBottom <= 20;
+
+  if (oldVal !== shouldAutoScroll) {
+    console.log("shouldAutoScroll", shouldAutoScroll);
+  }
 
   if (
     scrollTop <= CommonConstant.SCROLL_CHECK_HEIGHT &&
     !sessionContentLoading.value &&
-    hasMore.value
+    hasMore
   ) {
     doSearchThrottle(
       { id: sessionContentShowList.value[0]?.contentId, backwardFlag: false },
       true,
-      false
+      false,
+      true
     );
   }
 }
@@ -584,12 +591,19 @@ function handleScroll(event: Event) {
 function reset() {
   sessionContentCalcList = [];
   sessionContentShowList.value = [];
+  objIdSet.clear();
+  shouldAutoScroll = true;
+
+  showTodoSendMap();
 }
 
 watch(
   () => props.session.sessionId,
-  () => {
-    reset();
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      console.log("重置");
+      reset();
+    }
   }
 );
 </script>
@@ -650,11 +664,10 @@ watch(
       </div>
 
       <div ref="scrollbarParentDiv" class="flex-1">
-        <div
+        <el-scrollbar
           v-loading="sessionContentLoading"
-          class="overflow-auto"
-          :style="`height: calc( ${scrollbarHeight}px - var(--spacing) * 12)`"
-          @scroll="handleScroll"
+          view-class="flex flex-col h-full"
+          :height="'calc(' + scrollbarHeight + 'px - var(--spacing) * 12)'"
         >
           <RecycleScroller
             v-show="sessionContentShowList.length"
@@ -662,6 +675,7 @@ watch(
             :items="sessionContentShowList"
             :min-item-size="90"
             key-field="objId"
+            @scroll="handleScroll"
           >
             <template #default="{ item }">
               <div class="w-full pl-4 py-4">
@@ -727,7 +741,7 @@ watch(
           >
             暂无消息。
           </div>
-        </div>
+        </el-scrollbar>
       </div>
 
       <div class="bg-white p-4 border-t border-gray-200 flex flex-col">
