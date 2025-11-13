@@ -290,6 +290,15 @@ const textareaInputRef = ref();
 
 const targetInputFlag = ref<boolean>(false);
 
+function handleTextareaInputKeydown(e: KeyboardEvent) {
+  const isEnter = e.key === "Enter" || e.key === "NumpadEnter";
+
+  if (isEnter && !e.shiftKey) {
+    e.preventDefault();
+    sendClick();
+  }
+}
+
 function textareaInput(value: string) {
   textarea.value = value;
 
@@ -667,12 +676,7 @@ watch(
             @scroll="handleScroll"
           >
             <template #default="{ item, index, active }">
-              <DynamicScrollerItem
-                :item="item"
-                :active="active"
-                :data-index="index"
-                :data-active="active"
-              >
+              <DynamicScrollerItem :item="item" :active="active" :index="index">
                 <div class="w-full pl-4 py-5">
                   <div
                     v-if="item.createId === selfUserId"
@@ -795,6 +799,7 @@ watch(
             resize="none"
             input-style="padding-top: 0.75rem;padding-bottom: 0.75rem;padding-left: 1rem;padding-right: 1rem;border-radius: 9999px;"
             @input="textareaInput"
+            @keydown="handleTextareaInputKeydown"
           />
           <div
             class="ml-3 mr-5 bg-primary rounded-full w-12 h-12 flex items-center justify-center hover:bg-primary/90 transition-colors transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
