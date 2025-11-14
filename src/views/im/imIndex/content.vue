@@ -164,6 +164,7 @@ const doSearchThrottle = throttle(
     scrollToItemFlag?: boolean,
     scrollType?: "up" | "down"
   ) => {
+    console.log("参数", { form, loadingFlag, scrollToItemFlag, scrollType });
     doSearch(form, loadingFlag, scrollToItemFlag, scrollType);
   },
   1000
@@ -180,6 +181,8 @@ function doSearch(
   scrollToItemFlag?: boolean,
   scrollType?: "up" | "down"
 ) {
+  console.log("加载数据", { loadingFlag, form });
+
   if (loadingFlag) {
     sessionContentLoading.value = true;
   }
@@ -518,9 +521,33 @@ function doSendClick(
     scrollToBottom();
   });
 
-  setShouldAutoScroll(true);
-
   doSendToServer(form);
+}
+
+function getLastContentId() {
+  let lastContentId = undefined;
+  for (let i = sessionContentShowList.value.length - 1; i >= 0; i--) {
+    const item = sessionContentShowList.value[i];
+    if (item.contentId) {
+      lastContentId = item.contentId;
+      break;
+    }
+  }
+
+  return lastContentId;
+}
+
+function getFirstContentId() {
+  let firstContentId = undefined;
+  for (let i = 0; i < sessionContentShowList.value.length; i++) {
+    const item = sessionContentShowList.value[i];
+    if (item.contentId) {
+      firstContentId = item.contentId;
+      break;
+    }
+  }
+
+  return firstContentId;
 }
 
 function resendToServerClick(item: ISessionContentBO) {
@@ -551,11 +578,14 @@ function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
 
     setTodoSendMap({ objId: objId }, true);
 
+    console.log("查询", {
+      id: getLastContentId(),
+      backwardFlag: true
+    });
+
     doSearchThrottle(
       {
-        id: sessionContentShowList.value[
-          sessionContentShowList.value.length - 1
-        ]?.contentId,
+        id: getLastContentId(),
         backwardFlag: true
       },
       false,
@@ -610,9 +640,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
 
       doSearchThrottle(
         {
-          id: sessionContentShowList.value[
-            sessionContentShowList.value.length - 1
-          ]?.contentId,
+          id: getLastContentId(),
           backwardFlag: true
         },
         false,
@@ -644,20 +672,18 @@ function handleScroll(event: Event) {
     hasLess
   ) {
     doSearchThrottle(
-      { id: sessionContentShowList.value[0]?.contentId, backwardFlag: false },
-      true,
+      { id: getFirstContentId(), backwardFlag: false },
+      false,
       false,
       "up"
     );
   } else if (distanceToBottom <= 20 && !sessionContentLoading.value) {
     doSearchThrottle(
       {
-        id: sessionContentShowList.value[
-          sessionContentShowList.value.length - 1
-        ]?.contentId,
+        id: getLastContentId(),
         backwardFlag: true
       },
-      true,
+      false,
       false,
       "down"
     );

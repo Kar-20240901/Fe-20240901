@@ -5,7 +5,7 @@ import {
   IImSession,
   IImShowInfoMap
 } from "@/views/im/imIndex/types";
-import { nextTick, ref } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 import {
   BaseImSessionRefUserPageVO,
   baseImSessionRefUserUpdateAvatarAndNickname
@@ -20,8 +20,6 @@ import {
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import Manage from "@/views/im/imIndex/manage.vue";
 import Content from "@/views/im/imIndex/content.vue";
-import { useResizeObserver } from "@pureadmin/utils";
-import CommonConstant from "@/model/constant/CommonConstant";
 
 defineOptions({
   name: "ImIndex"
@@ -155,39 +153,30 @@ function doBaseImGroupRefUserPage(groupId: string) {
   });
 }
 
-const splitterSize = ref<string>("22%");
-
 const parentHeight = ref<number>(0);
 
-const parentResizeObserver = useResizeObserver([".grow"], entries => {
-  const entry = entries[0];
-  const [{ inlineSize, blockSize }] = entry.borderBoxSize;
-  if (inlineSize < CommonConstant.PAD_WIDTH) {
-    splitterSize.value = "30%";
-  } else {
-    splitterSize.value = "20%";
-  }
+onMounted(() => {
+  nextTick(() => {
+    const growEle: HTMLElement = document.querySelector(".grow");
 
-  const contentEle: HTMLElement = document.querySelector(".main-content");
+    const contentEle: HTMLElement = document.querySelector(".main-content");
 
-  const contentComputedStyle = window.getComputedStyle(contentEle);
+    const contentComputedStyle = window.getComputedStyle(contentEle);
 
-  const margin = parseFloat(contentComputedStyle.margin) || 0;
+    const contentMargin = parseFloat(contentComputedStyle.margin) || 0;
 
-  const footEle: HTMLElement = document.querySelector(".layout-footer");
+    const footEle: HTMLElement = document.querySelector(".layout-footer");
 
-  parentHeight.value = blockSize - footEle?.offsetHeight - margin;
-
-  if (blockSize) {
-    parentResizeObserver.stop();
-  }
+    parentHeight.value =
+      growEle.offsetHeight - footEle?.offsetHeight - contentMargin;
+  });
 });
 </script>
 
 <template>
   <div class="w-full bg-bg_color" :style="`height: ${parentHeight}px`">
     <el-splitter layout="horizontal">
-      <el-splitter-panel min="10%" :size="splitterSize">
+      <el-splitter-panel min="10%" size="30%">
         <manage
           :searchBaseContentVO="searchBaseContentVO"
           :sessionUserMap="sessionUserMap"
