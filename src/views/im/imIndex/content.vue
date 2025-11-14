@@ -164,10 +164,9 @@ const doSearchThrottle = throttle(
     scrollToItemFlag?: boolean,
     scrollType?: "up" | "down"
   ) => {
-    console.log("参数", { form, loadingFlag, scrollToItemFlag, scrollType });
     doSearch(form, loadingFlag, scrollToItemFlag, scrollType);
   },
-  1000
+  300
 ) as (
   form?: ScrollListDTO,
   loadingFlag?: boolean,
@@ -181,8 +180,6 @@ function doSearch(
   scrollToItemFlag?: boolean,
   scrollType?: "up" | "down"
 ) {
-  console.log("加载数据", { loadingFlag, form });
-
   if (loadingFlag) {
     sessionContentLoading.value = true;
   }
@@ -247,6 +244,10 @@ function scrollSearchSuf(contentId?: string, scrollType?: "up" | "down") {
 
     sessionContentRecycleScrollerRef.value.scrollToItem(index);
   } else if (scrollType === "down") {
+    if (findIndex === sessionContentShowList.value.length - 1) {
+      return;
+    }
+
     let index = findIndex + 2;
 
     if (index > sessionContentShowList.value.length - 1) {
@@ -577,11 +578,6 @@ function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
     });
 
     setTodoSendMap({ objId: objId }, true);
-
-    console.log("查询", {
-      id: getLastContentId(),
-      backwardFlag: true
-    });
 
     doSearchThrottle(
       {
