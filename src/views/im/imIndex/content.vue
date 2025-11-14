@@ -92,11 +92,6 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
     return;
   }
 
-  console.log(
-    "成功添添加消息",
-    sessionContentShowList.value[sessionContentShowList.value.length - 1].objId
-  );
-
   // 排序
   sessionContentShowList.value.sort((a, b) => {
     const createTsOne = Number(a.createTs);
@@ -337,7 +332,7 @@ onMounted(() => {
 
   timer = window.setInterval(() => {
     doSendTodoSendMap();
-  }, 3000);
+  }, 5000);
 });
 
 onUnmounted(() => {
@@ -360,6 +355,10 @@ function showSendFailFlag(item: ISessionContentBO) {
 }
 
 function doSendTodoSendMap() {
+  if (!props.session.sessionId) {
+    return;
+  }
+
   const todoSendObj = storageLocal().getItem<Record<string, ISessionContentBO>>(
     LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ + props.session.sessionId
   );
@@ -451,8 +450,6 @@ function doSendClick(
 
   setTodoSendMap(item, false);
 
-  console.log("发送消息", item.objId);
-
   setSessionContentList([item]);
 
   const form: BaseImSessionContentInsertTxtDTO = {
@@ -462,6 +459,10 @@ function doSendClick(
     orderNo,
     type: type.code
   };
+
+  nextTick(() => {
+    scrollToBottom();
+  });
 
   setShouldAutoScroll(true);
 
@@ -691,6 +692,18 @@ watch(
                     v-if="item.createId === selfUserId"
                     class="w-full flex items-end justify-end pr-9 space-x-2 animate-fadeIn"
                   >
+                    <div
+                      v-if="showSendFailFlag(item)"
+                      @click="resendToServerClick(item)"
+                    >
+                      <component
+                        :is="
+                          useRenderIcon(EpWarning, {
+                            class: 'text-red-500 w-[20px] h-[20px] mr-[2px]'
+                          })
+                        "
+                      />
+                    </div>
                     <div class="text-xs text-gray-400 self-end">
                       {{ FormatTsForCurrentDay(item.createTs) }}
                     </div>
@@ -718,18 +731,6 @@ watch(
                         />
                       </template>
                     </el-image>
-                    <div
-                      v-if="showSendFailFlag(item)"
-                      @click="resendToServerClick(item)"
-                    >
-                      <component
-                        :is="
-                          useRenderIcon(EpWarning, {
-                            class: 'text-red-500 w-[20px] h-[20px] mr-[2px]'
-                          })
-                        "
-                      />
-                    </div>
                     <div
                       class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
                     >
