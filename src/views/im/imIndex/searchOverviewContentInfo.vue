@@ -7,6 +7,7 @@ import {
 import { IImSearchOverviewMoreContentInfoProps } from "@/views/im/imIndex/types";
 import Avatar from "@/assets/user.png";
 import { processText } from "@/utils/StrUtil";
+import { FormatTsForCurrentDay } from "@/utils/DateUtil";
 
 const searchContentInfoList = ref<BaseImSessionContentRefUserPageVO[]>([]);
 
@@ -92,6 +93,9 @@ defineExpose({
               >
                 {{ part.text }}
               </div>
+            </div>
+            <div class="text-xs text-gray-400">
+              {{ FormatTsForCurrentDay(item.createTs, true) }}
             </div>
           </div>
         </div>

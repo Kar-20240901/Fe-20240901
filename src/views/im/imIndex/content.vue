@@ -272,6 +272,8 @@ function scrollToItemByContentId(contentId?: string) {
   }
 }
 
+let scrollToBottomStopSearchFlag = false;
+
 function scrollToBottom() {
   if (!sessionContentRecycleScrollerRef.value) {
     return;
@@ -280,13 +282,26 @@ function scrollToBottom() {
   sessionContentRecycleScrollerRef.value.scrollToItem(
     sessionContentShowList.value.length - 1
   );
+
+  scrollToBottomStopSearchFlag = true;
+}
+
+function setScrollToBottomStopSearchFlag(
+  scrollToBottomStopSearchFlagTemp?: boolean
+) {
+  scrollToBottomStopSearchFlag = scrollToBottomStopSearchFlagTemp;
 }
 
 function setShouldAutoScroll(shouldAutoScrollTemp?: boolean) {
   shouldAutoScroll = shouldAutoScrollTemp;
 }
 
-defineExpose({ doSearch, textareaInputRefFocus, setShouldAutoScroll });
+defineExpose({
+  doSearch,
+  textareaInputRefFocus,
+  setShouldAutoScroll,
+  setScrollToBottomStopSearchFlag
+});
 
 const selfUserId = ref(useUserStoreHook().id || "");
 
@@ -673,7 +688,11 @@ function handleScroll(event: Event) {
       false,
       "up"
     );
-  } else if (distanceToBottom <= 20 && !sessionContentLoading.value) {
+  } else if (
+    distanceToBottom <= 20 &&
+    !sessionContentLoading.value &&
+    !scrollToBottomStopSearchFlag
+  ) {
     doSearchThrottle(
       {
         id: getLastContentId(),
@@ -683,6 +702,10 @@ function handleScroll(event: Event) {
       false,
       "down"
     );
+  }
+
+  if (scrollToBottomStopSearchFlag) {
+    scrollToBottomStopSearchFlag = false;
   }
 }
 
@@ -794,7 +817,7 @@ watch(
                       />
                     </div>
                     <div class="text-xs text-gray-400 self-end">
-                      {{ FormatTsForCurrentDay(item.createTs) }}
+                      {{ FormatTsForCurrentDay(item.createTs, true) }}
                     </div>
                     <div
                       class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
@@ -830,7 +853,7 @@ watch(
                       </div>
                     </div>
                     <div class="text-xs text-gray-400 self-end">
-                      {{ FormatTsForCurrentDay(item.createTs) }}
+                      {{ FormatTsForCurrentDay(item.createTs, true) }}
                     </div>
                   </div>
                 </div>

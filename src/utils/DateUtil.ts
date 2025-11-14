@@ -10,7 +10,10 @@ export function FormatDateTime(date: Date = new Date()) {
 /**
  * 格式化时间戳，如果是今天，则不显示年月日
  */
-export function FormatTsForCurrentDay(ts?: string) {
+export function FormatTsForCurrentDay(
+  ts?: string,
+  showCurrentDayFLag?: boolean
+) {
   if (!ts) {
     return "未知时间";
   }
@@ -21,18 +24,21 @@ export function FormatTsForCurrentDay(ts?: string) {
     return "无效时间";
   }
 
-  return FormatDateTimeForCurrentDay(date);
+  return FormatDateTimeForCurrentDay(date, showCurrentDayFLag);
 }
 
 /**
  * 格式化时间，如果是今天，则不显示年月日
  */
-export function FormatDateTimeForCurrentDay(date: Date = new Date()) {
+export function FormatDateTimeForCurrentDay(
+  date: Date = new Date(),
+  showCurrentDayFLag?: boolean
+) {
   const currentDay = Math.trunc(GetServerTimestamp() / 86400000);
 
   const checkDay = Math.trunc(date.getTime() / 86400000);
 
-  if (currentDay === checkDay) {
+  if (!showCurrentDayFLag && currentDay === checkDay) {
     return dayjs(date).format("HH:mm:ss");
   }
 

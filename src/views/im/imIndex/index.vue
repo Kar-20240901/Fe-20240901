@@ -63,6 +63,7 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   nextTick(() => {
     contentRef.value?.textareaInputRefFocus();
     contentRef.value?.setShouldAutoScroll(true);
+    // contentRef.value?.setScrollToBottomStopSearchFlag(true);
     contentRef.value?.doSearch(
       { refId: sessionTemp.sessionId, backwardFlag: false },
       true,
