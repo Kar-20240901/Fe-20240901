@@ -11,7 +11,7 @@ const TITLE = getConfig("Title");
     Copyright © {{ new Date().getFullYear() }}
     <a
       class="hover:text-primary!"
-      href="https://github.com/pure-admin"
+      href="https://github.com/Kar-20240901"
       target="_blank"
     >
       &nbsp;{{ TITLE }}

@@ -66,10 +66,10 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
     contentRef.value?.textareaInputRefFocus();
     contentRef.value?.setShouldAutoScroll(true);
     contentRef.value?.doSearch(
-      { refId: sessionTemp.sessionId },
+      { refId: sessionTemp.sessionId, backwardFlag: false },
       true,
       false,
-      false
+      undefined
     );
   });
 }
@@ -110,14 +110,14 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
     contentRef.value?.setShouldAutoScroll(false);
     contentRef.value?.doSearch(
       {
-        backwardFlag: false,
+        backwardFlag: true,
         containsCurrentIdFlag: true,
         id: item.contentId,
         refId: session.value.sessionId
       },
       true,
       true,
-      false
+      undefined
     );
   });
 }
@@ -157,19 +157,35 @@ function doBaseImGroupRefUserPage(groupId: string) {
 
 const splitterSize = ref<string>("22%");
 
-useResizeObserver(".main-content", entries => {
+const parentHeight = ref<number>(0);
+
+const parentResizeObserver = useResizeObserver([".grow"], entries => {
   const entry = entries[0];
-  const [{ inlineSize }] = entry.borderBoxSize;
+  const [{ inlineSize, blockSize }] = entry.borderBoxSize;
   if (inlineSize < CommonConstant.PAD_WIDTH) {
     splitterSize.value = "30%";
   } else {
     splitterSize.value = "20%";
   }
+
+  const contentEle: HTMLElement = document.querySelector(".main-content");
+
+  const contentComputedStyle = window.getComputedStyle(contentEle);
+
+  const margin = parseFloat(contentComputedStyle.margin) || 0;
+
+  const footEle: HTMLElement = document.querySelector(".layout-footer");
+
+  parentHeight.value = blockSize - footEle?.offsetHeight - margin;
+
+  if (blockSize) {
+    parentResizeObserver.stop();
+  }
 });
 </script>
 
 <template>
-  <div class="w-full h-full bg-bg_color">
+  <div class="w-full bg-bg_color" :style="`height: ${parentHeight}px`">
     <el-splitter layout="horizontal">
       <el-splitter-panel min="10%" :size="splitterSize">
         <manage

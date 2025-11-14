@@ -162,23 +162,23 @@ const doSearchThrottle = throttle(
     form?: ScrollListDTO,
     loadingFlag?: boolean,
     scrollToItemFlag?: boolean,
-    scrollFlag?: boolean
+    scrollType?: "up" | "down"
   ) => {
-    doSearch(form, loadingFlag, scrollToItemFlag, scrollFlag);
+    doSearch(form, loadingFlag, scrollToItemFlag, scrollType);
   },
   1000
 ) as (
   form?: ScrollListDTO,
   loadingFlag?: boolean,
   scrollToItemFlag?: boolean,
-  scrollFlag?: boolean
+  scrollType?: "up" | "down"
 ) => void;
 
 function doSearch(
   form?: ScrollListDTO,
   loadingFlag?: boolean,
   scrollToItemFlag?: boolean,
-  scrollFlag?: boolean
+  scrollType?: "up" | "down"
 ) {
   if (loadingFlag) {
     sessionContentLoading.value = true;
@@ -193,11 +193,13 @@ function doSearch(
     .then(res => {
       setSessionContentList(res.data);
 
-      hasMore = res.data.length === 20;
+      if (scrollType === "up") {
+        hasLess = res.data.length === 20;
+      }
 
       nextTick(() => {
-        if (scrollFlag) {
-          scrollSearchSuf(form?.id);
+        if (scrollType) {
+          scrollSearchSuf(form?.id, scrollType);
         } else if (form?.id && scrollToItemFlag) {
           scrollToItemByContentId(form.id);
         } else {
@@ -220,7 +222,7 @@ function doSearch(
     });
 }
 
-function scrollSearchSuf(contentId?: string) {
+function scrollSearchSuf(contentId?: string, scrollType?: "up" | "down") {
   if (!contentId || !sessionContentRecycleScrollerRef.value) {
     return;
   }
@@ -229,8 +231,26 @@ function scrollSearchSuf(contentId?: string) {
     item => item.contentId === contentId
   );
 
-  if (findIndex !== -1 && findIndex >= 1) {
-    sessionContentRecycleScrollerRef.value.scrollToItem(findIndex - 2);
+  if (findIndex === -1) {
+    return;
+  }
+
+  if (scrollType === "up") {
+    let index = findIndex - 2;
+
+    if (index < 0) {
+      index = 0;
+    }
+
+    sessionContentRecycleScrollerRef.value.scrollToItem(index);
+  } else if (scrollType === "down") {
+    let index = findIndex + 2;
+
+    if (index > sessionContentShowList.value.length - 1) {
+      index = sessionContentShowList.value.length - 1;
+    }
+
+    sessionContentRecycleScrollerRef.value.scrollToItem(index);
   }
 }
 
@@ -400,17 +420,7 @@ function doSendTodoSendMap() {
     return;
   }
 
-  valueArr.sort((a, b) => {
-    const createTsOne = Number(a.createTs);
-
-    const createTsTwo = Number(b.createTs);
-
-    if (createTsOne === createTsTwo) {
-      return a.orderNo > b.orderNo ? 1 : -1;
-    } else {
-      return createTsOne > createTsTwo ? 1 : -1;
-    }
-  });
+  sortContentSimple(valueArr);
 
   valueArr.forEach(item => {
     const form: BaseImSessionContentInsertTxtDTO = {
@@ -422,6 +432,20 @@ function doSendTodoSendMap() {
     };
 
     doSendToServer(form);
+  });
+}
+
+function sortContentSimple(itemArr?: ISessionContentBO[]) {
+  itemArr.sort((a, b) => {
+    const createTsOne = Number(a.createTs);
+
+    const createTsTwo = Number(b.createTs);
+
+    if (createTsOne === createTsTwo) {
+      return a.orderNo > b.orderNo ? 1 : -1;
+    } else {
+      return createTsOne > createTsTwo ? 1 : -1;
+    }
   });
 }
 
@@ -536,7 +560,7 @@ function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
       },
       false,
       false,
-      false
+      undefined
     );
   });
 }
@@ -593,13 +617,13 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         },
         false,
         false,
-        false
+        undefined
       );
     }
   }
 });
 
-let hasMore: boolean = true;
+let hasLess: boolean = true;
 
 let shouldAutoScroll: boolean = true;
 
@@ -617,13 +641,25 @@ function handleScroll(event: Event) {
   if (
     scrollTop <= CommonConstant.SCROLL_CHECK_HEIGHT &&
     !sessionContentLoading.value &&
-    hasMore
+    hasLess
   ) {
     doSearchThrottle(
       { id: sessionContentShowList.value[0]?.contentId, backwardFlag: false },
       true,
       false,
-      true
+      "up"
+    );
+  } else if (distanceToBottom <= 20 && !sessionContentLoading.value) {
+    doSearchThrottle(
+      {
+        id: sessionContentShowList.value[
+          sessionContentShowList.value.length - 1
+        ]?.contentId,
+        backwardFlag: true
+      },
+      true,
+      false,
+      "down"
     );
   }
 }
