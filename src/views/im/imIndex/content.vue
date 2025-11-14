@@ -202,7 +202,15 @@ function doSearch(
           scrollToItemByContentId(form.id);
         } else {
           if (shouldAutoScroll) {
-            scrollToBottom();
+            setTimeout(() => {
+              scrollToBottom();
+
+              nextTick(() => {
+                setTimeout(() => {
+                  scrollToBottom();
+                }, CommonConstant.SHORT_DELAY);
+              });
+            }, CommonConstant.SHORT_DELAY);
           }
         }
       });
@@ -349,7 +357,7 @@ function showSendFailFlag(item: ISessionContentBO) {
   }
 
   const checkTimestamp =
-    GetServerTimestamp() - CommonConstant.SECOND_10_EXPIRE_TIME;
+    GetServerTimestamp() - CommonConstant.SECOND_5_EXPIRE_TIME;
 
   return Number(item.createTs) <= checkTimestamp;
 }
@@ -710,7 +718,9 @@ watch(
                     <div
                       class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
                     >
-                      <div class="text-sm">{{ item.content }}</div>
+                      <div class="text-sm whitespace-pre-wrap">
+                        {{ item.content }}
+                      </div>
                     </div>
                   </div>
 
@@ -734,7 +744,9 @@ watch(
                     <div
                       class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
                     >
-                      <div class="text-sm">{{ item.content }}</div>
+                      <div class="text-sm whitespace-pre-wrap">
+                        {{ item.content }}
+                      </div>
                     </div>
                     <div class="text-xs text-gray-400 self-end">
                       {{ FormatTsForCurrentDay(item.createTs) }}
