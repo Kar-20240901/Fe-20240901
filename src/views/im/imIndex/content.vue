@@ -384,6 +384,8 @@ function doSendTodoSendMap() {
   const checkTimestamp =
     GetServerTimestamp() - CommonConstant.SECOND_10_EXPIRE_TIME;
 
+  const valueArr = [];
+
   keyArr.forEach(key => {
     const item = todoSendObj[key];
 
@@ -391,6 +393,26 @@ function doSendTodoSendMap() {
       return;
     }
 
+    valueArr.push(item);
+  });
+
+  if (!valueArr.length) {
+    return;
+  }
+
+  valueArr.sort((a, b) => {
+    const createTsOne = Number(a.createTs);
+
+    const createTsTwo = Number(b.createTs);
+
+    if (createTsOne === createTsTwo) {
+      return a.orderNo > b.orderNo ? 1 : -1;
+    } else {
+      return createTsOne > createTsTwo ? 1 : -1;
+    }
+  });
+
+  valueArr.forEach(item => {
     const form: BaseImSessionContentInsertTxtDTO = {
       sessionId: item.sessionId,
       txt: item.content,
@@ -702,6 +724,7 @@ watch(
                   >
                     <div
                       v-if="showSendFailFlag(item)"
+                      class="cursor-pointer"
                       @click="resendToServerClick(item)"
                     >
                       <component

@@ -40,8 +40,13 @@ function doSearch() {
     });
 }
 
+function reset() {
+  searchContentInfoList.value = [];
+}
+
 defineExpose({
-  doSearch
+  doSearch,
+  reset
 });
 </script>
 

@@ -54,6 +54,7 @@ function onSearchKeyChangeDebounceFun() {
   searchOverviewRef.value?.doBaseImSearchBase();
 
   if (getShowContentInfoFlag.value) {
+    searchOverviewMoreContentInfoRef.value?.reset();
     searchOverviewMoreContentInfoRef.value?.doSearch();
   } else if (getShowOverviewMoreFlag.value) {
     searchOverviewMoreRef.value?.doSearch();
@@ -143,6 +144,7 @@ function searchContentClick(
 
   nextTick(() => {
     setSearchInputFocus();
+    searchOverviewMoreContentInfoRef.value?.reset();
     searchOverviewMoreContentInfoRef.value?.doSearch();
   });
 }
