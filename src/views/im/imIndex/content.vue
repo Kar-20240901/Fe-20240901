@@ -42,14 +42,13 @@ import {
 } from "@/model/constant/websocket/WebSocketReceivePath";
 import { storageLocal } from "@/store/utils";
 import CommonConstant from "@/model/constant/CommonConstant";
+import LocalStorageKey from "@/model/constant/LocalStorageKey";
 
 const props = defineProps<IImContentProps>();
 
 const sessionContentLoading = ref<boolean>(false);
 
 const sessionContentShowList = ref<ISessionContentBO[]>([]);
-
-let sessionContentCalcList: ISessionContentBO[] = [];
 
 function getObjId(item?: BaseImSessionContentRefUserPageVO) {
   return `${item.createId}-${item.createTs}-${item.orderNo}`;
@@ -84,7 +83,7 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
     }
 
     objIdSet.add(objId);
-    sessionContentCalcList.push(item);
+    sessionContentShowList.value.push(item);
 
     addFlag = true;
   });
@@ -93,8 +92,13 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
     return;
   }
 
+  console.log(
+    "成功添添加消息",
+    sessionContentShowList.value[sessionContentShowList.value.length - 1].objId
+  );
+
   // 排序
-  sessionContentCalcList.sort((a, b) => {
+  sessionContentShowList.value.sort((a, b) => {
     const createTsOne = Number(a.createTs);
 
     const createTsTwo = Number(b.createTs);
@@ -113,24 +117,20 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
       return createTsOne > createTsTwo ? 1 : -1;
     }
   });
-
-  sessionContentShowList.value = [...sessionContentCalcList];
 }
 
-const IM_SESSION_CONTENT_TODO_SEND_MAP_KEY = "ImSessionContentTodoSendMap:";
-
 function showTodoSendMap() {
-  const todoSendMapTemp = storageLocal().getItem<
-    Map<string, ISessionContentBO>
-  >(IM_SESSION_CONTENT_TODO_SEND_MAP_KEY + props.session.sessionId);
+  const todoSendObj = storageLocal().getItem<Record<string, ISessionContentBO>>(
+    LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ + props.session.sessionId
+  );
 
-  if (!todoSendMapTemp || !todoSendMapTemp.size) {
+  if (!todoSendObj || !Object.keys(todoSendObj).length) {
     return;
   }
 
-  todoSendMap.value = todoSendMapTemp;
+  todoSendMap.value = new Map(Object.entries(todoSendObj));
 
-  setSessionContentList([...todoSendMapTemp.values()]);
+  setSessionContentList([...todoSendMap.value.values()]);
 }
 
 function setTodoSendMap(item: ISessionContentBO, removeFlag: boolean) {
@@ -150,9 +150,9 @@ function setTodoSendMap(item: ISessionContentBO, removeFlag: boolean) {
     todoSendMap.value.set(objId, item);
   }
 
-  storageLocal().setItem<Map<string, ISessionContentBO>>(
-    IM_SESSION_CONTENT_TODO_SEND_MAP_KEY + props.session.sessionId,
-    todoSendMap.value
+  storageLocal().setItem<Record<string, ISessionContentBO>>(
+    LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ + props.session.sessionId,
+    Object.fromEntries(todoSendMap.value)
   );
 }
 
@@ -222,7 +222,7 @@ function scrollSearchSuf(contentId?: string) {
     return;
   }
 
-  const findIndex = sessionContentCalcList.findIndex(
+  const findIndex = sessionContentShowList.value.findIndex(
     item => item.contentId === contentId
   );
 
@@ -236,7 +236,7 @@ function scrollToItemByContentId(contentId?: string) {
     return;
   }
 
-  const findIndex = sessionContentCalcList.findIndex(
+  const findIndex = sessionContentShowList.value.findIndex(
     item => item.contentId === contentId
   );
 
@@ -360,18 +360,26 @@ function showSendFailFlag(item: ISessionContentBO) {
 }
 
 function doSendTodoSendMap() {
-  const todoSendMapTemp = storageLocal().getItem<
-    Map<string, ISessionContentBO>
-  >(IM_SESSION_CONTENT_TODO_SEND_MAP_KEY + props.session.sessionId);
+  const todoSendObj = storageLocal().getItem<Record<string, ISessionContentBO>>(
+    LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ + props.session.sessionId
+  );
 
-  if (!todoSendMapTemp || !todoSendMapTemp.size) {
+  if (!todoSendObj) {
+    return;
+  }
+
+  const keyArr = Object.keys(todoSendObj);
+
+  if (!keyArr.length) {
     return;
   }
 
   const checkTimestamp =
     GetServerTimestamp() - CommonConstant.SECOND_10_EXPIRE_TIME;
 
-  todoSendMapTemp.values().forEach(item => {
+  keyArr.forEach(key => {
+    const item = todoSendObj[key];
+
     if (Number(item.createTs) > checkTimestamp) {
       return;
     }
@@ -442,6 +450,8 @@ function doSendClick(
   };
 
   setTodoSendMap(item, false);
+
+  console.log("发送消息", item.objId);
 
   setSessionContentList([item]);
 
@@ -588,7 +598,6 @@ function handleScroll(event: Event) {
 }
 
 function reset() {
-  sessionContentCalcList = [];
   sessionContentShowList.value = [];
   objIdSet.clear();
   shouldAutoScroll = true;
