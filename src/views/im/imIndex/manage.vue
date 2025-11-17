@@ -44,6 +44,14 @@ const showSearchOverviewPre = ref<boolean>(false);
 
 const searchOverviewPreRef = ref();
 
+const sessionRef = ref();
+
+defineExpose({ sessionRefDoSearch });
+
+function sessionRefDoSearch(loadingFlag?: boolean) {
+  sessionRef.value?.onSearch(loadingFlag);
+}
+
 function searchClick() {
   showSearchOverviewPre.value = true;
 
@@ -124,6 +132,7 @@ function menuSelect(index: string) {
           !showSearchOverviewPre &&
           menuIndex === BaseImLeftSegmentedEnum.SESSION.code
         "
+        ref="sessionRef"
         @searchClick="searchClick"
         @sessionClick="sessionClick"
         @updateSessionUserMap="updateSessionUserMap"

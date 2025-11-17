@@ -731,7 +731,7 @@ watch(
   <div class="bg-gray-50 w-full h-full">
     <div v-show="props.session.showName" class="flex flex-col w-full h-full">
       <div
-        class="flex items-center justify-between bg-white w-full pl-4 h-13 border-b border-gray-200"
+        class="flex-shrink-0 flex items-center justify-between bg-white w-full pl-4 h-13 border-b border-gray-200"
       >
         <div class="flex items-center">
           <div>
@@ -786,7 +786,7 @@ watch(
         <el-scrollbar
           v-loading="sessionContentLoading"
           view-class="flex flex-col h-full"
-          :height="'calc(' + scrollbarHeight + 'px - var(--spacing) * 12)'"
+          :height="'calc(' + scrollbarHeight + 'px - var(--spacing) * 4)'"
         >
           <DynamicScroller
             v-show="sessionContentShowList.length"
@@ -913,7 +913,7 @@ watch(
             />
           </div>
         </div>
-        <div class="flex items-center">
+        <div class="flex-shrink-0 flex items-center">
           <el-input
             ref="textareaInputRef"
             v-model="textarea"

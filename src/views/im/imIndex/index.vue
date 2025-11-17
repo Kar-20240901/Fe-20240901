@@ -38,8 +38,11 @@ const searchBaseContentVO = ref<BaseImSearchBaseContentVO>({});
 
 const contentRef = ref();
 
+const manageRef = ref();
+
 function sessionClick(item: BaseImSessionRefUserPageVO) {
   doUpdateAvatarAndNickname([item.sessionId]);
+  manageRef.value?.sessionRefDoSearch();
 
   if (item.targetType === BaseImTypeEnum.FRIEND.code) {
     const sessionUserMapItem: IImShowInfoMap = {};
@@ -96,6 +99,8 @@ function searchContentClick(item: BaseImSearchBaseContentVO) {
 }
 
 function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
+  manageRef.value?.sessionRefDoSearch();
+
   const sessionTemp: IImContentSession = {};
 
   sessionTemp.sessionId = searchBaseContentVO.value.sessionId;
@@ -179,6 +184,7 @@ onMounted(() => {
     <el-splitter layout="horizontal">
       <el-splitter-panel min="10%" size="30%">
         <manage
+          ref="manageRef"
           :searchBaseContentVO="searchBaseContentVO"
           :sessionUserMap="sessionUserMap"
           @updateSessionUserMap="updateSessionUserMap"
