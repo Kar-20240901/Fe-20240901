@@ -731,7 +731,7 @@ watch(
   <div class="bg-gray-50 w-full h-full">
     <div v-show="props.session.showName" class="flex flex-col w-full h-full">
       <div
-        class="flex-shrink-0 flex items-center justify-between bg-white w-full pl-4 h-13 border-b border-gray-200"
+        class="shrink-0 flex items-center justify-between bg-white w-full pl-4 h-13 border-b border-gray-200"
       >
         <div class="flex items-center">
           <div>
@@ -913,7 +913,7 @@ watch(
             />
           </div>
         </div>
-        <div class="flex-shrink-0 flex items-center">
+        <div class="shrink-0 flex items-center">
           <el-input
             ref="textareaInputRef"
             v-model="textarea"

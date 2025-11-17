@@ -104,7 +104,7 @@ defineExpose({ onSearch });
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col h-full">
     <div
       class="w-full flex p-4 border-b border-gray-200 cursor-default"
       @click="searchClick"
@@ -183,7 +183,7 @@ defineExpose({ onSearch });
 
         <div
           v-if="!dataList.length && !loading"
-          class="text-[15px] flex w-full justify-center text-gray-400"
+          class="flex text-[15px] flex w-full h-full justify-center items-center text-gray-400"
         >
           暂无会话。
         </div>

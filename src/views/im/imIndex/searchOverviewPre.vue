@@ -267,7 +267,7 @@ const getShowContentInfoFlag = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col p-4 cursor-default">
+  <div class="flex flex-col p-4 cursor-default h-full">
     <div class="flex justify-between items-center mt-1">
       <div
         v-show="
@@ -306,103 +306,105 @@ const getShowContentInfoFlag = computed(() => {
       </div>
     </div>
 
-    <search-overview-more
-      v-show="getShowOverviewMoreFlag"
-      ref="searchOverviewMoreRef"
-      :search-key="searchKey"
-      :showSearchOverviewMoreFriendFlag="showSearchOverviewMoreFriendFlag"
-      :showSearchOverviewMoreGroupFlag="showSearchOverviewMoreGroupFlag"
-      :showSearchOverviewMoreContentFlag="showSearchOverviewMoreContentFlag"
-      @searchFriendClick="searchFriendClick"
-      @searchGroupClick="searchGroupClick"
-      @searchContentClick="
-        (item: BaseImSearchBaseContentVO) => searchContentClick(item, true)
-      "
-    />
+    <div class="flex-1">
+      <search-overview-more
+        v-show="getShowOverviewMoreFlag"
+        ref="searchOverviewMoreRef"
+        :search-key="searchKey"
+        :showSearchOverviewMoreFriendFlag="showSearchOverviewMoreFriendFlag"
+        :showSearchOverviewMoreGroupFlag="showSearchOverviewMoreGroupFlag"
+        :showSearchOverviewMoreContentFlag="showSearchOverviewMoreContentFlag"
+        @searchFriendClick="searchFriendClick"
+        @searchGroupClick="searchGroupClick"
+        @searchContentClick="
+          (item: BaseImSearchBaseContentVO) => searchContentClick(item, true)
+        "
+      />
 
-    <search-overview-content-info
-      v-show="getShowContentInfoFlag"
-      ref="searchOverviewMoreContentInfoRef"
-      :search-key="searchKey"
-      :searchBaseContentVO="props.searchBaseContentVO"
-      :sessionUserMap="props.sessionUserMap"
-      @searchContentInfoClick="searchContentInfoClick"
-    />
+      <search-overview-content-info
+        v-show="getShowContentInfoFlag"
+        ref="searchOverviewMoreContentInfoRef"
+        :search-key="searchKey"
+        :searchBaseContentVO="props.searchBaseContentVO"
+        :sessionUserMap="props.sessionUserMap"
+        @searchContentInfoClick="searchContentInfoClick"
+      />
 
-    <search-overview
-      v-show="
-        !getShowSearchOverviewMoreFlag &&
-        !showSearchOverviewContentInfoFlag &&
-        searchKey.trim()
-      "
-      ref="searchOverviewRef"
-      :search-key="searchKey"
-      @searchMoreFriendClick="searchMoreFriendClick"
-      @searchMoreGroupClick="searchMoreGroupClick"
-      @searchMoreContentClick="searchMoreContentClick"
-      @searchFriendClick="searchFriendClick"
-      @searchGroupClick="searchGroupClick"
-      @searchContentClick="
-        (item: BaseImSearchBaseContentVO) => searchContentClick(item, false)
-      "
-    />
+      <search-overview
+        v-show="
+          !getShowSearchOverviewMoreFlag &&
+          !showSearchOverviewContentInfoFlag &&
+          searchKey.trim()
+        "
+        ref="searchOverviewRef"
+        :search-key="searchKey"
+        @searchMoreFriendClick="searchMoreFriendClick"
+        @searchMoreGroupClick="searchMoreGroupClick"
+        @searchMoreContentClick="searchMoreContentClick"
+        @searchFriendClick="searchFriendClick"
+        @searchGroupClick="searchGroupClick"
+        @searchContentClick="
+          (item: BaseImSearchBaseContentVO) => searchContentClick(item, false)
+        "
+      />
 
-    <div
-      v-show="
-        !getShowSearchOverviewMoreFlag &&
-        !showSearchOverviewContentInfoFlag &&
-        !searchKey.trim()
-      "
-    >
-      <div class="flex justify-between text-sm mt-4 mb-4">
-        <div class="text-gray-400">最近搜索</div>
-        <div>
-          <div
-            v-show="!searchHistoryCloseFlag"
-            class="cursor-pointer text-gray-400 hover:text-gray-800"
-            @click="searchHistoryCloseFlag = true"
-          >
-            删除
-          </div>
-          <div
-            v-show="searchHistoryCloseFlag"
-            class="flex items-center space-x-2"
-          >
+      <div
+        v-show="
+          !getShowSearchOverviewMoreFlag &&
+          !showSearchOverviewContentInfoFlag &&
+          !searchKey.trim()
+        "
+      >
+        <div class="flex justify-between text-sm mt-4 mb-4">
+          <div class="text-gray-400">最近搜索</div>
+          <div>
             <div
+              v-show="!searchHistoryCloseFlag"
               class="cursor-pointer text-gray-400 hover:text-gray-800"
-              @click="searchHistoryDeleteAllClick()"
+              @click="searchHistoryCloseFlag = true"
             >
-              清空
+              删除
             </div>
             <div
-              class="cursor-pointer text-gray-400 hover:text-gray-800"
-              @click="searchHistoryCloseFlag = false"
+              v-show="searchHistoryCloseFlag"
+              class="flex items-center space-x-2"
             >
-              完成
+              <div
+                class="cursor-pointer text-gray-400 hover:text-gray-800"
+                @click="searchHistoryDeleteAllClick()"
+              >
+                清空
+              </div>
+              <div
+                class="cursor-pointer text-gray-400 hover:text-gray-800"
+                @click="searchHistoryCloseFlag = false"
+              >
+                完成
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="grid grid-cols-2 gap-2">
-        <template v-for="item in searchHistoryList" :key="item.id">
-          <el-tag
-            :disable-transitions="true"
-            :closable="searchHistoryCloseFlag"
-            effect="plain"
-            type="info"
-            @close="searchHistoryDeleteClick(item.id)"
-            @click="
-              () => {
-                onSearchKeyChange(item.searchHistory);
-              }
-            "
-          >
-            <div class="flex justify-center w-20 truncate cursor-pointer">
-              {{ item.searchHistory }}
-            </div>
-          </el-tag>
-        </template>
+        <div class="grid grid-cols-2 gap-2">
+          <template v-for="item in searchHistoryList" :key="item.id">
+            <el-tag
+              :disable-transitions="true"
+              :closable="searchHistoryCloseFlag"
+              effect="plain"
+              type="info"
+              @close="searchHistoryDeleteClick(item.id)"
+              @click="
+                () => {
+                  onSearchKeyChange(item.searchHistory);
+                }
+              "
+            >
+              <div class="flex justify-center w-20 truncate cursor-pointer">
+                {{ item.searchHistory }}
+              </div>
+            </el-tag>
+          </template>
+        </div>
       </div>
     </div>
   </div>
