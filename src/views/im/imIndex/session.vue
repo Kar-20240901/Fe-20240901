@@ -37,15 +37,21 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   activeSessionId.value = item.sessionId;
 }
 
-function onSearch(loadingFlag?: boolean) {
+function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   if (loadingFlag) {
     loading.value = true;
   }
 
-  baseImSessionRefUserScroll({
-    id: dataList.value.length
+  let sessionId = undefined;
+
+  if (scrollFlag) {
+    sessionId = dataList.value.length
       ? dataList.value[dataList.value.length - 1].sessionId
-      : undefined,
+      : undefined;
+  }
+
+  baseImSessionRefUserScroll({
+    id: sessionId,
     pageSize: "20"
   })
     .then(res => {
@@ -81,11 +87,11 @@ function onSearch(loadingFlag?: boolean) {
 let timer: number | null = null;
 
 onMounted(() => {
-  onSearch(false);
+  onSearch(true, false);
 
-  // timer = window.setInterval(() => {
-  //   onSearch(true);
-  // }, 2000);
+  timer = window.setInterval(() => {
+    onSearch(false, false);
+  }, 10000);
 });
 
 onUnmounted(() => {

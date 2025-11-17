@@ -48,8 +48,8 @@ const sessionRef = ref();
 
 defineExpose({ sessionRefDoSearch });
 
-function sessionRefDoSearch(loadingFlag?: boolean) {
-  sessionRef.value?.onSearch(loadingFlag);
+function sessionRefDoSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
+  sessionRef.value?.onSearch(loadingFlag, scrollFlag);
 }
 
 function searchClick() {

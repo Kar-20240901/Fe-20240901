@@ -42,7 +42,7 @@ const manageRef = ref();
 
 function sessionClick(item: BaseImSessionRefUserPageVO) {
   doUpdateAvatarAndNickname([item.sessionId]);
-  manageRef.value?.sessionRefDoSearch();
+  manageRef.value?.sessionRefDoSearch(false, false);
 
   if (item.targetType === BaseImTypeEnum.FRIEND.code) {
     const sessionUserMapItem: IImShowInfoMap = {};
@@ -66,7 +66,6 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   nextTick(() => {
     contentRef.value?.textareaInputRefFocus();
     contentRef.value?.setShouldAutoScroll(true);
-    // contentRef.value?.setScrollToBottomStopSearchFlag(true);
     contentRef.value?.doSearch(
       { refId: sessionTemp.sessionId, backwardFlag: false },
       true,
@@ -99,7 +98,7 @@ function searchContentClick(item: BaseImSearchBaseContentVO) {
 }
 
 function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
-  manageRef.value?.sessionRefDoSearch();
+  manageRef.value?.sessionRefDoSearch(false, false);
 
   const sessionTemp: IImContentSession = {};
 
