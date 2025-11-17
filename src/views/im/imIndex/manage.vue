@@ -106,7 +106,7 @@ function menuSelect(index: string) {
 
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="flex justify-center w-full">
+    <div class="flex justify-center w-full shrink-0">
       <template v-for="item in SegmentedOptionArr" :key="item.value">
         <div
           :class="

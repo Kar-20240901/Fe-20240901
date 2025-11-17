@@ -161,20 +161,18 @@ function doBaseImGroupRefUserPage(groupId: string) {
 const parentHeight = ref<number>(0);
 
 onMounted(() => {
-  nextTick(() => {
-    const growEle: HTMLElement = document.querySelector(".grow");
+  const growEle: HTMLElement = document.querySelector(".grow");
 
-    const contentEle: HTMLElement = document.querySelector(".main-content");
+  const contentEle: HTMLElement = document.querySelector(".main-content");
 
-    const contentComputedStyle = window.getComputedStyle(contentEle);
+  const contentComputedStyle = window.getComputedStyle(contentEle);
 
-    const contentMargin = parseFloat(contentComputedStyle.margin) || 0;
+  const contentMargin = parseFloat(contentComputedStyle.margin) || 0;
 
-    const footEle: HTMLElement = document.querySelector(".layout-footer");
+  const footEle: HTMLElement = document.querySelector(".layout-footer");
 
-    parentHeight.value =
-      growEle.offsetHeight - footEle?.offsetHeight - contentMargin;
-  });
+  parentHeight.value =
+    growEle.offsetHeight - footEle?.offsetHeight - contentMargin;
 });
 </script>
 

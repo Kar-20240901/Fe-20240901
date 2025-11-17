@@ -90,12 +90,11 @@ let timer: number | null = null;
 onMounted(() => {
   onSearch(true, false);
 
-  timer = window.setInterval(
-    () => {
+  if (!DevFlag()) {
+    timer = window.setInterval(() => {
       onSearch(false, false);
-    },
-    DevFlag() ? 30000 : 10000
-  );
+    }, 10000);
+  }
 });
 
 onUnmounted(() => {
