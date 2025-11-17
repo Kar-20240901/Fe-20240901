@@ -127,7 +127,7 @@ defineExpose({ onSearch });
     </div>
 
     <div class="flex-1">
-      <el-scrollbar v-loading="loading" view-class="flex flex-col h-full">
+      <el-scrollbar v-loading="loading">
         <DynamicScroller
           v-show="dataList.length"
           :items="dataList"

@@ -107,16 +107,8 @@ const doSearchThrottle = throttle(
   300
 ) as (loadingFlag?: boolean, scrollFlag?: boolean) => void;
 
-function handleScroll(event: Event) {
-  const scrollerEl = event.target as HTMLElement;
-
-  if (!scrollerEl) return;
-
-  const { scrollTop, scrollHeight, clientHeight } = scrollerEl;
-
-  const distanceToBottom = scrollHeight - clientHeight - scrollTop;
-
-  if (distanceToBottom <= 20 && !searchContentInfoLoading.value && hasMore) {
+function loadMore() {
+  if (!searchContentInfoLoading.value && hasMore) {
     doSearchThrottle(false, true);
   }
 }
@@ -130,15 +122,14 @@ function handleScroll(event: Event) {
       <div ref="scrollbarParentDiv" class="flex-1">
         <el-scrollbar
           v-loading="searchContentInfoLoading"
-          view-class="flex flex-col h-full"
-          :height="'calc(' + scrollbarHeight + 'px - var(--spacing) * 4)'"
+          :height="scrollbarHeight"
+          @end-reached="loadMore"
         >
           <DynamicScroller
             v-show="searchContentInfoList.length"
             :items="searchContentInfoList"
             :min-item-size="56"
             key-field="contentId"
-            @scroll="handleScroll"
           >
             <template #default="{ item, index, active }">
               <DynamicScrollerItem :item="item" :active="active" :index="index">
