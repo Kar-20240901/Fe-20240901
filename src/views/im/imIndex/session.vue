@@ -12,6 +12,7 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import FaSearch from "~icons/fa/search";
 import Avatar from "@/assets/user.png";
+import { DevFlag } from "@/utils/SysUtil";
 
 const loading = ref<boolean>(false);
 const dataList = ref<BaseImSessionRefUserPageVO[]>([]);
@@ -89,9 +90,12 @@ let timer: number | null = null;
 onMounted(() => {
   onSearch(true, false);
 
-  timer = window.setInterval(() => {
-    onSearch(false, false);
-  }, 10000);
+  timer = window.setInterval(
+    () => {
+      onSearch(false, false);
+    },
+    DevFlag() ? 30000 : 10000
+  );
 });
 
 onUnmounted(() => {

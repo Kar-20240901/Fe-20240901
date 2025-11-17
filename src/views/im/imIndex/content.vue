@@ -157,6 +157,8 @@ function textareaInputRefFocus() {
   textareaInputRef.value?.focus();
 }
 
+const pageSize = 20;
+
 const doSearchThrottle = throttle(
   (
     form?: ScrollListDTO,
@@ -188,18 +190,21 @@ function doSearch(
     refId: form?.refId || props.session.sessionId,
     backwardFlag: form?.backwardFlag || false,
     containsCurrentIdFlag: form?.containsCurrentIdFlag || false,
-    id: form?.id
+    id: form?.id,
+    pageSize: String(pageSize)
   })
     .then(res => {
+      const oldListLength = sessionContentShowList.value.length - 1;
+
       setSessionContentList(res.data);
 
       if (scrollType === "up") {
-        hasLess = res.data.length === 20;
+        hasLess = res.data.length === pageSize;
       }
 
       nextTick(() => {
         if (scrollType) {
-          scrollSearchSuf(form?.id, scrollType);
+          scrollSearchSuf(scrollType, oldListLength);
         } else if (form?.id && scrollToItemFlag) {
           scrollToItemByContentId(form.id);
         } else {
@@ -222,39 +227,31 @@ function doSearch(
     });
 }
 
-function scrollSearchSuf(contentId?: string, scrollType?: "up" | "down") {
-  if (!contentId || !sessionContentRecycleScrollerRef.value) {
+function scrollSearchSuf(scrollType?: "up" | "down", oldListLength?: number) {
+  if (!sessionContentRecycleScrollerRef.value) {
     return;
   }
 
-  const findIndex = sessionContentShowList.value.findIndex(
-    item => item.contentId === contentId
-  );
+  if (!oldListLength || oldListLength < 0) {
+    oldListLength = 0;
+  }
 
-  if (findIndex === -1) {
+  let newListLength = sessionContentShowList.value.length - 1;
+
+  if (newListLength < 0) {
+    newListLength = 0;
+  }
+
+  const diff = newListLength - oldListLength;
+
+  if (diff <= 0) {
     return;
   }
 
   if (scrollType === "up") {
-    let index = findIndex - 2;
-
-    if (index < 0) {
-      index = 0;
-    }
-
-    sessionContentRecycleScrollerRef.value.scrollToItem(index);
+    sessionContentRecycleScrollerRef.value.scrollToItem(diff - 1);
   } else if (scrollType === "down") {
-    if (findIndex === sessionContentShowList.value.length - 1) {
-      return;
-    }
-
-    let index = findIndex + 2;
-
-    if (index > sessionContentShowList.value.length - 1) {
-      index = sessionContentShowList.value.length - 1;
-    }
-
-    sessionContentRecycleScrollerRef.value.scrollToItem(index);
+    sessionContentRecycleScrollerRef.value.scrollToItem(oldListLength + 1);
   }
 }
 

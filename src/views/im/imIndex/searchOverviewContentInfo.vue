@@ -10,7 +10,7 @@ import { processText } from "@/utils/StrUtil";
 import { FormatTsForCurrentDay } from "@/utils/DateUtil";
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { useResizeObserver } from "@pureadmin/utils";
+import { throttle, useResizeObserver } from "@pureadmin/utils";
 
 const searchContentInfoList = ref<BaseImSessionContentRefUserPageVO[]>([]);
 
@@ -26,18 +26,40 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
   emit("searchContentInfoClick", item);
 }
 
-function doSearch() {
+const pageSize = 20;
+
+function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
+  if (loadingFlag) {
+    searchContentInfoLoading.value = true;
+  }
+
+  let contentId = undefined;
+
+  if (scrollFlag) {
+    contentId = searchContentInfoList.value.length
+      ? searchContentInfoList.value[searchContentInfoList.value.length - 1]
+          .contentId
+      : undefined;
+  }
+
   baseImSessionContentRefUserScroll({
     refId: props.searchBaseContentVO.sessionId,
     searchKey: props.searchKey,
-    pageSize: "20",
-    id: searchContentInfoList.value.length
-      ? searchContentInfoList.value[searchContentInfoList.value.length - 1]
-          .contentId
-      : undefined
+    pageSize: String(pageSize),
+    id: contentId,
+    backwardFlag: true,
+    containsCurrentIdFlag: false
   })
     .then(res => {
-      searchContentInfoList.value = res.data;
+      if (scrollFlag) {
+        searchContentInfoList.value = searchContentInfoList.value.concat(
+          res.data
+        );
+      } else {
+        searchContentInfoList.value = res.data;
+      }
+
+      hasMore = res.data.length === pageSize;
     })
     .finally(() => {
       searchContentInfoLoading.value = false;
@@ -46,6 +68,8 @@ function doSearch() {
 
 function reset() {
   searchContentInfoList.value = [];
+
+  hasMore = true;
 }
 
 defineExpose({
@@ -73,6 +97,29 @@ const scrollbarParentDivResizeObserver = useResizeObserver(
     syncHeight();
   }
 );
+
+let hasMore: boolean = true;
+
+const doSearchThrottle = throttle(
+  (loadingFlag?: boolean, scrollFlag?: boolean) => {
+    doSearch(loadingFlag, scrollFlag);
+  },
+  300
+) as (loadingFlag?: boolean, scrollFlag?: boolean) => void;
+
+function handleScroll(event: Event) {
+  const scrollerEl = event.target as HTMLElement;
+
+  if (!scrollerEl) return;
+
+  const { scrollTop, scrollHeight, clientHeight } = scrollerEl;
+
+  const distanceToBottom = scrollHeight - clientHeight - scrollTop;
+
+  if (distanceToBottom <= 20 && !searchContentInfoLoading.value && hasMore) {
+    doSearchThrottle(false, true);
+  }
+}
 </script>
 
 <template>
@@ -91,6 +138,7 @@ const scrollbarParentDivResizeObserver = useResizeObserver(
             :items="searchContentInfoList"
             :min-item-size="56"
             key-field="contentId"
+            @scroll="handleScroll"
           >
             <template #default="{ item, index, active }">
               <DynamicScrollerItem :item="item" :active="active" :index="index">

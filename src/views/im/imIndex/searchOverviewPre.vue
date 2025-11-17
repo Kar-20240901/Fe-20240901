@@ -322,7 +322,7 @@ const getShowContentInfoFlag = computed(() => {
       />
 
       <search-overview-content-info
-        v-show="getShowContentInfoFlag"
+        v-if="getShowContentInfoFlag"
         ref="searchOverviewMoreContentInfoRef"
         :search-key="searchKey"
         :searchBaseContentVO="props.searchBaseContentVO"
