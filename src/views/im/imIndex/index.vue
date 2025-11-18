@@ -177,7 +177,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full bg-bg_color" :style="`height: ${parentHeight}px`">
+  <div class="bg-bg_color" :style="`height: ${parentHeight}px`">
     <el-splitter layout="horizontal">
       <el-splitter-panel min="10%" size="30%">
         <manage
