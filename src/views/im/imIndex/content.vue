@@ -894,7 +894,7 @@ watch(
           :items="sessionContentShowList"
           :min-item-size="84"
           key-field="objId"
-          :style="`height: calc( ${scrollbarHeight}px - var(--spacing) * 4)`"
+          :style="`height: ${scrollbarHeight}px`"
           class="scrollbar-hide"
           @scroll="handleScroll"
         >
