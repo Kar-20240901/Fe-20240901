@@ -33,6 +33,8 @@ function searchClick() {
 
 function sessionClick(item: BaseImSessionRefUserPageVO) {
   emit("sessionClick", item);
+
+  updateLastContent(item.sessionId, undefined, undefined, 0, true);
 }
 
 const pageSize = 20;
@@ -162,13 +164,20 @@ function updateLastContent(
   );
 
   if (findIndex === -1) {
+    onSearch(false, false);
+
     return;
   }
 
-  dataList.value[findIndex].lastContent = lastContent;
-  dataList.value[findIndex].lastContentCreateTs = lastContentCreateTs;
+  if (lastContent) {
+    dataList.value[findIndex].lastContent = lastContent;
+  }
 
-  if (unReadCountAddNumber) {
+  if (lastContentCreateTs) {
+    dataList.value[findIndex].lastContentCreateTs = lastContentCreateTs;
+  }
+
+  if (unReadCountAddNumber !== undefined) {
     if (unReadCountAddNumberUpdateFlag) {
       dataList.value[findIndex].unReadCount = unReadCountAddNumber;
     } else {
