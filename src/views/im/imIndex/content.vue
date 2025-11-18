@@ -14,7 +14,6 @@ import {
 } from "@/api/http/base/BaseImSessionContentRefUserController";
 import { FormatTsForCurrentDay, GetServerTimestamp } from "@/utils/DateUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { useUserStoreHook } from "@/store/modules/user";
 import Avatar from "@/assets/user.png";
 import FaPhone from "~icons/fa/phone";
 import FaVideoCamera from "~icons/fa/video-camera";
@@ -26,6 +25,7 @@ import FaPictureO from "~icons/fa/picture-o";
 import FaMicrophone from "~icons/fa/microphone";
 import FaPaperPlane from "~icons/fa/paper-plane";
 import EpWarning from "~icons/ep/Warning";
+import { useUserStoreHook } from "@/store/modules/user";
 import { throttle, useResizeObserver } from "@pureadmin/utils";
 import {
   baseImSessionContentInsertTxt,
@@ -228,6 +228,10 @@ function doSearch(
 }
 
 function scrollSearchSuf(scrollType?: "up" | "down", oldListLength?: number) {
+  if (scrollType === "down") {
+    return;
+  }
+
   if (!sessionContentRecycleScrollerRef.value) {
     return;
   }
@@ -250,8 +254,6 @@ function scrollSearchSuf(scrollType?: "up" | "down", oldListLength?: number) {
 
   if (scrollType === "up") {
     sessionContentRecycleScrollerRef.value.scrollToItem(diff - 1);
-  } else if (scrollType === "down") {
-    sessionContentRecycleScrollerRef.value.scrollToItem(oldListLength + 1);
   }
 }
 
@@ -725,8 +727,8 @@ watch(
 </script>
 
 <template>
-  <div class="bg-gray-50 w-full h-full">
-    <div v-show="props.session.showName" class="flex flex-col w-full h-full">
+  <div class="bg-gray-50 h-full flex flex-col">
+    <div v-if="props.session.showName" class="flex flex-col flex-1">
       <div
         class="shrink-0 flex items-center justify-between bg-white w-full pl-4 h-13 border-b border-gray-200"
       >
@@ -779,95 +781,95 @@ watch(
         </div>
       </div>
 
-      <div ref="scrollbarParentDiv" class="flex-1">
-        <el-scrollbar
-          v-loading="sessionContentLoading"
-          view-class="flex flex-col h-full"
-          :height="'calc(' + scrollbarHeight + 'px - var(--spacing) * 4)'"
+      <div
+        ref="scrollbarParentDiv"
+        v-loading="sessionContentLoading"
+        class="flex-1"
+      >
+        <DynamicScroller
+          v-show="sessionContentShowList.length"
+          ref="sessionContentRecycleScrollerRef"
+          :items="sessionContentShowList"
+          :min-item-size="84"
+          key-field="objId"
+          :style="`height: calc( ${scrollbarHeight}px - var(--spacing) * 4)`"
+          class="scrollbar-hide"
+          @scroll="handleScroll"
         >
-          <DynamicScroller
-            v-show="sessionContentShowList.length"
-            ref="sessionContentRecycleScrollerRef"
-            :items="sessionContentShowList"
-            :min-item-size="84"
-            key-field="objId"
-            @scroll="handleScroll"
-          >
-            <template #default="{ item, index, active }">
-              <DynamicScrollerItem :item="item" :active="active" :index="index">
-                <div class="w-full pl-4 py-5">
+          <template #default="{ item, index, active }">
+            <DynamicScrollerItem :item="item" :active="active" :index="index">
+              <div class="w-full pl-4 py-5">
+                <div
+                  v-if="item.createId === selfUserId"
+                  class="flex items-end justify-end pr-7 space-x-2 animate-fadeIn"
+                >
                   <div
-                    v-if="item.createId === selfUserId"
-                    class="w-full flex items-end justify-end pr-9 space-x-2 animate-fadeIn"
+                    v-if="showSendFailFlag(item)"
+                    class="cursor-pointer"
+                    @click="resendToServerClick(item)"
                   >
-                    <div
-                      v-if="showSendFailFlag(item)"
-                      class="cursor-pointer"
-                      @click="resendToServerClick(item)"
-                    >
-                      <component
-                        :is="
-                          useRenderIcon(EpWarning, {
-                            class: 'text-red-500 w-[20px] h-[20px] mr-[2px]'
-                          })
-                        "
-                      />
-                    </div>
-                    <div class="text-xs text-gray-400 self-end">
-                      {{ FormatTsForCurrentDay(item.createTs, true) }}
-                    </div>
-                    <div
-                      class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
-                    >
-                      <div class="text-sm whitespace-pre-wrap">
-                        {{ item.content }}
-                      </div>
-                    </div>
+                    <component
+                      :is="
+                        useRenderIcon(EpWarning, {
+                          class: 'text-red-500 w-[20px] h-[20px] mr-[2px]'
+                        })
+                      "
+                    />
                   </div>
-
+                  <div class="text-xs text-gray-400 self-end">
+                    {{ FormatTsForCurrentDay(item.createTs, true) }}
+                  </div>
                   <div
-                    v-else
-                    class="w-full min-h-11 flex items-end space-x-2 animate-fadeIn"
+                    class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
                   >
-                    <el-image
-                      :src="props.sessionUserMap[item.createId]?.avatarUrl"
-                      fit="cover"
-                      class="w-8 h-8 rounded-full"
-                    >
-                      <template #error>
-                        <el-image
-                          :src="Avatar"
-                          fit="cover"
-                          class="w-8 h-8 rounded-full"
-                        />
-                      </template>
-                    </el-image>
-                    <div
-                      class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
-                    >
-                      <div class="text-sm whitespace-pre-wrap">
-                        {{ item.content }}
-                      </div>
-                    </div>
-                    <div class="text-xs text-gray-400 self-end">
-                      {{ FormatTsForCurrentDay(item.createTs, true) }}
+                    <div class="text-sm whitespace-pre-wrap">
+                      {{ item.content }}
                     </div>
                   </div>
                 </div>
-              </DynamicScrollerItem>
-            </template>
-          </DynamicScroller>
 
-          <div
-            v-if="!sessionContentShowList.length && !sessionContentLoading"
-            class="text-[15px] flex w-full h-full justify-center items-center text-gray-400"
-          >
-            暂无消息。
-          </div>
-        </el-scrollbar>
+                <div
+                  v-else
+                  class="w-full min-h-11 flex items-end space-x-2 animate-fadeIn"
+                >
+                  <el-image
+                    :src="props.sessionUserMap[item.createId]?.avatarUrl"
+                    fit="cover"
+                    class="w-8 h-8 rounded-full"
+                  >
+                    <template #error>
+                      <el-image
+                        :src="Avatar"
+                        fit="cover"
+                        class="w-8 h-8 rounded-full"
+                      />
+                    </template>
+                  </el-image>
+                  <div
+                    class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
+                  >
+                    <div class="text-sm whitespace-pre-wrap">
+                      {{ item.content }}
+                    </div>
+                  </div>
+                  <div class="text-xs text-gray-400 self-end">
+                    {{ FormatTsForCurrentDay(item.createTs, true) }}
+                  </div>
+                </div>
+              </div>
+            </DynamicScrollerItem>
+          </template>
+        </DynamicScroller>
+
+        <div
+          v-if="!sessionContentShowList.length && !sessionContentLoading"
+          class="text-[15px] flex w-full h-full justify-center items-center text-gray-400"
+        >
+          暂无消息。
+        </div>
       </div>
 
-      <div class="bg-white p-4 border-t border-gray-200 flex flex-col">
+      <div class="shrink-0 bg-white p-4 border-t border-gray-200 flex flex-col">
         <div class="flex items-center mb-4">
           <div v-if="false" class="p-2">
             <component
