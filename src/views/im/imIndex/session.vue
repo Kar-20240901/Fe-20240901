@@ -13,6 +13,7 @@ import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import FaSearch from "~icons/fa/search";
 import Avatar from "@/assets/user.png";
 import { DevFlag } from "@/utils/SysUtil";
+import { throttle, useResizeObserver } from "@pureadmin/utils";
 
 const loading = ref<boolean>(false);
 const dataList = ref<BaseImSessionRefUserPageVO[]>([]);
@@ -34,6 +35,14 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   emit("sessionClick", item);
 }
 
+const pageSize = 20;
+
+function reset() {
+  dataList.value = [];
+
+  hasMore = true;
+}
+
 function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   if (loadingFlag) {
     loading.value = true;
@@ -49,10 +58,12 @@ function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
 
   baseImSessionRefUserScroll({
     id: sessionId,
-    pageSize: "20"
+    pageSize: String(pageSize)
   })
     .then(res => {
       dataList.value = res.data;
+
+      hasMore = res.data.length >= pageSize;
 
       if (!res.data.length) {
         return;
@@ -99,17 +110,58 @@ onUnmounted(() => {
   }
 });
 
-defineExpose({ onSearch, updateLastContent });
+const scrollbarParentDiv = ref();
+
+const scrollbarHeight = ref<number>(0);
+
+const syncHeight = () => {
+  if (scrollbarParentDiv.value) {
+    scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
+
+    if (scrollbarHeight.value) {
+      scrollbarParentDivResizeObserver.stop();
+    }
+  }
+};
+
+const scrollbarParentDivResizeObserver = useResizeObserver(
+  scrollbarParentDiv,
+  () => {
+    syncHeight();
+  }
+);
+
+let hasMore: boolean = true;
+
+const doSearchThrottle = throttle(
+  (loadingFlag?: boolean, scrollFlag?: boolean) => {
+    onSearch(loadingFlag, scrollFlag);
+  },
+  300
+) as (loadingFlag?: boolean, scrollFlag?: boolean) => void;
+
+function loadMore() {
+  if (!loading.value && hasMore) {
+    doSearchThrottle(false, true);
+  }
+}
+
+defineExpose({ onSearch, updateLastContent, reset });
 
 const props = defineProps<IImSessionProps>();
 
-function updateLastContent(sessionId?: string, lastContent?: string) {
+function updateLastContent(
+  sessionId?: string,
+  lastContent?: string,
+  lastContentCreateTs?: string
+) {
   const findIndex = dataList.value.findIndex(
     item => item.sessionId === sessionId
   );
 
   if (findIndex !== -1) {
     dataList.value[findIndex].lastContent = lastContent;
+    dataList.value[findIndex].lastContentCreateTs = lastContentCreateTs;
   }
 }
 </script>
@@ -117,7 +169,7 @@ function updateLastContent(sessionId?: string, lastContent?: string) {
 <template>
   <div class="flex flex-col h-full">
     <div
-      class="w-full flex p-4 border-b border-gray-200 cursor-default"
+      class="shrink-0 w-full flex p-4 border-b border-gray-200 cursor-default"
       @click="searchClick"
     >
       <div
@@ -134,8 +186,13 @@ function updateLastContent(sessionId?: string, lastContent?: string) {
       </div>
     </div>
 
-    <div class="flex-1">
-      <el-scrollbar v-loading="loading">
+    <div ref="scrollbarParentDiv" class="flex-1">
+      <el-scrollbar
+        v-loading="loading"
+        :height="scrollbarHeight"
+        :distance="20"
+        @end-reached="loadMore"
+      >
         <DynamicScroller
           v-show="dataList.length"
           :items="dataList"

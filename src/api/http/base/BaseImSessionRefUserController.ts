@@ -100,16 +100,16 @@ export interface ScrollListDTO {
   searchKey?: string; // 搜索内容
   refId?: string; // 关联其他主键 id，格式：int64
   containsCurrentIdFlag?: boolean; // 是否包含当前主键 id，默认：false
-  queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往后多查询几条数据，为 false时，往前多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
+  queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往前多查询几条数据，为 false时，往后多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
 }
 
 export interface BaseImSessionRefUserPageVO {
   lastContentType?: number; // 最新消息类型，格式：int32
   notDisturbFlag?: boolean; // 是否是免打扰：true 是 false 否
-  lastContentCreateTime?: string; // 最新消息创建时间
   targetId?: string; // 目标 id，可以查询到好友用户主键 id，或者群组主键 id，一定有值，格式：int64
   avatarUrl?: string; // 冗余字段：头像 url，一定有值
   lastContent?: string; // 最新消息，备注：会截断或者处理
+  lastContentCreateTs?: string; // 最新消息创建时间戳，格式：int64
   sessionName?: string; // 显示的会话名，一定有值
   targetType?: number; // 目标类型：101 好友 201 群组，一定有值，格式：int32
   sessionId?: string; // 会话主键 id，一定有值，格式：int64

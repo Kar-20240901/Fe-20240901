@@ -6,6 +6,7 @@ export interface BaseImSessionContentInsertTxtVO
   extends BaseImSessionContentInsertTxtDTO {
   createId?: string; // 创建者用户主键 id，格式：int64
   notDisturbFlagUserIdSet?: string[]; // 开启了免打扰的用户主键 id集合，格式：int64
+  contentId?: string; // 消息主键 id，格式：int64
 }
 
 export interface ISessionContentBO extends BaseImSessionContentRefUserPageVO {

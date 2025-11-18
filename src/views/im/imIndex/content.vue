@@ -646,6 +646,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       if (setTargetInputFlagFalseTimeout) {
         clearTimeout(setTargetInputFlagFalseTimeout);
       }
+
       setTargetInputFlagFalseTimeout = window.setTimeout(() => {
         targetInputFlag.value = false;
       }, 3000);
@@ -669,7 +670,8 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         sessionId: baseImSessionContentInsertTxtVO.sessionId,
         content: baseImSessionContentInsertTxtVO.txt,
         type: baseImSessionContentInsertTxtVO.type,
-        objId
+        objId,
+        contentId: baseImSessionContentInsertTxtVO.contentId
       };
 
       setSessionContentList([item]);
