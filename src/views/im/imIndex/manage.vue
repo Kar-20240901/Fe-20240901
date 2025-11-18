@@ -55,8 +55,20 @@ function sessionRefDoSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   sessionRef.value?.onSearch(loadingFlag, scrollFlag);
 }
 
-function sessionRefUpdateLastContent(sessionId?: string, lastContent?: string) {
-  sessionRef.value?.updateLastContent(sessionId, lastContent);
+function sessionRefUpdateLastContent(
+  sessionId?: string,
+  lastContent?: string,
+  lastContentCreateTs?: string,
+  unReadCountAddNumber?: number,
+  unReadCountAddNumberUpdateFlag?: boolean
+) {
+  sessionRef.value?.updateLastContent(
+    sessionId,
+    lastContent,
+    lastContentCreateTs,
+    unReadCountAddNumber,
+    unReadCountAddNumberUpdateFlag
+  );
 }
 
 function searchClick() {

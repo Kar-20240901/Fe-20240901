@@ -9,7 +9,7 @@ import {
 import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
 import { IImSessionProps, IImShowInfoMap } from "@/views/im/imIndex/types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatTsForCurrentDay } from "@/utils/DateUtil";
 import FaSearch from "~icons/fa/search";
 import Avatar from "@/assets/user.png";
 import { DevFlag } from "@/utils/SysUtil";
@@ -153,15 +153,28 @@ const props = defineProps<IImSessionProps>();
 function updateLastContent(
   sessionId?: string,
   lastContent?: string,
-  lastContentCreateTs?: string
+  lastContentCreateTs?: string,
+  unReadCountAddNumber?: number,
+  unReadCountAddNumberUpdateFlag?: boolean
 ) {
   const findIndex = dataList.value.findIndex(
     item => item.sessionId === sessionId
   );
 
-  if (findIndex !== -1) {
-    dataList.value[findIndex].lastContent = lastContent;
-    dataList.value[findIndex].lastContentCreateTs = lastContentCreateTs;
+  if (findIndex === -1) {
+    return;
+  }
+
+  dataList.value[findIndex].lastContent = lastContent;
+  dataList.value[findIndex].lastContentCreateTs = lastContentCreateTs;
+
+  if (unReadCountAddNumber) {
+    if (unReadCountAddNumberUpdateFlag) {
+      dataList.value[findIndex].unReadCount = unReadCountAddNumber;
+    } else {
+      dataList.value[findIndex].unReadCount =
+        dataList.value[findIndex].unReadCount + unReadCountAddNumber;
+    }
   }
 }
 </script>
@@ -211,6 +224,7 @@ function updateLastContent(
                     :max="999"
                     :show-zero="false"
                     badge-class="mt-1 mr-1"
+                    :is-dot="item.notDisturbFlag"
                   >
                     <el-image
                       :src="item.avatarUrl"
@@ -234,9 +248,7 @@ function updateLastContent(
                     </div>
                     <div class="text-xs text-gray-400 shrink-0">
                       {{
-                        FormatDateTimeForCurrentDay(
-                          new Date(item.lastContentCreateTime)
-                        )
+                        FormatTsForCurrentDay(item.lastContentCreateTs, true)
                       }}
                     </div>
                   </div>

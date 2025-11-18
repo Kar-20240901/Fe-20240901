@@ -2,6 +2,15 @@ import type { BaseImSearchBaseContentVO } from "@/api/http/base/BaseImSearchCont
 import type { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import type { BaseImSessionContentInsertTxtDTO } from "@/api/http/base/BaseImSessionContentController";
 
+export interface BaseImSessionRefUserQueryLastContentVO {
+  sessionId?: string; // 会话主键 id，一定有值，格式：int64
+  lastContent?: string; // 最新消息，备注：会截断或者处理
+  lastContentCreateTs?: string; // 最新消息创建时间戳，格式：int64
+  lastContentType?: number; // 最新消息类型，格式：int32
+  unReadCount?: number; // 未读数量，最大值为 100，格式：int32
+  notDisturbFlag?: boolean; // 是否是免打扰：true 是 false 否
+}
+
 export interface BaseImSessionContentInsertTxtVO
   extends BaseImSessionContentInsertTxtDTO {
   createId?: string; // 创建者用户主键 id，格式：int64

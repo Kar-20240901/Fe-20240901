@@ -4,6 +4,7 @@ import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import {
   BaseImSessionContentInsertTxtVO,
+  BaseImSessionRefUserQueryLastContentVO,
   IImContentProps,
   ISessionContentBO
 } from "@/views/im/imIndex/types";
@@ -43,6 +44,7 @@ import {
 import { storageLocal } from "@/store/utils";
 import CommonConstant from "@/model/constant/CommonConstant";
 import LocalStorageKey from "@/model/constant/LocalStorageKey";
+import { baseImSessionRefUserQueryLastContentMap } from "@/api/http/base/BaseImSessionRefUserController";
 
 const props = defineProps<IImContentProps>();
 
@@ -113,22 +115,43 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
     }
   });
 
+  const lastContent =
+    sessionContentShowList.value[sessionContentShowList.value.length - 1];
+
   sessionRefUpdateLastContent(
     props.session.sessionId,
-    sessionContentShowList.value[sessionContentShowList.value.length - 1]
-      .content
+    lastContent.content,
+    lastContent.createTs,
+    undefined,
+    undefined
   );
 }
 
-function sessionRefUpdateLastContent(sessionId?: string, lastContent?: string) {
-  emit("sessionRefUpdateLastContent", sessionId, lastContent);
+function sessionRefUpdateLastContent(
+  sessionId?: string,
+  lastContent?: string,
+  lastContentCreateTs?: string,
+  unReadCountAddNumber?: number,
+  unReadCountAddNumberUpdateFlag?: boolean
+) {
+  emit(
+    "sessionRefUpdateLastContent",
+    sessionId,
+    lastContent,
+    lastContentCreateTs,
+    unReadCountAddNumber,
+    unReadCountAddNumberUpdateFlag
+  );
 }
 
 const emit = defineEmits<{
   (
     e: "sessionRefUpdateLastContent",
     sessionId?: string,
-    lastContent?: string
+    lastContent?: string,
+    lastContentCreateTs?: string,
+    unReadCountAddNumber?: number,
+    unReadCountAddNumberUpdateFlag?: boolean
   ): void;
 }>();
 
@@ -278,7 +301,7 @@ function scrollSearchSuf(scrollType?: "up" | "down", oldListLength?: number) {
   }
 
   if (scrollType === "up") {
-    sessionContentRecycleScrollerRef.value.scrollToItem(diff - 1);
+    sessionContentRecycleScrollerRef.value.scrollToItem(diff);
   }
 }
 
@@ -685,6 +708,51 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         false,
         undefined
       );
+    } else {
+      let unReadCountAddNumber = undefined;
+
+      if (baseImSessionContentInsertTxtVO.createId !== selfUserId.value) {
+        unReadCountAddNumber = 1;
+      }
+
+      sessionRefUpdateLastContent(
+        baseImSessionContentInsertTxtVO.sessionId,
+        baseImSessionContentInsertTxtVO.txt,
+        baseImSessionContentInsertTxtVO.createTs,
+        unReadCountAddNumber,
+        false
+      );
+
+      if (
+        baseImSessionContentInsertTxtVO.notDisturbFlagUserIdSet?.findIndex(
+          item => item === selfUserId.value
+        ) === -1
+      ) {
+        // TODO：进行通知
+      }
+
+      baseImSessionRefUserQueryLastContentMap({
+        idSet: [baseImSessionContentInsertTxtVO.sessionId]
+      }).then(res => {
+        const resObj = res.data as Record<
+          string,
+          BaseImSessionRefUserQueryLastContentVO
+        >;
+
+        const obj = resObj[baseImSessionContentInsertTxtVO.sessionId];
+
+        if (!obj) {
+          return;
+        }
+
+        sessionRefUpdateLastContent(
+          obj.sessionId,
+          obj.lastContent,
+          obj.lastContentCreateTs,
+          obj.unReadCount,
+          true
+        );
+      });
     }
   }
 });
@@ -764,7 +832,7 @@ watch(
   <div class="bg-gray-50 h-full flex flex-col">
     <div v-if="props.session.showName" class="flex flex-col flex-1">
       <div
-        class="shrink-0 flex items-center justify-between bg-white w-full pl-4 h-13 border-b border-gray-200"
+        class="shrink-0 flex items-center justify-between bg-white w-full px-4 h-13 border-b border-gray-200"
       >
         <div class="flex items-center">
           <div>
@@ -777,7 +845,7 @@ watch(
           </div>
         </div>
 
-        <div class="flex items-center space-x-4 mr-8">
+        <div class="flex items-center space-x-4">
           <component
             :is="
               useRenderIcon(FaSearch, {
@@ -961,7 +1029,7 @@ watch(
             @keydown="handleTextareaInputKeydown"
           />
           <div
-            class="ml-3 mr-5 bg-primary rounded-full w-12 h-12 flex items-center justify-center hover:bg-primary/90 transition-colors transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
+            class="ml-3 bg-primary rounded-full w-12 h-12 flex items-center justify-center hover:bg-primary/90 transition-colors transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
             @click="sendClick()"
           >
             <component

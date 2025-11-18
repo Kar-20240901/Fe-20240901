@@ -211,8 +211,20 @@ onMounted(() => {
     growEle.offsetHeight - footEle?.offsetHeight - contentMargin;
 });
 
-function sessionRefUpdateLastContent(sessionId?: string, lastContent?: string) {
-  manageRef.value?.sessionRefUpdateLastContent(sessionId, lastContent);
+function sessionRefUpdateLastContent(
+  sessionId?: string,
+  lastContent?: string,
+  lastContentCreateTs?: string,
+  unReadCountAddNumber?: number,
+  unReadCountAddNumberUpdateFlag?: boolean
+) {
+  manageRef.value?.sessionRefUpdateLastContent(
+    sessionId,
+    lastContent,
+    lastContentCreateTs,
+    unReadCountAddNumber,
+    unReadCountAddNumberUpdateFlag
+  );
 }
 </script>
 
