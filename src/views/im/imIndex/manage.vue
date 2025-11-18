@@ -38,6 +38,9 @@ const emit = defineEmits<{
 
   (e: "doUpdateAvatarAndNickname", idSet: string[]): void;
   (e: "doBaseImGroupRefUserPage", groupId: string): void;
+
+  (e: "contentOnlyReset"): void;
+  (e: "execContentSearch"): void;
 }>();
 
 const showSearchOverviewPre = ref<boolean>(false);
@@ -62,6 +65,8 @@ function searchClick() {
 }
 
 function searchOverviewPreBackClick() {
+  contentOnlyReset();
+  execContentSearch();
   showSearchOverviewPre.value = false;
 }
 
@@ -95,6 +100,14 @@ function doBaseImGroupRefUserPage(groupId: string) {
 
 function doUpdateAvatarAndNickname(idSet?: string[]) {
   emit("doUpdateAvatarAndNickname", idSet);
+}
+
+function contentOnlyReset() {
+  emit("contentOnlyReset");
+}
+
+function execContentSearch() {
+  emit("execContentSearch");
 }
 
 const menuIndex = ref<string>(SegmentedOptionArr[0].value);
@@ -133,6 +146,7 @@ function menuSelect(index: string) {
           menuIndex === BaseImLeftSegmentedEnum.SESSION.code
         "
         ref="sessionRef"
+        :session="props.session"
         @searchClick="searchClick"
         @sessionClick="sessionClick"
         @updateSessionUserMap="updateSessionUserMap"

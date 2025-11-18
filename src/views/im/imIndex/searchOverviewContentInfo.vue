@@ -59,7 +59,7 @@ function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
         searchContentInfoList.value = res.data;
       }
 
-      hasMore = res.data.length === pageSize;
+      hasMore = res.data.length >= pageSize;
     })
     .finally(() => {
       searchContentInfoLoading.value = false;
@@ -123,6 +123,7 @@ function loadMore() {
         <el-scrollbar
           v-loading="searchContentInfoLoading"
           :height="scrollbarHeight"
+          :distance="20"
           @end-reached="loadMore"
         >
           <DynamicScroller

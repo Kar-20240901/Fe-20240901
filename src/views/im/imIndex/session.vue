@@ -7,7 +7,7 @@ import {
   baseImSessionRefUserScroll
 } from "@/api/http/base/BaseImSessionRefUserController";
 import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
-import { IImShowInfoMap } from "@/views/im/imIndex/types";
+import { IImSessionProps, IImShowInfoMap } from "@/views/im/imIndex/types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import FaSearch from "~icons/fa/search";
@@ -30,12 +30,8 @@ function searchClick() {
   emit("searchClick");
 }
 
-const activeSessionId = ref<string>("");
-
 function sessionClick(item: BaseImSessionRefUserPageVO) {
   emit("sessionClick", item);
-
-  activeSessionId.value = item.sessionId;
 }
 
 function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
@@ -104,6 +100,8 @@ onUnmounted(() => {
 });
 
 defineExpose({ onSearch });
+
+const props = defineProps<IImSessionProps>();
 </script>
 
 <template>
@@ -137,7 +135,7 @@ defineExpose({ onSearch });
           <template #default="{ item, index, active }">
             <DynamicScrollerItem :item="item" :active="active" :index="index">
               <div
-                :class="`h-[80px] flex items-center p-4 border-b border-l-4 ${activeSessionId === item.sessionId ? 'bg-secondary border-b-secondary  border-l-primary hover:bg-secondary/70 hover:border-b-secondary/70' : 'hover:bg-gray-50 hover:border-l-gray-50 border-l-white border-b-gray-100'} cursor-pointer transition-colors`"
+                :class="`h-[80px] flex items-center p-4 border-b border-l-4 ${props.session.sessionId === item.sessionId ? 'bg-secondary border-b-secondary  border-l-primary hover:bg-secondary/70 hover:border-b-secondary/70' : 'hover:bg-gray-50 hover:border-l-gray-50 border-l-white border-b-gray-100'} cursor-pointer transition-colors`"
                 @click="sessionClick(item)"
               >
                 <div>

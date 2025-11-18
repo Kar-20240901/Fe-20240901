@@ -17,7 +17,10 @@ import {
   BaseImSearchBaseFriendVO,
   BaseImSearchBaseGroupVO
 } from "@/api/http/base/BaseImSearchController";
-import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
+import {
+  BaseImSessionContentRefUserPageVO,
+  ScrollListDTO
+} from "@/api/http/base/BaseImSessionContentRefUserController";
 import Manage from "@/views/im/imIndex/manage.vue";
 import Content from "@/views/im/imIndex/content.vue";
 
@@ -39,6 +42,31 @@ const searchBaseContentVO = ref<BaseImSearchBaseContentVO>({});
 const contentRef = ref();
 
 const manageRef = ref();
+
+function contentDoSearch(
+  form?: ScrollListDTO,
+  loadingFlag?: boolean,
+  scrollToItemFlag?: boolean,
+  scrollType?: "up" | "down"
+) {
+  contentRef.value?.doSearch(form, loadingFlag, scrollToItemFlag, scrollType);
+}
+
+function execContentSearch() {
+  if (!session.value.sessionId) {
+    return;
+  }
+
+  contentRef.value?.textareaInputRefFocus();
+  contentRef.value?.setShouldAutoScroll(true);
+
+  contentDoSearch(
+    { refId: session.value.sessionId, backwardFlag: false },
+    false,
+    false,
+    undefined
+  );
+}
 
 function sessionClick(item: BaseImSessionRefUserPageVO) {
   doUpdateAvatarAndNickname([item.sessionId]);
@@ -66,7 +94,8 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   nextTick(() => {
     contentRef.value?.textareaInputRefFocus();
     contentRef.value?.setShouldAutoScroll(true);
-    contentRef.value?.doSearch(
+
+    contentDoSearch(
       { refId: sessionTemp.sessionId, backwardFlag: false },
       true,
       false,
@@ -97,6 +126,10 @@ function searchContentClick(item: BaseImSearchBaseContentVO) {
   searchBaseContentVO.value = item;
 }
 
+function contentOnlyReset() {
+  contentRef.value?.onlyReset();
+}
+
 function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
   manageRef.value?.sessionRefDoSearch(false, false);
 
@@ -110,13 +143,16 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
 
   nextTick(() => {
     contentRef.value?.textareaInputRefFocus();
+    contentOnlyReset();
     contentRef.value?.setShouldAutoScroll(false);
-    contentRef.value?.doSearch(
+
+    contentDoSearch(
       {
         backwardFlag: true,
         containsCurrentIdFlag: true,
         id: item.contentId,
-        refId: session.value.sessionId
+        refId: session.value.sessionId,
+        queryMoreFlag: true
       },
       true,
       true,
@@ -184,6 +220,7 @@ onMounted(() => {
           ref="manageRef"
           :searchBaseContentVO="searchBaseContentVO"
           :sessionUserMap="sessionUserMap"
+          :session="session"
           @updateSessionUserMap="updateSessionUserMap"
           @sessionClick="sessionClick"
           @searchFriendClick="searchFriendClick"
@@ -192,6 +229,8 @@ onMounted(() => {
           @searchContentInfoClick="searchContentInfoClick"
           @doUpdateAvatarAndNickname="doUpdateAvatarAndNickname"
           @doBaseImGroupRefUserPage="doBaseImGroupRefUserPage"
+          @contentOnlyReset="contentOnlyReset"
+          @execContentSearch="execContentSearch"
         />
       </el-splitter-panel>
 

@@ -30,6 +30,10 @@ export interface IImContentSession {
   targetType?: number;
 }
 
+export interface IImSessionProps {
+  session?: IImContentSession;
+}
+
 export interface IImContentProps {
   session?: IImContentSession;
   sessionUserMap?: Record<string, IImShowInfoMap>;
@@ -40,6 +44,7 @@ export interface IImSearchOverviewProps {
 }
 
 export interface IImManageProps {
+  session?: IImContentSession;
   searchBaseContentVO?: BaseImSearchBaseContentVO;
   sessionUserMap?: Record<string, IImShowInfoMap>;
 }

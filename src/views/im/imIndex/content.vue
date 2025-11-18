@@ -186,12 +186,19 @@ function doSearch(
     sessionContentLoading.value = true;
   }
 
+  const sessionId = form?.refId || props.session.sessionId;
+
+  if (!sessionId) {
+    return;
+  }
+
   baseImSessionContentRefUserScroll({
-    refId: form?.refId || props.session.sessionId,
+    refId: sessionId,
     backwardFlag: form?.backwardFlag || false,
     containsCurrentIdFlag: form?.containsCurrentIdFlag || false,
     id: form?.id,
-    pageSize: String(pageSize)
+    pageSize: String(pageSize),
+    queryMoreFlag: form.queryMoreFlag || false
   })
     .then(res => {
       const oldListLength = sessionContentShowList.value.length - 1;
@@ -199,7 +206,7 @@ function doSearch(
       setSessionContentList(res.data);
 
       if (scrollType === "up") {
-        hasLess = res.data.length === pageSize;
+        hasLess = res.data.length >= pageSize;
       }
 
       nextTick(() => {
@@ -268,10 +275,12 @@ function scrollToItemByContentId(contentId?: string) {
 
   if (findIndex !== -1) {
     sessionContentRecycleScrollerRef.value.scrollToItem(findIndex);
+
+    scrollStopSearchFlag = true;
   }
 }
 
-let scrollToBottomStopSearchFlag = false;
+let scrollStopSearchFlag = false;
 
 function scrollToBottom() {
   if (!sessionContentRecycleScrollerRef.value) {
@@ -282,13 +291,11 @@ function scrollToBottom() {
     sessionContentShowList.value.length - 1
   );
 
-  scrollToBottomStopSearchFlag = true;
+  scrollStopSearchFlag = true;
 }
 
-function setScrollToBottomStopSearchFlag(
-  scrollToBottomStopSearchFlagTemp?: boolean
-) {
-  scrollToBottomStopSearchFlag = scrollToBottomStopSearchFlagTemp;
+function setHasLess(hasLessTemp?: boolean) {
+  hasLess = hasLessTemp;
 }
 
 function setShouldAutoScroll(shouldAutoScrollTemp?: boolean) {
@@ -299,7 +306,8 @@ defineExpose({
   doSearch,
   textareaInputRefFocus,
   setShouldAutoScroll,
-  setScrollToBottomStopSearchFlag
+  setHasLess,
+  onlyReset
 });
 
 const selfUserId = ref(useUserStoreHook().id || "");
@@ -676,10 +684,15 @@ function handleScroll(event: Event) {
 
   shouldAutoScroll = distanceToBottom <= 20;
 
+  if (!hasLess) {
+    console.log({ hasLess, scrollTop });
+  }
+
   if (
     scrollTop <= CommonConstant.SCROLL_CHECK_HEIGHT &&
     !sessionContentLoading.value &&
-    hasLess
+    hasLess &&
+    !scrollStopSearchFlag
   ) {
     doSearchThrottle(
       { id: getFirstContentId(), backwardFlag: false },
@@ -690,7 +703,7 @@ function handleScroll(event: Event) {
   } else if (
     distanceToBottom <= 20 &&
     !sessionContentLoading.value &&
-    !scrollToBottomStopSearchFlag
+    !scrollStopSearchFlag
   ) {
     doSearchThrottle(
       {
@@ -703,15 +716,20 @@ function handleScroll(event: Event) {
     );
   }
 
-  if (scrollToBottomStopSearchFlag) {
-    scrollToBottomStopSearchFlag = false;
+  if (scrollStopSearchFlag) {
+    scrollStopSearchFlag = false;
   }
 }
 
-function reset() {
+function onlyReset() {
   sessionContentShowList.value = [];
   objIdSet.clear();
   shouldAutoScroll = true;
+  hasLess = true;
+}
+
+function reset() {
+  onlyReset();
 
   showTodoSendMap();
 }

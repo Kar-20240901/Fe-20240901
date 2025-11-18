@@ -93,19 +93,6 @@ export function baseImSessionRefUserQueryLastContentMap(
   );
 }
 
-// 更新最后一次打开会话的时间
-export function baseImSessionRefUserUpdateLastOpenTs(
-  form: NotNullId,
-  config?: PureHttpRequestConfig
-) {
-  return http.request<string>(
-    "post",
-    baseApi("/base/imSessionRefUser/updateLastOpenTs"),
-    form,
-    config
-  );
-}
-
 export interface ScrollListDTO {
   backwardFlag?: boolean; // 是否向后查询，默认：false 根据 id，往前查询 true 根据 id，往后查询
   pageSize?: string; // 本次查询的长度，默认：20，格式：int64
@@ -113,6 +100,7 @@ export interface ScrollListDTO {
   searchKey?: string; // 搜索内容
   refId?: string; // 关联其他主键 id，格式：int64
   containsCurrentIdFlag?: boolean; // 是否包含当前主键 id，默认：false
+  queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往后多查询几条数据，为 false时，往前多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
 }
 
 export interface BaseImSessionRefUserPageVO {
