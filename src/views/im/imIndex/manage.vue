@@ -49,10 +49,14 @@ const searchOverviewPreRef = ref();
 
 const sessionRef = ref();
 
-defineExpose({ sessionRefDoSearch });
+defineExpose({ sessionRefDoSearch, sessionRefUpdateLastContent });
 
 function sessionRefDoSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   sessionRef.value?.onSearch(loadingFlag, scrollFlag);
+}
+
+function sessionRefUpdateLastContent(sessionId?: string, lastContent?: string) {
+  sessionRef.value?.updateLastContent(sessionId, lastContent);
 }
 
 function searchClick() {

@@ -99,9 +99,19 @@ onUnmounted(() => {
   }
 });
 
-defineExpose({ onSearch });
+defineExpose({ onSearch, updateLastContent });
 
 const props = defineProps<IImSessionProps>();
+
+function updateLastContent(sessionId?: string, lastContent?: string) {
+  const findIndex = dataList.value.findIndex(
+    item => item.sessionId === sessionId
+  );
+
+  if (findIndex !== -1) {
+    dataList.value[findIndex].lastContent = lastContent;
+  }
+}
 </script>
 
 <template>

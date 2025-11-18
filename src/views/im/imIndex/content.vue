@@ -112,7 +112,25 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
       return createTsOne > createTsTwo ? 1 : -1;
     }
   });
+
+  sessionRefUpdateLastContent(
+    props.session.sessionId,
+    sessionContentShowList.value[sessionContentShowList.value.length - 1]
+      .content
+  );
 }
+
+function sessionRefUpdateLastContent(sessionId?: string, lastContent?: string) {
+  emit("sessionRefUpdateLastContent", sessionId, lastContent);
+}
+
+const emit = defineEmits<{
+  (
+    e: "sessionRefUpdateLastContent",
+    sessionId?: string,
+    lastContent?: string
+  ): void;
+}>();
 
 function showTodoSendMap() {
   const todoSendObj = storageLocal().getItem<Record<string, ISessionContentBO>>(
@@ -683,10 +701,6 @@ function handleScroll(event: Event) {
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
 
   shouldAutoScroll = distanceToBottom <= 20;
-
-  if (!hasLess) {
-    console.log({ hasLess, scrollTop });
-  }
 
   if (
     scrollTop <= CommonConstant.SCROLL_CHECK_HEIGHT &&

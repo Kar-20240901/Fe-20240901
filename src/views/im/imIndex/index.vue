@@ -210,6 +210,10 @@ onMounted(() => {
   parentHeight.value =
     growEle.offsetHeight - footEle?.offsetHeight - contentMargin;
 });
+
+function sessionRefUpdateLastContent(sessionId?: string, lastContent?: string) {
+  manageRef.value?.sessionRefUpdateLastContent(sessionId, lastContent);
+}
 </script>
 
 <template>
@@ -239,6 +243,7 @@ onMounted(() => {
           ref="contentRef"
           :sessionUserMap="sessionUserMap"
           :session="session"
+          @sessionRefUpdateLastContent="sessionRefUpdateLastContent"
         />
       </el-splitter-panel>
     </el-splitter>
