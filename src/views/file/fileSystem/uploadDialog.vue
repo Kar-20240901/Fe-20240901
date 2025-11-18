@@ -192,7 +192,8 @@ function uploadFileSystem(uploadFile: UploadFile) {
     formData.append("transferId", res.data.transferId);
 
     FileUpload(formData, baseApi("/base/file/upload/fileSystem")).then(() => {
-      ToastSuccess("传输完成");
+      uploadFileSystemSuccessThrottle();
+
       onSearchThrottle();
 
       if (props.tableSearch) {
@@ -201,6 +202,10 @@ function uploadFileSystem(uploadFile: UploadFile) {
     });
   });
 }
+
+const uploadFileSystemSuccessThrottle = throttle(() => {
+  ToastSuccess("传输完成");
+}, 1000);
 
 const onSearchThrottle = throttle(() => {
   onSearch();

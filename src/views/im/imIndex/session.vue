@@ -142,8 +142,16 @@ const doSearchThrottle = throttle(
   300
 ) as (loadingFlag?: boolean, scrollFlag?: boolean) => void;
 
-function loadMore() {
-  if (!loading.value && hasMore) {
+function handleScroll(event: Event) {
+  const scrollerEl = event.target as HTMLElement;
+
+  if (!scrollerEl) return;
+
+  const { scrollTop, scrollHeight, clientHeight } = scrollerEl;
+
+  const distanceToBottom = scrollHeight - clientHeight - scrollTop;
+
+  if (distanceToBottom <= 20 && !loading.value && hasMore) {
     doSearchThrottle(false, true);
   }
 }
@@ -208,75 +216,69 @@ function updateLastContent(
       </div>
     </div>
 
-    <div ref="scrollbarParentDiv" class="flex-1">
-      <el-scrollbar
-        v-loading="loading"
-        :height="scrollbarHeight"
-        :distance="20"
-        @end-reached="loadMore"
+    <div ref="scrollbarParentDiv" v-loading="loading" class="flex-1">
+      <DynamicScroller
+        v-show="dataList.length"
+        :items="dataList"
+        :min-item-size="80"
+        key-field="sessionId"
+        :style="`height: ${scrollbarHeight}px`"
+        class="scrollbar-hide"
+        @scroll="handleScroll"
       >
-        <DynamicScroller
-          v-show="dataList.length"
-          :items="dataList"
-          :min-item-size="80"
-          key-field="sessionId"
-        >
-          <template #default="{ item, index, active }">
-            <DynamicScrollerItem :item="item" :active="active" :index="index">
-              <div
-                :class="`h-[80px] flex items-center p-4 border-b border-l-4 ${props.session.sessionId === item.sessionId ? 'bg-secondary border-b-secondary  border-l-primary hover:bg-secondary/70 hover:border-b-secondary/70' : 'hover:bg-gray-50 hover:border-l-gray-50 border-l-white border-b-gray-100'} cursor-pointer transition-colors`"
-                @click="sessionClick(item)"
-              >
-                <div>
-                  <el-badge
-                    :value="item.unReadCount"
-                    :max="999"
-                    :show-zero="false"
-                    badge-class="mt-1 mr-1"
-                    :is-dot="item.notDisturbFlag"
+        <template #default="{ item, index, active }">
+          <DynamicScrollerItem :item="item" :active="active" :index="index">
+            <div
+              :class="`h-[80px] flex items-center p-4 border-b border-l-4 ${props.session.sessionId === item.sessionId ? 'bg-secondary border-b-secondary  border-l-primary hover:bg-secondary/70 hover:border-b-secondary/70' : 'hover:bg-gray-50 hover:border-l-gray-50 border-l-white border-b-gray-100'} cursor-pointer transition-colors`"
+              @click="sessionClick(item)"
+            >
+              <div>
+                <el-badge
+                  :value="item.unReadCount"
+                  :max="999"
+                  :show-zero="false"
+                  badge-class="mt-1 mr-1"
+                  :is-dot="item.notDisturbFlag"
+                >
+                  <el-image
+                    :src="item.avatarUrl"
+                    fit="cover"
+                    class="w-12 h-12 rounded-full"
                   >
-                    <el-image
-                      :src="item.avatarUrl"
-                      fit="cover"
-                      class="w-12 h-12 rounded-full"
-                    >
-                      <template #error>
-                        <el-image
-                          :src="Avatar"
-                          fit="cover"
-                          class="w-12 h-12 rounded-full"
-                        />
-                      </template>
-                    </el-image>
-                  </el-badge>
+                    <template #error>
+                      <el-image
+                        :src="Avatar"
+                        fit="cover"
+                        class="w-12 h-12 rounded-full"
+                      />
+                    </template>
+                  </el-image>
+                </el-badge>
+              </div>
+              <div class="ml-4 flex-1">
+                <div class="flex justify-between items-center">
+                  <div class="text-sm truncate pr-1">
+                    {{ item.sessionName }}
+                  </div>
+                  <div class="text-xs text-gray-400 shrink-0">
+                    {{ FormatTsForCurrentDay(item.lastContentCreateTs, true) }}
+                  </div>
                 </div>
-                <div class="ml-4 flex-1">
-                  <div class="flex justify-between items-center">
-                    <div class="text-sm truncate pr-1">
-                      {{ item.sessionName }}
-                    </div>
-                    <div class="text-xs text-gray-400 shrink-0">
-                      {{
-                        FormatTsForCurrentDay(item.lastContentCreateTs, true)
-                      }}
-                    </div>
-                  </div>
-                  <div class="text-xs text-gray-400 truncate mt-1">
-                    {{ item.lastContent }}
-                  </div>
+                <div class="text-xs text-gray-400 truncate mt-1">
+                  {{ item.lastContent }}
                 </div>
               </div>
-            </DynamicScrollerItem>
-          </template>
-        </DynamicScroller>
+            </div>
+          </DynamicScrollerItem>
+        </template>
+      </DynamicScroller>
 
-        <div
-          v-if="!dataList.length && !loading"
-          class="flex text-[15px] flex w-full h-full justify-center items-center text-gray-400"
-        >
-          暂无会话。
-        </div>
-      </el-scrollbar>
+      <div
+        v-if="!dataList.length && !loading"
+        class="flex text-[15px] flex w-full h-full justify-center items-center text-gray-400"
+      >
+        暂无会话。
+      </div>
     </div>
   </div>
 </template>

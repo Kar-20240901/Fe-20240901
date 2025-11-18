@@ -372,7 +372,7 @@ onMounted(() => {
 
       setTimeout(() => {
         scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
-      }, CommonConstant.SHORT_DELAY);
+      }, CommonConstant.MEDIUM_DELAY);
     }, CommonConstant.MEDIUM_DELAY);
   });
 });
@@ -512,109 +512,106 @@ onMounted(() => {
         </div>
 
         <div ref="scrollbarParentDiv" class="flex-1">
-          <el-scrollbar :height="scrollbarHeight">
-            <DynamicScroller
-              v-show="dataList.length"
-              :items="dataList"
-              :min-item-size="90"
-              key-field="id"
-            >
-              <template #default="{ item, index, active }">
-                <DynamicScrollerItem
-                  :item="item"
-                  :active="active"
-                  :index="index"
-                >
-                  <div class="flex h-[90px]">
-                    <template v-for="subItem in item.l" :key="subItem.id">
-                      <el-tooltip placement="top" :show-after="800">
-                        <template #content>
-                          <div class="flex flex-col">
-                            <div>名称：{{ subItem.showFileName }}</div>
-                            <div
-                              v-if="subItem.type === BaseFileTypeEnum.FILE.code"
-                            >
-                              大小：{{ GetFileSizeStr(subItem.fileSize) }}
-                            </div>
-                            <div
-                              v-else-if="
-                                subItem.type === BaseFileTypeEnum.FOLDER.code
-                              "
-                            >
-                              大小：{{ GetFileSizeStr(subItem.folderSize) }}
-                            </div>
-                            <div>
-                              创建时间：{{
-                                FormatDateTimeForCurrentDay(
-                                  new Date(subItem.createTime)
-                                )
-                              }}
-                            </div>
+          <DynamicScroller
+            v-show="dataList.length"
+            :items="dataList"
+            :min-item-size="90"
+            key-field="id"
+            :style="`height: ${scrollbarHeight}px`"
+            class="scrollbar-hide"
+          >
+            <template #default="{ item, index, active }">
+              <DynamicScrollerItem :item="item" :active="active" :index="index">
+                <div class="flex h-[90px]">
+                  <template v-for="subItem in item.l" :key="subItem.id">
+                    <el-tooltip placement="top" :show-after="800">
+                      <template #content>
+                        <div class="flex flex-col">
+                          <div>名称：{{ subItem.showFileName }}</div>
+                          <div
+                            v-if="subItem.type === BaseFileTypeEnum.FILE.code"
+                          >
+                            大小：{{ GetFileSizeStr(subItem.fileSize) }}
                           </div>
-                        </template>
-                        <el-button
-                          text
-                          :type="
-                            selectIdSet.has(subItem.id) ? 'primary' : undefined
-                          "
-                          class="!h-[78px]"
-                          @dblclick="itemDblClick(subItem)"
-                          @click="itemClick(subItem)"
-                        >
-                          <div class="flex flex-col items-center">
-                            <el-image
-                              v-if="subItem.type === BaseFileTypeEnum.FILE.code"
-                              :src="`${BaseFilePrivateDownloadUrl}/${subItem.id}?${AUTHORIZATION}=${jwt}`"
-                              fit="cover"
-                              class="w-[45px] h-[45px] mb-[5px]"
-                            >
-                              <template #error>
-                                <component
-                                  :is="
-                                    useRenderIcon(RiFile2Line, {
-                                      width: '45px',
-                                      height: '45px'
-                                    })
-                                  "
-                                />
-                              </template>
-                            </el-image>
-                            <component
-                              :is="
-                                useRenderIcon(RiFolderOpenFill, {
-                                  width: '45px',
-                                  height: '45px'
-                                })
-                              "
-                              v-else
-                            />
-                            <el-text
-                              class="text-[13px] w-[80px] h-[18px] text-center"
-                              truncated
-                              :type="
-                                selectIdSet.has(subItem.id)
-                                  ? 'primary'
-                                  : undefined
-                              "
-                              >{{ subItem.uploadFlag ? "(传输中)" : ""
-                              }}{{ subItem.showFileName }}
-                            </el-text>
+                          <div
+                            v-else-if="
+                              subItem.type === BaseFileTypeEnum.FOLDER.code
+                            "
+                          >
+                            大小：{{ GetFileSizeStr(subItem.folderSize) }}
                           </div>
-                        </el-button>
-                      </el-tooltip>
-                    </template>
-                  </div>
-                </DynamicScrollerItem>
-              </template>
-            </DynamicScroller>
+                          <div>
+                            创建时间：{{
+                              FormatDateTimeForCurrentDay(
+                                new Date(subItem.createTime)
+                              )
+                            }}
+                          </div>
+                        </div>
+                      </template>
+                      <el-button
+                        text
+                        :type="
+                          selectIdSet.has(subItem.id) ? 'primary' : undefined
+                        "
+                        class="!h-[78px]"
+                        @dblclick="itemDblClick(subItem)"
+                        @click="itemClick(subItem)"
+                      >
+                        <div class="flex flex-col items-center">
+                          <el-image
+                            v-if="subItem.type === BaseFileTypeEnum.FILE.code"
+                            :src="`${BaseFilePrivateDownloadUrl}/${subItem.id}?${AUTHORIZATION}=${jwt}`"
+                            fit="cover"
+                            class="w-[45px] h-[45px] mb-[5px]"
+                            lazy
+                          >
+                            <template #error>
+                              <component
+                                :is="
+                                  useRenderIcon(RiFile2Line, {
+                                    width: '45px',
+                                    height: '45px'
+                                  })
+                                "
+                              />
+                            </template>
+                          </el-image>
+                          <component
+                            :is="
+                              useRenderIcon(RiFolderOpenFill, {
+                                width: '45px',
+                                height: '45px'
+                              })
+                            "
+                            v-else
+                          />
+                          <el-text
+                            class="text-[13px] w-[80px] h-[18px] text-center"
+                            truncated
+                            :type="
+                              selectIdSet.has(subItem.id)
+                                ? 'primary'
+                                : undefined
+                            "
+                            >{{ subItem.uploadFlag ? "(传输中)" : ""
+                            }}{{ subItem.showFileName }}
+                          </el-text>
+                        </div>
+                      </el-button>
+                    </el-tooltip>
+                  </template>
+                </div>
+              </DynamicScrollerItem>
+            </template>
+          </DynamicScroller>
 
-            <div
-              v-if="!dataList.length"
-              class="text-[15px] flex w-full justify-center"
-            >
-              此文件夹为空。
-            </div>
-          </el-scrollbar>
+          <div
+            v-if="!dataList.length && !loading"
+            class="text-[15px] flex w-full justify-center"
+          >
+            此文件夹为空。
+          </div>
         </div>
       </div>
 

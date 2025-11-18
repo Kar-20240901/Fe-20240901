@@ -107,8 +107,16 @@ const doSearchThrottle = throttle(
   300
 ) as (loadingFlag?: boolean, scrollFlag?: boolean) => void;
 
-function loadMore() {
-  if (!searchContentInfoLoading.value && hasMore) {
+function handleScroll(event: Event) {
+  const scrollerEl = event.target as HTMLElement;
+
+  if (!scrollerEl) return;
+
+  const { scrollTop, scrollHeight, clientHeight } = scrollerEl;
+
+  const distanceToBottom = scrollHeight - clientHeight - scrollTop;
+
+  if (distanceToBottom <= 20 && !searchContentInfoLoading.value && hasMore) {
     doSearchThrottle(false, true);
   }
 }
@@ -119,70 +127,68 @@ function loadMore() {
     <div class="flex flex-col bg-white pt-3 h-full">
       <div class="shrink-0 text-sm text-gray-400 mb-1">聊天记录</div>
 
-      <div ref="scrollbarParentDiv" class="flex-1">
-        <el-scrollbar
-          v-loading="searchContentInfoLoading"
-          :height="scrollbarHeight"
-          :distance="20"
-          @end-reached="loadMore"
+      <div
+        ref="scrollbarParentDiv"
+        v-loading="searchContentInfoLoading"
+        class="flex-1"
+      >
+        <DynamicScroller
+          v-show="searchContentInfoList.length"
+          :items="searchContentInfoList"
+          :min-item-size="56"
+          key-field="contentId"
+          :style="`height: ${scrollbarHeight}px`"
+          class="scrollbar-hide"
+          @scroll="handleScroll"
         >
-          <DynamicScroller
-            v-show="searchContentInfoList.length"
-            :items="searchContentInfoList"
-            :min-item-size="56"
-            key-field="contentId"
-          >
-            <template #default="{ item, index, active }">
-              <DynamicScrollerItem :item="item" :active="active" :index="index">
-                <div
-                  class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
-                  @click="searchContentInfoClick(item)"
+          <template #default="{ item, index, active }">
+            <DynamicScrollerItem :item="item" :active="active" :index="index">
+              <div
+                class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
+                @click="searchContentInfoClick(item)"
+              >
+                <el-image
+                  :src="props.sessionUserMap[item.createId]?.avatarUrl"
+                  fit="cover"
+                  class="w-12 h-12 rounded-full"
                 >
-                  <el-image
-                    :src="props.sessionUserMap[item.createId]?.avatarUrl"
-                    fit="cover"
-                    class="w-12 h-12 rounded-full"
-                  >
-                    <template #error>
-                      <el-image
-                        :src="Avatar"
-                        fit="cover"
-                        class="w-12 h-12 rounded-full"
-                      />
-                    </template>
-                  </el-image>
+                  <template #error>
+                    <el-image
+                      :src="Avatar"
+                      fit="cover"
+                      class="w-12 h-12 rounded-full"
+                    />
+                  </template>
+                </el-image>
 
-                  <div class="flex flex-col text-sm ml-2">
-                    <div class="truncate">
-                      {{ props.sessionUserMap[item.createId]?.showName }}
-                    </div>
+                <div class="flex flex-col text-sm ml-2">
+                  <div class="truncate">
+                    {{ props.sessionUserMap[item.createId]?.showName }}
+                  </div>
 
-                    <div class="flex">
-                      <div
-                        v-for="(part, index) in processText(
-                          item.content,
-                          props.searchKey
-                        )"
-                        :key="index"
-                        :class="
-                          part.highlightedFlag
-                            ? 'text-blue-800'
-                            : 'text-gray-400'
-                        "
-                      >
-                        {{ part.text }}
-                      </div>
-                    </div>
-
-                    <div class="text-xs text-gray-400">
-                      {{ FormatTsForCurrentDay(item.createTs, true) }}
+                  <div class="flex">
+                    <div
+                      v-for="(part, index) in processText(
+                        item.content,
+                        props.searchKey
+                      )"
+                      :key="index"
+                      :class="
+                        part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
+                      "
+                    >
+                      {{ part.text }}
                     </div>
                   </div>
+
+                  <div class="text-xs text-gray-400">
+                    {{ FormatTsForCurrentDay(item.createTs, true) }}
+                  </div>
                 </div>
-              </DynamicScrollerItem>
-            </template>
-          </DynamicScroller>
-        </el-scrollbar>
+              </div>
+            </DynamicScrollerItem>
+          </template>
+        </DynamicScroller>
       </div>
     </div>
   </div>
