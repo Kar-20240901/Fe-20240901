@@ -79,9 +79,9 @@ const pathList = ref<string[]>([CommonConstant.TOP_FOLDER_NAME]); // 例如：/�
 const rowMax = ref<number>(0);
 
 function setRowMax() {
-  const growEle: HTMLElement = document.querySelector(".grow");
+  const mainContentEle: HTMLElement = document.querySelector(".main-content");
 
-  if (!growEle) {
+  if (!mainContentEle) {
     rowMax.value = 1;
 
     return;
@@ -89,11 +89,11 @@ function setRowMax() {
 
   const itemWidth = 110;
 
-  let rowMaxTemp = Math.floor(growEle.offsetWidth / itemWidth);
+  let rowMaxTemp = Math.floor((mainContentEle.offsetWidth - 40) / itemWidth);
 
   const marginNumber = rowMaxTemp * 12;
 
-  rowMaxTemp = rowMaxTemp - Math.floor(marginNumber / itemWidth);
+  rowMaxTemp = rowMaxTemp - Math.ceil(marginNumber / itemWidth);
 
   if (rowMaxTemp <= 0) {
     rowMaxTemp = 1;
@@ -373,7 +373,7 @@ onMounted(() => {
       setTimeout(() => {
         scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
       }, CommonConstant.SHORT_DELAY);
-    }, CommonConstant.SHORT_DELAY);
+    }, CommonConstant.MEDIUM_DELAY);
   });
 });
 </script>
@@ -511,7 +511,7 @@ onMounted(() => {
           </el-breadcrumb>
         </div>
 
-        <div ref="scrollbarParentDiv" class="flex-1 myScrollbarParentDiv">
+        <div ref="scrollbarParentDiv" class="flex-1">
           <el-scrollbar :height="scrollbarHeight">
             <DynamicScroller
               v-show="dataList.length"
