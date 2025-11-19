@@ -9,6 +9,8 @@ import {
   BaseImSearchBaseGroupVO
 } from "@/api/http/base/BaseImSearchController";
 import { BaseImGroupPageVO } from "@/api/http/base/BaseImGroupController";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import EpArrowRight from "~icons/ep/ArrowRight";
 
 const SegmentedOptionArr = [
   {
@@ -39,10 +41,44 @@ function contactFriendClick(item: BaseImFriendPageVO) {
 function contactGroupClick(item: BaseImGroupPageVO) {
   emit("contactGroupClick", item);
 }
+
+const ApplyOperateFriendValue = "applyFriend";
+
+const ApplyOperateGroupValue = "applyGroup";
+
+const ApplyOperateArr = [
+  {
+    label: "好友申请",
+    value: ApplyOperateFriendValue
+  },
+  {
+    label: "群组申请",
+    value: ApplyOperateGroupValue
+  }
+];
 </script>
 
 <template>
   <div class="flex flex-col h-full">
+    <div class="pt-2 px-4 flex shrink-0 flex-col">
+      <template v-for="item in ApplyOperateArr" :key="item.value">
+        <div
+          class="py-1 cursor-pointer flex justify-between items-center transition-all text-sm text-neutral-700 hover:text-primary"
+        >
+          <div>{{ item.label }}</div>
+          <div>
+            <component
+              :is="
+                useRenderIcon(EpArrowRight, {
+                  class: 'w-3 h-3'
+                })
+              "
+            />
+          </div>
+        </div>
+      </template>
+    </div>
+
     <div class="p-2 shrink-0">
       <div class="bg-neutral-100 rounded-lg px-2 py-1 flex">
         <template v-for="item in SegmentedOptionArr" :key="item.value">
