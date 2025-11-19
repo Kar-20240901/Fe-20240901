@@ -113,7 +113,7 @@ export interface BaseImSessionRefUserPageVO {
   sessionName?: string; // 显示的会话名，一定有值
   targetType?: number; // 目标类型：101 好友 201 群组，一定有值，格式：int32
   sessionId?: string; // 会话主键 id，一定有值，格式：int64
-  unReadCount?: number; // 未读数量，最大值为 100，格式：int32
+  unReadCount?: number; // 未读数量，格式：int32
 }
 
 // 滚动加载

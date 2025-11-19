@@ -212,6 +212,8 @@ function menuSelect(index: string) {
           !showSearchOverviewPre &&
           menuIndex === BaseImLeftSegmentedEnum.CONTACT.code
         "
+        @contactFriendClick="searchFriendClick"
+        @contactGroupClick="searchGroupClick"
       />
     </div>
   </div>

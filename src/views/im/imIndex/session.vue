@@ -17,17 +17,12 @@ const loading = ref<boolean>(false);
 const dataList = ref<BaseImSessionRefUserPageVO[]>([]);
 
 const emit = defineEmits<{
-  (e: "searchClick"): void;
   (e: "sessionClick", item: BaseImSessionRefUserPageVO): void;
 
   (e: "updateSessionUserMap", item: IImShowInfoMap): void;
 
   (e: "doUpdateAvatarAndNickname", sessionIdArr: string[]): void;
 }>();
-
-function searchClick() {
-  emit("searchClick");
-}
 
 function sessionClick(item: BaseImSessionRefUserPageVO) {
   emit("sessionClick", item);
@@ -254,7 +249,7 @@ function updateLastContent(
                 </el-image>
               </el-badge>
             </div>
-            <div class="ml-4 flex-1">
+            <div class="ml-2 flex-1">
               <div class="flex justify-between items-center">
                 <div class="text-sm truncate pr-1">
                   {{ item.sessionName }}

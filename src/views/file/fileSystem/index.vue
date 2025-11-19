@@ -511,7 +511,7 @@ onMounted(() => {
           </el-breadcrumb>
         </div>
 
-        <div ref="scrollbarParentDiv" class="flex-1">
+        <div ref="scrollbarParentDiv" class="flex-1 h-full">
           <DynamicScroller
             v-show="dataList.length"
             :items="dataList"

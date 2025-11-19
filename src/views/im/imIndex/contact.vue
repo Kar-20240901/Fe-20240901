@@ -3,6 +3,12 @@ import { BaseImContactSegmentedEnum } from "@/model/enum/im/BaseImContactSegment
 import { ref } from "vue";
 import ContactFriend from "@/views/im/imIndex/contactFriend.vue";
 import ContactGroup from "@/views/im/imIndex/contactGroup.vue";
+import { BaseImFriendPageVO } from "@/api/http/base/BaseImFriendController";
+import {
+  BaseImSearchBaseFriendVO,
+  BaseImSearchBaseGroupVO
+} from "@/api/http/base/BaseImSearchController";
+import { BaseImGroupPageVO } from "@/api/http/base/BaseImGroupController";
 
 const SegmentedOptionArr = [
   {
@@ -19,6 +25,19 @@ const menuIndex = ref<string>(SegmentedOptionArr[0].value);
 
 function menuSelect(index: string) {
   menuIndex.value = index;
+}
+
+const emit = defineEmits<{
+  (e: "contactFriendClick", item: BaseImSearchBaseFriendVO): void;
+  (e: "contactGroupClick", item: BaseImSearchBaseGroupVO): void;
+}>();
+
+function contactFriendClick(item: BaseImFriendPageVO) {
+  emit("contactFriendClick", item);
+}
+
+function contactGroupClick(item: BaseImGroupPageVO) {
+  emit("contactGroupClick", item);
 }
 </script>
 
@@ -49,10 +68,12 @@ function menuSelect(index: string) {
     <div class="flex-1">
       <contact-friend
         v-show="menuIndex === BaseImContactSegmentedEnum.FRIEND.code"
+        @contactFriendClick="contactFriendClick"
       />
 
       <contact-group
         v-show="menuIndex === BaseImContactSegmentedEnum.GROUP.code"
+        @contactGroupClick="contactGroupClick"
       />
     </div>
   </div>
