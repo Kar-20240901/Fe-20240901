@@ -8,9 +8,7 @@ import {
 } from "@/api/http/base/BaseImSessionRefUserController";
 import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
 import { IImSessionProps, IImShowInfoMap } from "@/views/im/imIndex/types";
-import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { FormatTsForCurrentDay } from "@/utils/DateUtil";
-import FaSearch from "~icons/fa/search";
 import Avatar from "@/assets/user.png";
 import { DevFlag } from "@/utils/SysUtil";
 import { throttle, useResizeObserver } from "@pureadmin/utils";
@@ -212,89 +210,73 @@ function updateLastContent(
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
-    <div
-      class="shrink-0 w-full flex p-4 border-b border-gray-200 cursor-default"
-      @click="searchClick"
+  <div
+    ref="scrollbarParentDiv"
+    v-loading="loading"
+    class="flex flex-col h-full"
+  >
+    <DynamicScroller
+      v-show="dataList.length"
+      ref="sessionRecycleScrollerRef"
+      :items="dataList"
+      :min-item-size="80"
+      key-field="sessionId"
+      :style="`height: ${scrollbarHeight}px`"
+      :class="`${scrollbarClass}`"
+      @scroll="handleScroll"
     >
-      <div
-        class="w-full py-2 justify-center items-center flex rounded-full bg-gray-100"
-      >
-        <component
-          :is="
-            useRenderIcon(FaSearch, {
-              class: 'text-gray-400 w-[14px] h-[14px]'
-            })
-          "
-        />
-        <div class="ml-2 text-gray-400 text-sm">搜索</div>
-      </div>
-    </div>
-
-    <div ref="scrollbarParentDiv" v-loading="loading" class="flex-1">
-      <DynamicScroller
-        v-show="dataList.length"
-        ref="sessionRecycleScrollerRef"
-        :items="dataList"
-        :min-item-size="80"
-        key-field="sessionId"
-        :style="`height: ${scrollbarHeight}px`"
-        :class="`${scrollbarClass}`"
-        @scroll="handleScroll"
-      >
-        <template #default="{ item, index, active }">
-          <DynamicScrollerItem :item="item" :active="active" :index="index">
-            <div
-              :class="`h-[80px] flex items-center p-4 border-b border-l-4 ${props.session.sessionId === item.sessionId ? 'bg-secondary border-b-secondary  border-l-primary hover:bg-secondary/70 hover:border-b-secondary/70' : 'hover:bg-gray-50 hover:border-l-gray-50 border-l-white border-b-gray-100'} cursor-pointer transition-colors`"
-              @click="sessionClick(item)"
-            >
-              <div>
-                <el-badge
-                  :value="item.unReadCount"
-                  :max="999"
-                  :show-zero="false"
-                  badge-class="mt-1 mr-1"
-                  :is-dot="item.notDisturbFlag"
+      <template #default="{ item, index, active }">
+        <DynamicScrollerItem :item="item" :active="active" :index="index">
+          <div
+            :class="`h-[80px] flex items-center p-4 border-b border-l-4 ${props.session.sessionId === item.sessionId ? 'bg-secondary border-b-secondary  border-l-primary hover:bg-secondary/70 hover:border-b-secondary/70' : 'hover:bg-gray-50 hover:border-l-gray-50 border-l-white border-b-gray-100'} cursor-pointer transition-colors`"
+            @click="sessionClick(item)"
+          >
+            <div>
+              <el-badge
+                :value="item.unReadCount"
+                :max="999"
+                :show-zero="false"
+                badge-class="mt-1 mr-1"
+                :is-dot="item.notDisturbFlag"
+              >
+                <el-image
+                  :src="item.avatarUrl"
+                  fit="cover"
+                  class="w-12 h-12 rounded-full"
                 >
-                  <el-image
-                    :src="item.avatarUrl"
-                    fit="cover"
-                    class="w-12 h-12 rounded-full"
-                  >
-                    <template #error>
-                      <el-image
-                        :src="Avatar"
-                        fit="cover"
-                        class="w-12 h-12 rounded-full"
-                      />
-                    </template>
-                  </el-image>
-                </el-badge>
+                  <template #error>
+                    <el-image
+                      :src="Avatar"
+                      fit="cover"
+                      class="w-12 h-12 rounded-full"
+                    />
+                  </template>
+                </el-image>
+              </el-badge>
+            </div>
+            <div class="ml-4 flex-1">
+              <div class="flex justify-between items-center">
+                <div class="text-sm truncate pr-1">
+                  {{ item.sessionName }}
+                </div>
+                <div class="text-xs text-gray-400 shrink-0">
+                  {{ FormatTsForCurrentDay(item.lastContentCreateTs, true) }}
+                </div>
               </div>
-              <div class="ml-4 flex-1">
-                <div class="flex justify-between items-center">
-                  <div class="text-sm truncate pr-1">
-                    {{ item.sessionName }}
-                  </div>
-                  <div class="text-xs text-gray-400 shrink-0">
-                    {{ FormatTsForCurrentDay(item.lastContentCreateTs, true) }}
-                  </div>
-                </div>
-                <div class="text-xs text-gray-400 truncate mt-1">
-                  {{ item.lastContent }}
-                </div>
+              <div class="text-xs text-gray-400 truncate mt-1">
+                {{ item.lastContent }}
               </div>
             </div>
-          </DynamicScrollerItem>
-        </template>
-      </DynamicScroller>
+          </div>
+        </DynamicScrollerItem>
+      </template>
+    </DynamicScroller>
 
-      <div
-        v-if="!dataList.length && !loading"
-        class="flex text-[15px] flex w-full h-full justify-center items-center text-gray-400"
-      >
-        暂无会话。
-      </div>
+    <div
+      v-if="!dataList.length && !loading"
+      class="flex text-[15px] flex w-full h-full justify-center items-center text-gray-400"
+    >
+      暂无会话。
     </div>
   </div>
 </template>

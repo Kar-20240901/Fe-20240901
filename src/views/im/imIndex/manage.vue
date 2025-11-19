@@ -12,6 +12,8 @@ import {
 } from "@/api/http/base/BaseImSearchController";
 import { IImManageProps, IImShowInfoMap } from "@/views/im/imIndex/types";
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import FaSearch from "~icons/fa/search";
 
 const SegmentedOptionArr = [
   {
@@ -129,7 +131,7 @@ function execContentSearch() {
   emit("execContentSearch");
 }
 
-const menuIndex = ref<string>(SegmentedOptionArr[0].value);
+const menuIndex = ref<string>(SegmentedOptionArr[1].value);
 
 function menuSelect(index: string) {
   menuIndex.value = index;
@@ -158,6 +160,25 @@ function menuSelect(index: string) {
       </template>
     </div>
 
+    <div
+      v-show="!showSearchOverviewPre"
+      class="shrink-0 w-full flex p-4 border-b border-gray-200 cursor-default"
+      @click="searchClick"
+    >
+      <div
+        class="w-full py-2 justify-center items-center flex rounded-full bg-gray-100"
+      >
+        <component
+          :is="
+            useRenderIcon(FaSearch, {
+              class: 'text-gray-400 w-[14px] h-[14px]'
+            })
+          "
+        />
+        <div class="ml-2 text-gray-400 text-sm">搜索</div>
+      </div>
+    </div>
+
     <div class="flex-1">
       <session
         v-show="
@@ -173,10 +194,7 @@ function menuSelect(index: string) {
       />
 
       <search-overview-pre
-        v-show="
-          showSearchOverviewPre &&
-          menuIndex === BaseImLeftSegmentedEnum.SESSION.code
-        "
+        v-show="showSearchOverviewPre"
         ref="searchOverviewPreRef"
         :searchBaseContentVO="props.searchBaseContentVO"
         :sessionUserMap="props.sessionUserMap"
@@ -189,7 +207,12 @@ function menuSelect(index: string) {
         @searchOverviewPreBackClick="searchOverviewPreBackClick"
       />
 
-      <contact v-show="menuIndex === BaseImLeftSegmentedEnum.CONTACT.code" />
+      <contact
+        v-show="
+          !showSearchOverviewPre &&
+          menuIndex === BaseImLeftSegmentedEnum.CONTACT.code
+        "
+      />
     </div>
   </div>
 </template>

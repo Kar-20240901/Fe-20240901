@@ -71,6 +71,10 @@ export interface IImSearchOverviewMoreProps {
   searchKey?: string;
 }
 
+export interface IImContactFriendProps {
+  searchKey?: string;
+}
+
 export interface IImSearchOverviewMoreContentInfoProps {
   searchBaseContentVO?: BaseImSearchBaseContentVO;
   sessionUserMap?: Record<string, IImShowInfoMap>;
