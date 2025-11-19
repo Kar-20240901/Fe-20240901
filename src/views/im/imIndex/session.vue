@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { onMounted, onUnmounted, ref } from "vue";
+import { nextTick, onMounted, onUnmounted, ref } from "vue";
 import {
   BaseImSessionRefUserPageVO,
   baseImSessionRefUserScroll
@@ -116,13 +116,28 @@ const scrollbarParentDiv = ref();
 
 const scrollbarHeight = ref<number>(0);
 
-const syncHeight = () => {
-  if (scrollbarParentDiv.value) {
-    scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
+const scrollbarClass = ref<string>("");
 
-    if (scrollbarHeight.value) {
-      scrollbarParentDivResizeObserver.stop();
-    }
+const sessionRecycleScrollerRef = ref();
+
+const syncHeight = () => {
+  if (!scrollbarParentDiv.value) {
+    return;
+  }
+
+  scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
+
+  if (scrollbarHeight.value) {
+    scrollbarParentDivResizeObserver.stop();
+
+    nextTick(() => {
+      if (
+        sessionRecycleScrollerRef.value.offsetHeight >
+        sessionRecycleScrollerRef.value.clientHeight
+      ) {
+        scrollbarClass.value = "scrollbar-hide";
+      }
+    });
   }
 };
 
@@ -219,11 +234,12 @@ function updateLastContent(
     <div ref="scrollbarParentDiv" v-loading="loading" class="flex-1">
       <DynamicScroller
         v-show="dataList.length"
+        ref="sessionRecycleScrollerRef"
         :items="dataList"
         :min-item-size="80"
         key-field="sessionId"
         :style="`height: ${scrollbarHeight}px`"
-        class="scrollbar-hide"
+        :class="`${scrollbarClass}`"
         @scroll="handleScroll"
       >
         <template #default="{ item, index, active }">
