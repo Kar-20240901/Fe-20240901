@@ -3,7 +3,6 @@ import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import { throttle, useResizeObserver } from "@pureadmin/utils";
 import { nextTick, onMounted, onUnmounted, ref } from "vue";
-import { IImContactFriendProps } from "@/views/im/imIndex/types";
 import {
   BaseImFriendPageVO,
   baseImFriendScroll
@@ -55,8 +54,6 @@ const scrollbarParentDivResizeObserver = useResizeObserver(
 
 const friendList = ref<BaseImFriendPageVO[]>([]);
 
-const props = defineProps<IImContactFriendProps>();
-
 const emit = defineEmits<{
   (e: "contactFriendClick", item: BaseImFriendPageVO): void;
 }>();
@@ -97,7 +94,6 @@ function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   }
 
   baseImFriendScroll({
-    searchKey: props.searchKey,
     pageSize: String(pageSize),
     id: friendUserId,
     backwardFlag: true,
@@ -146,7 +142,7 @@ function handleScroll(event: Event) {
         v-show="friendList.length"
         ref="contactFriendRecycleScrollerRef"
         :items="friendList"
-        :min-item-size="80"
+        :min-item-size="56"
         key-field="friendUserId"
         :style="`height: ${scrollbarHeight}px`"
         :class="`${scrollbarClass}`"
