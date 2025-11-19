@@ -104,7 +104,7 @@ const emit = defineEmits<{
 
   (e: "doBaseImGroupRefUserPage", groupId: string): void;
 
-  (e: "searchOverviewPreBackClick"): void;
+  (e: "searchOverviewPreBackClick", execRestFlag?: boolean): void;
 }>();
 
 const showSearchOverviewMoreFriendFlag = ref<boolean>(false);
@@ -158,11 +158,17 @@ function searchGroupClick(item: BaseImSearchBaseGroupVO) {
 }
 
 function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
+  execRestFlag = true;
+
   emit("searchContentInfoClick", item);
 }
 
+let execRestFlag = false;
+
 function searchOverviewPreBackClick() {
-  emit("searchOverviewPreBackClick");
+  emit("searchOverviewPreBackClick", execRestFlag);
+
+  execRestFlag = false;
   searchKey.value = "";
   resetShowFlag();
   resetSearchOverview();

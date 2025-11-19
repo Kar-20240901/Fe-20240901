@@ -80,9 +80,12 @@ function searchClick() {
   });
 }
 
-function searchOverviewPreBackClick() {
-  contentOnlyReset();
-  execContentSearch();
+function searchOverviewPreBackClick(execRestFlag?: boolean) {
+  if (execRestFlag) {
+    contentOnlyReset();
+    execContentSearch();
+  }
+
   showSearchOverviewPre.value = false;
 }
 
