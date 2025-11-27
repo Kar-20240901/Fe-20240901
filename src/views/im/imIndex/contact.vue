@@ -11,6 +11,7 @@ import {
 import { BaseImGroupPageVO } from "@/api/http/base/BaseImGroupController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import EpArrowRight from "~icons/ep/ArrowRight";
+import ContactFriendApplyDialog from "@/views/im/imIndex/contactFriendApplyDialog.vue";
 
 const SegmentedOptionArr = [
   {
@@ -46,6 +47,8 @@ const ApplyOperateFriendValue = "applyFriend";
 
 const ApplyOperateGroupValue = "applyGroup";
 
+const BlockValue = "block";
+
 const ApplyOperateArr = [
   {
     label: "好友申请",
@@ -54,8 +57,19 @@ const ApplyOperateArr = [
   {
     label: "群组申请",
     value: ApplyOperateGroupValue
+  },
+  {
+    label: "黑名单",
+    value: BlockValue
   }
 ];
+
+function applyOperateClick(value?: string) {
+  if (value === ApplyOperateFriendValue) {
+  } else if (value === ApplyOperateGroupValue) {
+  } else if (value === BlockValue) {
+  }
+}
 </script>
 
 <template>
@@ -64,6 +78,7 @@ const ApplyOperateArr = [
       <template v-for="item in ApplyOperateArr" :key="item.value">
         <div
           class="py-1 cursor-pointer flex justify-between items-center transition-all text-sm text-neutral-700 hover:text-primary"
+          @click="applyOperateClick(item.value)"
         >
           <div>{{ item.label }}</div>
           <div>
@@ -112,5 +127,7 @@ const ApplyOperateArr = [
         @contactGroupClick="contactGroupClick"
       />
     </div>
+
+    <contact-friend-apply-dialog />
   </div>
 </template>

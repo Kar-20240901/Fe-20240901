@@ -71,8 +71,8 @@ export function baseImGroupInsertOrUpdate(
 }
 
 export interface BaseImGroupRemoveUserDTO {
+  userIdSet?: string[]; // 用户主键 id集合，是否必传：true，格式：int64
   groupId?: string; // 群组主键 id，是否必传：true，格式：int64
-  userId?: string; // 用户主键 id，是否必传：true，格式：int64
 }
 
 // 踢出群员

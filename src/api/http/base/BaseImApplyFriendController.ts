@@ -15,7 +15,6 @@ export interface BaseImApplyFriendPageDTO {
 
 export interface BaseImApplyFriendPageVO {
   avatarUrl?: string; // 目标用户头像
-  avatarFileId?: string; // 目标用户头像文件 id，格式：int64
   applyContent?: string; // 申请内容
   nickname?: string; // 目标用户昵称
   id?: string; // 主键 id，格式：int64
@@ -82,8 +81,8 @@ export function baseImApplyFriendSend(
 }
 
 export interface BaseImApplyFriendRejectDTO {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
   rejectReason?: string; // 拒绝理由
-  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 拒绝
@@ -99,13 +98,13 @@ export function baseImApplyFriendReject(
   );
 }
 
-export interface NotNullId {
-  id?: string; // 主键 id，是否必传：true，格式：int64
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 隐藏
 export function baseImApplyFriendHidden(
-  form: NotNullId,
+  form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
@@ -118,7 +117,7 @@ export function baseImApplyFriendHidden(
 
 // 同意
 export function baseImApplyFriendAgree(
-  form: NotNullId,
+  form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(

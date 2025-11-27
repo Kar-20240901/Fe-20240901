@@ -4,18 +4,36 @@ import { http } from "@/utils/http";
 import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
-export interface NotNullId {
-  id?: string; // 主键 id，是否必传：true，格式：int64
+export interface BaseImApplyGroupHiddenGroupDTO {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
+  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
 }
 
-// 隐藏
-export function baseImApplyGroupHidden(
-  form: NotNullId,
+// 隐藏-群组
+export function baseImApplyGroupHiddenGroup(
+  form: BaseImApplyGroupHiddenGroupDTO,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
     "post",
-    baseApi("/base/imApplyGroup/hidden"),
+    baseApi("/base/imApplyGroup/hiddenGroup"),
+    form,
+    config
+  );
+}
+
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
+}
+
+// 隐藏-自我
+export function baseImApplyGroupHiddenSelf(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/imApplyGroup/hiddenSelf"),
     form,
     config
   );
@@ -99,8 +117,9 @@ export function baseImApplyGroupSearchApplyGroup(
 }
 
 export interface BaseImApplyGroupRejectDTO {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
   rejectReason?: string; // 拒绝理由
-  id?: string; // 主键 id，是否必传：true，格式：int64
+  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
 }
 
 // 拒绝
@@ -116,9 +135,14 @@ export function baseImApplyGroupReject(
   );
 }
 
+export interface BaseImApplyGroupAgreeDTO {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
+  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
+}
+
 // 同意
 export function baseImApplyGroupAgree(
-  form: NotNullId,
+  form: BaseImApplyGroupAgreeDTO,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(

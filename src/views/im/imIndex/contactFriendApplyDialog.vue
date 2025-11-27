@@ -1,0 +1,333 @@
+<script setup lang="ts">
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import Delete from "~icons/ep/delete";
+import Refresh from "~icons/ep/refresh";
+import { ref } from "vue";
+import {
+  baseImApplyFriendAgree,
+  baseImApplyFriendHidden,
+  baseImApplyFriendPage,
+  BaseImApplyFriendPageDTO,
+  BaseImApplyFriendPageVO,
+  baseImApplyFriendReject
+} from "@/api/http/base/BaseImApplyFriendController";
+import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
+import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import {
+  BaseImApplyStatusEnum,
+  BaseImApplyStatusEnumMap
+} from "@/model/enum/im/BaseImApplyStatusEnum";
+import { baseImBlockAddFriend } from "@/api/http/base/BaseImBlockController";
+
+const search = ref<BaseImApplyFriendPageDTO>({});
+
+const loading = ref<boolean>(false);
+const dataList = ref<BaseImApplyFriendPageVO[]>([]);
+const total = ref<number>(0);
+const currentPage = ref<number>(1);
+const pageSize = ref<number>(10);
+
+const selectIdArr = ref<string[]>([]);
+const tableRef = ref();
+
+const visible = ref<boolean>(false);
+
+function open() {
+  total.value = 0;
+  currentPage.value = 1;
+  pageSize.value = 10;
+  dataList.value = [];
+  visible.value = true;
+  onSearch();
+}
+
+function onSearch() {
+  loading.value = true;
+  baseImApplyFriendPage({
+    ...search.value,
+    current: currentPage.value as any,
+    pageSize: pageSize.value as any
+  })
+    .then(res => {
+      dataList.value = res.data.records;
+      total.value = res.data.total;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
+
+defineExpose({
+  open
+});
+
+function agreeBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImApplyFriendAgree({
+        idSet: [...selectIdArr.value]
+      }).then(res => {
+        selectIdArr.value = [];
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定同意勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function rejectBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImApplyFriendReject({
+        idSet: [...selectIdArr.value]
+      }).then(res => {
+        selectIdArr.value = [];
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定拒绝勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function deleteBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImApplyFriendHidden({
+        idSet: [...selectIdArr.value]
+      }).then(res => {
+        selectIdArr.value = [];
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定隐藏勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function onSelectChange(rowArr?: BaseImApplyFriendPageVO[]) {
+  selectIdArr.value = rowArr.map(it => it.id);
+}
+
+function agreeClick(item?: BaseImApplyFriendPageVO) {
+  if (item?.id) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImApplyFriendAgree({
+        idSet: [item.id]
+      }).then(res => {
+        selectIdArr.value = [];
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定同意【${item.nickname}】的好友申请吗？`
+  );
+}
+
+function rejectClick(item?: BaseImApplyFriendPageVO) {
+  if (item?.id) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImApplyFriendReject({
+        idSet: [item.id]
+      }).then(res => {
+        selectIdArr.value = [];
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定拒绝【${item.nickname}】的好友申请吗？`
+  );
+}
+
+function blockClick(item?: BaseImApplyFriendPageVO) {
+  if (item?.id) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImBlockAddFriend({
+        idSet: [item.id]
+      }).then(res => {
+        selectIdArr.value = [];
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定拉黑【${item.nickname}】吗？`
+  );
+}
+
+function hiddenClick(item?: BaseImApplyFriendPageVO) {
+  if (item?.id) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImApplyFriendHidden({
+        idSet: [item.id]
+      }).then(res => {
+        selectIdArr.value = [];
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定隐藏【${item.nickname}】的好友申请吗？`
+  );
+}
+</script>
+
+<template>
+  <el-dialog
+    v-model="visible"
+    :title="`好友申请`"
+    draggable
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    width="45%"
+    destroy-on-close
+  >
+    <div class="flex flex-col px-5 py-3 bg-bg_color">
+      <div class="pb-3 flex justify-between">
+        <div class="flex">
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(Delete)"
+            @click="agreeBySelectIdArr"
+          >
+            批量同意
+          </el-button>
+
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(Delete)"
+            @click="rejectBySelectIdArr"
+          >
+            批量拒绝
+          </el-button>
+
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(Delete)"
+            @click="deleteBySelectIdArr"
+          >
+            批量隐藏
+          </el-button>
+        </div>
+
+        <div>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(Refresh)"
+            :loading="loading"
+            @click="onSearch"
+          >
+            刷新
+          </el-button>
+        </div>
+      </div>
+
+      <el-table
+        ref="tableRef"
+        v-loading="loading"
+        :data="dataList"
+        row-key="id"
+        :header-cell-style="{
+          background: 'var(--el-fill-color-light)',
+          color: 'var(--el-text-color-primary)'
+        }"
+        show-overflow-tooltip
+        stripe
+        highlight-current-row
+        max-height="600px"
+        @selection-change="onSelectChange"
+      >
+        <el-table-column type="selection" />
+        <el-table-column label="用户" />
+        <el-table-column prop="applyContent" label="申请内容" />
+        <el-table-column
+          #default="scope"
+          prop="status"
+          label="状态"
+          width="100"
+        >
+          {{ BaseImApplyStatusEnumMap.get(scope.row.status) || "" }}
+        </el-table-column>
+        <el-table-column
+          #default="scope"
+          prop="createTime"
+          label="申请时间"
+          width="200"
+        >
+          {{ FormatDateTimeForCurrentDay(new Date(scope.row.applyTime)) }}
+        </el-table-column>
+        <el-table-column #default="scope" label="操作" width="120">
+          <el-button
+            v-if="scope.row.status === BaseImApplyStatusEnum.APPLYING.code"
+            link
+            type="primary"
+            @click="agreeClick(scope.row)"
+          >
+            同意
+          </el-button>
+          <el-button
+            v-if="scope.row.status === BaseImApplyStatusEnum.APPLYING.code"
+            link
+            type="primary"
+            @click="rejectClick(scope.row)"
+          >
+            拒绝
+          </el-button>
+          <el-button link type="primary" @click="blockClick(scope.row)">
+            拉黑
+          </el-button>
+          <el-button link type="primary" @click="hiddenClick(scope.row)">
+            隐藏
+          </el-button>
+        </el-table-column>
+      </el-table>
+
+      <el-pagination
+        v-model:page-size="pageSize"
+        v-model:current-page="currentPage"
+        class="mt-3"
+        layout="->, prev, pager, next, jumper, sizes, total"
+        :total="total"
+        :page-sizes="[10, 50, 100]"
+        @change="onSearch"
+      />
+    </div>
+  </el-dialog>
+</template>

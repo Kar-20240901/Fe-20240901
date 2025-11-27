@@ -54,9 +54,40 @@ export function baseImGroupRefUserPage(
   );
 }
 
-export interface BaseImGroupRefUserAddMuteDTO {
+export interface BaseImGroupRefUserDeleteMuteDTO {
+  userIdSet?: string[]; // 需要解除禁言的用户主键 id集合，格式：int64
   groupId?: string; // 群组主键 id，是否必传：true，格式：int64
-  userId?: string; // 需要禁言的人员主键 id，格式：int64
+}
+
+// 解除管理员
+export function baseImGroupRefUserDeleteManage(
+  form: BaseImGroupRefUserDeleteMuteDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/imGroupRefUser/deleteManage"),
+    form,
+    config
+  );
+}
+
+export interface BaseImGroupRefUserAddMuteDTO {
+  userIdSet?: string[]; // 需要禁言的用户主键 id集合，格式：int64
+  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
+}
+
+// 新增管理员
+export function baseImGroupRefUserAddManage(
+  form: BaseImGroupRefUserAddMuteDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/imGroupRefUser/addManage"),
+    form,
+    config
+  );
 }
 
 // 新增禁言
@@ -70,11 +101,6 @@ export function baseImGroupRefUserAddMute(
     form,
     config
   );
-}
-
-export interface BaseImGroupRefUserDeleteMuteDTO {
-  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
-  userId?: string; // 需要解除禁言的人员主键 id，格式：int64
 }
 
 // 解除禁言

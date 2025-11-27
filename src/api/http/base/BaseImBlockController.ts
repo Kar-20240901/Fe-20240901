@@ -5,8 +5,8 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseImBlockGroupAddUserDTO {
+  userIdSet?: string[]; // 用户主键 id集合，是否必传：true，格式：int64
   groupId?: string; // 群组主键 id，是否必传：true，格式：int64
-  userId?: string; // 用户主键 id，是否必传：true，格式：int64
 }
 
 // 取消群组拉黑用户
@@ -50,13 +50,13 @@ export function baseImBlockGroupPage(
   );
 }
 
-export interface NotNullId {
-  id?: string; // 主键 id，是否必传：true，格式：int64
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 取消拉黑好友
 export function baseImBlockCancelFriend(
-  form: NotNullId,
+  form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
@@ -69,7 +69,7 @@ export function baseImBlockCancelFriend(
 
 // 拉黑好友
 export function baseImBlockAddFriend(
-  form: NotNullId,
+  form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
