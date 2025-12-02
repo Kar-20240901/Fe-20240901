@@ -12,12 +12,13 @@ import {
   baseImApplyFriendReject
 } from "@/api/http/base/BaseImApplyFriendController";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import {
   BaseImApplyStatusEnum,
   BaseImApplyStatusEnumMap
 } from "@/model/enum/im/BaseImApplyStatusEnum";
 import { baseImBlockAddFriend } from "@/api/http/base/BaseImBlockController";
+import KarOneInputTextarea from "@/components/KarAddOrderNo/index.vue";
+import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 
 const search = ref<BaseImApplyFriendPageDTO>({});
 
@@ -148,24 +149,16 @@ function agreeClick(item?: BaseImApplyFriendPageVO) {
   );
 }
 
+let rejectId: string | undefined = undefined;
+
 function rejectClick(item?: BaseImApplyFriendPageVO) {
   if (item?.id) {
     return;
   }
 
-  ExecConfirm(
-    async () => {
-      await baseImApplyFriendReject({
-        idSet: [item.id]
-      }).then(res => {
-        selectIdArr.value = [];
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定拒绝【${item.nickname}】的好友申请吗？`
-  );
+  rejectId = item.id;
+
+  rejectDialogRef.value?.open();
 }
 
 function blockClick(item?: BaseImApplyFriendPageVO) {
@@ -206,6 +199,20 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
     undefined,
     `确定隐藏【${item.nickname}】的好友申请吗？`
   );
+}
+
+const rejectDialogRef = ref();
+
+function rejectConfirmFun() {
+  return baseImApplyFriendReject({
+    idSet: [rejectId]
+  });
+}
+
+function rejectConfirmAfterFun(res, done) {
+  done();
+  ToastSuccess(res.msg);
+  onSearch();
 }
 </script>
 
@@ -329,5 +336,13 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
         @change="onSearch"
       />
     </div>
+
+    <kar-one-input-textarea
+      ref="rejectDialogRef"
+      title="拒绝原因"
+      label="拒绝原因"
+      :confirm-fun="rejectConfirmFun"
+      :confirm-after-fun="rejectConfirmAfterFun"
+    />
   </el-dialog>
 </template>
