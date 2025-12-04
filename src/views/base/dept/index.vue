@@ -16,7 +16,6 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
 import MenuAddFill from "~icons/ri/menu-add-fill";
-import EditPen from "~icons/ep/edit-pen";
 import Delete from "~icons/ep/delete";
 import ExpandIcon from "@/assets/table-bar/expand.svg?component";
 import {
@@ -276,29 +275,18 @@ function addOrderNoConfirmAfterFun(res, done) {
         >
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
-        <el-table-column #default="scope" label="操作">
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(EditPen)"
-            @click="editClick(scope.row)"
-          >
+        <el-table-column #default="scope" label="操作" width="170">
+          <el-button link type="primary" @click="editClick(scope.row)">
             修改
           </el-button>
           <el-button
             link
             type="primary"
-            :icon="useRenderIcon(AddFill)"
             @click="addClick({ pid: scope.row.id }, scope.row)"
           >
             新增
           </el-button>
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(Delete)"
-            @click="deleteClick(scope.row)"
-          >
+          <el-button link type="primary" @click="deleteClick(scope.row)">
             删除
           </el-button>
         </el-table-column>

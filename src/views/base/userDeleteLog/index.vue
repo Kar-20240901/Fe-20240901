@@ -17,7 +17,6 @@ import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
 } from "@/model/enum/base/TempRequestCategoryEnum";
-import EpView from "~icons/ep/view";
 
 defineOptions({
   name: "BaseUserDeleteLog"
@@ -182,21 +181,11 @@ function deleteBySelectIdArr() {
         <el-table-column #default="scope" prop="createTime" label="注销时间">
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
-        <el-table-column #default="scope" label="操作">
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(EpView)"
-            @click="viewClick(scope.row)"
-          >
+        <el-table-column #default="scope" label="操作" width="150">
+          <el-button link type="primary" @click="viewClick(scope.row)">
             查看
           </el-button>
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(Delete)"
-            @click="deleteClick(scope.row)"
-          >
+          <el-button link type="primary" @click="deleteClick(scope.row)">
             删除
           </el-button>
         </el-table-column>

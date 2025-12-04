@@ -4,7 +4,6 @@ import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
-import EditPen from "~icons/ep/edit-pen";
 import Delete from "~icons/ep/delete";
 import { baseRoleDictList, DictVO } from "@/api/http/base/BaseRoleController";
 import {
@@ -247,29 +246,14 @@ function onSelectChange(rowArr?: BaseAuthDO[]) {
         <el-table-column type="selection" />
         <el-table-column prop="name" label="权限名称" />
         <el-table-column prop="auth" label="权限值" />
-        <el-table-column
-          #default="scope"
-          prop="enableFlag"
-          label="禁用"
-          width="100"
-        >
+        <el-table-column #default="scope" prop="enableFlag" label="禁用">
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
-        <el-table-column #default="scope" label="操作">
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(EditPen)"
-            @click="editClick(scope.row)"
-          >
+        <el-table-column #default="scope" label="操作" width="150">
+          <el-button link type="primary" @click="editClick(scope.row)">
             修改
           </el-button>
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(Delete)"
-            @click="deleteClick(scope.row)"
-          >
+          <el-button link type="primary" @click="deleteClick(scope.row)">
             删除
           </el-button>
         </el-table-column>

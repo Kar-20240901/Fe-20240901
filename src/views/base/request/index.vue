@@ -19,7 +19,6 @@ import {
 import FormEdit from "@/views/base/request/formEdit.vue";
 import { baseRequestInfoInfoById } from "@/api/http/base/BaseRequestInfoController";
 import { IBaseRequestFullInfoDO } from "@/views/base/request/types";
-import EpView from "~icons/ep/view";
 
 defineOptions({
   name: "BaseRequest"
@@ -212,13 +211,8 @@ function viewClick(row: BaseRequestDO) {
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
         <el-table-column prop="costMs" label="耗时" />
-        <el-table-column #default="scope" label="操作" width="100">
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(EpView)"
-            @click="viewClick(scope.row)"
-          >
+        <el-table-column #default="scope" label="操作" width="70">
+          <el-button link type="primary" @click="viewClick(scope.row)">
             查看
           </el-button>
         </el-table-column>

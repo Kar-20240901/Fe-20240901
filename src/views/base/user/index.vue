@@ -4,7 +4,6 @@ import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
-import EditPen from "~icons/ep/edit-pen";
 import Delete from "~icons/ep/delete";
 import EpUnlock from "~icons/ep/unlock";
 import EpLock from "~icons/ep/lock";
@@ -402,7 +401,7 @@ function thawClick() {
           #default="scope"
           prop="enableFlag"
           label="冻结"
-          width="100"
+          width="70"
         >
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
@@ -429,21 +428,11 @@ function thawClick() {
         >
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.lastActiveTime)) }}
         </el-table-column>
-        <el-table-column #default="scope" label="操作">
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(EditPen)"
-            @click="editClick(scope.row)"
-          >
+        <el-table-column #default="scope" label="操作" width="150">
+          <el-button link type="primary" @click="editClick(scope.row)">
             修改
           </el-button>
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(Delete)"
-            @click="deleteClick(scope.row)"
-          >
+          <el-button link type="primary" @click="deleteClick(scope.row)">
             删除
           </el-button>
         </el-table-column>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Delete from "~icons/ep/delete";
+import CircleCheck from "~icons/ep/circle-check";
+import CircleClose from "~icons/ep/circle-close";
+import Hide from "~icons/ep/hide";
 import Refresh from "~icons/ep/refresh";
 import { ref } from "vue";
 import {
@@ -132,7 +134,7 @@ function onSelectChange(rowArr?: BaseImApplyFriendPageVO[]) {
 }
 
 function agreeClick(item?: BaseImApplyFriendPageVO) {
-  if (item?.id) {
+  if (!item?.id) {
     return;
   }
 
@@ -154,7 +156,7 @@ function agreeClick(item?: BaseImApplyFriendPageVO) {
 let rejectId: string | undefined = undefined;
 
 function rejectClick(item?: BaseImApplyFriendPageVO) {
-  if (item?.id) {
+  if (!item?.id) {
     return;
   }
 
@@ -164,7 +166,7 @@ function rejectClick(item?: BaseImApplyFriendPageVO) {
 }
 
 function blockClick(item?: BaseImApplyFriendPageVO) {
-  if (item?.id) {
+  if (!item?.id) {
     return;
   }
 
@@ -184,7 +186,7 @@ function blockClick(item?: BaseImApplyFriendPageVO) {
 }
 
 function hiddenClick(item?: BaseImApplyFriendPageVO) {
-  if (item?.id) {
+  if (!item?.id) {
     return;
   }
 
@@ -233,7 +235,7 @@ function rejectConfirmAfterFun(res, done) {
         <div class="flex">
           <el-button
             type="primary"
-            :icon="useRenderIcon(Delete)"
+            :icon="useRenderIcon(CircleCheck)"
             @click="agreeBySelectIdArr"
           >
             批量同意
@@ -241,7 +243,7 @@ function rejectConfirmAfterFun(res, done) {
 
           <el-button
             type="primary"
-            :icon="useRenderIcon(Delete)"
+            :icon="useRenderIcon(CircleClose)"
             @click="rejectBySelectIdArr"
           >
             批量拒绝
@@ -249,7 +251,7 @@ function rejectConfirmAfterFun(res, done) {
 
           <el-button
             type="primary"
-            :icon="useRenderIcon(Delete)"
+            :icon="useRenderIcon(Hide)"
             @click="deleteBySelectIdArr"
           >
             批量隐藏

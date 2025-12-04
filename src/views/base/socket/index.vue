@@ -245,29 +245,14 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
         <el-table-column #default="scope" prop="enableFlag" label="禁用">
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
-        <el-table-column #default="scope" label="操作">
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(EpCircleCheck)"
-            @click="enableClick(scope.row)"
-          >
+        <el-table-column #default="scope" label="操作" width="170">
+          <el-button link type="primary" @click="enableClick(scope.row)">
             启用
           </el-button>
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(EpCircleClose)"
-            @click="disableClick(scope.row)"
-          >
+          <el-button link type="primary" @click="disableClick(scope.row)">
             禁用
           </el-button>
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(Delete)"
-            @click="deleteClick(scope.row)"
-          >
+          <el-button link type="primary" @click="deleteClick(scope.row)">
             删除
           </el-button>
         </el-table-column>

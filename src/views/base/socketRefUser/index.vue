@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "~icons/ep/refresh";
-import Delete from "~icons/ep/delete";
+import CircleClose from "~icons/ep/circle-close";
 import RiComputerLine from "~icons/ri/computer-line";
 import {
   baseSocketRefUserChangeConsoleFlagByIdSet,
@@ -168,7 +168,7 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
         <div>
           <el-button
             type="primary"
-            :icon="useRenderIcon(Delete)"
+            :icon="useRenderIcon(CircleClose)"
             @click="offlineBySelectIdArr"
           >
             批量下线
@@ -219,21 +219,11 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
         <el-table-column #default="scope" prop="createTime" label="创建时间">
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
         </el-table-column>
-        <el-table-column #default="scope" label="操作">
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(Delete)"
-            @click="offlineClick(scope.row)"
-          >
+        <el-table-column #default="scope" label="操作" width="150">
+          <el-button link type="primary" @click="offlineClick(scope.row)">
             下线
           </el-button>
-          <el-button
-            link
-            type="primary"
-            :icon="useRenderIcon(RiComputerLine)"
-            @click="consoleClick(scope.row)"
-          >
+          <el-button link type="primary" @click="consoleClick(scope.row)">
             控制台
           </el-button>
         </el-table-column>
