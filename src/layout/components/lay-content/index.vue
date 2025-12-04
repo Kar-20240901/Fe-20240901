@@ -3,9 +3,9 @@ import { useI18n } from "vue-i18n";
 import LayFrame from "../lay-frame/index.vue";
 import LayFooter from "../lay-footer/index.vue";
 import { useTags } from "@/layout/hooks/useTag";
-import { useGlobal, isNumber } from "@pureadmin/utils";
+import { isNumber, useGlobal } from "@pureadmin/utils";
 import BackTopIcon from "@/assets/svg/back_top.svg?component";
-import { h, computed, Transition, defineComponent } from "vue";
+import { computed, defineComponent, h, Transition } from "vue";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 
 const props = defineProps({
@@ -138,7 +138,7 @@ const transitionMain = defineComponent({
               >
                 <BackTopIcon />
               </el-backtop>
-              <div class="grow">
+              <div class="grow kar-grow-content">
                 <transitionMain :route="route">
                   <keep-alive
                     v-if="isKeepAlive"
@@ -162,7 +162,7 @@ const transitionMain = defineComponent({
               </div>
               <LayFooter v-if="!hideFooter" />
             </el-scrollbar>
-            <div v-else class="grow">
+            <div v-else class="grow kar-grow-content">
               <transitionMain :route="route">
                 <keep-alive
                   v-if="isKeepAlive"

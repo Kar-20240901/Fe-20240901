@@ -20,6 +20,7 @@ import { baseImBlockAddFriend } from "@/api/http/base/BaseImBlockController";
 import KarOneInputTextarea from "@/components/KarAddOrderNo/index.vue";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
+import { getDialogWidth } from "@/utils/MyLayoutUtil";
 
 const search = ref<BaseImApplyFriendPageDTO>({});
 
@@ -224,7 +225,7 @@ function rejectConfirmAfterFun(res, done) {
     draggable
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    width="45%"
+    :width="getDialogWidth()"
     destroy-on-close
   >
     <div class="flex flex-col px-5 py-3 bg-bg_color">

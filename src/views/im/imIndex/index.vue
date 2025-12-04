@@ -23,6 +23,8 @@ import {
 } from "@/api/http/base/BaseImSessionContentRefUserController";
 import Manage from "@/views/im/imIndex/manage.vue";
 import Content from "@/views/im/imIndex/content.vue";
+import { getContentHeight, getMobileFlag } from "@/utils/MyLayoutUtil";
+import CommonConstant from "@/model/constant/CommonConstant";
 
 defineOptions({
   name: "ImIndex"
@@ -196,19 +198,18 @@ function doBaseImGroupRefUserPage(groupId: string) {
 
 const parentHeight = ref<number>(0);
 
+const splitterSize = ref<string>("20%");
+
 onMounted(() => {
-  const growEle: HTMLElement = document.querySelector(".grow");
+  parentHeight.value = getContentHeight();
 
-  const contentEle: HTMLElement = document.querySelector(".main-content");
-
-  const contentComputedStyle = window.getComputedStyle(contentEle);
-
-  const contentMargin = parseFloat(contentComputedStyle.margin) || 0;
-
-  const footEle: HTMLElement = document.querySelector(".layout-footer");
-
-  parentHeight.value =
-    growEle.offsetHeight - footEle?.offsetHeight - contentMargin;
+  nextTick(() => {
+    setTimeout(() => {
+      if (getMobileFlag()) {
+        splitterSize.value = "30%";
+      }
+    }, CommonConstant.MEDIUM_DELAY);
+  });
 });
 
 function sessionRefUpdateLastContent(
@@ -231,7 +232,7 @@ function sessionRefUpdateLastContent(
 <template>
   <div class="bg-bg_color" :style="`height: ${parentHeight}px`">
     <el-splitter layout="horizontal">
-      <el-splitter-panel min="10%" size="30%">
+      <el-splitter-panel :size="splitterSize" min="10%">
         <manage
           ref="manageRef"
           :searchBaseContentVO="searchBaseContentVO"

@@ -45,6 +45,7 @@ import EpCopyDocument from "~icons/ep/copy-document";
 import RiDragMove2Fill from "~icons/ri/drag-move-2-fill";
 import RiFontColor from "~icons/ri/font-color";
 import EpDownload from "~icons/ep/download";
+import { getContentHeight, getMainContentWidth } from "@/utils/MyLayoutUtil";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -79,17 +80,11 @@ const pathList = ref<string[]>([CommonConstant.TOP_FOLDER_NAME]); // 例如：/�
 const rowMax = ref<number>(0);
 
 function setRowMax() {
-  const mainContentEle: HTMLElement = document.querySelector(".main-content");
-
-  if (!mainContentEle) {
-    rowMax.value = 1;
-
-    return;
-  }
+  const mainContentEleWidth = getMainContentWidth();
 
   const itemWidth = 110;
 
-  let rowMaxTemp = Math.floor((mainContentEle.offsetWidth - 40) / itemWidth);
+  let rowMaxTemp = Math.floor((mainContentEleWidth - 40) / itemWidth);
 
   const marginNumber = rowMaxTemp * 12;
 
@@ -353,18 +348,7 @@ const scrollbarHeight = ref<number>(0);
 const parentHeight = ref<number>(0);
 
 onMounted(() => {
-  const growEle: HTMLElement = document.querySelector(".grow");
-
-  const contentEle: HTMLElement = document.querySelector(".main-content");
-
-  const contentComputedStyle = window.getComputedStyle(contentEle);
-
-  const contentMargin = parseFloat(contentComputedStyle.margin) || 0;
-
-  const footEle: HTMLElement = document.querySelector(".layout-footer");
-
-  parentHeight.value =
-    growEle.offsetHeight - footEle?.offsetHeight - contentMargin;
+  parentHeight.value = getContentHeight();
 
   nextTick(() => {
     setTimeout(() => {
