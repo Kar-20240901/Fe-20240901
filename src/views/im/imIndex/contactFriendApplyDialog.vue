@@ -19,6 +19,7 @@ import {
 import { baseImBlockAddFriend } from "@/api/http/base/BaseImBlockController";
 import KarOneInputTextarea from "@/components/KarAddOrderNo/index.vue";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import Avatar from "@/assets/user.png";
 
 const search = ref<BaseImApplyFriendPageDTO>({});
 
@@ -282,25 +283,39 @@ function rejectConfirmAfterFun(res, done) {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column label="用户" />
+        <el-table-column #default="scope" label="用户" width="180">
+          <div class="flex items-center">
+            <el-image
+              :src="scope.row?.avatarUrl"
+              fit="cover"
+              class="w-10 h-10 rounded-full"
+            >
+              <template #error>
+                <el-image
+                  :src="Avatar"
+                  fit="cover"
+                  class="w-10 h-10 rounded-full"
+                />
+              </template>
+            </el-image>
+            <div class="text-sm ml-2">
+              {{ scope.row?.nickname }}
+            </div>
+          </div>
+        </el-table-column>
         <el-table-column prop="applyContent" label="申请内容" />
-        <el-table-column
-          #default="scope"
-          prop="status"
-          label="状态"
-          width="100"
-        >
+        <el-table-column #default="scope" prop="status" label="状态" width="70">
           {{ BaseImApplyStatusEnumMap.get(scope.row.status) || "" }}
         </el-table-column>
         <el-table-column
           #default="scope"
           prop="createTime"
           label="申请时间"
-          width="200"
+          width="160"
         >
           {{ FormatDateTimeForCurrentDay(new Date(scope.row.applyTime)) }}
         </el-table-column>
-        <el-table-column #default="scope" label="操作" width="120">
+        <el-table-column #default="scope" label="操作">
           <el-button
             v-if="scope.row.status === BaseImApplyStatusEnum.APPLYING.code"
             link

@@ -64,8 +64,11 @@ const ApplyOperateArr = [
   }
 ];
 
+const contactFriendApplyDialogRef = ref();
+
 function applyOperateClick(value?: string) {
   if (value === ApplyOperateFriendValue) {
+    contactFriendApplyDialogRef?.value.open();
   } else if (value === ApplyOperateGroupValue) {
   } else if (value === BlockValue) {
   }
@@ -128,6 +131,6 @@ function applyOperateClick(value?: string) {
       />
     </div>
 
-    <contact-friend-apply-dialog />
+    <contact-friend-apply-dialog ref="contactFriendApplyDialogRef" />
   </div>
 </template>

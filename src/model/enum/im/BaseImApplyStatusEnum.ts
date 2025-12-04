@@ -13,17 +13,17 @@ export interface IBaseImApplyStatusEnum {
 export const BaseImApplyStatusEnum: IBaseImApplyStatusEnum = {
   APPLYING: {
     code: 101,
-    name: "好友"
+    name: "申请中"
   },
 
   PASSED: {
     code: 201,
-    name: "群聊"
+    name: "已通过"
   },
 
   REJECTED: {
     code: 301,
-    name: "群聊"
+    name: "已拒绝"
   }
 };
 
