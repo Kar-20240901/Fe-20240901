@@ -26,9 +26,9 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       // 本地跨域代理 https://cn.vitejs.dev/config/server-options.html#server-proxy
       proxy: {
         "/baseApi": {
-          target: "http://localhost:8001",
+          target: "http://192.168.33.11:9080",
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/baseApi/, "")
+          rewrite: path => path.replace(/^\/baseApi/, "/prod-api")
         }
       },
       // 预热文件以提前转换和缓存结果，降低启动期间的初始页面加载时长并防止转换瀑布
