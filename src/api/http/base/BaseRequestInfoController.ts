@@ -8,7 +8,9 @@ export interface NotNullId {
 
 export interface BaseRequestInfoDO {
   costMs?: string; // 冗余字段：耗时（毫秒），格式：int64
+  responseHeader?: string; // 响应的 header
   responseValue?: string; // 请求返回的值
+  requestHeader?: string; // 请求的 header
   id?: string; // 主键id，格式：int64
   requestParam?: string; // 请求的参数
   uri?: string; // 冗余字段：请求的 uri

@@ -128,12 +128,34 @@ const props = defineProps<IRequestDialogFormProps>();
         </re-col>
 
         <re-col :value="24" :xs="24" :sm="24">
+          <el-form-item label="请求头" prop="requestHeader">
+            <el-input
+              v-model="form.requestHeader"
+              readonly
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 2 }"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="24" :xs="24" :sm="24">
           <el-form-item label="请求值" prop="requestParam">
             <el-input
               v-model="form.requestParam"
               readonly
               type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
+              :autosize="{ minRows: 2, maxRows: 2 }"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="24" :xs="24" :sm="24">
+          <el-form-item label="返回头" prop="responseHeader">
+            <el-input
+              v-model="form.responseHeader"
+              readonly
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 2 }"
             />
           </el-form-item>
         </re-col>
@@ -144,7 +166,7 @@ const props = defineProps<IRequestDialogFormProps>();
               v-model="form.responseValue"
               readonly
               type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
+              :autosize="{ minRows: 2, maxRows: 2 }"
             />
           </el-form-item>
         </re-col>
@@ -155,7 +177,7 @@ const props = defineProps<IRequestDialogFormProps>();
               v-model="form.errorMsg"
               readonly
               type="textarea"
-              :autosize="{ minRows: 4, maxRows: 5 }"
+              :autosize="{ minRows: 2, maxRows: 2 }"
             />
           </el-form-item>
         </re-col>
