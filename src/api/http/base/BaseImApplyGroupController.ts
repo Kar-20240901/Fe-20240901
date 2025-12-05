@@ -73,7 +73,7 @@ export interface BaseImApplyGroupPageSelfVO {
   applyContent?: string; // 申请内容
   id?: string; // 主键 id，格式：int64
   applyTime?: string; // 申请时间，格式：date-time
-  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301
+  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301;401
 }
 
 // 分页排序查询-我的入群申请
@@ -168,7 +168,7 @@ export interface BaseImApplyGroupPageGroupVO {
   nickname?: string; // 目标用户昵称
   id?: string; // 主键 id，格式：int64
   applyTime?: string; // 申请时间，格式：date-time
-  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301
+  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301;401
 }
 
 // 分页排序查询-群组的入群申请

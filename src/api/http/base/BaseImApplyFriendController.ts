@@ -10,6 +10,7 @@ export interface BaseImApplyFriendPageDTO {
   nickname?: string; // 用户昵称
   pageSize?: string; // 每页显示条数，格式：int64
   searchKey?: string; // 搜索关键字
+  toMeFlag?: boolean; // true 查询对我的申请（默认），false 查询我发起的申请
   order?: MyOrderDTO; // 排序字段
 }
 
@@ -19,7 +20,7 @@ export interface BaseImApplyFriendPageVO {
   nickname?: string; // 目标用户昵称
   id?: string; // 主键 id，格式：int64
   applyTime?: string; // 申请时间，格式：date-time
-  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301
+  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301;401
 }
 
 // 分页排序查询
@@ -80,6 +81,23 @@ export function baseImApplyFriendSend(
   );
 }
 
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
+}
+
+// 取消
+export function baseImApplyFriendCancel(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/imApplyFriend/cancel"),
+    form,
+    config
+  );
+}
+
 export interface BaseImApplyFriendRejectDTO {
   idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
   rejectReason?: string; // 拒绝理由
@@ -96,10 +114,6 @@ export function baseImApplyFriendReject(
     form,
     config
   );
-}
-
-export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 隐藏
