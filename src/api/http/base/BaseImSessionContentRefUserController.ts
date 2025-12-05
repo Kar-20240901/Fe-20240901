@@ -41,7 +41,7 @@ export function baseImSessionContentRefUserScroll(
 export interface BaseImSessionContentRefUserPageDTO {
   current?: string; // 第几页，格式：int64
   contentId?: string; // 消息内容主键 id，格式：int64
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   sessionId?: string; // 会话主键 id，是否必传：true，格式：int64
   content?: string; // 消息内容
   order?: MyOrderDTO; // 排序字段

@@ -6,7 +6,7 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseFileTransferPageDTO {
   current?: string; // 第几页，格式：int64
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   showFileName?: string; // 冗余字段：展示用的文件名，默认为：原始文件名（包含文件类型）
   type?: string; // 类型：101 上传 201 下载，枚举值：101;201
   order?: MyOrderDTO; // 排序字段

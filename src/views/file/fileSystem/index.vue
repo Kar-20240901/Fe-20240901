@@ -58,7 +58,7 @@ const loading = ref<boolean>(false);
 const dataList = ref<IDataList[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
-const pageSize = ref<number>(-1);
+const pageSize = ref<number>(20);
 
 const title = ref<string>("");
 

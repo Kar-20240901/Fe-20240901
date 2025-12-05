@@ -96,7 +96,7 @@ export interface BaseUserPageDTO {
   signUpType?: string; // 请求类别，枚举值：101;102;103;104;105;106;201;202;203;301;302;303;401;402;403;501;502;601;701
   ip?: string; // ip
   wxAppId?: string; // 微信 appId
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   endCreateTime?: string; // 创建结束时间，格式：date-time
   current?: string; // 第几页，格式：int64
   beginCreateTime?: string; // 创建开始时间，格式：date-time

@@ -7,7 +7,7 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 export interface BaseRequestPageDTO {
   beginCostMs?: string; // 耗时开始（毫秒），格式：int64
   ip?: string; // ip
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   type?: string; // 请求类型
   uri?: string; // 请求的uri
   successFlag?: boolean; // 请求是否成功
@@ -55,7 +55,7 @@ export function baseRequestPage(
 export interface BaseRequestSelfLoginRecordPageDTO {
   current?: string; // 第几页，格式：int64
   ip?: string; // ip
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   category?: string; // 请求类别，枚举值：101;102;103;104;105;106;201;202;203;301;302;303;401;402;403;501;502;601;701
   region?: string; // Ip2RegionUtil.getRegion() 获取到的 ip所处区域
   order?: MyOrderDTO; // 排序字段

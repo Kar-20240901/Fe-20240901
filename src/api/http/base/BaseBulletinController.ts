@@ -116,7 +116,7 @@ export interface BaseBulletinPageDTO {
   current?: string; // 第几页，格式：int64
   userSelfFlag?: boolean; // 是否是用户自我查询，默认：false
   ptBeginTime?: string; // 发布时间范围查询：起始时间，格式：date-time
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   title?: string; // 标题
   enableFlag?: boolean; // 是否启用
   content?: string; // 公告内容（富文本）
@@ -141,7 +141,7 @@ export interface BaseBulletinUserSelfPageDTO {
   ptEndTime?: string; // 发布时间范围查询：结束时间，格式：date-time
   current?: string; // 第几页，格式：int64
   ptBeginTime?: string; // 发布时间范围查询：起始时间，格式：date-time
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   title?: string; // 标题
   content?: string; // 公告内容（富文本）
   order?: MyOrderDTO; // 排序字段

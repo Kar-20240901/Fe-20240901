@@ -23,7 +23,7 @@ export function baseFileStorageConfigurationDeleteByIdSet(
 
 export interface BaseFileStorageConfigurationPageDTO {
   defaultFlag?: boolean; // 是否是默认存储，备注：只会有一个默认存储
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   remark?: string; // 备注
   type?: number; // 文件存储类型，格式：int32
   uploadEndpoint?: string; // 上传的端点

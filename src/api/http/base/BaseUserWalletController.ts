@@ -74,7 +74,7 @@ export interface BaseUserWalletPageDTO {
   current?: string; // 第几页，格式：int64
   utEndTime?: string; // 结束时间：更新时间，格式：date-time
   endWithdrawableMoney?: number; // 提现金额：结束值
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   id?: string; // 用户主键 id，格式：int64
   utBeginTime?: string; // 起始时间：更新时间，格式：date-time
   beginWithdrawableMoney?: number; // 提现金额：开始值

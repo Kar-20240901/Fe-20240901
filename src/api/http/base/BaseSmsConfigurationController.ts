@@ -8,7 +8,7 @@ export interface BaseSmsConfigurationPageDTO {
   current?: string; // 第几页，格式：int64
   defaultFlag?: boolean; // 是否是默认短信发送，备注：只会有一个默认短信发送
   name?: string; // 短信名
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   remark?: string; // 备注
   type?: number; // 短信类型：101 阿里 201 腾讯，格式：int32
   enableFlag?: boolean; // 是否启用

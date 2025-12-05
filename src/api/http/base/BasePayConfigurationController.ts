@@ -9,7 +9,7 @@ export interface BasePayConfigurationPageDTO {
   defaultFlag?: boolean; // 是否是默认支付方式，备注：只会有一个默认支付方式
   appId?: string; // 支付平台，应用 id
   name?: string; // 支付名（不可重复）
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   remark?: string; // 备注
   type?: string; // 支付类型：101 支付宝 201 微信 301 云闪付 401 谷歌，枚举值：101;102;103;104;201;202;203;301;401;501
   enableFlag?: boolean; // 是否启用

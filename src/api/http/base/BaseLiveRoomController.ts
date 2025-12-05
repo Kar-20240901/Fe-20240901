@@ -66,7 +66,7 @@ export function baseLiveRoomInsertOrUpdate(
 export interface BaseLiveRoomPageDTO {
   current?: string; // 第几页，格式：int64
   name?: string; // 房间名
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   belongId?: string; // 归属用户主键 id，格式：int64
   order?: MyOrderDTO; // 排序字段
 }

@@ -28,7 +28,7 @@ export interface BaseMenuPageDTO {
   current?: string; // 第几页，格式：int64
   router?: string; // 路由
   name?: string; // 菜单名
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   pid?: string; // 父节点id（顶级则为0），格式：int64
   enableFlag?: boolean; // 是否启用
   showFlag?: boolean; // 是否显示在 左侧的菜单栏里面，如果为 false，也可以通过 $router.push()访问到

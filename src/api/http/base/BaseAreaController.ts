@@ -7,7 +7,7 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 export interface BaseAreaPageDTO {
   current?: string; // 第几页，格式：int64
   name?: string; // 区域名
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   enableFlag?: boolean; // 是否启用
   order?: MyOrderDTO; // 排序字段
 }

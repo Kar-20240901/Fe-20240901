@@ -61,7 +61,7 @@ export interface BaseImApplyGroupPageSelfDTO {
   current?: string; // 第几页，格式：int64
   groupName?: string; // 群组名
   applyContent?: string; // 申请内容
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   searchKey?: string; // 搜索关键字
   order?: MyOrderDTO; // 排序字段
 }
@@ -93,7 +93,7 @@ export interface BaseImApplyFriendSearchApplyGroupDTO {
   groupShowId?: string; // 群组展示的id，格式：int64
   current?: string; // 第几页，格式：int64
   name?: string; // 群组名称
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   order?: MyOrderDTO; // 排序字段
 }
 
@@ -156,7 +156,7 @@ export function baseImApplyGroupAgree(
 export interface BaseImApplyGroupPageGroupDTO {
   current?: string; // 第几页，格式：int64
   groupId?: string; // 群组主键 id，格式：int64
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   searchKey?: string; // 搜索关键字
   order?: MyOrderDTO; // 排序字段
 }

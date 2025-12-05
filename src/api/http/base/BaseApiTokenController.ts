@@ -7,7 +7,7 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 export interface BaseApiTokenPageDTO {
   current?: string; // 第几页，格式：int64
   name?: string; // 名称
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   userId?: string; // 用户主键id，格式：int64
   order?: MyOrderDTO; // 排序字段
 }

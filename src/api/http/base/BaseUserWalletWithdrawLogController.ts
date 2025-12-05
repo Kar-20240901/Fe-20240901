@@ -6,7 +6,7 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseUserWalletWithdrawLogPageDTO {
   bankCardNo?: string; // 卡号
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   endWithdrawMoney?: number; // 提现金额：结束值
   withdrawStatus?: string; // 提现状态，枚举值：101;201;301;401;501
   userId?: string; // 用户主键 id，格式：int64
@@ -185,7 +185,7 @@ export function baseUserWalletWithdrawLogDictListWithdrawStatus(
 
 export interface BaseUserWalletWithdrawLogPageUserSelfDTO {
   bankCardNo?: string; // 卡号
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   endWithdrawMoney?: number; // 提现金额：结束值
   withdrawStatus?: string; // 提现状态，枚举值：101;201;301;401;501
   openBankName?: string; // 开户行

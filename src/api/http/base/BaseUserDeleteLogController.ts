@@ -10,7 +10,7 @@ export interface BaseUserDeleteLogPageDTO {
   wxOpenId?: string; // 微信 openId，可以为空
   wxAppId?: string; // 微信 appId，可以为空
   nickname?: string; // 昵称
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   id?: string; // 用户主键 id，格式：int64
   uuid?: string; // 该用户的 uuid
   email?: string; // 邮箱，可以为空

@@ -30,7 +30,7 @@ export interface BaseAuthPageDTO {
   current?: string; // 第几页，格式：int64
   auth?: string; // 权限，例子：base:menu:edit
   name?: string; // 权限名（不能重复）
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   remark?: string; // 备注
   enableFlag?: boolean; // 是否启用
   order?: MyOrderDTO; // 排序字段

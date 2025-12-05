@@ -68,7 +68,7 @@ export interface BaseUserBankCardPageDTO {
   payeeName?: string; // 收款人姓名
   current?: string; // 第几页，格式：int64
   bankCardNo?: string; // 卡号
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   branchBankName?: string; // 支行
   id?: string; // 用户主键 id，格式：int64
   order?: MyOrderDTO; // 排序字段

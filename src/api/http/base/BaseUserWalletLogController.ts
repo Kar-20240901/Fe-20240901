@@ -7,7 +7,7 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 export interface BaseUserWalletLogPageDTO {
   current?: string; // 第几页，格式：int64
   name?: string; // 记录名
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   remark?: string; // 备注
   ctEndTime?: string; // 结束时间：创建时间，格式：date-time
   type?: number; // 记录类型：1开头 增加 2开头 减少，格式：int32
@@ -53,7 +53,7 @@ export function baseUserWalletLogPage(
 export interface BaseUserWalletLogUserSelfPageDTO {
   current?: string; // 第几页，格式：int64
   name?: string; // 记录名
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   remark?: string; // 备注
   ctEndTime?: string; // 结束时间：创建时间，格式：date-time
   type?: number; // 记录类型：1开头 增加 2开头 减少，格式：int32

@@ -9,7 +9,7 @@ export interface BaseThirdAppOfficialMenuPageDTO {
   buttonType?: string; // 按钮类型，枚举值：101;201;301
   thirdAppId?: string; // 所属的，第三方应用相关配置主键 id，格式：int64
   name?: string; // 菜单名，备注：一级菜单最多4个汉字，二级菜单最多8个汉字，多出来的部分将会以 ... 代替
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   remark?: string; // 备注
   replyContent?: string; // 回复的内容，备注：一般是点击按钮之后，回复的内容
   type?: number; // 类型，格式：int32

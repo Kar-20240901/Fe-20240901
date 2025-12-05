@@ -8,7 +8,7 @@ export interface BaseImApplyFriendPageDTO {
   current?: string; // 第几页，格式：int64
   applyContent?: string; // 申请内容
   nickname?: string; // 用户昵称
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   searchKey?: string; // 搜索关键字
   toMeFlag?: boolean; // true 查询对我的申请（默认），false 查询我发起的申请
   order?: MyOrderDTO; // 排序字段
@@ -39,7 +39,7 @@ export function baseImApplyFriendPage(
 export interface BaseImApplyFriendSearchApplyFriendDTO {
   current?: string; // 第几页，格式：int64
   nickname?: string; // 用户昵称
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   uuid?: string; // 用户 uuid
   order?: MyOrderDTO; // 排序字段
 }
@@ -64,8 +64,8 @@ export function baseImApplyFriendSearchApplyFriend(
 }
 
 export interface BaseImApplyFriendSendDTO {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
   applyContent?: string; // 申请内容
-  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 发送好友申请

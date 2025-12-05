@@ -7,7 +7,7 @@ export interface BaseFilePageSelfDTO {
   originFileName?: string; // 文件原始名（包含文件类型）
   globalFlag?: boolean; // 全局搜索
   publicFlag?: boolean; // 是否公开访问
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   pid?: string; // 父节点id（顶级则为0），格式：int64
   remark?: string; // 备注
   type?: string; // 类型，枚举值：101;201
@@ -177,7 +177,7 @@ export interface BaseFilePageDTO {
   originFileName?: string; // 文件原始名（包含文件类型）
   globalFlag?: boolean; // 全局搜索
   publicFlag?: boolean; // 是否公开访问
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   pid?: string; // 父节点id（顶级则为0），格式：int64
   remark?: string; // 备注
   type?: string; // 类型，枚举值：101;201

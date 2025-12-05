@@ -132,7 +132,7 @@ export function baseImSessionRefUserScroll(
 export interface BaseImSessionRefUserPageDTO {
   queryContentFlag?: boolean; // 是否查询：未读消息数量，最新一条消息，默认：false
   current?: string; // 第几页，格式：int64
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   sessionIdSet?: string[]; // 会话主键 id集合，格式：int64
   sessionId?: string; // 会话主键 id，格式：int64
   searchKey?: string; // 搜索内容：会话名

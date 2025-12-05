@@ -7,7 +7,7 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 export interface BaseThirdAppPageDTO {
   textReplyContent?: string; // 用户发送文字之后，回复的内容
   openId?: string; // 第三方应用的 openId/微信号，例如：接收微信公众号消息时的 ToUserName
-  pageSize?: string; // 每页显示条数，格式：int64
+  pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   remark?: string; // 备注
   type?: number; // 第三方应用类型，格式：int32
   current?: string; // 第几页，格式：int64
