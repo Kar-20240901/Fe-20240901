@@ -977,7 +977,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
 
         <div
           v-show="showToBottomBtnFlag"
-          class="absolute bottom-3 right-3 z-50 p-2 rounded-full transition-all duration-300 bg-white transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer shadow-lg"
+          class="absolute bottom-3 right-[2px] z-50 p-2 rounded-full transition-all duration-300 bg-white transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer shadow-lg"
           @click="scrollToBottom()"
         >
           <component
