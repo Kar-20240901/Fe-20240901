@@ -771,11 +771,7 @@ function handleScroll(event: Event) {
 
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
 
-  if (distanceToBottom >= 1000) {
-    showToBottomBtnFlag.value = true;
-  } else {
-    showToBottomBtnFlag.value = false;
-  }
+  showToBottomBtnFlag.value = distanceToBottom >= 1000;
 
   shouldAutoScroll = distanceToBottom <= 20;
 

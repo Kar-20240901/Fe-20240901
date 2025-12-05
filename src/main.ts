@@ -37,6 +37,7 @@ import { Perms } from "@/components/RePerms";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
 import VueTippy from "vue-tippy";
+import "dayjs/locale/zh-cn";
 
 const app = createApp(App);
 

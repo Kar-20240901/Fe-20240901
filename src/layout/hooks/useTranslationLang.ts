@@ -1,7 +1,8 @@
 import { useNav } from "./useNav";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import { watch, onBeforeMount, type Ref } from "vue";
+import { onBeforeMount, type Ref, watch } from "vue";
+import dayjs from "dayjs";
 
 export function useTranslationLang(ref?: Ref) {
   const { $storage, changeTitle, handleResize } = useNav();
@@ -12,12 +13,14 @@ export function useTranslationLang(ref?: Ref) {
     $storage.locale = { locale: "zh" };
     locale.value = "zh";
     ref && handleResize(ref.value);
+    dayjs.locale("zh-cn");
   }
 
   function translationEn() {
     $storage.locale = { locale: "en" };
     locale.value = "en";
     ref && handleResize(ref.value);
+    dayjs.locale("en");
   }
 
   watch(
@@ -29,6 +32,12 @@ export function useTranslationLang(ref?: Ref) {
 
   onBeforeMount(() => {
     locale.value = $storage.locale?.locale ?? "zh";
+
+    if (locale.value === "zh") {
+      dayjs.locale("zh-cn");
+    } else {
+      dayjs.locale("en");
+    }
   });
 
   return {
