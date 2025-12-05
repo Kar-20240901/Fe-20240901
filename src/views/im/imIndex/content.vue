@@ -25,7 +25,8 @@ import FaPaperclip from "~icons/fa/paperclip";
 import FaPictureO from "~icons/fa/picture-o";
 import FaMicrophone from "~icons/fa/microphone";
 import FaPaperPlane from "~icons/fa/paper-plane";
-import EpWarning from "~icons/ep/Warning";
+import EpWarning from "~icons/ep/warning";
+import EpArrowDown from "~icons/ep/arrow-down";
 import { useUserStoreHook } from "@/store/modules/user";
 import { throttle, useResizeObserver } from "@pureadmin/utils";
 import {
@@ -770,6 +771,12 @@ function handleScroll(event: Event) {
 
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
 
+  if (distanceToBottom >= 1000) {
+    showToBottomBtnFlag.value = true;
+  } else {
+    showToBottomBtnFlag.value = false;
+  }
+
   shouldAutoScroll = distanceToBottom <= 20;
 
   if (
@@ -826,6 +833,8 @@ watch(
     }
   }
 );
+
+const showToBottomBtnFlag = ref<boolean>(false);
 </script>
 
 <template>
@@ -886,7 +895,7 @@ watch(
       <div
         ref="scrollbarParentDiv"
         v-loading="sessionContentLoading"
-        class="flex-1"
+        class="flex-1 relative"
       >
         <DynamicScroller
           v-show="sessionContentShowList.length"
@@ -969,6 +978,20 @@ watch(
         >
           暂无消息。
         </div>
+
+        <div
+          v-show="showToBottomBtnFlag"
+          class="absolute bottom-3 right-3 z-50 p-2 rounded-full transition-all duration-300 bg-white transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer shadow-lg"
+          @click="scrollToBottom()"
+        >
+          <component
+            :is="
+              useRenderIcon(EpArrowDown, {
+                class: 'w-4 h-4 mt-[2px]'
+              })
+            "
+          />
+        </div>
       </div>
 
       <div class="shrink-0 bg-white p-4 border-t border-gray-200 flex flex-col">
@@ -1029,7 +1052,7 @@ watch(
             @keydown="handleTextareaInputKeydown"
           />
           <div
-            class="ml-3 bg-primary rounded-full w-12 h-12 flex items-center justify-center hover:bg-primary/90 transition-colors transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
+            class="ml-3 bg-primary duration-300 rounded-full w-12 h-12 flex items-center justify-center hover:bg-primary/90 transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
             @click="sendClick()"
           >
             <component
