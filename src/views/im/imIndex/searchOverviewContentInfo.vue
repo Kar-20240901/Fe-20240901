@@ -81,12 +81,25 @@ const scrollbarParentDiv = ref();
 
 const scrollbarHeight = ref<number>(0);
 
-const syncHeight = () => {
-  if (scrollbarParentDiv.value) {
-    scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
+const scrollbarClass = ref<string>("");
 
-    if (scrollbarHeight.value) {
-      scrollbarParentDivResizeObserver.stop();
+const searchOverviewContentInfoRecycleScrollerRef = ref();
+
+const syncHeight = () => {
+  if (!scrollbarParentDiv.value) {
+    return;
+  }
+
+  scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
+
+  if (scrollbarHeight.value) {
+    scrollbarParentDivResizeObserver.stop();
+
+    if (
+      searchOverviewContentInfoRecycleScrollerRef.value.offsetHeight >
+      searchOverviewContentInfoRecycleScrollerRef.value.clientHeight
+    ) {
+      scrollbarClass.value = "scrollbar-hide";
     }
   }
 };
@@ -134,11 +147,12 @@ function handleScroll(event: Event) {
       >
         <DynamicScroller
           v-show="searchContentInfoList.length"
+          ref="searchOverviewContentInfoRecycleScrollerRef"
           :items="searchContentInfoList"
           :min-item-size="56"
           key-field="contentId"
           :style="`height: ${scrollbarHeight}px`"
-          class="scrollbar-hide"
+          :class="`${scrollbarClass}`"
           @scroll="handleScroll"
         >
           <template #default="{ item, index, active }">

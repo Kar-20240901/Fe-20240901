@@ -8,10 +8,10 @@ import {
   baseFileCreateFolderSelf,
   BaseFileDO,
   baseFileMoveSelf,
-  baseFilePageSelf,
   BaseFilePageSelfDTO,
   baseFilePageTreeSelf,
   baseFileRemoveByFileIdSet,
+  baseFileScrollSelf,
   baseFileUpdateSelf
 } from "@/api/http/base/BaseFileController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -46,6 +46,7 @@ import RiDragMove2Fill from "~icons/ri/drag-move-2-fill";
 import RiFontColor from "~icons/ri/font-color";
 import EpDownload from "~icons/ep/download";
 import { getContentHeight, getMainContentWidth } from "@/utils/MyLayoutUtil";
+import { throttle } from "@pureadmin/utils";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -57,8 +58,7 @@ const searchRef = ref();
 const loading = ref<boolean>(false);
 const dataList = ref<IDataList[]>([]);
 const total = ref<number>(0);
-const currentPage = ref<number>(1);
-const pageSize = ref<number>(20);
+const pageSize = 100;
 
 const title = ref<string>("");
 
@@ -97,17 +97,35 @@ function setRowMax() {
   rowMax.value = rowMaxTemp;
 }
 
-function onSearch(sufFun?: () => void) {
-  loading.value = true;
+function onSearch(
+  sufFun?: () => void,
+  loadingFlag?: boolean,
+  scrollFlag?: boolean
+) {
+  if (loadingFlag) {
+    loading.value = true;
+  }
 
-  baseFilePageSelf({
+  let scrollId = undefined;
+
+  if (scrollFlag) {
+    scrollId = dataList.value.length
+      ? dataList.value[dataList.value.length - 1].l[
+          dataList.value[dataList.value.length - 1].l.length - 1
+        ].id
+      : undefined;
+  }
+
+  baseFileScrollSelf({
+    id: scrollId,
     ...search.value,
-    current: currentPage.value as any,
-    pageSize: pageSize.value as any
+    pageSize: String(pageSize)
   })
     .then(res => {
       selectIdSet.value.clear();
       totalSize.value = 0;
+
+      hasMore = res.data.records.length >= pageSize;
 
       if (search.value.backUpFlag && res.data.backUpPid) {
         search.value.pid = res.data.backUpPid;
@@ -347,6 +365,10 @@ const scrollbarHeight = ref<number>(0);
 
 const parentHeight = ref<number>(0);
 
+const fileSystemRecycleScrollerRef = ref();
+
+const scrollbarClass = ref<string>("");
+
 onMounted(() => {
   parentHeight.value = getContentHeight();
 
@@ -356,10 +378,42 @@ onMounted(() => {
 
       setTimeout(() => {
         scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
+
+        nextTick(() => {
+          if (
+            fileSystemRecycleScrollerRef.value.offsetHeight >
+            fileSystemRecycleScrollerRef.value.clientHeight
+          ) {
+            scrollbarClass.value = "scrollbar-hide";
+          }
+        });
       }, CommonConstant.MEDIUM_DELAY);
     }, CommonConstant.MEDIUM_DELAY);
   });
 });
+
+let hasMore: boolean = true;
+
+const doSearchThrottle = throttle(
+  (sufFun?: () => void, loadingFlag?: boolean, scrollFlag?: boolean) => {
+    onSearch(sufFun, loadingFlag, scrollFlag);
+  },
+  300
+) as (sufFun?: () => void, loadingFlag?: boolean, scrollFlag?: boolean) => void;
+
+function handleScroll(event: Event) {
+  const scrollerEl = event.target as HTMLElement;
+
+  if (!scrollerEl) return;
+
+  const { scrollTop, scrollHeight, clientHeight } = scrollerEl;
+
+  const distanceToBottom = scrollHeight - clientHeight - scrollTop;
+
+  if (distanceToBottom <= 20 && !loading.value && hasMore) {
+    doSearchThrottle(undefined, false, true);
+  }
+}
 </script>
 
 <template>
@@ -498,11 +552,13 @@ onMounted(() => {
         <div ref="scrollbarParentDiv" class="flex-1 h-full">
           <DynamicScroller
             v-show="dataList.length"
+            ref="fileSystemRecycleScrollerRef"
             :items="dataList"
             :min-item-size="90"
             key-field="id"
             :style="`height: ${scrollbarHeight}px`"
-            class="scrollbar-hide"
+            :class="`${scrollbarClass}`"
+            @scroll="handleScroll"
           >
             <template #default="{ item, index, active }">
               <DynamicScrollerItem :item="item" :active="active" :index="index">

@@ -358,13 +358,26 @@ const scrollbarParentDiv = ref();
 
 const scrollbarHeight = ref<number>(0);
 
-const syncHeight = () => {
-  if (scrollbarParentDiv.value) {
-    scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
+const scrollbarClass = ref<string>("");
 
-    if (scrollbarHeight.value) {
-      scrollbarParentDivResizeObserver.stop();
-    }
+const syncHeight = () => {
+  if (!scrollbarParentDiv.value) {
+    return;
+  }
+
+  scrollbarHeight.value = scrollbarParentDiv.value.offsetHeight;
+
+  if (scrollbarHeight.value) {
+    scrollbarParentDivResizeObserver.stop();
+
+    nextTick(() => {
+      if (
+        sessionContentRecycleScrollerRef.value.offsetHeight >
+        sessionContentRecycleScrollerRef.value.clientHeight
+      ) {
+        scrollbarClass.value = "scrollbar-hide";
+      }
+    });
   }
 };
 
@@ -900,7 +913,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
           :min-item-size="84"
           key-field="objId"
           :style="`height: ${scrollbarHeight}px`"
-          class="scrollbar-hide"
+          :class="`${scrollbarClass}`"
           @scroll="handleScroll"
         >
           <template #default="{ item, index, active }">

@@ -12,7 +12,6 @@ export interface BaseFilePageSelfDTO {
   remark?: string; // 备注
   type?: string; // 类型，枚举值：101;201
   current?: string; // 第几页，格式：int64
-  uploadType?: number; // 文件上传类型，格式：int32
   storageType?: number; // 存放文件的服务器类型，格式：int32
   showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
   refId?: string; // 关联的 id，格式：int64
@@ -87,6 +86,39 @@ export function baseFileCreateFolderSelf(
   return http.request<string>(
     "post",
     baseApi("/base/file/createFolder/self"),
+    form,
+    config
+  );
+}
+
+export interface BaseFileScrollSelfDTO {
+  originFileName?: string; // 文件原始名（包含文件类型）
+  globalFlag?: boolean; // 全局搜索
+  publicFlag?: boolean; // 是否公开访问
+  pageSize?: string; // 本次查询的长度，默认：20，格式：int64
+  pid?: string; // 父节点id（顶级则为0），格式：int64
+  remark?: string; // 备注
+  searchKey?: string; // 搜索内容
+  containsCurrentIdFlag?: boolean; // 是否包含当前主键 id，默认：false
+  type?: string; // 类型，枚举值：101;201
+  backwardFlag?: boolean; // 是否向后查询，默认：false 根据 id，往前查询 true 根据 id，往后查询
+  storageType?: number; // 存放文件的服务器类型，格式：int32
+  showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
+  id?: string; // 主键 id，如果为 null，则根据 backwardFlag，来查询最大 id或者最小 id，注意：不会查询该 id的数据，格式：int64
+  refId?: string; // 关联的 id，格式：int64
+  queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往前多查询几条数据，为 false时，往后多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
+  backUpFlag?: boolean; // 返回上级
+  enableFlag?: boolean; // 是否启用
+}
+
+// 滚动加载-自我
+export function baseFileScrollSelf(
+  form: BaseFileScrollSelfDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<BaseFilePageSelfVO>(
+    "post",
+    baseApi("/base/file/scroll/self"),
     form,
     config
   );
@@ -182,7 +214,6 @@ export interface BaseFilePageDTO {
   remark?: string; // 备注
   type?: string; // 类型，枚举值：101;201
   current?: string; // 第几页，格式：int64
-  uploadType?: number; // 文件上传类型，格式：int32
   storageType?: number; // 存放文件的服务器类型，格式：int32
   showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
   belongId?: string; // 归属者用户主键 id，只用于删除操作，格式：int64
