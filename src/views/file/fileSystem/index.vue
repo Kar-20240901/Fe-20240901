@@ -57,6 +57,7 @@ const searchRef = ref();
 
 const loading = ref<boolean>(false);
 const dataList = ref<IDataList[]>([]);
+let dataCalcList: BaseFileDO[] = [];
 const total = ref<number>(0);
 const pageSize = 100;
 
@@ -119,11 +120,12 @@ function onSearch(
   baseFileScrollSelf({
     id: scrollId,
     ...search.value,
+    backwardFlag: false,
+    queryTotalFlag: !scrollFlag,
     pageSize: String(pageSize)
   })
     .then(res => {
       selectIdSet.value.clear();
-      totalSize.value = 0;
 
       hasMore = res.data.records.length >= pageSize;
 
@@ -139,11 +141,17 @@ function onSearch(
         pathList.value = [CommonConstant.TOP_PID_STR];
       }
 
+      if (scrollFlag) {
+        dataCalcList = dataCalcList.concat(res.data.records);
+      } else {
+        dataCalcList = res.data.records;
+      }
+
       const dataListTemp: IDataList[] = [];
 
       let dataListItemList = [];
 
-      res.data.records.forEach((item, index) => {
+      dataCalcList.forEach((item, index) => {
         if (index % rowMax.value === 0 && index !== 0) {
           dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
 
@@ -157,14 +165,12 @@ function onSearch(
         dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
       }
 
-      if (scrollFlag) {
-        dataList.value = dataList.value.concat(dataListTemp);
-      } else {
-        dataList.value = dataListTemp;
-      }
+      dataList.value = dataListTemp;
 
-      total.value = res.data.fileTotal;
-      totalSize.value = res.data.fileTotalSize;
+      if (!scrollFlag) {
+        total.value = Number(res.data.fileTotal) || 0;
+        totalSize.value = Number(res.data.fileTotalSize) || 0;
+      }
     })
     .finally(() => {
       loading.value = false;
@@ -174,7 +180,9 @@ function onSearch(
       }
     });
 
-  treeSelfData();
+  if (!scrollFlag) {
+    treeSelfData();
+  }
 }
 
 function resetSearch() {

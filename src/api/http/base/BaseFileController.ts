@@ -111,6 +111,7 @@ export interface BaseFileScrollSelfDTO {
   queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往前多查询几条数据，为 false时，往后多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
   backUpFlag?: boolean; // 返回上级
   enableFlag?: boolean; // 是否启用
+  queryTotalFlag?: boolean; // 是否查询：总文件数和总文件大小，默认：false
 }
 
 // 滚动加载-自我
