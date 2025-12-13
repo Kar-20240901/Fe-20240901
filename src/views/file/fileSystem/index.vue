@@ -295,7 +295,7 @@ function uploadClick() {
 }
 
 function selectAllClick() {
-  if (selectIdSet.value.size === total.value) {
+  if (selectIdSet.value.size) {
     // 取消全部勾选
     selectIdSet.value.clear();
   } else {
