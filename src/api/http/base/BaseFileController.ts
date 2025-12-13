@@ -56,6 +56,8 @@ export interface BaseFileDO {
 export interface BaseFilePageSelfVO {
   records?: BaseFileDO[]; // 数据
   pidList?: string[]; // 父id组合集合，例如：[0,1,2]，备注：包含本级，并且包含顶级：0，并且和 pathList一一对应，格式：int64
+  fileTotal?: string; // 文件总数，格式：int64
+  fileTotalSize?: string; // 文件总大小，格式：int64
   pathList?: string[]; // 路径字符串集合，例如：/根目录/测试1/测试1-1，备注：包含本级，并且包含顶级：根目录，并且和 pidList一一对应
   backUpPid?: string; // 返回上一级的 pid，格式：int64
 }

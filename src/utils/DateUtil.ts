@@ -3,8 +3,23 @@ import dayjs from "dayjs";
 /**
  * 格式化时间
  */
-export function FormatDateTime(date: Date = new Date()) {
+export function FormatDateTime(date: Date = new Date()): string {
   return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
+}
+
+/**
+ * 获取：是否是：1970-01-01 00:00:00
+ */
+export function getEpochFlag(date: Date) {
+  return (
+    date.getFullYear() === 1970 &&
+    date.getMonth() === 0 &&
+    date.getDate() === 1 &&
+    date.getHours() === 0 &&
+    date.getMinutes() === 0 &&
+    date.getSeconds() === 0 &&
+    date.getMilliseconds() === 0
+  );
 }
 
 /**
@@ -12,8 +27,8 @@ export function FormatDateTime(date: Date = new Date()) {
  */
 export function FormatTsForCurrentDay(
   ts?: string,
-  showCurrentDayFLag?: boolean
-) {
+  showFullFLag?: boolean
+): string {
   if (!ts) {
     return "未知时间";
   }
@@ -24,7 +39,7 @@ export function FormatTsForCurrentDay(
     return "无效时间";
   }
 
-  return FormatDateTimeForCurrentDay(date, showCurrentDayFLag);
+  return FormatDateTimeForCurrentDay(date, showFullFLag);
 }
 
 /**
@@ -32,13 +47,18 @@ export function FormatTsForCurrentDay(
  */
 export function FormatDateTimeForCurrentDay(
   date: Date = new Date(),
-  showCurrentDayFLag?: boolean
-) {
+  showFullFLag?: boolean,
+  checkEpochFlag?: boolean
+): string {
+  if (checkEpochFlag && getEpochFlag(date)) {
+    return "-";
+  }
+
   const currentDay = Math.trunc(GetServerTimestamp() / 86400000);
 
   const checkDay = Math.trunc(date.getTime() / 86400000);
 
-  if (!showCurrentDayFLag && currentDay === checkDay) {
+  if (!showFullFLag && currentDay === checkDay) {
     return dayjs(date).format("HH:mm:ss");
   }
 
@@ -51,7 +71,7 @@ export function FormatDateTimeForCurrentDay(
 export function GetServerTimestamp(
   date: Date = new Date(),
   timezone: number = 8
-) {
+): number {
   const offsetGmt = date.getTimezoneOffset(); // 本地时间和格林威治的时间差，单位为分钟
 
   const nowDate = date.getTime(); // 本地时间距 1970 年 1 月 1 日午夜（GMT 时间）之间的毫秒数

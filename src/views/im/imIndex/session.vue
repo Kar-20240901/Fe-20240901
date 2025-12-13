@@ -56,7 +56,11 @@ function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
     pageSize: String(pageSize)
   })
     .then(res => {
-      dataList.value = res.data;
+      if (scrollFlag) {
+        dataList.value = dataList.value.concat(res.data);
+      } else {
+        dataList.value = res.data;
+      }
 
       hasMore = res.data.length >= pageSize;
 

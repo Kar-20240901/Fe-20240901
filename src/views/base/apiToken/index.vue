@@ -1,10 +1,16 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { onMounted, ref } from "vue";
-import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
+import {
+  ExecConfirm,
+  Toast,
+  ToastError,
+  ToastSuccess
+} from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
 import Delete from "~icons/ep/delete";
+import FaCopy from "~icons/fa/copy";
 import {
   baseApiTokenDeleteByIdSet,
   BaseApiTokenDO,
@@ -16,6 +22,7 @@ import {
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import FormEdit from "./formEdit.vue";
 import { R } from "@/model/vo/R";
+import { useCopyToClipboard } from "@pureadmin/utils";
 
 defineOptions({
   name: "BaseApiToken"
@@ -76,9 +83,46 @@ function confirmFun() {
   return baseApiTokenInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res: R<any>, done: () => void) {
+const { copied, update } = useCopyToClipboard();
+
+function copyToClipboard(textValue: string) {
+  update(textValue);
+  if (copied.value) {
+    ToastSuccess("复制成功");
+  }
+}
+
+function confirmAfterFun(res: R, done: () => void) {
   done();
-  ToastSuccess(res.msg);
+  if (res.data) {
+    const icon = () => {
+      return useRenderIcon(FaCopy, {
+        class: "w-5 h-5"
+      });
+    };
+
+    Toast(
+      "primary",
+      <div class="flex flex-col items-center justify-center w-full h-full">
+        <div class="text-gray-800 text-sm">请复制并保存下方令牌</div>
+        <div class="flex text-gray-500 items-center justify-center">
+          <div class="text-sm">{res.data}</div>
+          <div
+            class="ml-2 cursor-pointer hover:text-gray-800"
+            onclick={() => copyToClipboard(res.data)}
+            title="复制"
+          >
+            {icon()}
+          </div>
+        </div>
+      </div>,
+      0,
+      true,
+      true
+    );
+  } else {
+    ToastSuccess(res.msg);
+  }
   onSearch();
 }
 
@@ -191,7 +235,13 @@ function onSelectChange(rowArr?: BaseApiTokenDO[]) {
           sortable
           label="最近使用"
         >
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.lastUseTime)) }}
+          {{
+            FormatDateTimeForCurrentDay(
+              new Date(scope.row.lastUseTime),
+              false,
+              true
+            )
+          }}
         </el-table-column>
         <el-table-column #default="scope" prop="enableFlag" label="禁用">
           {{ scope.row.enableFlag ? "否" : "是" }}

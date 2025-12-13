@@ -143,8 +143,6 @@ function onSearch(
 
       let dataListItemList = [];
 
-      let totalSizeTemp = 0;
-
       res.data.records.forEach((item, index) => {
         if (index % rowMax.value === 0 && index !== 0) {
           dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
@@ -153,21 +151,20 @@ function onSearch(
         }
 
         dataListItemList.push(item);
-
-        if ((item.type as any) === BaseFileTypeEnum.FILE.code) {
-          totalSizeTemp = totalSizeTemp + Number(item.fileSize);
-        } else {
-          totalSizeTemp = totalSizeTemp + Number(item.folderSize);
-        }
       });
 
       if (dataListItemList.length > 0) {
         dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
       }
 
-      dataList.value = dataListTemp;
-      total.value = res.data.records.length;
-      totalSize.value = totalSizeTemp;
+      if (scrollFlag) {
+        dataList.value = dataList.value.concat(dataListTemp);
+      } else {
+        dataList.value = dataListTemp;
+      }
+
+      total.value = res.data.fileTotal;
+      totalSize.value = res.data.fileTotalSize;
     })
     .finally(() => {
       loading.value = false;

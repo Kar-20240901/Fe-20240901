@@ -1,5 +1,5 @@
 import type { VNode } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox, type MessageType } from "element-plus";
 
 export function ToastSuccess(msg: string | VNode, duration: number = 5000) {
   if (!msg) {
@@ -12,14 +12,41 @@ export function ToastSuccess(msg: string | VNode, duration: number = 5000) {
   });
 }
 
-export function ToastInfo(msg: string | VNode, duration: number = 5000) {
+export function Toast(
+  type: MessageType,
+  msg: string | VNode,
+  duration: number = 5000,
+  plain: boolean = false,
+  showClose: boolean = false
+) {
+  if (!msg) {
+    return;
+  }
+
+  ElMessage({
+    type,
+    message: msg,
+    duration,
+    plain,
+    showClose
+  });
+}
+
+export function ToastInfo(
+  msg: string | VNode,
+  duration: number = 5000,
+  plain: boolean = false,
+  showClose: boolean = false
+) {
   if (!msg) {
     return;
   }
 
   ElMessage.info({
     message: msg,
-    duration
+    duration,
+    plain,
+    showClose
   });
 }
 
