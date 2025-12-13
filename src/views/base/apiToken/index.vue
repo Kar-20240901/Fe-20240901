@@ -85,9 +85,9 @@ function confirmFun() {
 
 const { copied, update } = useCopyToClipboard();
 
-function copyToClipboard(textValue: string) {
+function copyToClipboard(textValue: string, showToastFlag: boolean) {
   update(textValue);
-  if (copied.value) {
+  if (copied.value && showToastFlag) {
     ToastSuccess("复制成功");
   }
 }
@@ -95,6 +95,8 @@ function copyToClipboard(textValue: string) {
 function confirmAfterFun(res: R, done: () => void) {
   done();
   if (res.data) {
+    copyToClipboard(res.data, false);
+
     const icon = () => {
       return useRenderIcon(FaCopy, {
         class: "w-5 h-5"
@@ -109,7 +111,7 @@ function confirmAfterFun(res: R, done: () => void) {
           <div class="text-sm">{res.data}</div>
           <div
             class="ml-2 cursor-pointer hover:text-gray-800"
-            onclick={() => copyToClipboard(res.data)}
+            onclick={() => copyToClipboard(res.data, true)}
             title="复制"
           >
             {icon()}
