@@ -415,7 +415,7 @@ function handleScroll(event: Event) {
 
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
 
-  if (distanceToBottom <= 20 && !loading.value && hasMore) {
+  if (distanceToBottom <= 80 && !loading.value && hasMore) {
     doSearchThrottle(undefined, false, true);
   }
 }
