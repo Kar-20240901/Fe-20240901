@@ -463,6 +463,8 @@ function showSendFailFlag(item: ISessionContentBO) {
   return Number(item.createTs) <= checkTimestamp;
 }
 
+let doSendTodoSendMapFlag: boolean = false;
+
 function doSendTodoSendMap() {
   if (!props.session.sessionId) {
     return;
@@ -500,6 +502,12 @@ function doSendTodoSendMap() {
   if (!valueArr.length) {
     return;
   }
+
+  if (doSendTodoSendMapFlag) {
+    return;
+  }
+
+  doSendTodoSendMapFlag = true;
 
   sortContentSimple(valueArr);
 

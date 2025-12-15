@@ -29,6 +29,7 @@ import { throttle } from "@pureadmin/utils";
 import CommonConstant from "@/model/constant/CommonConstant";
 import * as CryptoJS from "crypto-js";
 import EpUpload from "~icons/ep/upload";
+import { getDialogWidth } from "@/utils/MyLayoutUtil";
 
 const search = ref<BaseFileTransferPageDTO>({});
 
@@ -205,15 +206,15 @@ function uploadFileSystem(uploadFile: UploadFile) {
 
 const uploadFileSystemSuccessThrottle = throttle(() => {
   ToastSuccess("传输完成");
-}, 1000);
+}, 2000);
 
 const onSearchThrottle = throttle(() => {
   onSearch();
-}, 1000);
+}, 2000);
 
 const tableSearchThrottle = throttle(() => {
   props.tableSearch();
-}, 1000);
+}, 2000);
 
 function deleteBySelectIdArr() {
   if (!selectIdArr.value.length) {
@@ -278,7 +279,7 @@ function composeClick(row: BaseFileTransferDO) {
     draggable
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    width="45%"
+    :width="getDialogWidth()"
     destroy-on-close
   >
     <div class="flex flex-col px-5 py-3 bg-bg_color">

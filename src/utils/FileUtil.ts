@@ -1,11 +1,12 @@
 // 获取：文件是否可以预览
 import { ToastError } from "@/utils/ToastUtil";
 import { GetBrowserCategory } from "@/utils/BrowserCategoryUtil";
-import { http, ORIGIN_RESPONSE } from "@/utils/http";
+import { AUTHORIZATION, http, ORIGIN_RESPONSE } from "@/utils/http";
 import type { PureHttpResponse, RequestMethods } from "@/utils/http/types";
 import type { NotNullId } from "@/api/http/base/BaseFileController";
 import { baseApi } from "@/api/http/utils";
 import { TempRequestCategoryEnum } from "@/model/enum/base/TempRequestCategoryEnum";
+import { getToken } from "@/utils/auth";
 
 export function GetFileCanPreviewFlag(fileName: string) {
   return fileName.endsWith(".txt");
@@ -154,6 +155,16 @@ export function BaseFilePrivateDownload(form: NotNullId) {
   ExecFileDownload(BaseFilePrivateDownloadUrl, form);
 }
 
+export function getBaseFilePrivateDownloadUrl(
+  id: string,
+  jwt?: string
+): string {
+  if (!jwt) {
+    jwt = getToken()!.jwt;
+  }
+  return `${BaseFilePrivateDownloadUrl}?${AUTHORIZATION}=${jwt}&id=${id}`;
+}
+
 // 101 头像 801 文件系统
 type TSysFileUploadProType = "AVATAR" | "FILE_SYSTEM";
 
@@ -183,11 +194,17 @@ export function FileUpload<T = string>(formData: FormData, url: string) {
   });
 }
 
-export const AvatarFileTypeList = ["image/jpeg", "image/png", "image/jpg"];
+export const ImagePreviewTypeSet = new Set(["jpg", "png", "bmp"]);
+
+export const AvatarFileTypeSet = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/jpg"
+]);
 
 // 检查：头像的文件类型
 export function CheckAvatarFileType(fileType: string) {
-  return AvatarFileTypeList.includes(fileType);
+  return AvatarFileTypeSet.has(fileType);
 }
 
 export const ExcelFileTypeList = [
@@ -206,18 +223,18 @@ export function CheckTxtFileType(fileType: string) {
   return TxtFileTypeList.includes(fileType);
 }
 
-export const DocumentFileTypeList = [
+export const DocumentFileTypeSet = new Set([
   "text/plain",
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "",
   "text/html"
-];
+]);
 
 // 检查：文档文件类型
 export function CheckDocumentFileType(fileType: string) {
-  return DocumentFileTypeList.includes(fileType);
+  return DocumentFileTypeSet.has(fileType);
 }
 
 export const BpmnFileTypeList = ["text/xml", ""];

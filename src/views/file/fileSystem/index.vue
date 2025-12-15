@@ -23,8 +23,9 @@ import Delete from "~icons/ep/delete";
 import CommonConstant from "@/model/constant/CommonConstant";
 import {
   BaseFilePrivateDownload,
-  BaseFilePrivateDownloadUrl,
-  GetFileSizeStr
+  getBaseFilePrivateDownloadUrl,
+  GetFileSizeStr,
+  ImagePreviewTypeSet
 } from "@/utils/FileUtil";
 import { IDataList } from "@/views/file/fileSystem/types";
 import CreateFolderFormEdit from "@/views/file/fileSystem/createFolderFormEdit.vue";
@@ -33,7 +34,6 @@ import RenameFormEdit from "@/views/file/fileSystem/renameFormEdit.vue";
 import UploadDialog from "@/views/file/fileSystem/uploadDialog.vue";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { getToken } from "@/utils/auth";
-import { AUTHORIZATION } from "@/utils/http";
 import RiFile2Line from "~icons/ri/file-2-line";
 import RiFolderOpenFill from "~icons/ri/folder-open-fill";
 import EpUpload from "~icons/ep/upload";
@@ -98,6 +98,9 @@ function setRowMax() {
   rowMax.value = rowMaxTemp;
 }
 
+// key：file主键id，value：在 imagePreviewSrcList中的下标
+const previewImageMap = new Map<string, number>();
+
 function onSearch(
   sufFun?: () => void,
   loadingFlag?: boolean,
@@ -151,6 +154,10 @@ function onSearch(
 
       let dataListItemList = [];
 
+      previewImageMap.clear();
+
+      imagePreviewSrcList.value = [];
+
       dataCalcList.forEach((item, index) => {
         if (index % rowMax.value === 0 && index !== 0) {
           dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
@@ -159,6 +166,14 @@ function onSearch(
         }
 
         dataListItemList.push(item);
+
+        if (ImagePreviewTypeSet.has(item.fileExtName)) {
+          imagePreviewSrcList.value.push(
+            `${getBaseFilePrivateDownloadUrl(item.id)}&thumbnailFlag=false`
+          );
+
+          previewImageMap.set(item.id, imagePreviewSrcList.value.length - 1);
+        }
       });
 
       if (dataListItemList.length > 0) {
@@ -264,6 +279,15 @@ function itemDblClick(row: BaseFileDO) {
     search.value.pid = row.id;
     search.value.globalFlag = false;
     onSearch();
+  } else if ((row.type as any) === BaseFileTypeEnum.FILE.code) {
+    if (ImagePreviewTypeSet.has(row.fileExtName)) {
+      const index = previewImageMap.get(row.id);
+
+      if (index !== undefined) {
+        imagePreviewInitialIndex.value = index;
+        showImagePreview.value = true;
+      }
+    }
   }
 }
 
@@ -419,6 +443,10 @@ function handleScroll(event: Event) {
     doSearchThrottle(undefined, false, true);
   }
 }
+
+const showImagePreview = ref<boolean>(false);
+const imagePreviewSrcList = ref<string[]>([]);
+const imagePreviewInitialIndex = ref<number>(0);
 </script>
 
 <template>
@@ -606,7 +634,7 @@ function handleScroll(event: Event) {
                         <div class="flex flex-col items-center">
                           <el-image
                             v-if="subItem.type === BaseFileTypeEnum.FILE.code"
-                            :src="`${BaseFilePrivateDownloadUrl}/${subItem.id}?${AUTHORIZATION}=${jwt}`"
+                            :src="getBaseFilePrivateDownloadUrl(subItem.id)"
                             fit="cover"
                             class="w-[45px] h-[45px] mb-[5px]"
                             lazy
@@ -697,6 +725,14 @@ function handleScroll(event: Event) {
       title="上传"
       :table-search="onSearch"
       :pid="search.pid"
+    />
+
+    <el-image-viewer
+      v-if="showImagePreview"
+      :url-list="imagePreviewSrcList"
+      :initial-index="imagePreviewInitialIndex"
+      show-progress
+      @close="showImagePreview = false"
     />
   </div>
 </template>
