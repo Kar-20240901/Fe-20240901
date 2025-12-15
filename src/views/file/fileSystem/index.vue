@@ -67,7 +67,7 @@ const totalSize = ref<number>(0);
 
 const selectIdSet = ref<Set<string>>(new Set<string>());
 
-const jwt = ref<string>(getToken()!.jwt);
+const jwt = getToken()!.jwt;
 
 onMounted(() => {
   setRowMax();
@@ -169,7 +169,7 @@ function onSearch(
 
         if (ImagePreviewTypeSet.has(item.fileExtName)) {
           imagePreviewSrcList.value.push(
-            `${getBaseFilePrivateDownloadUrl(item.id)}&thumbnailFlag=false`
+            `${getBaseFilePrivateDownloadUrl(item.id, jwt)}&thumbnailFlag=false`
           );
 
           previewImageMap.set(item.id, imagePreviewSrcList.value.length - 1);
@@ -634,7 +634,9 @@ const imagePreviewInitialIndex = ref<number>(0);
                         <div class="flex flex-col items-center">
                           <el-image
                             v-if="subItem.type === BaseFileTypeEnum.FILE.code"
-                            :src="getBaseFilePrivateDownloadUrl(subItem.id)"
+                            :src="
+                              getBaseFilePrivateDownloadUrl(subItem.id, jwt)
+                            "
                             fit="cover"
                             class="w-[45px] h-[45px] mb-[5px]"
                             lazy
