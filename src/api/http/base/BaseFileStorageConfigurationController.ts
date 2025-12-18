@@ -44,6 +44,7 @@ export interface BaseFileStorageConfigurationDO {
   remark?: string; // 备注
   type?: number; // 文件存储类型，格式：int32
   uploadEndpoint?: string; // 上传的端点
+  customDomain?: string; // 自定义域名
   bucketPublicName?: string; // 公开类型的桶名
   updateId?: string; // 修改人id，格式：int64
   createTime?: string; // 创建时间，格式：date-time
@@ -89,16 +90,17 @@ export function baseFileStorageConfigurationInfoById(
 export interface BaseFileStorageConfigurationInsertOrUpdateDTO {
   defaultFlag?: boolean; // 是否是默认存储，备注：只会有一个默认存储
   secretKey?: string; // 秘钥，是否必传：true
-  accessKey?: string; // 钥匙，是否必传：true
-  name?: string; // 文件存储配置名，是否必传：true
   remark?: string; // 备注
-  id?: string; // 主键 id，格式：int64
   type?: number; // 文件存储类型，是否必传：true，格式：int32
   uploadEndpoint?: string; // 上传的端点，是否必传：true
+  customDomain?: string; // 自定义域名
+  bucketPublicName?: string; // 公开类型的桶名，是否必传：true
+  accessKey?: string; // 钥匙，是否必传：true
+  name?: string; // 文件存储配置名，是否必传：true
+  id?: string; // 主键 id，格式：int64
   enableFlag?: boolean; // 是否启用
   bucketPrivateName?: string; // 私有类型的桶名，是否必传：true
   publicDownloadEndpoint?: string; // 公开下载的端点，是否必传：true
-  bucketPublicName?: string; // 公开类型的桶名，是否必传：true
 }
 
 // 新增/修改

@@ -3,10 +3,10 @@ import { ToastError } from "@/utils/ToastUtil";
 import { GetBrowserCategory } from "@/utils/BrowserCategoryUtil";
 import { AUTHORIZATION, http, ORIGIN_RESPONSE } from "@/utils/http";
 import type { PureHttpResponse, RequestMethods } from "@/utils/http/types";
-import type { NotNullId } from "@/api/http/base/BaseFileController";
 import { baseApi } from "@/api/http/utils";
 import { TempRequestCategoryEnum } from "@/model/enum/base/TempRequestCategoryEnum";
 import { getToken } from "@/utils/auth";
+import type { NotNullId } from "@/api/http/base/BaseParamController";
 
 export function GetFileCanPreviewFlag(fileName: string) {
   return fileName.endsWith(".txt");

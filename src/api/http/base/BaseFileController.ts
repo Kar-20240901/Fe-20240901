@@ -289,6 +289,23 @@ export function baseFileUploadFileSystemChunkPre(
   );
 }
 
+export interface LongObjectMapVOString {
+  map?: object; // map对象
+}
+
+// 批量获取：文件的 url-临时
+export function baseFileGetExpireUrl(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<LongObjectMapVOString>(
+    "post",
+    baseApi("/base/file/getExpireUrl"),
+    form,
+    config
+  );
+}
+
 export interface BaseFileUpdateSelfDTO {
   idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
   fileName?: string; // 文件名
@@ -353,13 +370,17 @@ export function baseFileUploadFileSystemChunk(
   );
 }
 
-export interface NotNullId {
+export interface BaseFilePrivateDownloadDTO {
+  thumbnailQuality?: number; // 缩略图质量，格式：double
   id?: string; // 主键 id，是否必传：true，格式：int64
+  thumbnailWidth?: number; // 缩略图宽度，格式：int32
+  thumbnailFlag?: boolean; // 是否返回缩略图
+  thumbnailHeight?: number; // 缩略图高度，格式：int32
 }
 
 // 下载文件：私有
 export function baseFilePrivateDownload(
-  form: NotNullId,
+  form: BaseFilePrivateDownloadDTO,
   config?: PureHttpRequestConfig
 ) {
   return http.request<undefined>(
@@ -383,11 +404,7 @@ export function baseFilePageTree(
   );
 }
 
-export interface LongObjectMapVOString {
-  map?: object; // map对象
-}
-
-// 批量获取：公开文件的 url
+// 批量获取：公开文件的 url-永久
 export function baseFileGetPublicUrl(
   form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
@@ -427,19 +444,6 @@ export function baseFilePageTreeSelf(
     "post",
     baseApi("/base/file/page/tree/self"),
     form,
-    config
-  );
-}
-
-// 下载文件：私有
-export function baseFilePrivateDownloadId(
-  id: string,
-  config?: PureHttpRequestConfig
-) {
-  return http.request<undefined>(
-    "get",
-    baseApi("/base/file/privateDownload/{id}"),
-    id,
     config
   );
 }

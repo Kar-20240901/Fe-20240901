@@ -1,6 +1,10 @@
 import type { R } from "@/model/vo/R";
 import type { Ref } from "vue";
 
+export interface IDialogFormDefineExpose {
+  open: () => void;
+}
+
 export interface IDialogFormOneInputDTO {
   idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
   inputValue?: string; // 输入框的值，是否必传：true

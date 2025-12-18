@@ -18,9 +18,6 @@ export interface BaseUserWalletLogPageDTO {
 
 export interface BaseUserWalletLogDO {
   refData?: string; // 关联的数据
-  withdrawablePreUseMoneySuf?: number; // 可提现的钱，预使用，后
-  withdrawablePreUseMoneyPre?: number; // 可提现的钱，预使用，前
-  withdrawablePreUseMoneyChange?: number; // 可提现的钱，预使用，变
   updateTime?: string; // 修改时间，格式：date-time
   remark?: string; // 备注
   type?: number; // 记录类型：1开头 增加 2开头 减少，格式：int32

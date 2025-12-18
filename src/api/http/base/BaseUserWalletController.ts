@@ -12,12 +12,9 @@ export interface BaseUserWalletDO {
   updateId?: string; // 修改人id，格式：int64
   createTime?: string; // 创建时间，格式：date-time
   createId?: string; // 创建人id，格式：int64
-  totalMoney?: number; // 总金额
   updateTime?: string; // 修改时间，格式：date-time
   remark?: string; // 备注
   id?: string; // 用户主键 id，格式：int64
-  withdrawableRealMoney?: number; // 实际可提现的钱
-  withdrawablePreUseMoney?: number; // 可提现的钱：预使用，例如用于：用户提现时，需要扣除租户的可提现的钱时
   enableFlag?: boolean; // 是否启用
   withdrawableMoney?: number; // 可提现的钱
 }

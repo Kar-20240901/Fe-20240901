@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { nextTick, onMounted, ref } from "vue";
+import { nextTick, onMounted, ref, useTemplateRef } from "vue";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
   baseFileCopySelf,
   baseFileCreateFolderSelf,
   BaseFileDO,
+  baseFileGetExpireUrl,
   baseFileMoveSelf,
   BaseFilePageSelfDTO,
   baseFilePageTreeSelf,
@@ -47,6 +48,7 @@ import RiFontColor from "~icons/ri/font-color";
 import EpDownload from "~icons/ep/download";
 import { getContentHeight, getMainContentWidth } from "@/utils/MyLayoutUtil";
 import { throttle } from "@pureadmin/utils";
+import { IDialogFormDefineExpose } from "@/model/types/IDialogFormProps";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -72,7 +74,7 @@ const jwt = getToken()!.jwt;
 onMounted(() => {
   setRowMax();
 
-  onSearch();
+  onSearch(undefined, true);
 });
 
 const pidList = ref<string[]>([CommonConstant.TOP_PID_STR]); // 例如：[0,1,2]
@@ -158,6 +160,8 @@ function onSearch(
 
       imagePreviewSrcList.value = [];
 
+      const previewFileIdArr = [];
+
       dataCalcList.forEach((item, index) => {
         if (index % rowMax.value === 0 && index !== 0) {
           dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
@@ -168,13 +172,15 @@ function onSearch(
         dataListItemList.push(item);
 
         if (ImagePreviewTypeSet.has(item.fileExtName)) {
-          imagePreviewSrcList.value.push(
-            `${getBaseFilePrivateDownloadUrl(item.id, jwt)}&thumbnailFlag=false`
-          );
+          imagePreviewSrcList.value.push(getOriginImage(item.id));
 
           previewImageMap.set(item.id, imagePreviewSrcList.value.length - 1);
+
+          previewFileIdArr.push(item.id);
         }
       });
+
+      doGetExpireUrl(previewFileIdArr);
 
       if (dataListItemList.length > 0) {
         dataListTemp.push({ id: dataListTemp.length, l: dataListItemList });
@@ -188,7 +194,9 @@ function onSearch(
       }
     })
     .finally(() => {
-      loading.value = false;
+      nextTick(() => {
+        loading.value = false;
+      });
 
       if (sufFun) {
         sufFun();
@@ -197,6 +205,65 @@ function onSearch(
 
   if (!scrollFlag) {
     treeSelfData();
+  }
+}
+
+const expireUrlMap = ref<Map<string, string>>(new Map());
+
+function doGetExpireUrl(fileIdArr: string[]) {
+  if (!fileIdArr || !fileIdArr.length) {
+    return;
+  }
+
+  if (
+    window.thumbnailImageGetType !== "201" &&
+    window.originImageGetType !== "201"
+  ) {
+    return;
+  }
+
+  baseFileGetExpireUrl({ idSet: fileIdArr }).then(res => {
+    Object.keys(res.data.map).forEach(key => {
+      expireUrlMap.value.set(key, res.data.map[key]);
+    });
+  });
+}
+
+function execGetExpireUrl(fileId?: string) {
+  if (!fileId) {
+    return;
+  }
+
+  return expireUrlMap.value.get(fileId);
+}
+
+// 获取：缩略图
+function getThumbnailImage(fileId?: string) {
+  if (!fileId) {
+    return;
+  }
+
+  const thumbnailImageGetType = window.thumbnailImageGetType;
+
+  if (thumbnailImageGetType === "201") {
+    return `${execGetExpireUrl(fileId)}?x-oss-process=image/resize,w_50,h_50,m_cover`;
+  } else {
+    return `${getBaseFilePrivateDownloadUrl(fileId, jwt)}&thumbnailWidth=50&thumbnailHeight=50`;
+  }
+}
+
+// 获取：原图
+function getOriginImage(fileId?: string): string {
+  if (!fileId) {
+    return;
+  }
+
+  const originImageGetType = window.originImageGetType;
+
+  if (originImageGetType === "201") {
+    return execGetExpireUrl(fileId);
+  } else {
+    return `${getBaseFilePrivateDownloadUrl(fileId, jwt)}&thumbnailFlag=false`;
   }
 }
 
@@ -386,7 +453,8 @@ function breadcrumbClick(index: number) {
   onSearch();
 }
 
-const uploadDialogRef = ref();
+const uploadDialogRef =
+  useTemplateRef<IDialogFormDefineExpose>("uploadDialogRef");
 
 const scrollbarParentDiv = ref();
 
@@ -634,9 +702,7 @@ const imagePreviewInitialIndex = ref<number>(0);
                         <div class="flex flex-col items-center">
                           <el-image
                             v-if="subItem.type === BaseFileTypeEnum.FILE.code"
-                            :src="
-                              getBaseFilePrivateDownloadUrl(subItem.id, jwt)
-                            "
+                            :src="getThumbnailImage(subItem.id)"
                             fit="cover"
                             class="w-[45px] h-[45px] mb-[5px]"
                             lazy
