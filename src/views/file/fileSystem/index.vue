@@ -25,8 +25,8 @@ import CommonConstant from "@/model/constant/CommonConstant";
 import {
   BaseFilePrivateDownload,
   CheckGetExpireUrl,
+  getBaseFilePrivateDownloadUrl,
   GetFileSizeStr,
-  GetOriginImage,
   GetThumbnailImage,
   ImagePreviewTypeSet
 } from "@/utils/FileUtil";
@@ -213,35 +213,38 @@ function doGetExpireUrl(fileIdArr: string[]) {
     return;
   }
 
-  if (!CheckGetExpireUrl()) {
-    return;
-  }
+  if (CheckGetExpireUrl()) {
+    baseFileGetExpireUrl({ idSet: fileIdArr }).then(res => {
+      fileIdArr.forEach(item => {
+        const url = res.data.map[item];
 
-  baseFileGetExpireUrl({ idSet: fileIdArr }).then(res => {
+        if (!url) {
+          return;
+        }
+
+        expireUrlMap.value.set(item, res.data.map[item]);
+
+        imagePreviewSrcList.value.push(url);
+
+        previewImageMap.set(item, imagePreviewSrcList.value.length - 1);
+      });
+    });
+  } else {
     fileIdArr.forEach(item => {
-      const url = res.data.map[item];
+      const url = `${getBaseFilePrivateDownloadUrl(item, jwt)}&thumbnailFlag=false`;
 
-      if (!url) {
-        return;
-      }
-
-      expireUrlMap.value.set(item, res.data.map[item]);
+      expireUrlMap.value.set(item, url);
 
       imagePreviewSrcList.value.push(url);
 
       previewImageMap.set(item, imagePreviewSrcList.value.length - 1);
     });
-  });
+  }
 }
 
 // 获取：缩略图
 function getThumbnailImage(fileId?: string) {
   return GetThumbnailImage(fileId, expireUrlMap, jwt);
-}
-
-// 获取：原图
-function getOriginImage(fileId?: string) {
-  return GetOriginImage(fileId, expireUrlMap, jwt);
 }
 
 function resetSearch() {
