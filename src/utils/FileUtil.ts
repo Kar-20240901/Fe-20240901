@@ -7,6 +7,66 @@ import { baseApi } from "@/api/http/utils";
 import { TempRequestCategoryEnum } from "@/model/enum/base/TempRequestCategoryEnum";
 import { getToken } from "@/utils/auth";
 import type { NotNullId } from "@/api/http/base/BaseParamController";
+import type { Ref } from "vue";
+
+// 获取：是否获取临时预览地址
+export function CheckGetExpireUrl() {
+  return (
+    (window.thumbnailImageGetType > 200 &&
+      window.thumbnailImageGetType < 300) ||
+    (window.originImageGetType > 200 && window.originImageGetType < 300)
+  );
+}
+
+// 获取：缩略图
+export function GetThumbnailImage(
+  fileId?: string,
+  expireUrlMap?: Ref<Map<string, string>>,
+  jwt?: string
+) {
+  if (!fileId) {
+    return;
+  }
+
+  if (!jwt) {
+    jwt = getToken()!.jwt;
+  }
+
+  const thumbnailImageGetType = window.thumbnailImageGetType;
+
+  if (thumbnailImageGetType === 201) {
+    return `${expireUrlMap.value.get(fileId)}`;
+  } else if (thumbnailImageGetType === 202) {
+    return `${expireUrlMap.value.get(fileId)}?x-oss-process=image/resize,w_50,h_50,m_cover`;
+  } else {
+    return `${getBaseFilePrivateDownloadUrl(fileId, jwt)}&thumbnailWidth=50&thumbnailHeight=50`;
+  }
+}
+
+// 获取：原图
+export function GetOriginImage(
+  fileId?: string,
+  expireUrlMap?: Ref<Map<string, string>>,
+  jwt?: string
+) {
+  if (!fileId) {
+    return;
+  }
+
+  if (!jwt) {
+    jwt = getToken()!.jwt;
+  }
+
+  const originImageGetType = window.originImageGetType;
+
+  if (originImageGetType === 201) {
+    return expireUrlMap.value.get(fileId);
+  } else if (originImageGetType === 202) {
+    return expireUrlMap.value.get(fileId);
+  } else {
+    return `${getBaseFilePrivateDownloadUrl(fileId, jwt)}&thumbnailFlag=false`;
+  }
+}
 
 export function GetFileCanPreviewFlag(fileName: string) {
   return fileName.endsWith(".txt");

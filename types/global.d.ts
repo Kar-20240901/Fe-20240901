@@ -39,8 +39,8 @@ declare global {
     WeixinJSBridge: any; // WeixinJSBridge
     WebSocket: WebSocket;
     apiUrl: string;
-    thumbnailImageGetType: "101" | "201"; // 缩略图获取类型：101 privateDownload（默认） 201 getExpireUrl
-    originImageGetType: "101" | "201"; // 原图获取类型：101 privateDownload（默认） 201 getExpireUrl
+    thumbnailImageGetType: 101 | 201 | 202; // 缩略图获取类型：101 privateDownload（默认） 201 getExpireUrl-minio 202 getExpireUrl-oss
+    originImageGetType: 101 | 201 | 202; // 原图获取类型：101 privateDownload（默认） 201 getExpireUrl-minio 202 getExpireUrl-oss
   }
 
   /**

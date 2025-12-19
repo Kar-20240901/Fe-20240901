@@ -24,8 +24,10 @@ import Delete from "~icons/ep/delete";
 import CommonConstant from "@/model/constant/CommonConstant";
 import {
   BaseFilePrivateDownload,
-  getBaseFilePrivateDownloadUrl,
+  CheckGetExpireUrl,
   GetFileSizeStr,
+  GetOriginImage,
+  GetThumbnailImage,
   ImagePreviewTypeSet
 } from "@/utils/FileUtil";
 import { IDataList } from "@/views/file/fileSystem/types";
@@ -156,10 +158,6 @@ function onSearch(
 
       let dataListItemList = [];
 
-      previewImageMap.clear();
-
-      imagePreviewSrcList.value = [];
-
       const previewFileIdArr = [];
 
       dataCalcList.forEach((item, index) => {
@@ -172,10 +170,6 @@ function onSearch(
         dataListItemList.push(item);
 
         if (ImagePreviewTypeSet.has(item.fileExtName)) {
-          imagePreviewSrcList.value.push(getOriginImage(item.id));
-
-          previewImageMap.set(item.id, imagePreviewSrcList.value.length - 1);
-
           previewFileIdArr.push(item.id);
         }
       });
@@ -211,60 +205,43 @@ function onSearch(
 const expireUrlMap = ref<Map<string, string>>(new Map());
 
 function doGetExpireUrl(fileIdArr: string[]) {
+  previewImageMap.clear();
+
+  imagePreviewSrcList.value = [];
+
   if (!fileIdArr || !fileIdArr.length) {
     return;
   }
 
-  if (
-    window.thumbnailImageGetType !== "201" &&
-    window.originImageGetType !== "201"
-  ) {
+  if (!CheckGetExpireUrl()) {
     return;
   }
 
   baseFileGetExpireUrl({ idSet: fileIdArr }).then(res => {
-    Object.keys(res.data.map).forEach(key => {
-      expireUrlMap.value.set(key, res.data.map[key]);
+    fileIdArr.forEach(item => {
+      const url = res.data.map[item];
+
+      if (!url) {
+        return;
+      }
+
+      expireUrlMap.value.set(item, res.data.map[item]);
+
+      imagePreviewSrcList.value.push(url);
+
+      previewImageMap.set(item, imagePreviewSrcList.value.length - 1);
     });
   });
 }
 
-function execGetExpireUrl(fileId?: string) {
-  if (!fileId) {
-    return;
-  }
-
-  return expireUrlMap.value.get(fileId);
-}
-
 // 获取：缩略图
 function getThumbnailImage(fileId?: string) {
-  if (!fileId) {
-    return;
-  }
-
-  const thumbnailImageGetType = window.thumbnailImageGetType;
-
-  if (thumbnailImageGetType === "201") {
-    return `${execGetExpireUrl(fileId)}?x-oss-process=image/resize,w_50,h_50,m_cover`;
-  } else {
-    return `${getBaseFilePrivateDownloadUrl(fileId, jwt)}&thumbnailWidth=50&thumbnailHeight=50`;
-  }
+  return GetThumbnailImage(fileId, expireUrlMap, jwt);
 }
 
 // 获取：原图
-function getOriginImage(fileId?: string): string {
-  if (!fileId) {
-    return;
-  }
-
-  const originImageGetType = window.originImageGetType;
-
-  if (originImageGetType === "201") {
-    return execGetExpireUrl(fileId);
-  } else {
-    return `${getBaseFilePrivateDownloadUrl(fileId, jwt)}&thumbnailFlag=false`;
-  }
+function getOriginImage(fileId?: string) {
+  return GetOriginImage(fileId, expireUrlMap, jwt);
 }
 
 function resetSearch() {
@@ -705,7 +682,6 @@ const imagePreviewInitialIndex = ref<number>(0);
                             :src="getThumbnailImage(subItem.id)"
                             fit="cover"
                             class="w-[45px] h-[45px] mb-[5px]"
-                            lazy
                           >
                             <template #error>
                               <component
