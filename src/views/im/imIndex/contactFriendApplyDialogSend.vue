@@ -2,26 +2,19 @@
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { onMounted, ref } from "vue";
 import {
-  baseImApplyFriendCancel,
-  baseImApplyFriendHidden,
-  baseImApplyFriendPage,
-  BaseImApplyFriendPageDTO,
-  BaseImApplyFriendPageVO
+  baseImApplyFriendSearchApplyFriend,
+  BaseImApplyFriendSearchApplyFriendDTO,
+  BaseImApplyFriendSearchApplyFriendVO
 } from "@/api/http/base/BaseImApplyFriendController";
-import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
-import {
-  BaseImApplyStatusEnum,
-  BaseImApplyStatusEnumMap
-} from "@/model/enum/im/BaseImApplyStatusEnum";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { ToastError } from "@/utils/ToastUtil";
 import Avatar from "@/assets/user.png";
 import AddFill from "~icons/ri/add-circle-line";
 import RiSearchLine from "~icons/ri/search-line";
 
-const search = ref<BaseImApplyFriendPageDTO>({});
+const search = ref<BaseImApplyFriendSearchApplyFriendDTO>({});
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseImApplyFriendPageVO[]>([]);
+const dataList = ref<BaseImApplyFriendSearchApplyFriendVO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
@@ -31,9 +24,8 @@ const tableRef = ref();
 
 function onSearch() {
   loading.value = true;
-  baseImApplyFriendPage({
+  baseImApplyFriendSearchApplyFriend({
     ...search.value,
-    toMeFlag: false,
     current: currentPage.value as any,
     pageSize: pageSize.value as any
   })
@@ -50,49 +42,8 @@ defineExpose({
   onSearch
 });
 
-function cancelBySelectIdArr() {
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImApplyFriendCancel({
-        idSet: [...selectIdArr.value]
-      }).then(res => {
-        selectIdArr.value = [];
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定取消申请对勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
-}
-
-function onSelectChange(rowArr?: BaseImApplyFriendPageVO[]) {
-  selectIdArr.value = rowArr.map(it => it.id);
-}
-
-function cancelClick(item?: BaseImApplyFriendPageVO) {
-  if (!item?.id) {
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImApplyFriendCancel({
-        idSet: [item.id]
-      }).then(res => {
-        selectIdArr.value = [];
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定取消对【${item.nickname}】的好友申请吗？`
-  );
+function onSelectChange(rowArr?: BaseImApplyFriendSearchApplyFriendVO[]) {
+  selectIdArr.value = rowArr.map(it => it.userId);
 }
 
 onMounted(() => {
@@ -104,46 +55,14 @@ function sendBySelectIdArr() {
     ToastError("请勾选数据");
     return;
   }
-
-  ExecConfirm(
-    async () => {
-      await baseImApplyFriendHidden({
-        idSet: [...selectIdArr.value]
-      }).then(res => {
-        selectIdArr.value = [];
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定隐藏勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
 }
 
-function hiddenClick(item?: BaseImApplyFriendPageVO) {
-  if (!item?.id) {
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImApplyFriendHidden({
-        idSet: [item.id]
-      }).then(res => {
-        selectIdArr.value = [];
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定隐藏对【${item.nickname}】的好友申请吗？`
-  );
-}
+function applyClick(row: BaseImApplyFriendSearchApplyFriendVO) {}
 </script>
 
 <template>
   <div class="flex flex-col">
-    <div class="pb-3 flex justify-between">
+    <div class="flex justify-between">
       <div class="flex">
         <el-button
           type="primary"
@@ -155,14 +74,26 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
       </div>
 
       <div>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon(RiSearchLine)"
-          :loading="loading"
-          @click="onSearch"
-        >
-          搜索
-        </el-button>
+        <el-form ref="searchRef" :inline="true" :model="search">
+          <el-form-item prop="searchKey">
+            <el-input
+              v-model="search.searchKey"
+              placeholder="请输入用户昵称、用户编码"
+              clearable
+              class="!w-[200px]"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              type="primary"
+              :icon="useRenderIcon(RiSearchLine)"
+              :loading="loading"
+              @click="onSearch"
+            >
+              搜索
+            </el-button>
+          </el-form-item>
+        </el-form>
       </div>
     </div>
 
@@ -202,29 +133,10 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
           </div>
         </div>
       </el-table-column>
-      <el-table-column prop="applyContent" label="申请内容" />
-      <el-table-column #default="scope" prop="status" label="状态" width="70">
-        {{ BaseImApplyStatusEnumMap.get(scope.row.status) || "" }}
-      </el-table-column>
-      <el-table-column
-        #default="scope"
-        prop="createTime"
-        label="申请时间"
-        width="160"
-      >
-        {{ FormatDateTimeForCurrentDay(new Date(scope.row.applyTime)) }}
-      </el-table-column>
+      <el-table-column prop="bio" label="个性签名" />
       <el-table-column #default="scope" label="操作" width="150">
-        <el-button
-          v-if="scope.row.status === BaseImApplyStatusEnum.APPLYING.code"
-          link
-          type="primary"
-          @click="cancelClick(scope.row)"
-        >
-          取消
-        </el-button>
-        <el-button link type="primary" @click="hiddenClick(scope.row)">
-          隐藏
+        <el-button link type="primary" @click="applyClick(scope.row)">
+          申请
         </el-button>
       </el-table-column>
     </el-table>
