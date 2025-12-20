@@ -16,6 +16,7 @@ import {
 } from "@/api/http/base/BaseFileStorageConfigurationController";
 import { BaseFileStorageTypeMap } from "@/model/enum/file/BaseFileStorageTypeEnum";
 import { R } from "@/model/vo/R";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseFileStorageConfiguration"
@@ -138,7 +139,7 @@ function onSelectChange(rowArr?: BaseFileStorageConfigurationDO[]) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

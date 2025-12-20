@@ -40,7 +40,7 @@ import { getToken } from "@/utils/auth";
 import RiFile2Line from "~icons/ri/file-2-line";
 import RiFolderOpenFill from "~icons/ri/folder-open-fill";
 import EpUpload from "~icons/ep/upload";
-
+import RiSearchLine from "~icons/ri/search-line";
 import RiArrowGoBackFill from "~icons/ri/arrow-go-back-fill";
 import EpCheck from "~icons/ep/check";
 import RiFolderAddFill from "~icons/ri/folder-add-fill";
@@ -523,7 +523,7 @@ const imagePreviewInitialIndex = ref<number>(0);
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch()"
           >

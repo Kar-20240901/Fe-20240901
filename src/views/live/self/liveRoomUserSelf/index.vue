@@ -26,6 +26,7 @@ import {
 } from "@/model/constant/websocket/WebSocketReceivePath";
 import { BASE_LIVE_ROOM_USER_ADD_USER } from "@/model/constant/websocket/WebSocketAllPath";
 import { storeToRefs } from "pinia";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseLiveRoomUserSelf"
@@ -350,7 +351,7 @@ function chooseRoomClick() {
           <el-form-item>
             <el-button
               type="primary"
-              :icon="useRenderIcon('ri/search-line')"
+              :icon="useRenderIcon(RiSearchLine)"
               :loading="loading"
               @click="() => onSearch(false)"
             >

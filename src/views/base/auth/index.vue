@@ -19,6 +19,7 @@ import FormBatch from "@/views/base/auth/formBatch.vue";
 import { IFormBatch } from "@/views/base/auth/types";
 import type { R } from "@/model/vo/R";
 import MenuAddFill from "~icons/ri/menu-add-fill";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseAuth"
@@ -187,7 +188,7 @@ function onSelectChange(rowArr?: BaseAuthDO[]) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

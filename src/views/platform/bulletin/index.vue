@@ -24,6 +24,7 @@ import {
 import { R } from "@/model/vo/R";
 import RiSendPlaneFill from "~icons/ri/send-plane-fill";
 import FaSolidUndo from "~icons/fa-solid/undo";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "PlatformBulletin"
@@ -180,7 +181,7 @@ function getOperateName(row: BaseBulletinDO) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

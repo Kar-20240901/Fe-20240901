@@ -28,6 +28,7 @@ import {
   ToggleRowExpansionAll
 } from "@/utils/TableUtil";
 import { R } from "@/model/vo/R";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseArea"
@@ -189,7 +190,7 @@ function addOrderNoConfirmAfterFun(res, done) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

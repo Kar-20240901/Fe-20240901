@@ -9,6 +9,7 @@ import {
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
+import RiSearchLine from "~icons/ri/search-line";
 import Delete from "~icons/ep/delete";
 import FaCopy from "~icons/fa/copy";
 import {
@@ -180,7 +181,7 @@ function onSelectChange(rowArr?: BaseApiTokenDO[]) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

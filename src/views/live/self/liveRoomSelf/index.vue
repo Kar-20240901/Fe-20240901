@@ -25,6 +25,7 @@ import { useWebSocketStoreHook } from "@/store/modules/webSocket";
 import { useLiveRoomStoreHook } from "@/store/modules/liveRoom";
 import { BASE_LIVE_ROOM_USER_ADD_USER } from "@/model/constant/websocket/WebSocketAllPath";
 import CommonConstant from "@/model/constant/CommonConstant";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseLiveRoomSelf"
@@ -176,7 +177,7 @@ function onSelectChange(rowArr?: BaseLiveRoomDO[]) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

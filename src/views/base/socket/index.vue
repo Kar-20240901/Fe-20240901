@@ -16,6 +16,7 @@ import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import { BaseSocketTypeMap } from "@/model/enum/socket/BaseSocketTypeEnum";
 import EpCircleCheck from "~icons/ep/circle-check";
 import EpCircleClose from "~icons/ep/circle-close";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseSocket"
@@ -169,7 +170,7 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

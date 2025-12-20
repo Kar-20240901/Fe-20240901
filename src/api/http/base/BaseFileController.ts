@@ -374,7 +374,7 @@ export interface BaseFilePrivateDownloadDTO {
   thumbnailQuality?: number; // 缩略图质量，格式：double
   id?: string; // 主键 id，是否必传：true，格式：int64
   thumbnailWidth?: number; // 缩略图宽度，格式：int32
-  thumbnailFlag?: boolean; // 是否返回缩略图
+  thumbnailFlag?: boolean; // 是否返回缩略图，默认：true
   thumbnailHeight?: number; // 缩略图高度，格式：int32
 }
 

@@ -38,9 +38,8 @@ export function baseImApplyFriendPage(
 
 export interface BaseImApplyFriendSearchApplyFriendDTO {
   current?: string; // 第几页，格式：int64
-  nickname?: string; // 用户昵称
   pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
-  uuid?: string; // 用户 uuid
+  searchKey?: string; // 搜索关键字
   order?: MyOrderDTO; // 排序字段
 }
 

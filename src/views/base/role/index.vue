@@ -22,6 +22,7 @@ import {
 } from "@/api/http/base/BaseMenuController";
 import { baseUserDictList } from "@/api/http/base/BaseUserController";
 import { R } from "@/model/vo/R";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseRole"
@@ -162,7 +163,7 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

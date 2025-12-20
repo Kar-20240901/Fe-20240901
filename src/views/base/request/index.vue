@@ -19,6 +19,7 @@ import {
 import FormEdit from "@/views/base/request/formEdit.vue";
 import { baseRequestInfoInfoById } from "@/api/http/base/BaseRequestInfoController";
 import { IBaseRequestFullInfoDO } from "@/views/base/request/types";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseRequest"
@@ -151,7 +152,7 @@ function viewClick(row: BaseRequestDO) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

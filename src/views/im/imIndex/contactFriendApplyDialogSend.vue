@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import Refresh from "~icons/ep/refresh";
 import { onMounted, ref } from "vue";
 import {
   baseImApplyFriendCancel,
@@ -17,6 +16,7 @@ import {
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
 import AddFill from "~icons/ri/add-circle-line";
+import RiSearchLine from "~icons/ri/search-line";
 
 const search = ref<BaseImApplyFriendPageDTO>({});
 
@@ -157,11 +157,11 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
       <div>
         <el-button
           type="primary"
-          :icon="useRenderIcon(Refresh)"
+          :icon="useRenderIcon(RiSearchLine)"
           :loading="loading"
           @click="onSearch"
         >
-          刷新
+          搜索
         </el-button>
       </div>
     </div>

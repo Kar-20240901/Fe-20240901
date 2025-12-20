@@ -42,6 +42,7 @@ import {
 import { R } from "@/model/vo/R";
 import LogoutCircleRLine from "~icons/ri/logout-circle-r-line";
 import LogoutBoxRLine from "~icons/ri/logout-box-r-line";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseUser"
@@ -302,7 +303,7 @@ function thawClick() {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

@@ -13,6 +13,7 @@ import {
   BaseRequestSelfLoginRecordPageDTO
 } from "@/api/http/base/BaseRequestController";
 import { deviceDetection } from "@pureadmin/utils";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "SecurityLog"
@@ -78,7 +79,7 @@ function resetSearch() {
           <el-form-item>
             <el-button
               type="primary"
-              :icon="useRenderIcon('ri/search-line')"
+              :icon="useRenderIcon(RiSearchLine)"
               :loading="loading"
               @click="onSearch"
             >

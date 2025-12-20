@@ -28,6 +28,7 @@ import { DictVO } from "@/api/http/base/BaseRoleController";
 import { CalcOrderNo } from "@/utils/TreeUtil";
 import { baseUserDictList } from "@/api/http/base/BaseUserController";
 import { R } from "@/model/vo/R";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseDept"
@@ -189,7 +190,7 @@ function addOrderNoConfirmAfterFun(res, done) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

@@ -27,6 +27,7 @@ import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
 import { CalcOrderNo } from "@/utils/TreeUtil";
 import { dictTypeOptions } from "@/views/base/dict/enums";
 import { R } from "@/model/vo/R";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseDict"
@@ -186,7 +187,7 @@ function addOrderNoConfirmAfterFun(res, done) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

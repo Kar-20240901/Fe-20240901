@@ -16,6 +16,7 @@ import {
 } from "@/api/http/base/BaseSmsConfigurationController";
 import { BaseSmsTypeMap } from "@/model/enum/sms/BaseSmsTypeEnum";
 import { R } from "@/model/vo/R";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseSmsConfiguration"
@@ -134,7 +135,7 @@ function onSelectChange(rowArr?: BaseSmsConfigurationDO[]) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

@@ -19,6 +19,7 @@ import {
   TempRequestCategoryMap
 } from "@/model/enum/base/TempRequestCategoryEnum";
 import { BaseSocketTypeMap } from "@/model/enum/socket/BaseSocketTypeEnum";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseSocketRefUser"
@@ -148,7 +149,7 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >

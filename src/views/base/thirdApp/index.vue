@@ -16,6 +16,7 @@ import {
 } from "@/api/http/base/BaseThirdAppController";
 import { BaseThirdAppTypeMap } from "@/model/enum/thirdApp/BaseThirdAppTypeEnum";
 import { R } from "@/model/vo/R";
+import RiSearchLine from "~icons/ri/search-line";
 
 defineOptions({
   name: "BaseThirdApp"
@@ -134,7 +135,7 @@ function onSelectChange(rowArr?: BaseThirdAppDO[]) {
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('ri/search-line')"
+            :icon="useRenderIcon(RiSearchLine)"
             :loading="loading"
             @click="onSearch"
           >
