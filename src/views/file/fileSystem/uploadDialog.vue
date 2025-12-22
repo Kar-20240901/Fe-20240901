@@ -384,3 +384,10 @@ function composeClick(row: BaseFileTransferDO) {
     </div>
   </el-dialog>
 </template>
+
+<style scoped lang="scss">
+:deep(.el-upload-dragger) {
+  padding: 0;
+  border: none;
+}
+</style>

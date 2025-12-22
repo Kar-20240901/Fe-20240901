@@ -43,6 +43,12 @@ import { R } from "@/model/vo/R";
 import LogoutCircleRLine from "~icons/ri/logout-circle-r-line";
 import LogoutBoxRLine from "~icons/ri/logout-box-r-line";
 import RiSearchLine from "~icons/ri/search-line";
+import EpUpload from "~icons/ep/upload";
+import { getDialogWidth } from "@/utils/MyLayoutUtil";
+import EpDownload from "~icons/ep/download";
+import { UploadFile, UploadFiles } from "element-plus";
+import { baseApi } from "@/api/http/utils";
+import { ExecFileDownload, FileUpload } from "@/utils/FileUtil";
 
 defineOptions({
   name: "BaseUser"
@@ -278,6 +284,46 @@ function thawClick() {
     `确定解冻勾选的【${selectIdArr.value.length}】项数据吗？`
   );
 }
+
+const batchInsertDialogVisible = ref<boolean>(false);
+const batchInsertLoading = ref<boolean>(false);
+
+function batchInsertClick() {
+  batchInsertDialogVisible.value = true;
+}
+
+function batchInsertDialogUploadClick() {}
+
+function batchInsertDialogDownloadClick() {
+  ExecFileDownload(baseApi("/base/user/insertBatchByExcel/downloadTemplate"));
+}
+
+const uploadRef = ref();
+const uploadFilesRef = ref<UploadFiles>([]);
+
+function onBeforeUpload() {
+  return true;
+}
+
+function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
+  uploadFilesRef.value = uploadFiles;
+
+  batchInsertLoading.value = true;
+
+  const formData = new FormData();
+
+  formData.append("file", uploadFile.raw);
+
+  FileUpload(formData, baseApi("/base/user/insertBatchByExcel"))
+    .then(() => {
+      ToastSuccess("批量新增成功");
+
+      onSearch();
+    })
+    .finally(() => {
+      batchInsertLoading.value = false;
+    });
+}
 </script>
 
 <template>
@@ -317,67 +363,70 @@ function thawClick() {
     </div>
 
     <div class="flex flex-col px-5 py-3 bg-bg_color">
-      <div class="pb-3 flex justify-between">
-        <div />
-
-        <div>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(AddFill)"
-            @click="addClick({})"
-          >
-            新增用户
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(RiLockPasswordLine)"
-            @click="updatePasswordClick"
-          >
-            批量修改密码
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(RiUser4Line)"
-            @click="resetAvatarClick"
-          >
-            批量重置头像
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(EpLock)"
-            @click="freezeClick"
-          >
-            批量冻结
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(EpUnlock)"
-            @click="thawClick"
-          >
-            批量解冻
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(Delete)"
-            @click="deleteBySelectIdArr"
-          >
-            批量删除
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(LogoutCircleRLine)"
-            @click="signOutBySelectIdArr"
-          >
-            批量登出
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(LogoutBoxRLine)"
-            @click="signOutAll"
-          >
-            全部登出
-          </el-button>
-        </div>
+      <div class="pb-3 flex flex-wrap gap-y-1">
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(AddFill)"
+          @click="addClick({})"
+        >
+          新增用户
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(RiLockPasswordLine)"
+          @click="updatePasswordClick"
+        >
+          批量修改密码
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(RiUser4Line)"
+          @click="resetAvatarClick"
+        >
+          批量重置头像
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(EpLock)"
+          @click="freezeClick"
+        >
+          批量冻结
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(EpUnlock)"
+          @click="thawClick"
+        >
+          批量解冻
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(Delete)"
+          @click="deleteBySelectIdArr"
+        >
+          批量删除
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(LogoutCircleRLine)"
+          @click="signOutBySelectIdArr"
+        >
+          批量登出
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(LogoutBoxRLine)"
+          @click="signOutAll"
+        >
+          全部登出
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(EpUpload)"
+          @click="batchInsertClick"
+        >
+          批量导入
+        </el-button>
       </div>
 
       <el-table
@@ -463,5 +512,63 @@ function thawClick() {
       :confirm-fun="updatePasswordConfirmFun"
       :confirm-after-fun="confirmAfterFun"
     />
+
+    <el-dialog
+      v-model="batchInsertDialogVisible"
+      title="批量操作"
+      :width="getDialogWidth()"
+      draggable
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      destroy-on-close
+    >
+      <div class="flex flex-col gap-4">
+        <div>
+          <el-button
+            class="w-full"
+            :icon="useRenderIcon(EpDownload)"
+            @click="batchInsertDialogDownloadClick()"
+            >下载模版
+          </el-button>
+        </div>
+        <div>
+          <el-upload
+            ref="uploadRef"
+            :show-file-list="false"
+            :auto-upload="false"
+            multiple
+            :on-change="onChangeFun"
+            :before-upload="onBeforeUpload"
+            :file-list="uploadFilesRef"
+            drag
+          >
+            <el-button
+              class="w-full"
+              type="primary"
+              :loading="batchInsertLoading"
+              :icon="useRenderIcon(EpUpload)"
+              @click="batchInsertDialogUploadClick()"
+              >批量导入
+            </el-button>
+          </el-upload>
+        </div>
+        <div class="mb-1">
+          <el-button
+            class="w-full"
+            link
+            @click="batchInsertDialogVisible = false"
+          >
+            取消
+          </el-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
+
+<style scoped lang="scss">
+:deep(.el-upload-dragger) {
+  padding: 0;
+  border: none;
+}
+</style>

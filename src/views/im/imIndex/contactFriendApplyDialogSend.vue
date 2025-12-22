@@ -58,6 +58,15 @@ function sendBySelectIdArr() {
 }
 
 function applyClick(row: BaseImApplyFriendSearchApplyFriendVO) {}
+
+function handleSearchInputKeydown(e: KeyboardEvent) {
+  const isEnter = e.key === "Enter" || e.key === "NumpadEnter";
+
+  if (isEnter) {
+    e.preventDefault();
+    onSearch();
+  }
+}
 </script>
 
 <template>
@@ -80,7 +89,8 @@ function applyClick(row: BaseImApplyFriendSearchApplyFriendVO) {}
               v-model="search.searchKey"
               placeholder="请输入用户昵称、用户编码"
               clearable
-              class="!w-[200px]"
+              class="!w-[220px]"
+              @keydown="handleSearchInputKeydown"
             />
           </el-form-item>
           <el-form-item>
@@ -113,7 +123,7 @@ function applyClick(row: BaseImApplyFriendSearchApplyFriendVO) {}
       @selection-change="onSelectChange"
     >
       <el-table-column type="selection" />
-      <el-table-column #default="scope" label="用户" width="180">
+      <el-table-column #default="scope" label="用户" width="220">
         <div class="flex items-center">
           <el-image
             :src="scope.row?.avatarUrl"
@@ -135,7 +145,7 @@ function applyClick(row: BaseImApplyFriendSearchApplyFriendVO) {}
       </el-table-column>
       <el-table-column prop="uuid" label="用户编码" />
       <el-table-column prop="bio" label="个人简介" />
-      <el-table-column #default="scope" label="操作" width="150">
+      <el-table-column #default="scope" label="操作" width="120">
         <el-button link type="primary" @click="applyClick(scope.row)">
           申请
         </el-button>

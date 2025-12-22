@@ -783,10 +783,3 @@ const imagePreviewInitialIndex = ref<number>(0);
     />
   </div>
 </template>
-
-<style scoped lang="scss">
-:deep(.el-upload-dragger) {
-  padding: 0;
-  border: none;
-}
-</style>
