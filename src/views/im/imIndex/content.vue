@@ -522,6 +522,10 @@ function doSendTodoSendMap() {
 
     doSendToServer(form);
   });
+
+  setTimeout(() => {
+    doSendTodoSendMapFlag = false;
+  }, 1000);
 }
 
 function sortContentSimple(itemArr?: ISessionContentBO[]) {
@@ -637,17 +641,9 @@ function getFirstContentId() {
 }
 
 function resendToServerClick(item: ISessionContentBO) {
-  const form: BaseImSessionContentInsertTxtDTO = {
-    sessionId: props.session.sessionId,
-    txt: item.content,
-    createTs: item.createTs,
-    orderNo: item.orderNo,
-    type: item.type
-  };
-
   setShouldAutoScroll(true);
 
-  doSendToServer(form);
+  doSendTodoSendMap();
 }
 
 function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
