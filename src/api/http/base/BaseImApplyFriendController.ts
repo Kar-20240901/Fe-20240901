@@ -46,7 +46,9 @@ export interface BaseImApplyFriendSearchApplyFriendDTO {
 export interface BaseImApplyFriendSearchApplyFriendVO {
   avatarUrl?: string; // 头像地址
   nickname?: string; // 用户昵称
+  bio?: string; // 个人简介
   userId?: string; // 用户主键 id，格式：int64
+  uuid?: string; // 用户编码
 }
 
 // 搜索要添加的好友
