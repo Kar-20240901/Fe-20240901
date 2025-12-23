@@ -52,7 +52,7 @@ const props = defineProps<IUserDeleteLogDialogFormProps>();
     >
       <el-row :gutter="30">
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="id" prop="id">
+          <el-form-item label="用户编码" prop="id">
             <el-input v-model="form.id" readonly />
           </el-form-item>
         </re-col>

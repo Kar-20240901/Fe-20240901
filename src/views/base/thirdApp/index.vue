@@ -124,10 +124,10 @@ function onSelectChange(rowArr?: BaseThirdAppDO[]) {
   <div class="flex flex-col">
     <div class="bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="名称：" prop="name">
+        <el-form-item label="三方应用名称：" prop="name">
           <el-input
             v-model="search.name"
-            placeholder="请输入名称"
+            placeholder="请输入三方应用名称"
             clearable
             class="!w-[180px]"
           />

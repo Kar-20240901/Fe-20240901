@@ -189,7 +189,7 @@ function viewClick(row: BaseRequestDO) {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="id" label="id" />
+        <el-table-column prop="id" label="请求编码" />
         <el-table-column prop="name" label="名称" />
         <el-table-column prop="uri" label="路径" />
         <el-table-column prop="ip" label="ip" />

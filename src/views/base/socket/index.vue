@@ -159,10 +159,10 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
   <div class="flex flex-col">
     <div class="bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="id：" prop="id">
+        <el-form-item label="套接字编码：" prop="id">
           <el-input
             v-model="search.id"
-            placeholder="请输入id"
+            placeholder="请输入套接字编码"
             clearable
             class="!w-[180px]"
           />
@@ -227,7 +227,7 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="id" label="id" />
+        <el-table-column prop="id" label="套接字编码" />
         <el-table-column #default="scope" prop="type" label="类型">
           {{ BaseSocketTypeMap.get(scope.row.type) || "" }}
         </el-table-column>

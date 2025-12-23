@@ -138,10 +138,10 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
   <div class="flex flex-col">
     <div class="bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="id：" prop="id">
+        <el-form-item label="在线编码：" prop="id">
           <el-input
             v-model="search.id"
-            placeholder="请输入id"
+            placeholder="请输入在线编码"
             clearable
             class="!w-[180px]"
           />
@@ -200,8 +200,8 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="id" label="id" />
-        <el-table-column prop="socketId" label="socketId" />
+        <el-table-column prop="id" label="在线编码" />
+        <el-table-column prop="socketId" label="套接字编码" />
         <el-table-column prop="nickname" label="用户" />
         <el-table-column #default="scope" prop="onlineType" label="状态">
           {{ BaseSocketOnlineTypeMap.get(scope.row.onlineType) || "" }}

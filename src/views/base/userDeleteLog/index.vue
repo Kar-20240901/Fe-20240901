@@ -164,7 +164,7 @@ function deleteBySelectIdArr() {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="id" label="id" />
+        <el-table-column prop="id" label="用户编码" />
         <el-table-column prop="nickname" label="昵称" />
         <el-table-column
           #default="scope"

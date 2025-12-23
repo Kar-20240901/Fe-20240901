@@ -501,12 +501,12 @@ const imagePreviewInitialIndex = ref<number>(0);
   <div class="flex flex-col" :style="`height: ${parentHeight}px`">
     <div class="bg-bg_color px-8 pt-[12px] mb-3 shrink-0">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="文件名称：" prop="showFileName">
+        <el-form-item label="名称：" prop="showFileName">
           <el-input
             v-model="search.showFileName"
-            placeholder="请输入文件名称"
+            placeholder="请输入文件/文件夹名称"
             clearable
-            class="!w-[180px]"
+            class="!w-[200px]"
           />
         </el-form-item>
         <el-form-item label="全局搜索" prop="globalFlag">
