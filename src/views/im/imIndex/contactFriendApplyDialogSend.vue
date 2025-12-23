@@ -119,11 +119,11 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
       show-overflow-tooltip
       stripe
       highlight-current-row
-      max-height="600px"
+      height="45vh"
       @selection-change="onSelectChange"
     >
       <el-table-column type="selection" />
-      <el-table-column #default="scope" label="用户" width="220">
+      <el-table-column #default="scope" label="用户" width="180">
         <div class="flex items-center">
           <el-image
             :src="scope.row?.avatarUrl"

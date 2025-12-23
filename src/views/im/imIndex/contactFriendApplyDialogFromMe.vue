@@ -187,7 +187,7 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
       show-overflow-tooltip
       stripe
       highlight-current-row
-      max-height="600px"
+      height="45vh"
       @selection-change="onSelectChange"
     >
       <el-table-column type="selection" />
