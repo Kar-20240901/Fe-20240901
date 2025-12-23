@@ -316,7 +316,7 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
 
   FileUpload(formData, baseApi("/base/user/insertBatchByExcel"))
     .then(res => {
-      ToastSuccess(res.msg);
+      ToastSuccess(res.msg, 10000);
 
       onSearch();
     })
