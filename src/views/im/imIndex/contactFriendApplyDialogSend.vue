@@ -4,9 +4,10 @@ import { onMounted, ref } from "vue";
 import {
   baseImApplyFriendSearchApplyFriend,
   BaseImApplyFriendSearchApplyFriendDTO,
-  BaseImApplyFriendSearchApplyFriendVO
+  BaseImApplyFriendSearchApplyFriendVO,
+  baseImApplyFriendSend
 } from "@/api/http/base/BaseImApplyFriendController";
-import { ToastError } from "@/utils/ToastUtil";
+import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import Avatar from "@/assets/user.png";
 import AddFill from "~icons/ri/add-circle-line";
 import RiSearchLine from "~icons/ri/search-line";
@@ -55,9 +56,35 @@ function sendBySelectIdArr() {
     ToastError("请勾选数据");
     return;
   }
+
+  ExecConfirm(
+    async () => {
+      await baseImApplyFriendSend({
+        idSet: selectIdArr.value
+      }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定发起对勾选的【${selectIdArr.value.length}】个用户的好友申请吗？`
+  );
 }
 
-function applyClick(row: BaseImApplyFriendSearchApplyFriendVO) {}
+function applyClick(row: BaseImApplyFriendSearchApplyFriendVO) {
+  ExecConfirm(
+    async () => {
+      await baseImApplyFriendSend({
+        idSet: [row.userId]
+      }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定发起对【${row.nickname}（${row.uuid}）】的好友申请吗？`
+  );
+}
 
 function handleSearchInputKeydown(e: KeyboardEvent) {
   const isEnter = e.key === "Enter" || e.key === "NumpadEnter";

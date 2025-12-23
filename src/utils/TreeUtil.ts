@@ -110,7 +110,7 @@ export function ListToTree(
     }
 
     // 把自己添加到：父节点的 children上
-    let parentDTO = listMap.get(mapDTO[pidName]);
+    const parentDTO = listMap.get(mapDTO[pidName]);
 
     if (parentDTO) {
       if (parentDTO[childrenName]) {

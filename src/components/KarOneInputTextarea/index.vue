@@ -9,7 +9,7 @@ import {
 import ReCol from "@/components/ReCol";
 
 defineOptions({
-  name: "KarAddOrderNo"
+  name: "KarOneInputTextarea"
 });
 
 const visible = ref<boolean>(false);

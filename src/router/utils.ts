@@ -275,7 +275,8 @@ function getDynamicRoutes(
           title: item.name,
           showLink: item.showFlag,
           icon: item.icon,
-          showParent: true
+          showParent: true,
+          keepAlive: true
         }
       });
     });
