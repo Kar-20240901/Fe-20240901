@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, useTemplateRef } from "vue";
 import {
   baseImApplyFriendSearchApplyFriend,
   BaseImApplyFriendSearchApplyFriendDTO,
@@ -11,6 +11,12 @@ import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import Avatar from "@/assets/user.png";
 import AddFill from "~icons/ri/add-circle-line";
 import RiSearchLine from "~icons/ri/search-line";
+import KarOneInputTextarea from "@/components/KarOneInputTextarea/index.vue";
+import type { R } from "@/model/vo/R";
+import {
+  IDialogFormOneInputDTO,
+  IOneInputDialogFormDefineExpose
+} from "@/model/types/IDialogFormProps";
 
 const search = ref<BaseImApplyFriendSearchApplyFriendDTO>({});
 
@@ -57,33 +63,29 @@ function sendBySelectIdArr() {
     return;
   }
 
-  ExecConfirm(
-    async () => {
-      await baseImApplyFriendSend({
-        idSet: selectIdArr.value
-      }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定发起对勾选的【${selectIdArr.value.length}】个用户的好友申请吗？`
-  );
+  sendDialogTitle.value = `批量发起【${selectIdArr.value.length}】个好友申请`;
+
+  sendBatchFlag = true;
+
+  sendIdArr = [...selectIdArr.value];
+
+  sendDialogRef.value?.open();
 }
 
+const sendDialogTitle = ref<string>();
+
 function applyClick(row: BaseImApplyFriendSearchApplyFriendVO) {
-  ExecConfirm(
-    async () => {
-      await baseImApplyFriendSend({
-        idSet: [row.userId]
-      }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定发起对【${row.nickname}（${row.uuid}）】的好友申请吗？`
-  );
+  if (!row?.userId) {
+    return;
+  }
+
+  sendDialogTitle.value = `发起对【${row.nickname}】的好友申请`;
+
+  sendBatchFlag = false;
+
+  sendIdArr = [row.userId];
+
+  sendDialogRef.value?.open();
 }
 
 function handleSearchInputKeydown(e: KeyboardEvent) {
@@ -93,6 +95,48 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
     e.preventDefault();
     onSearch();
   }
+}
+
+let sendIdArr: string[] = [];
+let sendBatchFlag: boolean = false;
+
+const sendDialogRef =
+  useTemplateRef<IOneInputDialogFormDefineExpose<IDialogFormOneInputDTO>>(
+    "sendDialogRef"
+  );
+
+function sendConfirmFun() {
+  const inputValue = sendDialogRef.value.getForm().value.inputValue;
+
+  if (sendBatchFlag) {
+    return new Promise<R<any>>((resolve, reject) => {
+      ExecConfirm(
+        async () => {
+          await baseImApplyFriendSend({
+            idSet: sendIdArr,
+            applyContent: inputValue
+          }).then(res => {
+            resolve(res);
+          });
+        },
+        async () => {
+          reject();
+        },
+        `确定发起【${sendIdArr.length}】个好友申请吗？`
+      );
+    });
+  } else {
+    return baseImApplyFriendSend({
+      idSet: sendIdArr,
+      applyContent: inputValue
+    });
+  }
+}
+
+function sendConfirmAfterFun(res: R<any>, done: () => void) {
+  done();
+  ToastSuccess(res.msg);
+  onSearch();
 }
 </script>
 
@@ -187,6 +231,14 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
       :total="total"
       :page-sizes="[10, 50, 100]"
       @change="onSearch"
+    />
+
+    <kar-one-input-textarea
+      ref="sendDialogRef"
+      :title="sendDialogTitle"
+      label="申请理由"
+      :confirm-fun="sendConfirmFun"
+      :confirm-after-fun="sendConfirmAfterFun"
     />
   </div>
 </template>

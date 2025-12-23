@@ -5,13 +5,18 @@ export interface IDialogFormDefineExpose {
   open: () => void;
 }
 
+export interface IOneInputDialogFormDefineExpose<T> {
+  open: () => void;
+  getForm: () => Ref<T>;
+}
+
 export interface IDialogFormOneInputDTO {
-  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
   inputValue?: string; // 输入框的值，是否必传：true
 }
 
 export interface IDialogFormOneInputProps extends IDialogFormProps {
   label?: string;
+  width?: string;
 }
 
 export interface IDialogFormProps {
@@ -47,7 +52,7 @@ export function doConfirmClick(
   visible: Ref<boolean>,
   confirmLoading: Ref<boolean>
 ) {
-  formRef.value.validate().then(valid => {
+  formRef.value.validate().then((valid: boolean) => {
     if (!valid) {
       return;
     }
@@ -56,6 +61,7 @@ export function doConfirmClick(
       visible.value = false;
       return;
     }
+
     confirmLoading.value = true;
 
     props

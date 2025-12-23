@@ -51,6 +51,7 @@ import EpDownload from "~icons/ep/download";
 import { getContentHeight, getMainContentWidth } from "@/utils/MyLayoutUtil";
 import { throttle } from "@pureadmin/utils";
 import { IDialogFormDefineExpose } from "@/model/types/IDialogFormProps";
+import type { R } from "@/model/vo/R";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -288,7 +289,7 @@ function fileTreeConfirmFun() {
   }
 }
 
-function fileTreeConfirmAfterFun(res, done) {
+function fileTreeConfirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

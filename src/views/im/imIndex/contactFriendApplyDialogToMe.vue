@@ -4,7 +4,7 @@ import CircleCheck from "~icons/ep/circle-check";
 import CircleClose from "~icons/ep/circle-close";
 import Hide from "~icons/ep/hide";
 import Refresh from "~icons/ep/refresh";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, useTemplateRef } from "vue";
 import {
   baseImApplyFriendAgree,
   baseImApplyFriendHidden,
@@ -19,9 +19,14 @@ import {
   BaseImApplyStatusEnumMap
 } from "@/model/enum/im/BaseImApplyStatusEnum";
 import { baseImBlockAddFriend } from "@/api/http/base/BaseImBlockController";
-import KarOneInputTextarea from "@/components/KarAddOrderNo/index.vue";
+import KarOneInputTextarea from "@/components/KarOneInputTextarea/index.vue";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
+import type { R } from "@/model/vo/R";
+import {
+  IDialogFormOneInputDTO,
+  IOneInputDialogFormDefineExpose
+} from "@/model/types/IDialogFormProps";
 
 const search = ref<BaseImApplyFriendPageDTO>({});
 
@@ -82,19 +87,11 @@ function rejectBySelectIdArr() {
     return;
   }
 
-  ExecConfirm(
-    async () => {
-      await baseImApplyFriendReject({
-        idSet: [...selectIdArr.value]
-      }).then(res => {
-        selectIdArr.value = [];
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定拒绝勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
+  rejectIdArr = [...selectIdArr.value];
+
+  rejectBatchFlag = true;
+
+  rejectDialogRef.value?.open();
 }
 
 function hiddenBySelectIdArr() {
@@ -115,6 +112,27 @@ function hiddenBySelectIdArr() {
     },
     undefined,
     `确定隐藏勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function blockBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImBlockAddFriend({
+        idSet: [...selectIdArr.value]
+      }).then(res => {
+        selectIdArr.value = [];
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定拉黑勾选的【${selectIdArr.value.length}】项数据吗？`
   );
 }
 
@@ -142,14 +160,17 @@ function agreeClick(item?: BaseImApplyFriendPageVO) {
   );
 }
 
-let rejectId: string | undefined = undefined;
+let rejectIdArr: string[] = [];
+let rejectBatchFlag: boolean = false;
 
 function rejectClick(item?: BaseImApplyFriendPageVO) {
   if (!item?.id) {
     return;
   }
 
-  rejectId = item.id;
+  rejectBatchFlag = false;
+
+  rejectIdArr = [item.id];
 
   rejectDialogRef.value?.open();
 }
@@ -194,15 +215,40 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
   );
 }
 
-const rejectDialogRef = ref();
+const rejectDialogRef =
+  useTemplateRef<IOneInputDialogFormDefineExpose<IDialogFormOneInputDTO>>(
+    "rejectDialogRef"
+  );
 
 function rejectConfirmFun() {
-  return baseImApplyFriendReject({
-    idSet: [rejectId]
-  });
+  const inputValue = rejectDialogRef.value.getForm().value.inputValue;
+
+  if (rejectBatchFlag) {
+    return new Promise<R<any>>((resolve, reject) => {
+      ExecConfirm(
+        async () => {
+          await baseImApplyFriendReject({
+            idSet: rejectIdArr,
+            rejectReason: inputValue
+          }).then(res => {
+            resolve(res);
+          });
+        },
+        async () => {
+          reject();
+        },
+        `确定拒绝勾选的【${rejectIdArr.length}】项数据吗？`
+      );
+    });
+  } else {
+    return baseImApplyFriendReject({
+      idSet: rejectIdArr,
+      rejectReason: inputValue
+    });
+  }
 }
 
-function rejectConfirmAfterFun(res, done) {
+function rejectConfirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();
@@ -239,6 +285,14 @@ onMounted(() => {
           @click="hiddenBySelectIdArr"
         >
           批量隐藏
+        </el-button>
+
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(Hide)"
+          @click="blockBySelectIdArr"
+        >
+          批量拉黑
         </el-button>
       </div>
 

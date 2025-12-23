@@ -8,9 +8,13 @@ export default {
 
   MODAL_FORM_WIDTH: 450, // ModalForm 宽度
 
-  DIALOG_WIDTH_45: "45%", // Dialog 宽度
-
   DIALOG_WIDTH_80: "80%", // Dialog 宽度
+  DIALOG_WIDTH_75: "75%", // Dialog 宽度
+  DIALOG_WIDTH_70: "70%", // Dialog 宽度
+  DIALOG_WIDTH_60: "60%", // Dialog 宽度
+  DIALOG_WIDTH_45: "45%", // Dialog 宽度
+  DIALOG_WIDTH_40: "40%", // Dialog 宽度
+  DIALOG_WIDTH_30: "30%", // Dialog 宽度
 
   TABLE_QR_CODE_WIDTH: 64, // 在 table里面，二维码的宽度
 

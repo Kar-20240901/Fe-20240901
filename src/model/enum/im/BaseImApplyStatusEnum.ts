@@ -7,6 +7,8 @@ export interface IBaseImApplyStatusEnum {
   PASSED: IEnum<number>;
 
   REJECTED: IEnum<number>;
+
+  CANCELLED: IEnum<number>;
 }
 
 // 申请状态，枚举类
@@ -24,6 +26,11 @@ export const BaseImApplyStatusEnum: IBaseImApplyStatusEnum = {
   REJECTED: {
     code: 301,
     name: "已拒绝"
+  },
+
+  CANCELLED: {
+    code: 401,
+    name: "已取消"
   }
 };
 

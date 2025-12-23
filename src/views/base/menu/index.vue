@@ -167,7 +167,7 @@ function addOrderNoConfirmFun() {
   });
 }
 
-function addOrderNoConfirmAfterFun(res, done) {
+function addOrderNoConfirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();

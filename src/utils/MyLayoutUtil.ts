@@ -49,3 +49,19 @@ export function getDialogWidth() {
     return CommonConstant.DIALOG_WIDTH_45;
   }
 }
+
+export function getSmallDialogWidth() {
+  if (getMobileFlag()) {
+    return CommonConstant.DIALOG_WIDTH_70;
+  } else {
+    return CommonConstant.DIALOG_WIDTH_40;
+  }
+}
+
+export function getMinDialogWidth() {
+  if (getMobileFlag()) {
+    return CommonConstant.DIALOG_WIDTH_60;
+  } else {
+    return CommonConstant.DIALOG_WIDTH_30;
+  }
+}

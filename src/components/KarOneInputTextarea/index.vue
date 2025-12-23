@@ -7,6 +7,7 @@ import {
   IDialogFormOneInputProps
 } from "@/model/types/IDialogFormProps";
 import ReCol from "@/components/ReCol";
+import { getMinDialogWidth } from "@/utils/MyLayoutUtil";
 
 defineOptions({
   name: "KarOneInputTextarea"
@@ -46,7 +47,7 @@ function confirmClick() {
     draggable
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    width="30%"
+    :width="props.width || getMinDialogWidth()"
     destroy-on-close
   >
     <el-form ref="formRef" :model="form" label-width="auto">
