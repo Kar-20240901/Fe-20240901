@@ -348,15 +348,24 @@ onMounted(() => {
       <el-table-column #default="scope" prop="status" label="状态" width="70">
         {{ BaseImApplyStatusEnumMap.get(scope.row.status) || "" }}
       </el-table-column>
+      <el-table-column prop="rejectReason" label="拒绝原因" />
       <el-table-column
         #default="scope"
-        prop="createTime"
+        prop="updateTime"
+        label="更新时间"
+        width="160"
+      >
+        {{ FormatDateTimeForCurrentDay(new Date(scope.row.updateTime)) }}
+      </el-table-column>
+      <el-table-column
+        #default="scope"
+        prop="applyTime"
         label="申请时间"
         width="160"
       >
         {{ FormatDateTimeForCurrentDay(new Date(scope.row.applyTime)) }}
       </el-table-column>
-      <el-table-column #default="scope" label="操作">
+      <el-table-column #default="scope" label="操作" fixed="right" width="200">
         <el-button
           v-if="scope.row.status === BaseImApplyStatusEnum.APPLYING.code"
           link

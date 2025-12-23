@@ -54,6 +54,10 @@ export function FormatDateTimeForCurrentDay(
     return "-";
   }
 
+  if (date.toString() === "Invalid Date") {
+    return "无效时间";
+  }
+
   const currentDay = Math.trunc(GetServerTimestamp() / 86400000);
 
   const checkDay = Math.trunc(date.getTime() / 86400000);

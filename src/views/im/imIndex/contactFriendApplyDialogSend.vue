@@ -182,7 +182,7 @@ function sendConfirmAfterFun(res: R<any>, done: () => void) {
       ref="tableRef"
       v-loading="loading"
       :data="dataList"
-      row-key="id"
+      row-key="userId"
       :header-cell-style="{
         background: 'var(--el-fill-color-light)',
         color: 'var(--el-text-color-primary)'
@@ -216,7 +216,7 @@ function sendConfirmAfterFun(res: R<any>, done: () => void) {
       </el-table-column>
       <el-table-column prop="uuid" label="用户编码" />
       <el-table-column prop="bio" label="个人简介" />
-      <el-table-column #default="scope" label="操作" width="120">
+      <el-table-column #default="scope" label="操作" width="80">
         <el-button link type="primary" @click="applyClick(scope.row)">
           申请
         </el-button>
