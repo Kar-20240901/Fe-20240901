@@ -50,6 +50,7 @@ const showSearchOverviewPre = ref<boolean>(false);
 const searchOverviewPreRef = ref();
 
 const sessionRef = ref();
+const contactRef = ref();
 
 defineExpose({ sessionRefDoSearch, sessionRefUpdateLastContent });
 
@@ -135,6 +136,12 @@ const menuIndex = ref<string>(SegmentedOptionArr[1].value);
 
 function menuSelect(index: string) {
   menuIndex.value = index;
+
+  if (index === BaseImLeftSegmentedEnum.SESSION.code) {
+    sessionRef.value?.onSearch(false, false);
+  } else if (index === BaseImLeftSegmentedEnum.CONTACT.code) {
+    contactRef.value?.onSearch(false, false);
+  }
 }
 </script>
 
@@ -212,6 +219,7 @@ function menuSelect(index: string) {
           !showSearchOverviewPre &&
           menuIndex === BaseImLeftSegmentedEnum.CONTACT.code
         "
+        ref="contactRef"
         @contactFriendClick="searchFriendClick"
         @contactGroupClick="searchGroupClick"
       />

@@ -29,14 +29,18 @@ const menuIndex = ref<string>(SegmentedOptionArr[0].value);
 function menuSelect(index: string) {
   menuIndex.value = index;
 
-  nextTick(() => {
-    if (index === BaseImContactSegmentedEnum.FRIEND.code) {
-      contactFriendRef.value?.doSearch(false, false);
-    } else if (index === BaseImContactSegmentedEnum.GROUP.code) {
-      contactGroupRef.value?.doSearch(false, false);
-    }
-  });
+  onSearch(false, false);
 }
+
+function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
+  if (menuIndex.value === BaseImContactSegmentedEnum.FRIEND.code) {
+    contactFriendRef.value?.doSearch(loadingFlag, scrollFlag);
+  } else if (menuIndex.value === BaseImContactSegmentedEnum.GROUP.code) {
+    contactGroupRef.value?.doSearch(loadingFlag, scrollFlag);
+  }
+}
+
+defineExpose({ onSearch });
 
 const contactFriendRef = ref();
 const contactGroupRef = ref();
