@@ -16,7 +16,6 @@
     "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
     "allowJs": false,
     "resolveJsonModule": true,
     "lib": ["ESNext", "DOM"],
