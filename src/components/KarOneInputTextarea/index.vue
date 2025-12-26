@@ -56,13 +56,17 @@ function confirmClick() {
           <el-form-item
             :label="props.label"
             prop="inputValue"
-            :rules="[
-              {
-                required: true,
-                message: `${props.label}为必填项`,
-                trigger: 'blur'
-              }
-            ]"
+            :rules="
+              !props.nonRequiredFlag
+                ? [
+                    {
+                      required: true,
+                      message: `${props.label}为必填项`,
+                      trigger: 'blur'
+                    }
+                  ]
+                : []
+            "
           >
             <el-input
               v-model="form.inputValue"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BaseImContactSegmentedEnum } from "@/model/enum/im/BaseImContactSegmentedEnum";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import ContactFriend from "@/views/im/imIndex/contactFriend.vue";
 import ContactGroup from "@/views/im/imIndex/contactGroup.vue";
 import { BaseImFriendPageVO } from "@/api/http/base/BaseImFriendController";
@@ -28,7 +28,18 @@ const menuIndex = ref<string>(SegmentedOptionArr[0].value);
 
 function menuSelect(index: string) {
   menuIndex.value = index;
+
+  nextTick(() => {
+    if (index === BaseImContactSegmentedEnum.FRIEND.code) {
+      contactFriendRef.value?.doSearch(false, false);
+    } else if (index === BaseImContactSegmentedEnum.GROUP.code) {
+      contactGroupRef.value?.doSearch(false, false);
+    }
+  });
 }
+
+const contactFriendRef = ref();
+const contactGroupRef = ref();
 
 const emit = defineEmits<{
   (e: "contactFriendClick", item: BaseImSearchBaseFriendVO): void;
@@ -98,17 +109,24 @@ function applyOperateClick(value?: string) {
     </div>
 
     <div class="shrink-0 custom-el-segmented px-2 py-1">
-      <el-segmented v-model="menuIndex" block :options="SegmentedOptionArr" />
+      <el-segmented
+        v-model="menuIndex"
+        block
+        :options="SegmentedOptionArr"
+        @change="menuSelect"
+      />
     </div>
 
     <div class="flex-1">
       <contact-friend
         v-show="menuIndex === BaseImContactSegmentedEnum.FRIEND.code"
+        ref="contactFriendRef"
         @contactFriendClick="contactFriendClick"
       />
 
       <contact-group
         v-show="menuIndex === BaseImContactSegmentedEnum.GROUP.code"
+        ref="contactGroupRef"
         @contactGroupClick="contactGroupClick"
       />
     </div>

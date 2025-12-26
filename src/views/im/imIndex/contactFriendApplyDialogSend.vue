@@ -239,6 +239,7 @@ function sendConfirmAfterFun(res: R<any>, done: () => void) {
       label="申请理由"
       :confirm-fun="sendConfirmFun"
       :confirm-after-fun="sendConfirmAfterFun"
+      :non-required-flag="true"
     />
   </div>
 </template>

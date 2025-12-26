@@ -17,6 +17,7 @@ export interface IDialogFormOneInputDTO {
 export interface IDialogFormOneInputProps extends IDialogFormProps {
   label?: string;
   width?: string;
+  nonRequiredFlag?: boolean;
 }
 
 export interface IDialogFormProps {

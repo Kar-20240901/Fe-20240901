@@ -80,6 +80,10 @@ onUnmounted(() => {
   }
 });
 
+defineExpose({
+  doSearch
+});
+
 function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   if (loadingFlag) {
     loading.value = true;
