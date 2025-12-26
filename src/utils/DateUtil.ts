@@ -30,7 +30,7 @@ export function FormatTsForCurrentDay(
   showFullFLag?: boolean
 ): string {
   if (!ts) {
-    return "未知时间";
+    return "";
   }
 
   const date = new Date(Number(ts));
