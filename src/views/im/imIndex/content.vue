@@ -447,16 +447,25 @@ function updateTargetInputFlag() {
 }
 
 let timer: number | null = null;
+let setLongTimerFlag = false;
 
 onMounted(() => {
   showTodoSendMap();
 
   doSendTodoSendMap();
 
+  setTimer(5000);
+});
+
+function setTimer(timeout: number) {
+  if (timer) {
+    window.clearInterval(timer);
+  }
+
   timer = window.setInterval(() => {
     doSendTodoSendMap();
-  }, 5000);
-});
+  }, timeout);
+}
 
 onUnmounted(() => {
   if (timer) {
@@ -668,7 +677,11 @@ function resendToServerClick(item: ISessionContentBO) {
 function doSendToServer(form: BaseImSessionContentInsertTxtForFeDTO) {
   let hiddenErrorMsg = false;
 
-  if (form.sendErrorFlag) {
+  const sendErrorFlag = form.sendErrorFlag;
+
+  form.sendErrorFlag = undefined;
+
+  if (sendErrorFlag) {
     hiddenErrorMsg = true;
   }
 
@@ -685,11 +698,20 @@ function doSendToServer(form: BaseImSessionContentInsertTxtForFeDTO) {
     });
 
     if (res.code !== CommonConstant.API_OK_CODE) {
-      if (!form.sendErrorFlag) {
+      if (!sendErrorFlag) {
         setTodoSendMap({ objId: objId }, false, true);
       }
 
+      if (!setLongTimerFlag) {
+        setTimer(10000);
+        setLongTimerFlag = true;
+      }
       return;
+    } else {
+      if (setLongTimerFlag) {
+        setLongTimerFlag = false;
+        setTimer(5000);
+      }
     }
 
     setTodoSendMap({ objId: objId }, true, false);
@@ -864,6 +886,7 @@ function onlyReset() {
   objIdSet.clear();
   shouldAutoScroll = true;
   hasLess = true;
+  todoSendMap.value.clear();
 }
 
 function reset() {
