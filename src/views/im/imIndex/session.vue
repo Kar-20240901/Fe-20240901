@@ -253,7 +253,7 @@ function updateLastContent(
                 </el-image>
               </el-badge>
             </div>
-            <div class="ml-2 flex-1">
+            <div class="ml-2 flex-1 truncate">
               <div class="flex justify-between items-center">
                 <div class="text-sm truncate pr-1">
                   {{ item.sessionName }}
@@ -262,6 +262,7 @@ function updateLastContent(
                   {{ FormatTsForCurrentDay(item.lastContentCreateTs, true) }}
                 </div>
               </div>
+
               <div class="text-xs text-gray-400 truncate mt-1">
                 {{ item.lastContent }}
               </div>

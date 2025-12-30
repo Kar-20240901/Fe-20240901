@@ -6,7 +6,7 @@ import {
 } from "@/api/http/base/BaseImSessionContentRefUserController";
 import { IImSearchOverviewMoreContentInfoProps } from "@/views/im/imIndex/types";
 import Avatar from "@/assets/user.png";
-import { processText } from "@/utils/StrUtil";
+import { safeHighlight } from "@/utils/StrUtil";
 import { FormatTsForCurrentDay } from "@/utils/DateUtil";
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
@@ -161,28 +161,30 @@ function handleScroll(event: Event) {
                 class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
                 @click="searchContentInfoClick(item)"
               >
-                <el-image
-                  :src="props.sessionUserMap[item.createId]?.avatarUrl"
-                  fit="cover"
-                  class="w-12 h-12 rounded-full"
-                >
-                  <template #error>
-                    <el-image
-                      :src="Avatar"
-                      fit="cover"
-                      class="w-12 h-12 rounded-full"
-                    />
-                  </template>
-                </el-image>
+                <div class="shrink-0">
+                  <el-image
+                    :src="props.sessionUserMap[item.createId]?.avatarUrl"
+                    fit="cover"
+                    class="w-12 h-12 rounded-full"
+                  >
+                    <template #error>
+                      <el-image
+                        :src="Avatar"
+                        fit="cover"
+                        class="w-12 h-12 rounded-full"
+                      />
+                    </template>
+                  </el-image>
+                </div>
 
                 <div class="flex flex-col text-sm ml-2">
                   <div class="truncate">
                     {{ props.sessionUserMap[item.createId]?.showName }}
                   </div>
 
-                  <div class="flex">
+                  <div class="flex truncate">
                     <div
-                      v-for="(part, index) in processText(
+                      v-for="(part, index) in safeHighlight(
                         item.content,
                         props.searchKey
                       )"

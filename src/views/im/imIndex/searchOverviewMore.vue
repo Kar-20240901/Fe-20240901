@@ -9,7 +9,7 @@ import {
   BaseImSearchBaseGroupVO
 } from "@/api/http/base/BaseImSearchController";
 import { IImSearchOverviewMoreProps } from "@/views/im/imIndex/types";
-import { processText } from "@/utils/StrUtil";
+import { safeHighlight } from "@/utils/StrUtil";
 
 const searchFriendList = ref<BaseImSearchBaseFriendVO[]>([]);
 
@@ -87,44 +87,52 @@ defineExpose({
           class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
           @click="searchFriendClick(item)"
         >
-          <el-image
-            :src="item.avatarUrl"
-            fit="cover"
-            class="w-12 h-12 rounded-full"
-          >
-            <template #error>
-              <el-image
-                :src="Avatar"
-                fit="cover"
-                class="w-12 h-12 rounded-full"
-              />
-            </template>
-          </el-image>
-          <div class="text-sm ml-2 shrink-0 flex">
-            <div
-              v-for="(part, index) in processText(
-                item.friendShowName,
-                props.searchKey
-              )"
-              :key="index"
-              :class="part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'"
+          <div class="shrink-0">
+            <el-image
+              :src="item.avatarUrl"
+              fit="cover"
+              class="w-12 h-12 rounded-full"
             >
-              {{ part.text }}
-            </div>
+              <template #error>
+                <el-image
+                  :src="Avatar"
+                  fit="cover"
+                  class="w-12 h-12 rounded-full"
+                />
+              </template>
+            </el-image>
           </div>
-          <div class="truncate text-sm text-gray-400 flex">
-            （
-            <div
-              v-for="(part, index) in processText(
-                item.friendShowId,
-                props.searchKey
-              )"
-              :key="index"
-              :class="part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'"
-            >
-              {{ part.text }}
+
+          <div class="ml-2 flex flex-col truncate">
+            <div class="text-sm shrink-0 flex truncate">
+              <div
+                v-for="(part, index) in safeHighlight(
+                  item.friendShowName,
+                  props.searchKey
+                )"
+                :key="index"
+                :class="
+                  part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
+                "
+              >
+                {{ part.text }}
+              </div>
             </div>
-            ）
+
+            <div class="truncate text-sm text-gray-400 flex">
+              <div
+                v-for="(part, index) in safeHighlight(
+                  item.friendShowId,
+                  props.searchKey
+                )"
+                :key="index"
+                :class="
+                  part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
+                "
+              >
+                {{ part.text }}
+              </div>
+            </div>
           </div>
         </div>
       </template>
@@ -139,44 +147,52 @@ defineExpose({
           class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
           @click="searchGroupClick(item)"
         >
-          <el-image
-            :src="item.avatarUrl"
-            fit="cover"
-            class="w-12 h-12 rounded-full"
-          >
-            <template #error>
-              <el-image
-                :src="Avatar"
-                fit="cover"
-                class="w-12 h-12 rounded-full"
-              />
-            </template>
-          </el-image>
-          <div class="text-sm ml-2 shrink-0 flex">
-            <div
-              v-for="(part, index) in processText(
-                item.groupShowName,
-                props.searchKey
-              )"
-              :key="index"
-              :class="part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'"
+          <div class="shrink-0">
+            <el-image
+              :src="item.avatarUrl"
+              fit="cover"
+              class="w-12 h-12 rounded-full"
             >
-              {{ part.text }}
-            </div>
+              <template #error>
+                <el-image
+                  :src="Avatar"
+                  fit="cover"
+                  class="w-12 h-12 rounded-full"
+                />
+              </template>
+            </el-image>
           </div>
-          <div class="truncate text-sm text-gray-400 flex">
-            （
-            <div
-              v-for="(part, index) in processText(
-                item.groupShowId,
-                props.searchKey
-              )"
-              :key="index"
-              :class="part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'"
-            >
-              {{ part.text }}
+
+          <div class="ml-2 flex flex-col truncate">
+            <div class="text-sm shrink-0 flex truncate">
+              <div
+                v-for="(part, index) in safeHighlight(
+                  item.groupShowName,
+                  props.searchKey
+                )"
+                :key="index"
+                :class="
+                  part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
+                "
+              >
+                {{ part.text }}
+              </div>
             </div>
-            ）
+
+            <div class="truncate text-sm text-gray-400 flex">
+              <div
+                v-for="(part, index) in safeHighlight(
+                  item.groupShowId,
+                  props.searchKey
+                )"
+                :key="index"
+                :class="
+                  part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
+                "
+              >
+                {{ part.text }}
+              </div>
+            </div>
           </div>
         </div>
       </template>
@@ -204,7 +220,7 @@ defineExpose({
               />
             </template>
           </el-image>
-          <div class="flex flex-col text-sm ml-2">
+          <div class="flex flex-col text-sm ml-2 truncate">
             <div class="truncate">{{ item.showName }}</div>
             <div class="flex text-gray-400">
               <div>{{ item.searchCount }}</div>

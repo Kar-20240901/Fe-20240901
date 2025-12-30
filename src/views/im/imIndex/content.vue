@@ -986,7 +986,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
                 >
                   <div
                     v-if="showSendFailFlag(item)"
-                    class="cursor-pointer"
+                    class="cursor-pointer shrink-0"
                     @click="resendToServerClick(item)"
                   >
                     <component
@@ -997,13 +997,15 @@ const showToBottomBtnFlag = ref<boolean>(false);
                       "
                     />
                   </div>
-                  <div class="text-xs text-gray-400 self-end">
+
+                  <div class="text-xs text-gray-400 self-end shrink-0">
                     {{ FormatTsForCurrentDay(item.createTs, true) }}
                   </div>
+
                   <div
                     class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
                   >
-                    <div class="text-sm whitespace-pre-wrap">
+                    <div class="text-sm break-all whitespace-pre-wrap">
                       {{ item.content }}
                     </div>
                   </div>
@@ -1013,19 +1015,22 @@ const showToBottomBtnFlag = ref<boolean>(false);
                   v-else
                   class="w-full min-h-11 flex items-end space-x-2 animate-fadeIn"
                 >
-                  <el-image
-                    :src="props.sessionUserMap[item.createId]?.avatarUrl"
-                    fit="cover"
-                    class="w-8 h-8 rounded-full"
-                  >
-                    <template #error>
-                      <el-image
-                        :src="Avatar"
-                        fit="cover"
-                        class="w-8 h-8 rounded-full"
-                      />
-                    </template>
-                  </el-image>
+                  <div class="shrink-0">
+                    <el-image
+                      :src="props.sessionUserMap[item.createId]?.avatarUrl"
+                      fit="cover"
+                      class="w-8 h-8 rounded-full"
+                    >
+                      <template #error>
+                        <el-image
+                          :src="Avatar"
+                          fit="cover"
+                          class="w-8 h-8 rounded-full"
+                        />
+                      </template>
+                    </el-image>
+                  </div>
+
                   <div
                     class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
                   >
@@ -1033,7 +1038,8 @@ const showToBottomBtnFlag = ref<boolean>(false);
                       {{ item.content }}
                     </div>
                   </div>
-                  <div class="text-xs text-gray-400 self-end">
+
+                  <div class="text-xs text-gray-400 self-end shrink-0">
                     {{ FormatTsForCurrentDay(item.createTs, true) }}
                   </div>
                 </div>
