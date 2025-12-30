@@ -196,6 +196,11 @@ class PureHttp {
                 ToastError(res.msg || "请求失败：服务器未启动");
               }
 
+              if (config.headers?.returnErrorRsp) {
+                resolve(res);
+                return;
+              }
+
               reject(new Error("请求错误：" + JSON.stringify(config)));
             }
           } else {

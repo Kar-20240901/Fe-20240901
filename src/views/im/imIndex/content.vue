@@ -649,9 +649,9 @@ function resendToServerClick(item: ISessionContentBO) {
 function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
   baseImSessionContentInsertTxt(form, {
     headers: {
-      hiddenErrorMsg: true
+      returnErrorRsp: true
     } as any
-  }).then(() => {
+  }).then(res => {
     const objId = getObjId({
       createId: selfUserId.value,
       createTs: form.createTs,
@@ -659,6 +659,10 @@ function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
     });
 
     setTodoSendMap({ objId: objId }, true);
+
+    if (res.code !== CommonConstant.API_OK_CODE) {
+      return;
+    }
 
     doSearchThrottle(
       {

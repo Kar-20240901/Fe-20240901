@@ -15,12 +15,16 @@ export interface BaseImApplyFriendPageDTO {
 }
 
 export interface BaseImApplyFriendPageVO {
+  rejectReason?: string; // 拒绝理由
+  blockFlag?: boolean; // 是否已经拉黑，备注：只有 dto的 toMeFlag生效时，才会返回该值
   avatarUrl?: string; // 目标用户头像
   applyContent?: string; // 申请内容
   nickname?: string; // 目标用户昵称
+  updateTime?: string; // 修改时间，包含：申请时间、取消时间、通过时间、拒绝时间，格式：date-time
   id?: string; // 主键 id，格式：int64
   applyTime?: string; // 申请时间，格式：date-time
-  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301;401
+  userId?: string; // 目标用户主键 id，用于：拉黑功能，格式：int64
+  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝 401 已取消，枚举值：101;201;301;401
 }
 
 // 分页排序查询

@@ -37,7 +37,12 @@ const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
 
 const selectIdArr = ref<string[]>([]);
-const tableRef = ref();
+const selectUserIdArr = ref<string[]>([]);
+
+function resetSelectIdArr() {
+  selectIdArr.value = [];
+  selectUserIdArr.value = [];
+}
 
 function onSearch() {
   loading.value = true;
@@ -71,7 +76,7 @@ function agreeBySelectIdArr() {
       await baseImApplyFriendAgree({
         idSet: [...selectIdArr.value]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -105,7 +110,7 @@ function hiddenBySelectIdArr() {
       await baseImApplyFriendHidden({
         idSet: [...selectIdArr.value]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -116,7 +121,7 @@ function hiddenBySelectIdArr() {
 }
 
 function blockBySelectIdArr() {
-  if (!selectIdArr.value.length) {
+  if (!selectUserIdArr.value.length) {
     ToastError("请勾选数据");
     return;
   }
@@ -124,20 +129,22 @@ function blockBySelectIdArr() {
   ExecConfirm(
     async () => {
       await baseImBlockAddFriend({
-        idSet: [...selectIdArr.value]
+        idSet: [...selectUserIdArr.value]
       }).then(res => {
-        selectIdArr.value = [];
+        selectUserIdArr.value = [];
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
-    `确定拉黑勾选的【${selectIdArr.value.length}】项数据吗？`
+    `确定拉黑勾选的【${selectUserIdArr.value.length}】项数据吗？`
   );
 }
 
 function onSelectChange(rowArr?: BaseImApplyFriendPageVO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
+
+  selectUserIdArr.value = rowArr.map(it => it.userId);
 }
 
 function agreeClick(item?: BaseImApplyFriendPageVO) {
@@ -150,7 +157,7 @@ function agreeClick(item?: BaseImApplyFriendPageVO) {
       await baseImApplyFriendAgree({
         idSet: [item.id]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -176,16 +183,16 @@ function rejectClick(item?: BaseImApplyFriendPageVO) {
 }
 
 function blockClick(item?: BaseImApplyFriendPageVO) {
-  if (!item?.id) {
+  if (!item?.userId) {
     return;
   }
 
   ExecConfirm(
     async () => {
       await baseImBlockAddFriend({
-        idSet: [item.id]
+        idSet: [item.userId]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -205,7 +212,7 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
       await baseImApplyFriendHidden({
         idSet: [item.id]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -382,7 +389,12 @@ onMounted(() => {
         >
           拒绝
         </el-button>
-        <el-button link type="primary" @click="blockClick(scope.row)">
+        <el-button
+          v-if="!scope.row.blockFlag"
+          link
+          type="primary"
+          @click="blockClick(scope.row)"
+        >
           拉黑
         </el-button>
         <el-button link type="primary" @click="hiddenClick(scope.row)">

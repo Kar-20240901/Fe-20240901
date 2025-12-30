@@ -273,7 +273,7 @@ function updateLastContent(
 
     <div
       v-if="!dataList.length && !loading"
-      class="flex text-[15px] flex w-full h-full justify-center items-center text-gray-400"
+      class="text-[15px] flex w-full h-full justify-center items-center text-gray-400"
     >
       暂无会话。
     </div>

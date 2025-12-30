@@ -77,6 +77,18 @@ export function baseUserResetAvatar(
   );
 }
 
+// 批量注册用户-下载模版
+export function baseUserInsertBatchByExcelDownloadTemplate(
+  config?: PureHttpRequestConfig
+) {
+  return http.request<undefined>(
+    "post",
+    baseApi("/base/user/insertBatchByExcel/downloadTemplate"),
+    undefined,
+    config
+  );
+}
+
 // 批量：注销用户
 export function baseUserDeleteByIdSet(
   form: NotEmptyIdSet,
@@ -230,6 +242,19 @@ export function baseUserSelfInfo(config?: PureHttpRequestConfig) {
     "post",
     baseApi("/base/user/self/info"),
     undefined,
+    config
+  );
+}
+
+// 批量注册用户
+export function baseUserInsertBatchByExcel(
+  file: string,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/user/insertBatchByExcel"),
+    file,
     config
   );
 }
