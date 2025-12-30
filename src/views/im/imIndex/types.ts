@@ -11,6 +11,11 @@ export interface BaseImSessionRefUserQueryLastContentVO {
   notDisturbFlag?: boolean; // 是否是免打扰：true 是 false 否
 }
 
+export interface BaseImSessionContentInsertTxtForFeDTO
+  extends BaseImSessionContentInsertTxtDTO {
+  sendErrorFlag?: boolean;
+}
+
 export interface BaseImSessionContentInsertTxtVO
   extends BaseImSessionContentInsertTxtDTO {
   createId?: string; // 创建者用户主键 id，格式：int64
@@ -20,6 +25,7 @@ export interface BaseImSessionContentInsertTxtVO
 
 export interface ISessionContentBO extends BaseImSessionContentRefUserPageVO {
   objId?: string; // 唯一标识：userId-createTs-orderNo，通过横杠连接
+  sendErrorFlag?: boolean; // 是否发送失败，比如：被对方拉入黑名单，或者不是好友等
 }
 
 export interface IImShowInfoMap {

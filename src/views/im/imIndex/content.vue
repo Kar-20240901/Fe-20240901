@@ -3,6 +3,7 @@ import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import {
+  BaseImSessionContentInsertTxtForFeDTO,
   BaseImSessionContentInsertTxtVO,
   BaseImSessionRefUserQueryLastContentVO,
   IImContentProps,
@@ -31,7 +32,6 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { throttle, useResizeObserver } from "@pureadmin/utils";
 import {
   baseImSessionContentInsertTxt,
-  BaseImSessionContentInsertTxtDTO,
   baseImSessionContentUpdateTargetInputFlag
 } from "@/api/http/base/BaseImSessionContentController";
 import { BaseImSessionContentTypeEnum } from "@/model/enum/im/BaseImSessionContentTypeEnum";
@@ -78,7 +78,7 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
     }
 
     if (item.contentId) {
-      setTodoSendMap(item, true); // 如果已经在后台处理过了，则在 map里面移除
+      setTodoSendMap(item, true, false); // 如果已经在后台处理过了，则在 map里面移除
     }
 
     if (objIdSet.has(objId)) {
@@ -170,10 +170,24 @@ function showTodoSendMap() {
   setSessionContentList([...todoSendMap.value.values()]);
 }
 
-function setTodoSendMap(item: ISessionContentBO, removeFlag: boolean) {
+function setTodoSendMap(
+  item: ISessionContentBO,
+  removeFlag: boolean,
+  sendErrorFlag: boolean
+) {
   const objId = item.objId;
 
-  if (removeFlag) {
+  if (sendErrorFlag) {
+    const value: ISessionContentBO = todoSendMap.value.get(objId);
+
+    if (!value) {
+      return;
+    }
+
+    value.sendErrorFlag = true;
+
+    todoSendMap.value.set(objId, value);
+  } else if (removeFlag) {
     if (!todoSendMap.value.has(objId)) {
       return;
     }
@@ -460,6 +474,10 @@ function showSendFailFlag(item: ISessionContentBO) {
   const checkTimestamp =
     GetServerTimestamp() - CommonConstant.SECOND_5_EXPIRE_TIME;
 
+  if (value.sendErrorFlag) {
+    return true;
+  }
+
   return Number(item.createTs) <= checkTimestamp;
 }
 
@@ -487,7 +505,7 @@ function doSendTodoSendMap() {
   const checkTimestamp =
     GetServerTimestamp() - CommonConstant.SECOND_10_EXPIRE_TIME;
 
-  const valueArr = [];
+  const valueArr: ISessionContentBO[] = [];
 
   keyArr.forEach(key => {
     const item = todoSendObj[key];
@@ -512,12 +530,13 @@ function doSendTodoSendMap() {
   sortContentSimple(valueArr);
 
   valueArr.forEach(item => {
-    const form: BaseImSessionContentInsertTxtDTO = {
+    const form: BaseImSessionContentInsertTxtForFeDTO = {
       sessionId: item.sessionId,
       txt: item.content,
       createTs: item.createTs,
       orderNo: item.orderNo,
-      type: item.type
+      type: item.type,
+      sendErrorFlag: item.sendErrorFlag
     };
 
     doSendToServer(form);
@@ -525,7 +544,7 @@ function doSendTodoSendMap() {
 
   setTimeout(() => {
     doSendTodoSendMapFlag = false;
-  }, 1000);
+  }, 2000);
 }
 
 function sortContentSimple(itemArr?: ISessionContentBO[]) {
@@ -595,11 +614,11 @@ function doSendClick(
     objId
   };
 
-  setTodoSendMap(item, false);
+  setTodoSendMap(item, false, false);
 
   setSessionContentList([item]);
 
-  const form: BaseImSessionContentInsertTxtDTO = {
+  const form: BaseImSessionContentInsertTxtForFeDTO = {
     sessionId,
     txt,
     createTs,
@@ -646,10 +665,17 @@ function resendToServerClick(item: ISessionContentBO) {
   doSendTodoSendMap();
 }
 
-function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
+function doSendToServer(form: BaseImSessionContentInsertTxtForFeDTO) {
+  let hiddenErrorMsg = false;
+
+  if (form.sendErrorFlag) {
+    hiddenErrorMsg = true;
+  }
+
   baseImSessionContentInsertTxt(form, {
     headers: {
-      returnErrorRsp: true
+      returnErrorRsp: true,
+      hiddenErrorMsg
     } as any
   }).then(res => {
     const objId = getObjId({
@@ -658,11 +684,15 @@ function doSendToServer(form: BaseImSessionContentInsertTxtDTO) {
       orderNo: form.orderNo
     });
 
-    setTodoSendMap({ objId: objId }, true);
-
     if (res.code !== CommonConstant.API_OK_CODE) {
+      if (!form.sendErrorFlag) {
+        setTodoSendMap({ objId: objId }, false, true);
+      }
+
       return;
     }
+
+    setTodoSendMap({ objId: objId }, true, false);
 
     doSearchThrottle(
       {
