@@ -41,6 +41,7 @@ const rules: FormRules<BaseUserSelfInfoVO> = {
 const userAvatarUrl = ref(useUserStoreHook().avatar || "");
 
 const submitLoadingFlag = ref<boolean>(true);
+const submitImageLoadingFlag = ref<boolean>(false);
 
 onMounted(() => {
   baseUserSelfInfo()
@@ -96,13 +97,16 @@ const handleClose = () => {
 const onCropper = ({ blob }) => (cropperBlob.value = blob);
 
 const handleSubmitImage = () => {
-  BaseFileUpload(new File([cropperBlob.value], "avatar"), "AVATAR").then(
-    res => {
+  submitImageLoadingFlag.value = true;
+  BaseFileUpload(new File([cropperBlob.value], "avatar"), "AVATAR")
+    .then(res => {
       handleAvatarFileId(res.data, url => (userAvatarUrl.value = url));
       ToastSuccess(res.msg);
       handleClose();
-    }
-  );
+    })
+    .finally(() => {
+      submitImageLoadingFlag.value = false;
+    });
 };
 
 // 更新信息
@@ -204,7 +208,13 @@ const onSubmit = async () => {
       <template #footer>
         <div class="dialog-footer">
           <el-button bg text @click="handleClose">取消</el-button>
-          <el-button bg text type="primary" @click="handleSubmitImage">
+          <el-button
+            bg
+            text
+            :loading="submitImageLoadingFlag"
+            type="primary"
+            @click="handleSubmitImage"
+          >
             确定
           </el-button>
         </div>
