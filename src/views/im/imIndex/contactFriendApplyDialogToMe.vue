@@ -417,6 +417,7 @@ onMounted(() => {
       ref="rejectDialogRef"
       title="拒绝原因"
       label="拒绝原因"
+      :nonRequiredFlag="true"
       :confirm-fun="rejectConfirmFun"
       :confirm-after-fun="rejectConfirmAfterFun"
     />
