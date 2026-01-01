@@ -39,6 +39,14 @@ const contactFriendApplyDialogFromMe = "contactFriendApplyDialogFromMe";
 const contactFriendApplyDialogToMe = "contactFriendApplyDialogToMe";
 
 const tabsVal = ref<string>(contactFriendApplyDialogSend);
+
+const emit = defineEmits<{
+  (e: "searchContactFriend"): void;
+}>();
+
+function searchContactFriend() {
+  emit("searchContactFriend");
+}
 </script>
 
 <template>
@@ -66,6 +74,7 @@ const tabsVal = ref<string>(contactFriendApplyDialogSend);
         <el-tab-pane label="对我申请" :name="contactFriendApplyDialogToMe">
           <contact-friend-apply-dialog-to-me
             ref="contactFriendApplyDialogToMeRef"
+            @searchContactFriend="searchContactFriend()"
           />
         </el-tab-pane>
       </el-tabs>

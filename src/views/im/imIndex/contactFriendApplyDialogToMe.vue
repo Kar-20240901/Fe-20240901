@@ -4,6 +4,8 @@ import CircleCheck from "~icons/ep/circle-check";
 import CircleClose from "~icons/ep/circle-close";
 import Hide from "~icons/ep/hide";
 import Refresh from "~icons/ep/refresh";
+import RiUserForbidFill from "~icons/ri/user-forbid-fill";
+import RiUserFollowFill from "~icons/ri/user-follow-fill";
 import { onMounted, ref, useTemplateRef } from "vue";
 import {
   baseImApplyFriendAgree,
@@ -18,7 +20,10 @@ import {
   BaseImApplyStatusEnum,
   BaseImApplyStatusEnumMap
 } from "@/model/enum/im/BaseImApplyStatusEnum";
-import { baseImBlockAddFriend } from "@/api/http/base/BaseImBlockController";
+import {
+  baseImBlockAddFriend,
+  baseImBlockCancelFriend
+} from "@/api/http/base/BaseImBlockController";
 import KarOneInputTextarea from "@/components/KarOneInputTextarea/index.vue";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
@@ -79,6 +84,7 @@ function agreeBySelectIdArr() {
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
+        searchContactFriend();
       });
     },
     undefined,
@@ -131,13 +137,34 @@ function blockBySelectIdArr() {
       await baseImBlockAddFriend({
         idSet: [...selectUserIdArr.value]
       }).then(res => {
-        selectUserIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
     `确定拉黑勾选的【${selectUserIdArr.value.length}】项数据吗？`
+  );
+}
+
+function cancelBlockBySelectIdArr() {
+  if (!selectUserIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImBlockCancelFriend({
+        idSet: [...selectUserIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定取消拉黑勾选的【${selectUserIdArr.value.length}】项数据吗？`
   );
 }
 
@@ -160,6 +187,7 @@ function agreeClick(item?: BaseImApplyFriendPageVO) {
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
+        searchContactFriend();
       });
     },
     undefined,
@@ -199,6 +227,26 @@ function blockClick(item?: BaseImApplyFriendPageVO) {
     },
     undefined,
     `确定拉黑【${item.nickname}】吗？`
+  );
+}
+
+function cancelBlockClick(item?: BaseImApplyFriendPageVO) {
+  if (!item?.userId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImBlockCancelFriend({
+        idSet: [item.userId]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定取消拉黑【${item.nickname}】吗？`
   );
 }
 
@@ -264,6 +312,14 @@ function rejectConfirmAfterFun(res: R<any>, done: () => void) {
 onMounted(() => {
   onSearch();
 });
+
+const emit = defineEmits<{
+  (e: "searchContactFriend"): void;
+}>();
+
+function searchContactFriend() {
+  emit("searchContactFriend");
+}
 </script>
 
 <template>
@@ -296,10 +352,18 @@ onMounted(() => {
 
         <el-button
           type="primary"
-          :icon="useRenderIcon(Hide)"
+          :icon="useRenderIcon(RiUserForbidFill)"
           @click="blockBySelectIdArr"
         >
           批量拉黑
+        </el-button>
+
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(RiUserFollowFill)"
+          @click="cancelBlockBySelectIdArr"
+        >
+          取消拉黑
         </el-button>
       </div>
 
@@ -372,6 +436,14 @@ onMounted(() => {
       >
         {{ FormatDateTimeForCurrentDay(new Date(scope.row.applyTime)) }}
       </el-table-column>
+      <el-table-column
+        #default="scope"
+        prop="blockFlag"
+        label="是否拉黑"
+        width="160"
+      >
+        {{ scope.row.blockFlag ? "是" : "否" }}
+      </el-table-column>
       <el-table-column #default="scope" label="操作" fixed="right" width="200">
         <el-button
           v-if="scope.row.status === BaseImApplyStatusEnum.APPLYING.code"
@@ -396,6 +468,14 @@ onMounted(() => {
           @click="blockClick(scope.row)"
         >
           拉黑
+        </el-button>
+        <el-button
+          v-if="scope.row.blockFlag"
+          link
+          type="primary"
+          @click="cancelBlockClick(scope.row)"
+        >
+          取消拉黑
         </el-button>
         <el-button link type="primary" @click="hiddenClick(scope.row)">
           隐藏

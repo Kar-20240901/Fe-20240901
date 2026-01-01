@@ -182,7 +182,7 @@ function handleScroll(event: Event) {
 
       <div
         v-if="!friendList.length && !loading"
-        class="flex text-[15px] flex w-full h-full justify-center items-center text-gray-400"
+        class="flex text-[15px] w-full h-full justify-center items-center text-gray-400"
       >
         暂无好友。
       </div>

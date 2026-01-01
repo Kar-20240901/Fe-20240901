@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BaseImContactSegmentedEnum } from "@/model/enum/im/BaseImContactSegmentedEnum";
-import { nextTick, ref } from "vue";
+import { ref } from "vue";
 import ContactFriend from "@/views/im/imIndex/contactFriend.vue";
 import ContactGroup from "@/views/im/imIndex/contactGroup.vue";
 import { BaseImFriendPageVO } from "@/api/http/base/BaseImFriendController";
@@ -135,7 +135,10 @@ function applyOperateClick(value?: string) {
       />
     </div>
 
-    <contact-friend-apply-dialog ref="contactFriendApplyDialogRef" />
+    <contact-friend-apply-dialog
+      ref="contactFriendApplyDialogRef"
+      @searchContactFriend="onSearch()"
+    />
   </div>
 </template>
 
