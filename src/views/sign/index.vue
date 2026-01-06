@@ -3,7 +3,6 @@ import { useI18n } from "vue-i18n";
 import Motion from "./utils/motion";
 import { useRouter } from "vue-router";
 import { computed, ref, toRaw } from "vue";
-import { debounce } from "@pureadmin/utils";
 import { useNav } from "@/layout/hooks/useNav";
 import { useEventListener } from "@vueuse/core";
 import type { FormInstance } from "element-plus";
@@ -36,7 +35,6 @@ defineOptions({
 
 const router = useRouter();
 const loading = ref(false);
-const disabled = ref(false);
 const ruleFormRef = ref<FormInstance>();
 
 const { initStorage } = useLayout();
@@ -50,47 +48,38 @@ const { locale, translationCh, translationEn } = useTranslationLang();
 
 const ruleForm = ref<SignUserNameSignInPasswordDTO>({});
 
-const onLogin = async (formEl: FormInstance | undefined) => {
+const onLogin = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  await formEl.validate(valid => {
+
+  if (loading.value) return;
+
+  loading.value = true;
+
+  formEl.validate(valid => {
     if (!valid) {
+      loading.value = false;
       return;
     }
-    loading.value = true;
+
     useUserStoreHook()
       .loginByUsername({
         username: ruleForm.value.username,
         password: ruleForm.value.password
       })
-      .then(() => {
+      .then(async () => {
         // 获取后端路由
-        initRouter().then(() => {
-          disabled.value = true;
-          router
-            .push(getTopMenu(true).path)
-            .then(() => {
-              ToastSuccess("欢迎回来 ~");
-            })
-            .finally(() => (disabled.value = false));
+        await initRouter().then(async () => {
+          await router.push(getTopMenu(true).path).then(() => {
+            ToastSuccess("欢迎回来 ~");
+          });
         });
       })
       .finally(() => (loading.value = false));
   });
 };
 
-const immediateDebounce: any = debounce(
-  formRef => onLogin(formRef),
-  1000,
-  true
-);
-
 useEventListener(document, "keydown", ({ code }) => {
-  if (
-    ["Enter", "NumpadEnter"].includes(code) &&
-    !disabled.value &&
-    !loading.value
-  )
-    immediateDebounce(ruleFormRef.value);
+  if (["Enter", "NumpadEnter"].includes(code)) onLogin(ruleFormRef.value);
 });
 
 const currentPage = computed(() => {
@@ -218,7 +207,6 @@ const currentPage = computed(() => {
                   size="default"
                   type="primary"
                   :loading="loading"
-                  :disabled="disabled"
                   @click="onLogin(ruleFormRef)"
                 >
                   {{ t("login.pureLogin") }}
