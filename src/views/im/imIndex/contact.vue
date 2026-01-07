@@ -11,7 +11,7 @@ import {
 import { BaseImGroupPageVO } from "@/api/http/base/BaseImGroupController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import EpArrowRight from "~icons/ep/ArrowRight";
-import ContactFriendApplyDialog from "@/views/im/imIndex/contactFriendApplyDialog.vue";
+import ContactFriendDialog from "@/views/im/imIndex/contactFriendDialog.vue";
 
 const SegmentedOptionArr = [
   {
@@ -58,20 +58,20 @@ function contactGroupClick(item: BaseImGroupPageVO) {
   emit("contactGroupClick", item);
 }
 
-const ApplyOperateFriendValue = "applyFriend";
+const OperateFriendValue = "friend";
 
-const ApplyOperateGroupValue = "applyGroup";
+const OperateGroupValue = "group";
 
 const BlockValue = "block";
 
 const ApplyOperateArr = [
   {
     label: "好友管理",
-    value: ApplyOperateFriendValue
+    value: OperateFriendValue
   },
   {
     label: "群组管理",
-    value: ApplyOperateGroupValue
+    value: OperateGroupValue
   },
   {
     label: "黑名单",
@@ -79,12 +79,12 @@ const ApplyOperateArr = [
   }
 ];
 
-const contactFriendApplyDialogRef = ref();
+const contactFriendDialogRef = ref();
 
 function applyOperateClick(value?: string) {
-  if (value === ApplyOperateFriendValue) {
-    contactFriendApplyDialogRef?.value.open();
-  } else if (value === ApplyOperateGroupValue) {
+  if (value === OperateFriendValue) {
+    contactFriendDialogRef?.value.open();
+  } else if (value === OperateGroupValue) {
   } else if (value === BlockValue) {
   }
 }
@@ -135,8 +135,8 @@ function applyOperateClick(value?: string) {
       />
     </div>
 
-    <contact-friend-apply-dialog
-      ref="contactFriendApplyDialogRef"
+    <contact-friend-dialog
+      ref="contactFriendDialogRef"
       @searchContactFriend="onSearch()"
     />
   </div>

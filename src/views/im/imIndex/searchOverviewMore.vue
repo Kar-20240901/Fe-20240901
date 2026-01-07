@@ -114,6 +114,7 @@ defineExpose({
                 :class="
                   part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
                 "
+                :title="item.friendShowName"
               >
                 {{ part.text }}
               </div>
@@ -129,6 +130,7 @@ defineExpose({
                 :class="
                   part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
                 "
+                :title="item.friendShowId"
               >
                 {{ part.text }}
               </div>
@@ -174,6 +176,7 @@ defineExpose({
                 :class="
                   part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
                 "
+                :title="item.groupShowName"
               >
                 {{ part.text }}
               </div>
@@ -189,6 +192,7 @@ defineExpose({
                 :class="
                   part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
                 "
+                :title="item.groupShowId"
               >
                 {{ part.text }}
               </div>
@@ -221,7 +225,9 @@ defineExpose({
             </template>
           </el-image>
           <div class="flex flex-col text-sm ml-2 truncate">
-            <div class="truncate">{{ item.showName }}</div>
+            <div class="truncate" :title="item.showName">
+              {{ item.showName }}
+            </div>
             <div class="flex text-gray-400">
               <div>{{ item.searchCount }}</div>
               <div>条相关聊天记录</div>
