@@ -66,11 +66,11 @@ const BlockValue = "block";
 
 const ApplyOperateArr = [
   {
-    label: "好友申请",
+    label: "好友管理",
     value: ApplyOperateFriendValue
   },
   {
-    label: "群组申请",
+    label: "群组管理",
     value: ApplyOperateGroupValue
   },
   {

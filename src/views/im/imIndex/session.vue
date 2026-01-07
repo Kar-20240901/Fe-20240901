@@ -227,12 +227,12 @@ function updateLastContent(
       <template #default="{ item, index, active }">
         <DynamicScrollerItem :item="item" :active="active" :index="index">
           <div
-            :class="`h-[80px] flex items-center p-4 border-b border-l-4 ${props.session.sessionId === item.sessionId ? 'bg-secondary border-b-secondary  border-l-primary hover:bg-secondary/70 hover:border-b-secondary/70' : 'hover:bg-gray-50 hover:border-l-gray-50 border-l-white border-b-gray-100'} cursor-pointer transition-colors`"
+            :class="`h-[80px] flex items-center p-2 border-b border-l-4 ${props.session.sessionId === item.sessionId ? 'bg-secondary border-b-secondary  border-l-primary hover:bg-secondary/70 hover:border-b-secondary/70' : 'hover:bg-gray-50 hover:border-l-gray-50 border-l-white border-b-gray-100'} cursor-pointer transition-colors`"
             @click="sessionClick(item)"
           >
             <div>
               <el-badge
-                :value="item.unReadCount"
+                :value="item.unReadCount || 0"
                 :max="999"
                 :show-zero="false"
                 badge-class="mt-1 mr-1"
@@ -255,7 +255,7 @@ function updateLastContent(
             </div>
             <div class="ml-2 flex-1 truncate">
               <div class="flex justify-between items-center">
-                <div class="text-sm truncate pr-1">
+                <div class="text-sm truncate pr-1" :title="item.sessionName">
                   {{ item.sessionName }}
                 </div>
                 <div class="text-xs text-gray-400 shrink-0">
