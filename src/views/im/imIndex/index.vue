@@ -217,14 +217,16 @@ function sessionRefUpdateLastContent(
   lastContent?: string,
   lastContentCreateTs?: string,
   unReadCountAddNumber?: number,
-  unReadCountAddNumberUpdateFlag?: boolean
+  unReadCountAddNumberUpdateFlag?: boolean,
+  topFlag?: boolean
 ) {
   manageRef.value?.sessionRefUpdateLastContent(
     sessionId,
     lastContent,
     lastContentCreateTs,
     unReadCountAddNumber,
-    unReadCountAddNumberUpdateFlag
+    unReadCountAddNumberUpdateFlag,
+    topFlag
   );
 }
 </script>

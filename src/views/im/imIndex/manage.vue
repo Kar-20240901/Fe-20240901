@@ -63,14 +63,16 @@ function sessionRefUpdateLastContent(
   lastContent?: string,
   lastContentCreateTs?: string,
   unReadCountAddNumber?: number,
-  unReadCountAddNumberUpdateFlag?: boolean
+  unReadCountAddNumberUpdateFlag?: boolean,
+  topFlag?: boolean
 ) {
   sessionRef.value?.updateLastContent(
     sessionId,
     lastContent,
     lastContentCreateTs,
     unReadCountAddNumber,
-    unReadCountAddNumberUpdateFlag
+    unReadCountAddNumberUpdateFlag,
+    topFlag
   );
 }
 

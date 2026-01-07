@@ -27,7 +27,7 @@ const emit = defineEmits<{
 function sessionClick(item: BaseImSessionRefUserPageVO) {
   emit("sessionClick", item);
 
-  updateLastContent(item.sessionId, undefined, undefined, 0, true);
+  updateLastContent(item.sessionId, undefined, undefined, 0, true, false);
 }
 
 const pageSize = 20;
@@ -177,8 +177,11 @@ function updateLastContent(
   lastContent?: string,
   lastContentCreateTs?: string,
   unReadCountAddNumber?: number,
-  unReadCountAddNumberUpdateFlag?: boolean
+  unReadCountAddNumberUpdateFlag?: boolean,
+  topFlag?: boolean
 ) {
+  console.log({ topFlag });
+
   const findIndex = dataList.value.findIndex(
     item => item.sessionId === sessionId
   );
@@ -189,21 +192,27 @@ function updateLastContent(
     return;
   }
 
+  const item = dataList.value[findIndex];
+
   if (lastContent) {
-    dataList.value[findIndex].lastContent = lastContent;
+    item.lastContent = lastContent;
   }
 
   if (lastContentCreateTs) {
-    dataList.value[findIndex].lastContentCreateTs = lastContentCreateTs;
+    item.lastContentCreateTs = lastContentCreateTs;
   }
 
   if (unReadCountAddNumber !== undefined) {
     if (unReadCountAddNumberUpdateFlag) {
-      dataList.value[findIndex].unReadCount = unReadCountAddNumber;
+      item.unReadCount = unReadCountAddNumber;
     } else {
-      dataList.value[findIndex].unReadCount =
-        dataList.value[findIndex].unReadCount + unReadCountAddNumber;
+      item.unReadCount = item.unReadCount + unReadCountAddNumber;
     }
+  }
+
+  if (topFlag) {
+    dataList.value.splice(findIndex, 1);
+    dataList.value.unshift(item);
   }
 }
 </script>

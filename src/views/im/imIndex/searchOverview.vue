@@ -78,6 +78,8 @@ function searchMoreGroupClick() {
 function searchMoreContentClick() {
   emit("searchMoreContentClick");
 }
+
+const showMoreLength = 3;
 </script>
 
 <template>
@@ -86,7 +88,7 @@ function searchMoreContentClick() {
       <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
         <div>联系人</div>
         <div
-          v-if="searchFriendList.length > 1"
+          v-if="searchFriendList.length > showMoreLength"
           class="text-gray-400 cursor-pointer hover:text-gray-800"
           @click="searchMoreFriendClick"
         >
@@ -158,7 +160,7 @@ function searchMoreContentClick() {
       <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
         <div>群聊</div>
         <div
-          v-if="searchGroupList.length > 1"
+          v-if="searchGroupList.length > showMoreLength"
           class="text-gray-400 cursor-pointer hover:text-gray-800"
           @click="searchMoreGroupClick"
         >
@@ -230,7 +232,7 @@ function searchMoreContentClick() {
       <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
         <div>聊天记录</div>
         <div
-          v-if="searchContentList.length > 1"
+          v-if="searchContentList.length > showMoreLength"
           class="text-gray-400 cursor-pointer hover:text-gray-800"
           @click="searchMoreContentClick"
         >
