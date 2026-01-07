@@ -180,8 +180,6 @@ function updateLastContent(
   unReadCountAddNumberUpdateFlag?: boolean,
   topFlag?: boolean
 ) {
-  console.log({ topFlag });
-
   const findIndex = dataList.value.findIndex(
     item => item.sessionId === sessionId
   );
@@ -241,7 +239,11 @@ function updateLastContent(
           >
             <div>
               <el-badge
-                :value="item.unReadCount || 0"
+                :value="
+                  props.session.sessionId === item.sessionId
+                    ? 0
+                    : item.unReadCount || 0
+                "
                 :max="999"
                 :show-zero="false"
                 badge-class="mt-1 mr-1"
