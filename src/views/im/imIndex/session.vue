@@ -274,7 +274,10 @@ function updateLastContent(
                 </div>
               </div>
 
-              <div class="text-xs text-gray-400 truncate mt-1">
+              <div
+                class="text-xs text-gray-400 truncate mt-1"
+                :title="item.lastContent"
+              >
                 {{ item.lastContent }}
               </div>
             </div>

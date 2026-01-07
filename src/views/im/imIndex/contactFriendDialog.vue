@@ -52,7 +52,7 @@ function searchContactFriend() {
 <template>
   <el-dialog
     v-model="visible"
-    :title="`好友申请`"
+    title="好友管理"
     draggable
     :close-on-click-modal="false"
     :close-on-press-escape="false"

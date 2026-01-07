@@ -1043,7 +1043,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
                   <div
                     class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
                   >
-                    <div class="text-sm whitespace-pre-wrap">
+                    <div class="text-sm break-all whitespace-pre-wrap">
                       {{ item.content }}
                     </div>
                   </div>
