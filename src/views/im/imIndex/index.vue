@@ -111,7 +111,8 @@ function searchFriendClick(item: BaseImSearchBaseFriendVO) {
     sessionId: item.sessionId,
     targetType: BaseImTypeEnum.FRIEND.code,
     targetId: item.friendUserId,
-    sessionName: item.friendShowName
+    sessionName: item.friendShowName,
+    avatarUrl: item.avatarUrl
   });
 }
 
@@ -120,7 +121,8 @@ function searchGroupClick(item: BaseImSearchBaseGroupVO) {
     sessionId: item.sessionId,
     targetType: BaseImTypeEnum.GROUP.code,
     targetId: item.groupId,
-    sessionName: item.groupShowName
+    sessionName: item.groupShowName,
+    avatarUrl: item.avatarUrl
   });
 }
 

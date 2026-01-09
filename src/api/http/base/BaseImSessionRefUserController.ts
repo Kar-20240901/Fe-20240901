@@ -101,6 +101,7 @@ export interface ScrollListDTO {
   refId?: string; // 关联其他主键 id，格式：int64
   containsCurrentIdFlag?: boolean; // 是否包含当前主键 id，默认：false
   queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往前多查询几条数据，为 false时，往后多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
+  refIdSet?: string[]; // 关联的 id集合
 }
 
 export interface BaseImSessionRefUserPageVO {
@@ -114,6 +115,7 @@ export interface BaseImSessionRefUserPageVO {
   targetType?: number; // 目标类型：101 好友 201 群组，一定有值，格式：int32
   sessionId?: string; // 会话主键 id，一定有值，格式：int64
   unReadCount?: number; // 未读数量，格式：int32
+  lastReceiveTs?: string; // 最后一次接受到消息时的时间戳，默认为：-1，备注：该字段用于：排序，格式：int64
 }
 
 // 滚动加载

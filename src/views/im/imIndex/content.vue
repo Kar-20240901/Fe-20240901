@@ -107,9 +107,9 @@ function setSessionContentList(
     if (createTsOne === createTsTwo) {
       if (a.orderNo === b.orderNo) {
         if (a.contentId && b.contentId) {
-          return Number(a.contentId) > Number(b.contentId) ? 1 : -1;
+          return a.contentId > b.contentId ? 1 : -1;
         } else {
-          return Number(a.createId) > Number(b.createId) ? 1 : -1;
+          return a.createId > b.createId ? 1 : -1;
         }
       } else {
         return a.orderNo > b.orderNo ? 1 : -1;

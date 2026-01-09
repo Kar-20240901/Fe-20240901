@@ -36,6 +36,52 @@ function reset() {
   dataList.value = [];
 
   hasMore = true;
+
+  dataListSessionIdSet.clear();
+}
+
+const dataListSessionIdSet: Set<string> = new Set();
+
+function handleDataList(tempDataList?: BaseImSessionRefUserPageVO[]) {
+  if (!tempDataList || !tempDataList.length) {
+    return;
+  }
+
+  let addFlag = false;
+
+  tempDataList.forEach(item => {
+    const sessionId = item.sessionId;
+
+    if (!sessionId) {
+      return;
+    }
+
+    if (dataListSessionIdSet.has(sessionId)) {
+      return;
+    }
+
+    dataListSessionIdSet.add(sessionId);
+    dataList.value.push(item);
+
+    addFlag = true;
+  });
+
+  if (!addFlag) {
+    return;
+  }
+
+  // 排序
+  dataList.value.sort((a, b) => {
+    const lastReceiveTsOne = Number(a.lastReceiveTs);
+
+    const lastReceiveTsTwo = Number(b.lastReceiveTs);
+
+    if (lastReceiveTsOne === lastReceiveTsTwo) {
+      return a.sessionId < b.sessionId ? 1 : -1;
+    } else {
+      return lastReceiveTsOne < lastReceiveTsTwo ? 1 : -1;
+    }
+  });
 }
 
 function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
@@ -44,22 +90,32 @@ function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   }
 
   let sessionId = undefined;
+  let lastReceiveTs = undefined;
+  let refIdSet = undefined;
 
   if (scrollFlag) {
-    sessionId = dataList.value.length
-      ? dataList.value[dataList.value.length - 1].sessionId
-      : undefined;
+    if (dataList.value.length) {
+      const lastItem = dataList.value[dataList.value.length - 1];
+
+      sessionId = lastItem.sessionId;
+      lastReceiveTs = lastItem.lastReceiveTs;
+    }
+  } else {
+    refIdSet = [...dataListSessionIdSet];
   }
 
   baseImSessionRefUserScroll({
     id: sessionId,
-    pageSize: String(pageSize)
+    pageSize: String(pageSize),
+    refId: lastReceiveTs,
+    refIdSet
   })
     .then(res => {
       if (scrollFlag) {
-        dataList.value = dataList.value.concat(res.data);
+        handleDataList(res.data);
       } else {
-        dataList.value = res.data;
+        reset();
+        handleDataList(res.data);
       }
 
       hasMore = res.data.length >= pageSize;
