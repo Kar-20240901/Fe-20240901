@@ -210,6 +210,8 @@ const doSearchThrottle = throttle(
   300
 ) as (loadingFlag?: boolean, scrollFlag?: boolean) => void;
 
+let shouldAutoScroll: boolean = true;
+
 function handleScroll(event: Event) {
   const scrollerEl = event.target as HTMLElement;
 
@@ -218,6 +220,8 @@ function handleScroll(event: Event) {
   const { scrollTop, scrollHeight, clientHeight } = scrollerEl;
 
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
+
+  shouldAutoScroll = scrollTop <= 50;
 
   if (distanceToBottom <= 20 && !loading.value && hasMore) {
     doSearchThrottle(false, true);
@@ -234,7 +238,8 @@ function updateLastContent(
   lastContentCreateTs?: string,
   unReadCountAddNumber?: number,
   unReadCountAddNumberUpdateFlag?: boolean,
-  topFlag?: boolean
+  topFlag?: boolean,
+  mustTopFlag?: boolean
 ) {
   const findIndex = dataList.value.findIndex(
     item => item.sessionId === sessionId
@@ -267,6 +272,26 @@ function updateLastContent(
   if (topFlag) {
     dataList.value.splice(findIndex, 1);
     dataList.value.unshift(item);
+
+    if (shouldAutoScroll || mustTopFlag) {
+      nextTick(() => {
+        scrollToItemBySessionId(sessionId);
+      });
+    }
+  }
+}
+
+function scrollToItemBySessionId(sessionId?: string) {
+  if (!sessionId) {
+    return;
+  }
+
+  const findIndex = dataList.value.findIndex(
+    item => item.sessionId === sessionId
+  );
+
+  if (findIndex !== -1) {
+    sessionRecycleScrollerRef.value.scrollToItem(findIndex);
   }
 }
 </script>

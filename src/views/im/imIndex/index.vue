@@ -72,7 +72,6 @@ function execContentSearch() {
 
 function sessionClick(item: BaseImSessionRefUserPageVO) {
   doUpdateAvatarAndNickname([item.sessionId]);
-  manageRef.value?.sessionRefDoSearch(false, false);
 
   if (item.targetType === BaseImTypeEnum.FRIEND.code) {
     const sessionUserMapItem: IImShowInfoMap = {};
@@ -103,6 +102,10 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
       false,
       undefined
     );
+
+    setTimeout(() => {
+      manageRef.value?.sessionRefDoSearch(false, false);
+    }, 300);
   });
 }
 
@@ -135,8 +138,6 @@ function contentOnlyReset() {
 }
 
 function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
-  manageRef.value?.sessionRefDoSearch(false, false);
-
   const sessionTemp: IImContentSession = {};
 
   sessionTemp.sessionId = searchBaseContentVO.value.sessionId;
@@ -162,6 +163,10 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
       true,
       undefined
     );
+
+    setTimeout(() => {
+      manageRef.value?.sessionRefDoSearch(false, false);
+    }, 300);
   });
 }
 
@@ -208,7 +213,7 @@ onMounted(() => {
   nextTick(() => {
     setTimeout(() => {
       if (getMobileFlag()) {
-        splitterSize.value = "30%";
+        splitterSize.value = "32%";
       }
     }, CommonConstant.MEDIUM_DELAY);
   });
@@ -220,7 +225,8 @@ function sessionRefUpdateLastContent(
   lastContentCreateTs?: string,
   unReadCountAddNumber?: number,
   unReadCountAddNumberUpdateFlag?: boolean,
-  topFlag?: boolean
+  topFlag?: boolean,
+  mustTopFlag?: boolean
 ) {
   manageRef.value?.sessionRefUpdateLastContent(
     sessionId,
@@ -228,7 +234,8 @@ function sessionRefUpdateLastContent(
     lastContentCreateTs,
     unReadCountAddNumber,
     unReadCountAddNumberUpdateFlag,
-    topFlag
+    topFlag,
+    mustTopFlag
   );
 }
 </script>

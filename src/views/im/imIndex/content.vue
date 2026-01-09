@@ -64,7 +64,8 @@ const todoSendMap = ref<Map<string, ISessionContentBO>>(new Map());
 
 function setSessionContentList(
   sessionContentListTemp?: ISessionContentBO[],
-  topFlag?: boolean
+  topFlag?: boolean,
+  mustTopFlag?: boolean
 ) {
   if (!sessionContentListTemp || !sessionContentListTemp.length) {
     return;
@@ -128,7 +129,8 @@ function setSessionContentList(
     lastContent.createTs,
     undefined,
     undefined,
-    topFlag
+    topFlag,
+    mustTopFlag
   );
 }
 
@@ -138,7 +140,8 @@ function sessionRefUpdateLastContent(
   lastContentCreateTs?: string,
   unReadCountAddNumber?: number,
   unReadCountAddNumberUpdateFlag?: boolean,
-  topFlag?: boolean
+  topFlag?: boolean,
+  mustTopFlag?: boolean
 ) {
   emit(
     "sessionRefUpdateLastContent",
@@ -147,7 +150,8 @@ function sessionRefUpdateLastContent(
     lastContentCreateTs,
     unReadCountAddNumber,
     unReadCountAddNumberUpdateFlag,
-    topFlag
+    topFlag,
+    mustTopFlag
   );
 }
 
@@ -159,7 +163,8 @@ const emit = defineEmits<{
     lastContentCreateTs?: string,
     unReadCountAddNumber?: number,
     unReadCountAddNumberUpdateFlag?: boolean,
-    topFlag?: boolean
+    topFlag?: boolean,
+    mustTopFlag?: boolean
   ): void;
 }>();
 
@@ -174,7 +179,7 @@ function showTodoSendMap() {
 
   todoSendMap.value = new Map(Object.entries(todoSendObj));
 
-  setSessionContentList([...todoSendMap.value.values()], false);
+  setSessionContentList([...todoSendMap.value.values()], false, false);
 }
 
 function setTodoSendMap(
@@ -266,7 +271,7 @@ function doSearch(
     .then(res => {
       const oldListLength = sessionContentShowList.value.length - 1;
 
-      setSessionContentList(res.data, false);
+      setSessionContentList(res.data, false, false);
 
       if (scrollType === "up") {
         hasLess = res.data.length >= pageSize;
@@ -632,7 +637,7 @@ function doSendClick(
 
   setTodoSendMap(item, false, false);
 
-  setSessionContentList([item], true);
+  setSessionContentList([item], true, true);
 
   const form: BaseImSessionContentInsertTxtForFeDTO = {
     sessionId,
@@ -778,7 +783,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         contentId: baseImSessionContentInsertTxtVO.contentId
       };
 
-      setSessionContentList([item], false);
+      setSessionContentList([item], true, false);
 
       doSearchThrottle(
         {
@@ -802,7 +807,8 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         baseImSessionContentInsertTxtVO.createTs,
         unReadCountAddNumber,
         false,
-        true
+        true,
+        false
       );
 
       if (
@@ -833,7 +839,8 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
           obj.lastContentCreateTs,
           obj.unReadCount,
           true,
-          true
+          true,
+          false
         );
       });
     }

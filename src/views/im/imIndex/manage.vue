@@ -64,7 +64,8 @@ function sessionRefUpdateLastContent(
   lastContentCreateTs?: string,
   unReadCountAddNumber?: number,
   unReadCountAddNumberUpdateFlag?: boolean,
-  topFlag?: boolean
+  topFlag?: boolean,
+  mustTopFlag?: boolean
 ) {
   sessionRef.value?.updateLastContent(
     sessionId,
@@ -72,7 +73,8 @@ function sessionRefUpdateLastContent(
     lastContentCreateTs,
     unReadCountAddNumber,
     unReadCountAddNumberUpdateFlag,
-    topFlag
+    topFlag,
+    mustTopFlag
   );
 }
 
