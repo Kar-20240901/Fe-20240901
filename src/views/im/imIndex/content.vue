@@ -7,7 +7,8 @@ import {
   BaseImSessionContentInsertTxtVO,
   BaseImSessionRefUserQueryLastContentVO,
   IImContentProps,
-  ISessionContentBO
+  ISessionContentBO,
+  IUpdateLastContentObj
 } from "@/views/im/imIndex/types";
 import {
   BaseImSessionContentRefUserPageVO,
@@ -74,6 +75,10 @@ function setSessionContentList(
   let addFlag = false;
 
   sessionContentListTemp.forEach(item => {
+    if (item.sessionId !== props.session.sessionId) {
+      return;
+    }
+
     let objId = item.objId;
 
     if (!objId) {
@@ -123,48 +128,27 @@ function setSessionContentList(
   const lastContent =
     sessionContentShowList.value[sessionContentShowList.value.length - 1];
 
-  sessionRefUpdateLastContent(
-    props.session.sessionId,
-    lastContent.content,
-    lastContent.createTs,
-    undefined,
-    undefined,
-    topFlag,
-    mustTopFlag
-  );
+  sessionRefUpdateLastContent({
+    sessionId: props.session.sessionId,
+    lastContent: lastContent.content,
+    lastContentCreateTs: lastContent.createTs,
+    unReadCountAddNumber: undefined,
+    unReadCountAddNumberUpdateFlag: undefined,
+    topFlag: topFlag,
+    mustTopFlag: mustTopFlag
+  });
 }
 
 function sessionRefUpdateLastContent(
-  sessionId?: string,
-  lastContent?: string,
-  lastContentCreateTs?: string,
-  unReadCountAddNumber?: number,
-  unReadCountAddNumberUpdateFlag?: boolean,
-  topFlag?: boolean,
-  mustTopFlag?: boolean
+  updateLastContentObjTemp: IUpdateLastContentObj
 ) {
-  emit(
-    "sessionRefUpdateLastContent",
-    sessionId,
-    lastContent,
-    lastContentCreateTs,
-    unReadCountAddNumber,
-    unReadCountAddNumberUpdateFlag,
-    topFlag,
-    mustTopFlag
-  );
+  emit("sessionRefUpdateLastContent", updateLastContentObjTemp);
 }
 
 const emit = defineEmits<{
   (
     e: "sessionRefUpdateLastContent",
-    sessionId?: string,
-    lastContent?: string,
-    lastContentCreateTs?: string,
-    unReadCountAddNumber?: number,
-    unReadCountAddNumberUpdateFlag?: boolean,
-    topFlag?: boolean,
-    mustTopFlag?: boolean
+    updateLastContentObjTemp: IUpdateLastContentObj
   ): void;
 }>();
 
@@ -187,6 +171,10 @@ function setTodoSendMap(
   removeFlag: boolean,
   sendErrorFlag: boolean
 ) {
+  if (props.session.sessionId !== item.sessionId) {
+    return;
+  }
+
   const objId = item.objId;
 
   if (sendErrorFlag) {
@@ -244,7 +232,7 @@ const doSearchThrottle = throttle(
   scrollType?: "up" | "down"
 ) => void;
 
-function doSearch(
+async function doSearch(
   form?: ScrollListDTO,
   loadingFlag?: boolean,
   scrollToItemFlag?: boolean,
@@ -260,7 +248,7 @@ function doSearch(
     return;
   }
 
-  baseImSessionContentRefUserScroll({
+  await baseImSessionContentRefUserScroll({
     refId: sessionId,
     backwardFlag: form?.backwardFlag || false,
     containsCurrentIdFlag: form?.containsCurrentIdFlag || false,
@@ -362,10 +350,6 @@ function scrollToBottom() {
   scrollStopSearchFlag = true;
 }
 
-function setHasLess(hasLessTemp?: boolean) {
-  hasLess = hasLessTemp;
-}
-
 function setShouldAutoScroll(shouldAutoScrollTemp?: boolean) {
   shouldAutoScroll = shouldAutoScrollTemp;
 }
@@ -374,7 +358,6 @@ defineExpose({
   doSearch,
   textareaInputRefFocus,
   setShouldAutoScroll,
-  setHasLess,
   onlyReset
 });
 
@@ -711,7 +694,11 @@ function doSendToServer(form: BaseImSessionContentInsertTxtForFeDTO) {
 
     if (res.code !== CommonConstant.API_OK_CODE) {
       if (!sendErrorFlag) {
-        setTodoSendMap({ objId: objId }, false, true);
+        setTodoSendMap(
+          { objId: objId, sessionId: form.sessionId },
+          false,
+          true
+        );
       }
 
       if (!setLongTimerFlag) {
@@ -726,12 +713,14 @@ function doSendToServer(form: BaseImSessionContentInsertTxtForFeDTO) {
       }
     }
 
-    setTodoSendMap({ objId: objId }, true, false);
+    setTodoSendMap({ objId: objId, sessionId: form.sessionId }, true, false);
 
     doSearchThrottle(
       {
-        id: getLastContentId(),
-        backwardFlag: true
+        id: res.data,
+        backwardFlag: true,
+        refId: form.sessionId,
+        containsCurrentIdFlag: true
       },
       false,
       false,
@@ -787,8 +776,10 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
 
       doSearchThrottle(
         {
-          id: getLastContentId(),
-          backwardFlag: true
+          id: baseImSessionContentInsertTxtVO.contentId,
+          backwardFlag: true,
+          refId: baseImSessionContentInsertTxtVO.sessionId,
+          containsCurrentIdFlag: true
         },
         false,
         false,
@@ -801,15 +792,15 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         unReadCountAddNumber = 1;
       }
 
-      sessionRefUpdateLastContent(
-        baseImSessionContentInsertTxtVO.sessionId,
-        baseImSessionContentInsertTxtVO.txt,
-        baseImSessionContentInsertTxtVO.createTs,
-        unReadCountAddNumber,
-        false,
-        true,
-        false
-      );
+      sessionRefUpdateLastContent({
+        sessionId: baseImSessionContentInsertTxtVO.sessionId,
+        lastContent: baseImSessionContentInsertTxtVO.txt,
+        lastContentCreateTs: baseImSessionContentInsertTxtVO.createTs,
+        unReadCountAddNumber: unReadCountAddNumber,
+        unReadCountAddNumberUpdateFlag: false,
+        topFlag: true,
+        mustTopFlag: false
+      });
 
       if (
         baseImSessionContentInsertTxtVO.notDisturbFlagUserIdSet?.findIndex(
@@ -833,15 +824,15 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
           return;
         }
 
-        sessionRefUpdateLastContent(
-          obj.sessionId,
-          obj.lastContent,
-          obj.lastContentCreateTs,
-          obj.unReadCount,
-          true,
-          true,
-          false
-        );
+        sessionRefUpdateLastContent({
+          sessionId: obj.sessionId,
+          lastContent: obj.lastContent,
+          lastContentCreateTs: obj.lastContentCreateTs,
+          unReadCountAddNumber: obj.unReadCount,
+          unReadCountAddNumberUpdateFlag: true,
+          topFlag: true,
+          mustTopFlag: false
+        });
       });
     }
   }

@@ -7,7 +7,11 @@ import {
   baseImSessionRefUserScroll
 } from "@/api/http/base/BaseImSessionRefUserController";
 import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
-import { IImSessionProps, IImShowInfoMap } from "@/views/im/imIndex/types";
+import {
+  IImSessionProps,
+  IImShowInfoMap,
+  IUpdateLastContentObj
+} from "@/views/im/imIndex/types";
 import { FormatTsForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
 import { DevFlag } from "@/utils/SysUtil";
@@ -27,7 +31,15 @@ const emit = defineEmits<{
 function sessionClick(item: BaseImSessionRefUserPageVO) {
   emit("sessionClick", item);
 
-  updateLastContent(item.sessionId, undefined, undefined, 0, true, false);
+  updateLastContent({
+    sessionId: item.sessionId,
+    lastContent: undefined,
+    lastContentCreateTs: undefined,
+    unReadCountAddNumber: 0,
+    unReadCountAddNumberUpdateFlag: true,
+    topFlag: false,
+    mustTopFlag: false
+  });
 }
 
 const pageSize = 20;
@@ -70,8 +82,18 @@ function handleDataList(tempDataList?: BaseImSessionRefUserPageVO[]) {
     return;
   }
 
+  console.log("排序：", updateLastContentObj?.sessionId);
+
   // 排序
   dataList.value.sort((a, b) => {
+    if (updateLastContentObj) {
+      if (updateLastContentObj.sessionId === a.sessionId) {
+        return -1;
+      } else if (updateLastContentObj.sessionId === b.sessionId) {
+        return 1;
+      }
+    }
+
     const lastReceiveTsOne = Number(a.lastReceiveTs);
 
     const lastReceiveTsTwo = Number(b.lastReceiveTs);
@@ -116,6 +138,8 @@ function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
       } else {
         reset();
         handleDataList(res.data);
+        console.log("会话刷新完毕", updateLastContentObj?.sessionId);
+        updateLastContent(updateLastContentObj); // 更新：最新的消息
       }
 
       hasMore = res.data.length >= pageSize;
@@ -228,21 +252,28 @@ function handleScroll(event: Event) {
   }
 }
 
-defineExpose({ onSearch, updateLastContent, reset });
+defineExpose({ onSearch, updateLastContent, doSearchThrottle });
 
 const props = defineProps<IImSessionProps>();
 
-function updateLastContent(
-  sessionId?: string,
-  lastContent?: string,
-  lastContentCreateTs?: string,
-  unReadCountAddNumber?: number,
-  unReadCountAddNumberUpdateFlag?: boolean,
-  topFlag?: boolean,
-  mustTopFlag?: boolean
-) {
+let updateLastContentObj: IUpdateLastContentObj;
+
+function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
+  if (!updateLastContentObjTemp) {
+    return;
+  }
+
+  if (
+    updateLastContentObjTemp.topFlag &&
+    updateLastContentObjTemp.mustTopFlag
+  ) {
+    updateLastContentObj = updateLastContentObjTemp;
+
+    console.log("置顶", updateLastContentObj?.sessionId);
+  }
+
   const findIndex = dataList.value.findIndex(
-    item => item.sessionId === sessionId
+    item => item.sessionId === updateLastContentObjTemp.sessionId
   );
 
   if (findIndex === -1) {
@@ -253,29 +284,30 @@ function updateLastContent(
 
   const item = dataList.value[findIndex];
 
-  if (lastContent) {
-    item.lastContent = lastContent;
+  if (updateLastContentObjTemp.lastContent) {
+    item.lastContent = updateLastContentObjTemp.lastContent;
   }
 
-  if (lastContentCreateTs) {
-    item.lastContentCreateTs = lastContentCreateTs;
+  if (updateLastContentObjTemp.lastContentCreateTs) {
+    item.lastContentCreateTs = updateLastContentObjTemp.lastContentCreateTs;
   }
 
-  if (unReadCountAddNumber !== undefined) {
-    if (unReadCountAddNumberUpdateFlag) {
-      item.unReadCount = unReadCountAddNumber;
+  if (updateLastContentObjTemp.unReadCountAddNumber !== undefined) {
+    if (updateLastContentObjTemp.unReadCountAddNumberUpdateFlag) {
+      item.unReadCount = updateLastContentObjTemp.unReadCountAddNumber;
     } else {
-      item.unReadCount = item.unReadCount + unReadCountAddNumber;
+      item.unReadCount =
+        item.unReadCount + updateLastContentObjTemp.unReadCountAddNumber;
     }
   }
 
-  if (topFlag) {
+  if (updateLastContentObjTemp.topFlag) {
     dataList.value.splice(findIndex, 1);
     dataList.value.unshift(item);
 
-    if (shouldAutoScroll || mustTopFlag) {
+    if (shouldAutoScroll || updateLastContentObjTemp.mustTopFlag) {
       nextTick(() => {
-        scrollToItemBySessionId(sessionId);
+        scrollToItemBySessionId(updateLastContentObjTemp.sessionId);
       });
     }
   }

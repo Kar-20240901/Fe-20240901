@@ -3,7 +3,8 @@ import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import {
   IImContentSession,
   IImSession,
-  IImShowInfoMap
+  IImShowInfoMap,
+  IUpdateLastContentObj
 } from "@/views/im/imIndex/types";
 import { nextTick, onMounted, ref } from "vue";
 import {
@@ -45,13 +46,18 @@ const contentRef = ref();
 
 const manageRef = ref();
 
-function contentDoSearch(
+async function contentDoSearch(
   form?: ScrollListDTO,
   loadingFlag?: boolean,
   scrollToItemFlag?: boolean,
   scrollType?: "up" | "down"
 ) {
-  contentRef.value?.doSearch(form, loadingFlag, scrollToItemFlag, scrollType);
+  await contentRef.value?.doSearch(
+    form,
+    loadingFlag,
+    scrollToItemFlag,
+    scrollType
+  );
 }
 
 function execContentSearch() {
@@ -101,11 +107,9 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
       true,
       false,
       undefined
-    );
-
-    setTimeout(() => {
+    ).then(() => {
       manageRef.value?.sessionRefDoSearch(false, false);
-    }, 300);
+    });
   });
 }
 
@@ -162,11 +166,9 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
       true,
       true,
       undefined
-    );
-
-    setTimeout(() => {
+    ).then(() => {
       manageRef.value?.sessionRefDoSearch(false, false);
-    }, 300);
+    });
   });
 }
 
@@ -220,23 +222,9 @@ onMounted(() => {
 });
 
 function sessionRefUpdateLastContent(
-  sessionId?: string,
-  lastContent?: string,
-  lastContentCreateTs?: string,
-  unReadCountAddNumber?: number,
-  unReadCountAddNumberUpdateFlag?: boolean,
-  topFlag?: boolean,
-  mustTopFlag?: boolean
+  updateLastContentObjTemp: IUpdateLastContentObj
 ) {
-  manageRef.value?.sessionRefUpdateLastContent(
-    sessionId,
-    lastContent,
-    lastContentCreateTs,
-    unReadCountAddNumber,
-    unReadCountAddNumberUpdateFlag,
-    topFlag,
-    mustTopFlag
-  );
+  manageRef.value?.sessionRefUpdateLastContent(updateLastContentObjTemp);
 }
 </script>
 

@@ -10,7 +10,11 @@ import {
   BaseImSearchBaseFriendVO,
   BaseImSearchBaseGroupVO
 } from "@/api/http/base/BaseImSearchController";
-import { IImManageProps, IImShowInfoMap } from "@/views/im/imIndex/types";
+import {
+  IImManageProps,
+  IImShowInfoMap,
+  IUpdateLastContentObj
+} from "@/views/im/imIndex/types";
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import FaSearch from "~icons/fa/search";
@@ -55,27 +59,13 @@ const contactRef = ref();
 defineExpose({ sessionRefDoSearch, sessionRefUpdateLastContent });
 
 function sessionRefDoSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
-  sessionRef.value?.onSearch(loadingFlag, scrollFlag);
+  sessionRef.value?.doSearchThrottle(loadingFlag, scrollFlag);
 }
 
 function sessionRefUpdateLastContent(
-  sessionId?: string,
-  lastContent?: string,
-  lastContentCreateTs?: string,
-  unReadCountAddNumber?: number,
-  unReadCountAddNumberUpdateFlag?: boolean,
-  topFlag?: boolean,
-  mustTopFlag?: boolean
+  updateLastContentObjTemp: IUpdateLastContentObj
 ) {
-  sessionRef.value?.updateLastContent(
-    sessionId,
-    lastContent,
-    lastContentCreateTs,
-    unReadCountAddNumber,
-    unReadCountAddNumberUpdateFlag,
-    topFlag,
-    mustTopFlag
-  );
+  sessionRef.value?.updateLastContent(updateLastContentObjTemp);
 }
 
 function searchClick() {

@@ -2,6 +2,16 @@ import type { BaseImSearchBaseContentVO } from "@/api/http/base/BaseImSearchCont
 import type { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import type { BaseImSessionContentInsertTxtDTO } from "@/api/http/base/BaseImSessionContentController";
 
+export interface IUpdateLastContentObj {
+  sessionId?: string;
+  lastContent?: string;
+  lastContentCreateTs?: string;
+  unReadCountAddNumber?: number;
+  unReadCountAddNumberUpdateFlag?: boolean;
+  topFlag?: boolean;
+  mustTopFlag?: boolean;
+}
+
 export interface BaseImSessionRefUserQueryLastContentVO {
   sessionId?: string; // 会话主键 id，一定有值，格式：int64
   lastContent?: string; // 最新消息，备注：会截断或者处理
