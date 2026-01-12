@@ -73,6 +73,7 @@ function handleDataList(tempDataList?: BaseImSessionRefUserPageVO[]) {
     }
 
     dataListSessionIdSet.add(sessionId);
+
     dataList.value.push(item);
 
     addFlag = true;
@@ -82,18 +83,8 @@ function handleDataList(tempDataList?: BaseImSessionRefUserPageVO[]) {
     return;
   }
 
-  console.log("排序：", updateLastContentObj?.sessionId);
-
   // 排序
   dataList.value.sort((a, b) => {
-    if (updateLastContentObj) {
-      if (updateLastContentObj.sessionId === a.sessionId) {
-        return -1;
-      } else if (updateLastContentObj.sessionId === b.sessionId) {
-        return 1;
-      }
-    }
-
     const lastReceiveTsOne = Number(a.lastReceiveTs);
 
     const lastReceiveTsTwo = Number(b.lastReceiveTs);
@@ -113,7 +104,7 @@ function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
 
   let sessionId = undefined;
   let lastReceiveTs = undefined;
-  let refIdSet = undefined;
+  let refIdSet: string[] = undefined;
 
   if (scrollFlag) {
     if (dataList.value.length) {
@@ -137,9 +128,8 @@ function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
         handleDataList(res.data);
       } else {
         reset();
+
         handleDataList(res.data);
-        console.log("会话刷新完毕", updateLastContentObj?.sessionId);
-        updateLastContent(updateLastContentObj); // 更新：最新的消息
       }
 
       hasMore = res.data.length >= pageSize;
@@ -256,20 +246,9 @@ defineExpose({ onSearch, updateLastContent, doSearchThrottle });
 
 const props = defineProps<IImSessionProps>();
 
-let updateLastContentObj: IUpdateLastContentObj;
-
 function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
   if (!updateLastContentObjTemp) {
     return;
-  }
-
-  if (
-    updateLastContentObjTemp.topFlag &&
-    updateLastContentObjTemp.mustTopFlag
-  ) {
-    updateLastContentObj = updateLastContentObjTemp;
-
-    console.log("置顶", updateLastContentObj?.sessionId);
   }
 
   const findIndex = dataList.value.findIndex(
