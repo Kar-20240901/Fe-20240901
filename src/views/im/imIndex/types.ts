@@ -1,6 +1,14 @@
 import type { BaseImSearchBaseContentVO } from "@/api/http/base/BaseImSearchController";
 import type { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import type { BaseImSessionContentInsertTxtDTO } from "@/api/http/base/BaseImSessionContentController";
+import type { BaseImSessionRefUserPageVO } from "@/api/http/base/BaseImSessionRefUserController";
+
+export interface FeBaseImSessionRefUserPageVO
+  extends BaseImSessionRefUserPageVO {
+  unReadCountCalc?: number; // 未读数量-前端计算，格式：int32
+  lastContentCalc?: string; // 最新消息-前端计算，备注：会截断或者处理
+  lastContentCreateTsCalc?: string; // 最新消息创建时间戳-前端计算，格式：int64
+}
 
 export interface IUpdateLastContentObj {
   sessionId?: string;

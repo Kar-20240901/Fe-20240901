@@ -8,6 +8,7 @@ import {
 } from "@/api/http/base/BaseImSessionRefUserController";
 import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
 import {
+  FeBaseImSessionRefUserPageVO,
   IImSessionProps,
   IImShowInfoMap,
   IUpdateLastContentObj
@@ -16,9 +17,10 @@ import { FormatTsForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
 import { DevFlag } from "@/utils/SysUtil";
 import { throttle, useResizeObserver } from "@pureadmin/utils";
+import { debounceByKey, throttleByKey } from "@/utils/CommonUtil";
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseImSessionRefUserPageVO[]>([]);
+const dataList = ref<FeBaseImSessionRefUserPageVO[]>([]);
 
 const emit = defineEmits<{
   (e: "sessionClick", item: BaseImSessionRefUserPageVO): void;
@@ -54,7 +56,7 @@ function reset() {
 
 const dataListSessionIdSet: Set<string> = new Set();
 
-function handleDataList(tempDataList?: BaseImSessionRefUserPageVO[]) {
+function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
   if (!tempDataList || !tempDataList.length) {
     return;
   }
@@ -74,7 +76,13 @@ function handleDataList(tempDataList?: BaseImSessionRefUserPageVO[]) {
 
     dataListSessionIdSet.add(sessionId);
 
+    item.unReadCountCalc = item.unReadCount || 0;
+    item.lastContentCalc = item.lastContent;
+    item.lastContentCreateTsCalc = item.lastContentCreateTs;
+
     dataList.value.push(item);
+
+    handleLastContentInfo(item.sessionId, item.sessionId);
 
     addFlag = true;
   });
@@ -246,6 +254,65 @@ defineExpose({ onSearch, updateLastContent, doSearchThrottle });
 
 const props = defineProps<IImSessionProps>();
 
+// 置顶
+const pinToTop = debounceByKey(
+  (sessionId, mustTopFlag) => {
+    const findIndex = dataList.value.findIndex(
+      item => item.sessionId === sessionId
+    );
+
+    if (findIndex === -1) {
+      onSearch(false, false);
+
+      return;
+    }
+
+    const itemArr = dataList.value.splice(findIndex, 1);
+
+    if (itemArr.length) {
+      dataList.value.unshift(itemArr[0]);
+    }
+
+    if (shouldAutoScroll || mustTopFlag) {
+      nextTick(() => {
+        scrollToItemBySessionId(sessionId);
+      });
+    }
+  },
+  1000,
+  true
+);
+
+const handleLastContentInfo = throttleByKey(
+  sessionId => {
+    const findIndex = dataList.value.findIndex(
+      item => item.sessionId === sessionId
+    );
+
+    if (findIndex === -1) {
+      onSearch(false, false);
+
+      return;
+    }
+
+    const item: FeBaseImSessionRefUserPageVO = dataList.value[findIndex];
+
+    item.unReadCount = item.unReadCountCalc || 0;
+    item.lastContent = item.lastContentCalc;
+    item.lastContentCreateTs = item.lastContentCreateTsCalc;
+
+    console.log("更新", {
+      sessionId,
+      unReadCountCalc: item.unReadCountCalc,
+      lastContentCalc: item.lastContentCalc,
+      lastContentCreateTsCalc: item.lastContentCreateTsCalc
+    });
+  },
+  1000,
+  true,
+  true
+);
+
 function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
   if (!updateLastContentObjTemp) {
     return;
@@ -261,34 +328,38 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
     return;
   }
 
-  const item = dataList.value[findIndex];
+  const item: FeBaseImSessionRefUserPageVO = dataList.value[findIndex];
 
   if (updateLastContentObjTemp.lastContent) {
-    item.lastContent = updateLastContentObjTemp.lastContent;
+    item.lastContentCalc = updateLastContentObjTemp.lastContent;
   }
 
   if (updateLastContentObjTemp.lastContentCreateTs) {
-    item.lastContentCreateTs = updateLastContentObjTemp.lastContentCreateTs;
+    item.lastContentCreateTsCalc = updateLastContentObjTemp.lastContentCreateTs;
   }
 
   if (updateLastContentObjTemp.unReadCountAddNumber !== undefined) {
     if (updateLastContentObjTemp.unReadCountAddNumberUpdateFlag) {
       item.unReadCount = updateLastContentObjTemp.unReadCountAddNumber;
+      item.unReadCountCalc = updateLastContentObjTemp.unReadCountAddNumber;
     } else {
-      item.unReadCount =
-        item.unReadCount + updateLastContentObjTemp.unReadCountAddNumber;
+      item.unReadCountCalc =
+        (item.unReadCountCalc || 0) +
+        updateLastContentObjTemp.unReadCountAddNumber;
     }
   }
 
-  if (updateLastContentObjTemp.topFlag) {
-    dataList.value.splice(findIndex, 1);
-    dataList.value.unshift(item);
+  handleLastContentInfo(
+    updateLastContentObjTemp.sessionId,
+    updateLastContentObjTemp.sessionId
+  );
 
-    if (shouldAutoScroll || updateLastContentObjTemp.mustTopFlag) {
-      nextTick(() => {
-        scrollToItemBySessionId(updateLastContentObjTemp.sessionId);
-      });
-    }
+  if (updateLastContentObjTemp.topFlag) {
+    pinToTop(
+      updateLastContentObjTemp.sessionId,
+      updateLastContentObjTemp.sessionId,
+      updateLastContentObjTemp.mustTopFlag
+    );
   }
 }
 
