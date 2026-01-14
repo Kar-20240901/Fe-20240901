@@ -48,6 +48,20 @@ import CommonConstant from "@/model/constant/CommonConstant";
 import LocalStorageKey from "@/model/constant/LocalStorageKey";
 import { baseImSessionRefUserQueryLastContentMap } from "@/api/http/base/BaseImSessionRefUserController";
 
+// let sendTimer;
+//
+// window.startSend = function () {
+//   sendTimer = setInterval(() => {
+//     textarea.value = buildUUID();
+//
+//     document.querySelector("#sendBtn")?.click();
+//   }, 100);
+// };
+//
+// window.stopSend = function () {
+//   clearInterval(sendTimer);
+// };
+
 const props = defineProps<IImContentProps>();
 
 const sessionContentLoading = ref<boolean>(false);
@@ -1135,6 +1149,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
             @keydown="handleTextareaInputKeydown"
           />
           <div
+            id="sendBtn"
             class="ml-3 bg-primary duration-300 rounded-full w-12 h-12 flex items-center justify-center hover:bg-primary/90 transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
             @click="sendClick()"
           >
