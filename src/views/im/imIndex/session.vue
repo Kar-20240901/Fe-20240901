@@ -71,6 +71,8 @@ function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
     }
 
     if (dataListSessionIdSet.has(sessionId)) {
+      handleLastContentInfo(sessionId, sessionId);
+
       return;
     }
 
@@ -82,7 +84,7 @@ function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
 
     dataList.value.push(item);
 
-    handleLastContentInfo(item.sessionId, item.sessionId);
+    handleLastContentInfo(sessionId, sessionId);
 
     addFlag = true;
   });
@@ -301,12 +303,12 @@ const handleLastContentInfo = throttleByKey(
     item.lastContent = item.lastContentCalc;
     item.lastContentCreateTs = item.lastContentCreateTsCalc;
 
-    // console.log("更新", {
-    //   sessionId,
-    //   unReadCountCalc: item.unReadCountCalc,
-    //   lastContentCalc: item.lastContentCalc,
-    //   lastContentCreateTsCalc: item.lastContentCreateTsCalc
-    // });
+    console.log("更新", {
+      sessionId,
+      unReadCountCalc: item.unReadCountCalc,
+      lastContentCalc: item.lastContentCalc,
+      lastContentCreateTsCalc: item.lastContentCreateTsCalc
+    });
   },
   1000,
   true,

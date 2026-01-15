@@ -47,6 +47,7 @@ import { storageLocal } from "@/store/utils";
 import CommonConstant from "@/model/constant/CommonConstant";
 import LocalStorageKey from "@/model/constant/LocalStorageKey";
 import { baseImSessionRefUserQueryLastContentMap } from "@/api/http/base/BaseImSessionRefUserController";
+import { throttleByKey } from "@/utils/CommonUtil";
 
 // let sendTimer;
 //
@@ -824,33 +825,45 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         // TODO：进行通知
       }
 
-      baseImSessionRefUserQueryLastContentMap({
-        idSet: [baseImSessionContentInsertTxtVO.sessionId]
-      }).then(res => {
-        const resObj = res.data as Record<
-          string,
-          BaseImSessionRefUserQueryLastContentVO
-        >;
-
-        const obj = resObj[baseImSessionContentInsertTxtVO.sessionId];
-
-        if (!obj) {
-          return;
-        }
-
-        sessionRefUpdateLastContent({
-          sessionId: obj.sessionId,
-          lastContent: obj.lastContent,
-          lastContentCreateTs: obj.lastContentCreateTs,
-          unReadCountAddNumber: obj.unReadCount,
-          unReadCountAddNumberUpdateFlag: true,
-          topFlag: true,
-          mustTopFlag: false
-        });
-      });
+      queryLastContentMap(
+        baseImSessionContentInsertTxtVO.sessionId,
+        baseImSessionContentInsertTxtVO.sessionId
+      );
     }
   }
 });
+
+const queryLastContentMap = throttleByKey(
+  sessionId => {
+    baseImSessionRefUserQueryLastContentMap({
+      idSet: [sessionId]
+    }).then(res => {
+      const resObj = res.data as Record<
+        string,
+        BaseImSessionRefUserQueryLastContentVO
+      >;
+
+      const obj = resObj[sessionId];
+
+      if (!obj) {
+        return;
+      }
+
+      sessionRefUpdateLastContent({
+        sessionId: obj.sessionId,
+        lastContent: obj.lastContent,
+        lastContentCreateTs: obj.lastContentCreateTs,
+        unReadCountAddNumber: obj.unReadCount,
+        unReadCountAddNumberUpdateFlag: true,
+        topFlag: true,
+        mustTopFlag: false
+      });
+    });
+  },
+  1000,
+  true,
+  true
+);
 
 let hasLess: boolean = true;
 
