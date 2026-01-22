@@ -58,8 +58,12 @@ const contactRef = ref();
 
 defineExpose({ sessionRefDoSearch, sessionRefUpdateLastContent });
 
-function sessionRefDoSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
-  sessionRef.value?.doSearchThrottle(loadingFlag, scrollFlag);
+function sessionRefDoSearch(
+  loadingFlag?: boolean,
+  scrollFlag?: boolean,
+  queryNewFlag?: boolean
+) {
+  sessionRef.value?.doSearchThrottle(loadingFlag, scrollFlag, queryNewFlag);
 }
 
 function sessionRefUpdateLastContent(
@@ -132,7 +136,7 @@ function menuSelect(index: string) {
   menuIndex.value = index;
 
   if (index === BaseImLeftSegmentedEnum.SESSION.code) {
-    sessionRef.value?.onSearch(false, false);
+    sessionRef.value?.onSearch(false, false, false);
   } else if (index === BaseImLeftSegmentedEnum.CONTACT.code) {
     contactRef.value?.onSearch(false, false);
   }

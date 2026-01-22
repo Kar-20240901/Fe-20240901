@@ -108,7 +108,7 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
       false,
       undefined
     ).then(() => {
-      manageRef.value?.sessionRefDoSearch(false, false);
+      manageRef.value?.sessionRefDoSearch(false, false, false);
     });
   });
 }
@@ -167,7 +167,7 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
       true,
       undefined
     ).then(() => {
-      manageRef.value?.sessionRefDoSearch(false, false);
+      manageRef.value?.sessionRefDoSearch(false, false, false);
     });
   });
 }

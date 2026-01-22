@@ -107,7 +107,15 @@ function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
   });
 }
 
-function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
+const doSearchNewThrottle = throttle(() => {
+  onSearch(false, false, true);
+}, 500) as () => void;
+
+function onSearch(
+  loadingFlag?: boolean,
+  scrollFlag?: boolean,
+  queryNewFlag?: boolean
+) {
   if (loadingFlag) {
     loading.value = true;
   }
@@ -123,6 +131,7 @@ function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
       sessionId = lastItem.sessionId;
       lastReceiveTs = lastItem.lastReceiveTs;
     }
+  } else if (queryNewFlag) {
   } else {
     refIdSet = [...dataListSessionIdSet];
   }
@@ -134,12 +143,14 @@ function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
     refIdSet
   })
     .then(res => {
-      if (scrollFlag) {
+      if (scrollFlag || queryNewFlag) {
         handleDataList(res.data);
       } else {
         reset();
 
         handleDataList(res.data);
+
+        doSearchNewThrottle();
       }
 
       hasMore = res.data.length >= pageSize;
@@ -174,11 +185,11 @@ function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
 let timer: number | null = null;
 
 onMounted(() => {
-  onSearch(true, false);
+  onSearch(true, false, false);
 
   if (!DevFlag()) {
     timer = window.setInterval(() => {
-      onSearch(false, false);
+      onSearch(false, false, false);
     }, 10000);
   }
 });
@@ -228,11 +239,15 @@ const scrollbarParentDivResizeObserver = useResizeObserver(
 let hasMore: boolean = true;
 
 const doSearchThrottle = throttle(
-  (loadingFlag?: boolean, scrollFlag?: boolean) => {
-    onSearch(loadingFlag, scrollFlag);
+  (loadingFlag?: boolean, scrollFlag?: boolean, queryNewFlag?: boolean) => {
+    onSearch(loadingFlag, scrollFlag, queryNewFlag);
   },
   300
-) as (loadingFlag?: boolean, scrollFlag?: boolean) => void;
+) as (
+  loadingFlag?: boolean,
+  scrollFlag?: boolean,
+  queryNewFlag?: boolean
+) => void;
 
 let shouldAutoScroll: boolean = true;
 
@@ -248,7 +263,7 @@ function handleScroll(event: Event) {
   shouldAutoScroll = scrollTop <= 50;
 
   if (distanceToBottom <= 20 && !loading.value && hasMore) {
-    doSearchThrottle(false, true);
+    doSearchThrottle(false, true, false);
   }
 }
 
@@ -264,7 +279,7 @@ const pinToTop = debounceByKey(
     );
 
     if (findIndex === -1) {
-      onSearch(false, false);
+      onSearch(false, false, false);
 
       return;
     }
@@ -292,7 +307,7 @@ const handleLastContentInfo = throttleByKey(
     );
 
     if (findIndex === -1) {
-      onSearch(false, false);
+      onSearch(false, false, false);
 
       return;
     }
@@ -325,7 +340,7 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
   );
 
   if (findIndex === -1) {
-    onSearch(false, false);
+    onSearch(false, false, false);
 
     return;
   }
