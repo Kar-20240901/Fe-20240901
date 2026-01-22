@@ -303,12 +303,12 @@ const handleLastContentInfo = throttleByKey(
     item.lastContent = item.lastContentCalc;
     item.lastContentCreateTs = item.lastContentCreateTsCalc;
 
-    console.log("更新", {
-      sessionId,
-      unReadCountCalc: item.unReadCountCalc,
-      lastContentCalc: item.lastContentCalc,
-      lastContentCreateTsCalc: item.lastContentCreateTsCalc
-    });
+    // console.log("更新", {
+    //   sessionId,
+    //   unReadCountCalc: item.unReadCountCalc,
+    //   lastContentCalc: item.lastContentCalc,
+    //   lastContentCreateTsCalc: item.lastContentCreateTsCalc
+    // });
   },
   1000,
   true,
