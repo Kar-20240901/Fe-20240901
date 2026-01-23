@@ -3,7 +3,6 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import CircleCheck from "~icons/ep/circle-check";
 import CircleClose from "~icons/ep/circle-close";
 import Hide from "~icons/ep/hide";
-import Refresh from "~icons/ep/refresh";
 import RiUserForbidFill from "~icons/ri/user-forbid-fill";
 import RiUserFollowFill from "~icons/ri/user-follow-fill";
 import { onMounted, ref, useTemplateRef } from "vue";
@@ -32,6 +31,7 @@ import {
   IDialogFormOneInputDTO,
   IOneInputDialogFormDefineExpose
 } from "@/model/types/IDialogFormProps";
+import RiSearchLine from "~icons/ri/search-line";
 
 const search = ref<BaseImApplyFriendPageDTO>({});
 
@@ -320,12 +320,21 @@ const emit = defineEmits<{
 function searchContactFriend() {
   emit("searchContactFriend");
 }
+
+function handleSearchInputKeydown(e: KeyboardEvent) {
+  const isEnter = e.key === "Enter" || e.key === "NumpadEnter";
+
+  if (isEnter) {
+    e.preventDefault();
+    onSearch();
+  }
+}
 </script>
 
 <template>
   <div class="flex flex-col">
-    <div class="pb-3 flex justify-between">
-      <div class="flex">
+    <div class="flex justify-between gap-3">
+      <div class="flex flex-wrap flex-1 gap-x-2 gap-y-3 mb-3">
         <el-button
           type="primary"
           :icon="useRenderIcon(CircleCheck)"
@@ -368,14 +377,32 @@ function searchContactFriend() {
       </div>
 
       <div>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon(Refresh)"
-          :loading="loading"
-          @click="onSearch"
+        <el-form
+          ref="searchRef"
+          class="last-not-margin-right-form"
+          :inline="true"
+          :model="search"
         >
-          刷新
-        </el-button>
+          <el-form-item prop="searchKey">
+            <el-input
+              v-model="search.searchKey"
+              placeholder="请输入用户昵称、用户编码"
+              clearable
+              class="!w-[220px]"
+              @keydown="handleSearchInputKeydown"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              type="primary"
+              :icon="useRenderIcon(RiSearchLine)"
+              :loading="loading"
+              @click="onSearch"
+            >
+              搜索
+            </el-button>
+          </el-form-item>
+        </el-form>
       </div>
     </div>
 
@@ -503,3 +530,9 @@ function searchContactFriend() {
     />
   </div>
 </template>
+
+<style scoped lang="scss">
+:deep(.el-button + .el-button) {
+  margin-left: 0;
+}
+</style>

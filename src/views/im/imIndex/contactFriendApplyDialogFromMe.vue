@@ -2,7 +2,6 @@
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import CircleClose from "~icons/ep/circle-close";
 import Hide from "~icons/ep/hide";
-import Refresh from "~icons/ep/refresh";
 import { onMounted, ref } from "vue";
 import {
   baseImApplyFriendCancel,
@@ -18,6 +17,7 @@ import {
 } from "@/model/enum/im/BaseImApplyStatusEnum";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
+import RiSearchLine from "~icons/ri/search-line";
 
 const search = ref<BaseImApplyFriendPageDTO>({});
 
@@ -140,11 +140,20 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
     `确定隐藏对【${item.nickname}】的好友申请吗？`
   );
 }
+
+function handleSearchInputKeydown(e: KeyboardEvent) {
+  const isEnter = e.key === "Enter" || e.key === "NumpadEnter";
+
+  if (isEnter) {
+    e.preventDefault();
+    onSearch();
+  }
+}
 </script>
 
 <template>
   <div class="flex flex-col">
-    <div class="pb-3 flex justify-between">
+    <div class="flex justify-between">
       <div class="flex">
         <el-button
           type="primary"
@@ -164,14 +173,32 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
       </div>
 
       <div>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon(Refresh)"
-          :loading="loading"
-          @click="onSearch"
+        <el-form
+          ref="searchRef"
+          class="last-not-margin-right-form"
+          :inline="true"
+          :model="search"
         >
-          刷新
-        </el-button>
+          <el-form-item prop="searchKey">
+            <el-input
+              v-model="search.searchKey"
+              placeholder="请输入用户昵称、用户编码"
+              clearable
+              class="!w-[220px]"
+              @keydown="handleSearchInputKeydown"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              type="primary"
+              :icon="useRenderIcon(RiSearchLine)"
+              :loading="loading"
+              @click="onSearch"
+            >
+              搜索
+            </el-button>
+          </el-form-item>
+        </el-form>
       </div>
     </div>
 

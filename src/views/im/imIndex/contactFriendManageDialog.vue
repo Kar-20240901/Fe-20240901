@@ -289,8 +289,8 @@ function cancelNotDisturbClick(item?: BaseImFriendPageVO) {
 
 <template>
   <div class="flex flex-col">
-    <div class="flex justify-between gap-4">
-      <div class="flex flex-wrap flex-1 gap-x-2 gap-y-3 mb-4">
+    <div class="flex justify-between gap-3">
+      <div class="flex flex-wrap flex-1 gap-x-2 gap-y-3 mb-3">
         <el-button
           type="primary"
           :icon="useRenderIcon(RiUserForbidFill)"
