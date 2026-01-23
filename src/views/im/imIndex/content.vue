@@ -462,7 +462,7 @@ let setLongTimerFlag = false;
 onMounted(() => {
   showTodoSendMap();
 
-  doSendTodoSendMap();
+  doSendTodoSendMap(false);
 
   setTimer(5000);
 });
@@ -473,7 +473,7 @@ function setTimer(timeout: number) {
   }
 
   timer = window.setInterval(() => {
-    doSendTodoSendMap();
+    doSendTodoSendMap(false);
   }, timeout);
 }
 
@@ -502,7 +502,7 @@ function showSendFailFlag(item: ISessionContentBO) {
 
 let doSendTodoSendMapFlag: boolean = false;
 
-function doSendTodoSendMap() {
+function doSendTodoSendMap(clickFlag: boolean) {
   if (!props.session.sessionId) {
     return;
   }
@@ -540,7 +540,7 @@ function doSendTodoSendMap() {
     return;
   }
 
-  if (doSendTodoSendMapFlag) {
+  if (doSendTodoSendMapFlag && !clickFlag) {
     return;
   }
 
@@ -548,14 +548,20 @@ function doSendTodoSendMap() {
 
   sortContentSimple(valueArr);
 
-  valueArr.forEach(item => {
+  valueArr.forEach((item, index) => {
+    let sendErrorFlag = item.sendErrorFlag;
+
+    if (index === 0 && clickFlag) {
+      sendErrorFlag = false;
+    }
+
     const form: BaseImSessionContentInsertTxtForFeDTO = {
       sessionId: item.sessionId,
       txt: item.content,
       createTs: item.createTs,
       orderNo: item.orderNo,
       type: item.type,
-      sendErrorFlag: item.sendErrorFlag
+      sendErrorFlag: sendErrorFlag
     };
 
     doSendToServer(form);
@@ -563,7 +569,7 @@ function doSendTodoSendMap() {
 
   setTimeout(() => {
     doSendTodoSendMapFlag = false;
-  }, 2000);
+  }, 500 * valueArr.length);
 }
 
 function sortContentSimple(itemArr?: ISessionContentBO[]) {
@@ -681,7 +687,7 @@ function getFirstContentId() {
 function resendToServerClick(item: ISessionContentBO) {
   setShouldAutoScroll(true);
 
-  doSendTodoSendMap();
+  doSendTodoSendMap(true);
 }
 
 function doSendToServer(form: BaseImSessionContentInsertTxtForFeDTO) {
@@ -720,6 +726,7 @@ function doSendToServer(form: BaseImSessionContentInsertTxtForFeDTO) {
         setTimer(10000);
         setLongTimerFlag = true;
       }
+
       return;
     } else {
       if (setLongTimerFlag) {

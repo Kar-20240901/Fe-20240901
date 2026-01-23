@@ -6,10 +6,15 @@ import RiSearchLine from "~icons/ri/search-line";
 import {
   baseImFriendPage,
   BaseImFriendPageDTO,
-  BaseImFriendPageVO
+  BaseImFriendPageVO,
+  baseImFriendRemoveFriend
 } from "@/api/http/base/BaseImFriendController";
 import RiUserForbidFill from "~icons/ri/user-forbid-fill";
 import RiUserFollowFill from "~icons/ri/user-follow-fill";
+import RiMailForbidFill from "~icons/ri/MailForbidFill";
+import RiMailCheckFill from "~icons/ri/MailCheckFill";
+import RiEraserFill from "~icons/ri/EraserFill";
+import RiUserMinusFill from "~icons/ri/UserMinusFill";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
   baseImBlockAddFriend,
@@ -76,6 +81,27 @@ function resetSelectIdArr() {
   selectIdArr.value = [];
 }
 
+function deleteBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImFriendRemoveFriend({
+        idSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定删除勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
 function notDisturbBySelectIdArr() {
   if (!selectIdArr.value.length) {
     ToastError("请勾选数据");
@@ -94,6 +120,27 @@ function notDisturbBySelectIdArr() {
     },
     undefined,
     `确定免打扰勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function cancelNotDisturbBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImSessionRefUserDeleteNotDisturb({
+        friendUserIdSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定取消免打扰勾选的【${selectIdArr.value.length}】项数据吗？`
   );
 }
 
@@ -179,6 +226,26 @@ function cancelBlockClick(item?: BaseImFriendPageVO) {
   );
 }
 
+function deleteClick(item?: BaseImFriendPageVO) {
+  if (!item?.friendUserId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImFriendRemoveFriend({
+        idSet: [item.friendUserId]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定删除【${item.friendShowName}】吗？`
+  );
+}
+
 function notDisturbClick(item?: BaseImFriendPageVO) {
   if (!item?.friendUserId) {
     return;
@@ -222,8 +289,8 @@ function cancelNotDisturbClick(item?: BaseImFriendPageVO) {
 
 <template>
   <div class="flex flex-col">
-    <div class="flex justify-between">
-      <div class="flex">
+    <div class="flex justify-between gap-4">
+      <div class="flex flex-wrap flex-1 gap-x-2 gap-y-3 mb-4">
         <el-button
           type="primary"
           :icon="useRenderIcon(RiUserForbidFill)"
@@ -242,10 +309,33 @@ function cancelNotDisturbClick(item?: BaseImFriendPageVO) {
 
         <el-button
           type="primary"
-          :icon="useRenderIcon(RiUserForbidFill)"
+          :icon="useRenderIcon(RiMailForbidFill)"
           @click="notDisturbBySelectIdArr"
         >
           批量免打扰
+        </el-button>
+
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(RiMailCheckFill)"
+          @click="cancelNotDisturbBySelectIdArr"
+        >
+          取消免打扰
+        </el-button>
+
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(RiEraserFill)"
+          @click="cancelNotDisturbBySelectIdArr"
+        >
+          清空聊天记录
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(RiUserMinusFill)"
+          @click="deleteBySelectIdArr"
+        >
+          删除好友
         </el-button>
       </div>
 
@@ -283,7 +373,7 @@ function cancelNotDisturbClick(item?: BaseImFriendPageVO) {
       ref="tableRef"
       v-loading="loading"
       :data="dataList"
-      row-key="userId"
+      row-key="friendUserId"
       :header-cell-style="{
         background: 'var(--el-fill-color-light)',
         color: 'var(--el-text-color-primary)'
@@ -374,6 +464,9 @@ function cancelNotDisturbClick(item?: BaseImFriendPageVO) {
         >
           取消拉黑
         </el-button>
+        <el-button link type="primary" @click="deleteClick(scope.row)">
+          删除
+        </el-button>
       </el-table-column>
     </el-table>
 
@@ -388,3 +481,9 @@ function cancelNotDisturbClick(item?: BaseImFriendPageVO) {
     />
   </div>
 </template>
+
+<style scoped lang="scss">
+:deep(.el-button + .el-button) {
+  margin-left: 0;
+}
+</style>

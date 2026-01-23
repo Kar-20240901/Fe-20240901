@@ -211,11 +211,11 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
           </div>
         </div>
       </el-table-column>
-      <el-table-column prop="applyContent" label="申请内容" />
-      <el-table-column #default="scope" prop="status" label="状态" width="70">
+      <el-table-column prop="applyContent" label="申请内容" width="220" />
+      <el-table-column #default="scope" prop="status" label="状态" width="80">
         {{ BaseImApplyStatusEnumMap.get(scope.row.status) || "" }}
       </el-table-column>
-      <el-table-column prop="rejectReason" label="拒绝原因" />
+      <el-table-column prop="rejectReason" label="拒绝原因" width="220" />
       <el-table-column
         #default="scope"
         prop="updateTime"

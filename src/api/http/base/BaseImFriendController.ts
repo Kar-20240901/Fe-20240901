@@ -40,13 +40,13 @@ export function baseImFriendScroll(
   );
 }
 
-export interface NotNullId {
-  id?: string; // 主键 id，是否必传：true，格式：int64
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 删除好友
 export function baseImFriendRemoveFriend(
-  form: NotNullId,
+  form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
