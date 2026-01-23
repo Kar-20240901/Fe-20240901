@@ -5,7 +5,9 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface BaseImSessionRefUserDeleteNotDisturbDTO {
-  sessionId?: string; // 会话主键 id，是否必传：true，格式：int64
+  friendUserIdSet?: string[]; // 好友用户主键 id集合，格式：int64
+  sessionIdSet?: string[]; // 会话主键 id集合，格式：int64
+  groupIdSet?: string[]; // 群组主键 id集合，格式：int64
 }
 
 // 删除免打扰
@@ -47,7 +49,9 @@ export function baseImSessionRefUserUpdateAvatarAndNickname(
 }
 
 export interface BaseImSessionRefUserAddNotDisturbDTO {
-  sessionId?: string; // 会话主键 id，是否必传：true，格式：int64
+  friendUserIdSet?: string[]; // 好友用户主键 id集合，格式：int64
+  sessionIdSet?: string[]; // 会话主键 id集合，格式：int64
+  groupIdSet?: string[]; // 群组主键 id集合，格式：int64
 }
 
 // 新增免打扰
@@ -96,17 +100,18 @@ export function baseImSessionRefUserQueryLastContentMap(
 export interface ScrollListDTO {
   backwardFlag?: boolean; // 是否向后查询，默认：false 根据 id，往前查询 true 根据 id，往后查询
   pageSize?: string; // 本次查询的长度，默认：20，格式：int64
+  refIdSet?: string[]; // 关联的 id集合，格式：int64
   id?: string; // 主键 id，如果为 null，则根据 backwardFlag，来查询最大 id或者最小 id，注意：不会查询该 id的数据，格式：int64
   searchKey?: string; // 搜索内容
   refId?: string; // 关联其他主键 id，格式：int64
   containsCurrentIdFlag?: boolean; // 是否包含当前主键 id，默认：false
   queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往前多查询几条数据，为 false时，往后多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
-  refIdSet?: string[]; // 关联的 id集合
 }
 
 export interface BaseImSessionRefUserPageVO {
   lastContentType?: number; // 最新消息类型，格式：int32
   notDisturbFlag?: boolean; // 是否是免打扰：true 是 false 否
+  lastReceiveTs?: string; // 最后一次接受到消息时的时间戳，默认为：-1，备注：该字段用于：排序，格式：int64
   targetId?: string; // 目标 id，可以查询到好友用户主键 id，或者群组主键 id，一定有值，格式：int64
   avatarUrl?: string; // 冗余字段：头像 url，一定有值
   lastContent?: string; // 最新消息，备注：会截断或者处理
@@ -115,7 +120,6 @@ export interface BaseImSessionRefUserPageVO {
   targetType?: number; // 目标类型：101 好友 201 群组，一定有值，格式：int32
   sessionId?: string; // 会话主键 id，一定有值，格式：int64
   unReadCount?: number; // 未读数量，格式：int32
-  lastReceiveTs?: string; // 最后一次接受到消息时的时间戳，默认为：-1，备注：该字段用于：排序，格式：int64
 }
 
 // 滚动加载

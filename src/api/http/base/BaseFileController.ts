@@ -99,6 +99,7 @@ export interface BaseFileScrollSelfDTO {
   queryTotalFlag?: boolean; // 是否查询：总文件数和总文件大小，默认：false
   publicFlag?: boolean; // 是否公开访问
   pageSize?: string; // 本次查询的长度，默认：20，格式：int64
+  refIdSet?: string[]; // 关联的 id集合，格式：int64
   pid?: string; // 父节点id（顶级则为0），格式：int64
   remark?: string; // 备注
   searchKey?: string; // 搜索内容

@@ -7,6 +7,7 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 export interface ScrollListDTO {
   backwardFlag?: boolean; // 是否向后查询，默认：false 根据 id，往前查询 true 根据 id，往后查询
   pageSize?: string; // 本次查询的长度，默认：20，格式：int64
+  refIdSet?: string[]; // 关联的 id集合，格式：int64
   id?: string; // 主键 id，如果为 null，则根据 backwardFlag，来查询最大 id或者最小 id，注意：不会查询该 id的数据，格式：int64
   searchKey?: string; // 搜索内容
   refId?: string; // 关联其他主键 id，格式：int64

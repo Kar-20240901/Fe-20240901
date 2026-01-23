@@ -36,3 +36,7 @@
 .no-footer-dialog .el-dialog__body {
   max-height: 73vh !important;
 }
+
+.last-not-margin-right-form .el-form-item:last-child {
+  margin-right: 0;
+}

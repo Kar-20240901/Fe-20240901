@@ -61,9 +61,13 @@ export interface BaseImSearchBaseGroupVO {
 }
 
 export interface BaseImSearchBaseFriendVO {
+  notDisturbFlag?: boolean; // 是否免打扰，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  friendCreateTime?: string; // 好友创建时间，备注：只有 dto的 manageQueryFlag生效时，才会返回该值，格式：date-time
+  blockFlag?: boolean; // 是否已经拉黑，备注：只有 dto的 queryBlockFlag生效时，才会返回该值
   avatarUrl?: string; // 好友头像
   friendShowId?: string; // 好友显示的 id
-  friendUserId?: string; // 好友用户主键 id
+  bio?: string; // 个人简介，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  friendUserId?: string; // 好友用户主键 id，格式：int64
   friendShowName?: string; // 好友显示名称
   sessionId?: string; // 会话主键 id，格式：int64
 }

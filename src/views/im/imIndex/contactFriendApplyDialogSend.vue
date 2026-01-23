@@ -154,7 +154,12 @@ function sendConfirmAfterFun(res: R<any>, done: () => void) {
       </div>
 
       <div>
-        <el-form ref="searchRef" :inline="true" :model="search">
+        <el-form
+          ref="searchRef"
+          class="last-not-margin-right-form"
+          :inline="true"
+          :model="search"
+        >
           <el-form-item prop="searchKey">
             <el-input
               v-model="search.searchKey"
@@ -214,7 +219,7 @@ function sendConfirmAfterFun(res: R<any>, done: () => void) {
           </div>
         </div>
       </el-table-column>
-      <el-table-column prop="uuid" label="用户编码" />
+      <el-table-column prop="uuid" label="用户编码" width="270" />
       <el-table-column prop="bio" label="个人简介" />
       <el-table-column #default="scope" label="操作" width="80">
         <el-button link type="primary" @click="applyClick(scope.row)">

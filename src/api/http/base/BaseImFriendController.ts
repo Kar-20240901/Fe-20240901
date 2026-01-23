@@ -7,6 +7,7 @@ import type { PureHttpRequestConfig } from "@/utils/http/types";
 export interface ScrollListDTO {
   backwardFlag?: boolean; // 是否向后查询，默认：false 根据 id，往前查询 true 根据 id，往后查询
   pageSize?: string; // 本次查询的长度，默认：20，格式：int64
+  refIdSet?: string[]; // 关联的 id集合，格式：int64
   id?: string; // 主键 id，如果为 null，则根据 backwardFlag，来查询最大 id或者最小 id，注意：不会查询该 id的数据，格式：int64
   searchKey?: string; // 搜索内容
   refId?: string; // 关联其他主键 id，格式：int64
@@ -15,9 +16,13 @@ export interface ScrollListDTO {
 }
 
 export interface BaseImFriendPageVO {
+  notDisturbFlag?: boolean; // 是否免打扰，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  friendCreateTime?: string; // 好友创建时间，备注：只有 dto的 manageQueryFlag生效时，才会返回该值，格式：date-time
+  blockFlag?: boolean; // 是否已经拉黑，备注：只有 dto的 queryBlockFlag生效时，才会返回该值
   avatarUrl?: string; // 好友头像
   friendShowId?: string; // 好友显示的 id
-  friendUserId?: string; // 好友用户主键 id
+  bio?: string; // 个人简介，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  friendUserId?: string; // 好友用户主键 id，格式：int64
   friendShowName?: string; // 好友显示名称
   sessionId?: string; // 会话主键 id，格式：int64
 }
@@ -54,7 +59,9 @@ export function baseImFriendRemoveFriend(
 
 export interface BaseImFriendPageDTO {
   current?: string; // 第几页，格式：int64
+  manageQueryFlag?: boolean; // 是否是好友管理查询
   pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
+  queryBlockFlag?: boolean; // 是否查询拉黑情况
   friendUserId?: string; // 好友用户主键 id，格式：int64
   searchKey?: string; // 搜索关键字
   order?: MyOrderDTO; // 排序字段

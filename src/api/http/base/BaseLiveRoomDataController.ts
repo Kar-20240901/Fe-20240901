@@ -3,8 +3,8 @@ import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface Channel {
-  registered?: boolean; // null
   active?: boolean; // null
+  registered?: boolean; // null
   open?: boolean; // null
   writable?: boolean; // null
 }

@@ -33,8 +33,8 @@ export function nettyWebSocketGetAllWebSocketUrl(
 }
 
 export interface Channel {
-  registered?: boolean; // null
   active?: boolean; // null
+  registered?: boolean; // null
   open?: boolean; // null
   writable?: boolean; // null
 }

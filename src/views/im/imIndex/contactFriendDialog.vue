@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
 import { getDialogWidth } from "@/utils/MyLayoutUtil";
+import ContactFriendManageDialog from "@/views/im/imIndex/contactFriendManageDialog.vue";
 import ContactFriendApplyDialogToMe from "@/views/im/imIndex/contactFriendApplyDialogToMe.vue";
 import ContactFriendApplyDialogFromMe from "@/views/im/imIndex/contactFriendApplyDialogFromMe.vue";
 import ContactFriendApplyDialogSend from "@/views/im/imIndex/contactFriendApplyDialogSend.vue";
@@ -34,11 +35,12 @@ function tabChange(name: TabPaneName) {
   });
 }
 
+const contactFriendManageDialog = "contactFriendManageDialog";
 const contactFriendApplyDialogSend = "contactFriendApplyDialogSend";
 const contactFriendApplyDialogFromMe = "contactFriendApplyDialogFromMe";
 const contactFriendApplyDialogToMe = "contactFriendApplyDialogToMe";
 
-const tabsVal = ref<string>(contactFriendApplyDialogSend);
+const tabsVal = ref<string>(contactFriendManageDialog);
 
 const emit = defineEmits<{
   (e: "searchContactFriend"): void;
@@ -61,6 +63,9 @@ function searchContactFriend() {
   >
     <div class="flex flex-col px-5 py-3 bg-bg_color">
       <el-tabs v-model="tabsVal" type="border-card" @tab-change="tabChange">
+        <el-tab-pane label="好友管理" :name="contactFriendManageDialog">
+          <contact-friend-manage-dialog ref="contactFriendManageDialogRef" />
+        </el-tab-pane>
         <el-tab-pane label="发起申请" :name="contactFriendApplyDialogSend">
           <contact-friend-apply-dialog-send
             ref="contactFriendApplyDialogSendRef"

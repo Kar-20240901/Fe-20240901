@@ -7,6 +7,7 @@ import {
   IRequestDialogFormProps
 } from "@/views/base/request/types";
 import { yesOrNoOptions } from "@/model/enum/base/yesOrNoEnum";
+import { getDialogWidth } from "@/utils/MyLayoutUtil";
 
 const form = ref<IBaseRequestFullInfoDO>({});
 const formRef = ref();
@@ -43,7 +44,7 @@ const props = defineProps<IRequestDialogFormProps>();
     draggable
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    width="45%"
+    :width="getDialogWidth()"
     destroy-on-close
   >
     <el-form
