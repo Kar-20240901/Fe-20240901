@@ -286,23 +286,29 @@ async function doSearch(
         } else if (form?.id && scrollToItemFlag) {
           scrollToItemByContentId(form.id);
         } else {
-          if (shouldAutoScroll) {
-            setTimeout(() => {
-              scrollToBottom();
-
-              nextTick(() => {
-                setTimeout(() => {
-                  scrollToBottom();
-                }, CommonConstant.SHORT_DELAY);
-              });
-            }, CommonConstant.SHORT_DELAY);
-          }
+          handleShouldAutoScroll();
         }
       });
     })
     .finally(() => {
       sessionContentLoading.value = false;
     });
+}
+
+function handleShouldAutoScroll() {
+  if (!shouldAutoScroll) {
+    return;
+  }
+
+  setTimeout(() => {
+    scrollToBottom();
+
+    nextTick(() => {
+      setTimeout(() => {
+        scrollToBottom();
+      }, CommonConstant.SHORT_DELAY);
+    });
+  }, CommonConstant.SHORT_DELAY);
 }
 
 function scrollSearchSuf(scrollType?: "up" | "down", oldListLength?: number) {
@@ -795,6 +801,8 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       };
 
       setSessionContentList([item], true, false);
+
+      handleShouldAutoScroll();
 
       doSearchThrottle(
         {
