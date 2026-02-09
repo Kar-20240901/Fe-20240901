@@ -4,18 +4,18 @@ import { http } from "@/utils/http";
 import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
-export interface NotNullId {
-  id?: string; // 主键 id，是否必传：true，格式：int64
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
 
 // 解散群组
-export function baseImGroupDeleteById(
-  form: NotNullId,
+export function baseImGroupDeleteByIdSet(
+  form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
     "post",
-    baseApi("/base/imGroup/deleteById"),
+    baseApi("/base/imGroup/deleteByIdSet"),
     form,
     config
   );

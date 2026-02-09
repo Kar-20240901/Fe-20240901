@@ -17,6 +17,7 @@ defineExpose({
   open
 });
 
+const contactFriendManageDialogRef = ref();
 const contactFriendApplyDialogSendRef = ref();
 const contactFriendApplyDialogFromMeRef = ref();
 const contactFriendApplyDialogToMeRef = ref();
@@ -25,7 +26,9 @@ function tabChange(name: TabPaneName) {
   tabsVal.value = name as unknown as string;
 
   nextTick(() => {
-    if (name === contactFriendApplyDialogSend) {
+    if (name === contactFriendManageDialog) {
+      contactFriendManageDialogRef.value?.onSearch();
+    } else if (name === contactFriendApplyDialogSend) {
       contactFriendApplyDialogSendRef.value?.onSearch();
     } else if (name === contactFriendApplyDialogFromMe) {
       contactFriendApplyDialogFromMeRef.value?.onSearch();

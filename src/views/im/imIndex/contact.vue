@@ -12,6 +12,7 @@ import { BaseImGroupPageVO } from "@/api/http/base/BaseImGroupController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import EpArrowRight from "~icons/ep/ArrowRight";
 import ContactFriendDialog from "@/views/im/imIndex/contactFriendDialog.vue";
+import ContactGroupDialog from "@/views/im/imIndex/contactGroupDialog.vue";
 
 const SegmentedOptionArr = [
   {
@@ -80,11 +81,13 @@ const ApplyOperateArr = [
 ];
 
 const contactFriendDialogRef = ref();
+const contactGroupDialogRef = ref();
 
 function applyOperateClick(value?: string) {
   if (value === OperateFriendValue) {
     contactFriendDialogRef?.value.open();
   } else if (value === OperateGroupValue) {
+    contactGroupDialogRef?.value.open();
   } else if (value === BlockValue) {
   }
 }
@@ -138,6 +141,11 @@ function applyOperateClick(value?: string) {
     <contact-friend-dialog
       ref="contactFriendDialogRef"
       @searchContactFriend="onSearch()"
+    />
+
+    <contact-group-dialog
+      ref="contactGroupDialogRef"
+      @searchContactGroup="onSearch()"
     />
   </div>
 </template>
