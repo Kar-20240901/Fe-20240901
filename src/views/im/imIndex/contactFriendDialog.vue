@@ -48,11 +48,18 @@ const tabsVal = ref<string>(contactFriendManageDialog);
 const emit = defineEmits<{
   (e: "searchContactFriend"): void;
   (e: "onlySessionSearch"): void;
-  (e: "refreshSearchContent", sessionIdArr?: string[]): void;
+  (
+    e: "refreshSearchContent",
+    sessionIdArr?: string[],
+    removeSessionFlag?: boolean
+  ): void;
 }>();
 
-function refreshSearchContent(sessionIdArr?: string[]) {
-  emit("refreshSearchContent", sessionIdArr);
+function refreshSearchContent(
+  sessionIdArr?: string[],
+  removeSessionFlag?: boolean
+) {
+  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
 }
 
 function onlySessionSearch() {

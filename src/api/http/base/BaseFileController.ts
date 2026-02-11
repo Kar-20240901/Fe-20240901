@@ -110,6 +110,7 @@ export interface BaseFileScrollSelfDTO {
   showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
   id?: string; // 主键 id，如果为 null，则根据 backwardFlag，来查询最大 id或者最小 id，注意：不会查询该 id的数据，格式：int64
   refId?: string; // 关联的 id，格式：int64
+  boolean1?: boolean; // 布尔值1
   queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往前多查询几条数据，为 false时，往后多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
   backUpFlag?: boolean; // 返回上级
   enableFlag?: boolean; // 是否启用

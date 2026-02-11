@@ -96,7 +96,7 @@ function deleteBySelectIdArr() {
       await baseImFriendRemoveFriend({
         idSet: [...selectIdArr.value]
       }).then(res => {
-        refreshSearchContent([...selectSessionIdArr.value]);
+        refreshSearchContent([...selectSessionIdArr.value], true);
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
@@ -266,7 +266,7 @@ function deleteClick(item?: BaseImFriendPageVO) {
       await baseImFriendRemoveFriend({
         idSet: [item.friendUserId]
       }).then(res => {
-        refreshSearchContent([...selectSessionIdArr.value]);
+        refreshSearchContent([item.sessionId], true);
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
@@ -322,11 +322,18 @@ function cancelNotDisturbClick(item?: BaseImFriendPageVO) {
 const emit = defineEmits<{
   (e: "searchContactFriend"): void;
   (e: "onlySessionSearch"): void;
-  (e: "refreshSearchContent", sessionIdArr: string[]): void;
+  (
+    e: "refreshSearchContent",
+    sessionIdArr: string[],
+    removeSessionFlag?: boolean
+  ): void;
 }>();
 
-function refreshSearchContent(sessionIdArr?: string[]) {
-  emit("refreshSearchContent", sessionIdArr);
+function refreshSearchContent(
+  sessionIdArr?: string[],
+  removeSessionFlag?: boolean
+) {
+  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
 }
 
 function onlySessionSearch() {

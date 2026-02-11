@@ -169,6 +169,10 @@ const emit = defineEmits<{
 }>();
 
 function showTodoSendMap() {
+  if (!props.session.sessionId) {
+    return;
+  }
+
   const todoSendObj = storageLocal().getItem<Record<string, ISessionContentBO>>(
     LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ + props.session.sessionId
   );
@@ -266,11 +270,12 @@ async function doSearch(
 
   await baseImSessionContentRefUserScroll({
     refId: sessionId,
-    backwardFlag: form?.backwardFlag || false,
-    containsCurrentIdFlag: form?.containsCurrentIdFlag || false,
+    backwardFlag: form?.backwardFlag ?? false,
+    containsCurrentIdFlag: form?.containsCurrentIdFlag ?? false,
     id: form?.id,
     pageSize: String(pageSize),
-    queryMoreFlag: form.queryMoreFlag || false
+    queryMoreFlag: form.queryMoreFlag ?? false,
+    boolean1: form.boolean1 ?? true
   })
     .then(res => {
       const oldListLength = sessionContentShowList.value.length - 1;

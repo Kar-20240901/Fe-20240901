@@ -48,11 +48,18 @@ const emit = defineEmits<{
   (e: "contentOnlyReset"): void;
   (e: "execContentSearch"): void;
 
-  (e: "refreshSearchContent", sessionIdArr?: string[]): void;
+  (
+    e: "refreshSearchContent",
+    sessionIdArr?: string[],
+    removeSessionFlag?: boolean
+  ): void;
 }>();
 
-function refreshSearchContent(sessionIdArr?: string[]) {
-  emit("refreshSearchContent", sessionIdArr);
+function refreshSearchContent(
+  sessionIdArr?: string[],
+  removeSessionFlag?: boolean
+) {
+  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
 }
 
 const showSearchOverviewPre = ref<boolean>(false);

@@ -51,11 +51,18 @@ const emit = defineEmits<{
   (e: "contactGroupClick", item: BaseImSearchBaseGroupVO): void;
 
   (e: "onlySessionSearch"): void;
-  (e: "refreshSearchContent", sessionIdArr?: string[]): void;
+  (
+    e: "refreshSearchContent",
+    sessionIdArr?: string[],
+    removeSessionFlag?: boolean
+  ): void;
 }>();
 
-function refreshSearchContent(sessionIdArr?: string[]) {
-  emit("refreshSearchContent", sessionIdArr);
+function refreshSearchContent(
+  sessionIdArr?: string[],
+  removeSessionFlag?: boolean
+) {
+  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
 }
 
 function onlySessionSearch() {

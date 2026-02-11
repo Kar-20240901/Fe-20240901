@@ -46,7 +46,10 @@ const contentRef = ref();
 
 const manageRef = ref();
 
-function refreshSearchContent(sessionIdArr?: string[]) {
+function refreshSearchContent(
+  sessionIdArr?: string[],
+  removeSessionFlag?: boolean
+) {
   if (!sessionIdArr?.length) {
     return;
   }
@@ -55,14 +58,18 @@ function refreshSearchContent(sessionIdArr?: string[]) {
     return;
   }
 
-  contentOnlyReset();
+  if (removeSessionFlag) {
+    session.value = {};
+  } else {
+    contentOnlyReset();
 
-  contentRef.value?.doSearch(
-    { refId: session.value.sessionId, backwardFlag: false },
-    false,
-    false,
-    undefined
-  );
+    contentRef.value?.doSearch(
+      { refId: session.value.sessionId, backwardFlag: false, boolean1: true },
+      false,
+      false,
+      undefined
+    );
+  }
 }
 
 async function contentDoSearch(
