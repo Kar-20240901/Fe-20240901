@@ -15,7 +15,7 @@ import {
   BaseImApplyStatusEnum,
   BaseImApplyStatusEnumMap
 } from "@/model/enum/im/BaseImApplyStatusEnum";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
 import RiSearchLine from "~icons/ri/search-line";
 
@@ -249,7 +249,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
         label="更新时间"
         width="160"
       >
-        {{ FormatDateTimeForCurrentDay(new Date(scope.row.updateTime)) }}
+        {{ FormatStringForCurrentDay(scope.row.updateTime) }}
       </el-table-column>
       <el-table-column
         #default="scope"
@@ -257,7 +257,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
         label="申请时间"
         width="160"
       >
-        {{ FormatDateTimeForCurrentDay(new Date(scope.row.applyTime)) }}
+        {{ FormatStringForCurrentDay(scope.row.applyTime) }}
       </el-table-column>
       <el-table-column #default="scope" label="操作" fixed="right" width="120">
         <el-button

@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "~icons/ep/refresh";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import FormEdit from "@/views/base/userDeleteLog/formEdit.vue";
 import {
   baseUserDeleteLogDeleteByIdSet,
@@ -171,7 +171,7 @@ function deleteBySelectIdArr() {
           prop="userCreateTime"
           label="创建时间"
         >
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.userCreateTime)) }}
+          {{ FormatStringForCurrentDay(scope.row.userCreateTime) }}
         </el-table-column>
         <el-table-column #default="scope" label="注册终端">
           {{
@@ -180,7 +180,7 @@ function deleteBySelectIdArr() {
           }}
         </el-table-column>
         <el-table-column #default="scope" prop="createTime" label="注销时间">
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
+          {{ FormatStringForCurrentDay(scope.row.createTime) }}
         </el-table-column>
         <el-table-column #default="scope" label="操作" width="150">
           <el-button link type="primary" @click="viewClick(scope.row)">

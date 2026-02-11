@@ -25,9 +25,31 @@ export function getEpochFlag(date: Date) {
 /**
  * 格式化时间戳，如果是今天，则不显示年月日
  */
+export function FormatStringForCurrentDay(
+  dateTimeStr?: string,
+  showFullFLag: boolean = true,
+  checkEpochFlag?: boolean
+): string {
+  if (!dateTimeStr) {
+    return "";
+  }
+
+  const date = new Date(dateTimeStr);
+
+  if (date.toString() === "Invalid Date") {
+    return "无效时间";
+  }
+
+  return FormatDateTimeForCurrentDay(date, showFullFLag, checkEpochFlag);
+}
+
+/**
+ * 格式化时间戳，如果是今天，则不显示年月日
+ */
 export function FormatTsForCurrentDay(
   ts?: string,
-  showFullFLag?: boolean
+  showFullFLag: boolean = true,
+  checkEpochFlag?: boolean
 ): string {
   if (!ts) {
     return "";
@@ -39,7 +61,7 @@ export function FormatTsForCurrentDay(
     return "无效时间";
   }
 
-  return FormatDateTimeForCurrentDay(date, showFullFLag);
+  return FormatDateTimeForCurrentDay(date, showFullFLag, checkEpochFlag);
 }
 
 /**
@@ -47,7 +69,7 @@ export function FormatTsForCurrentDay(
  */
 export function FormatDateTimeForCurrentDay(
   date: Date = new Date(),
-  showFullFLag?: boolean,
+  showFullFlag: boolean = true,
   checkEpochFlag?: boolean
 ): string {
   if (checkEpochFlag && getEpochFlag(date)) {
@@ -58,15 +80,19 @@ export function FormatDateTimeForCurrentDay(
     return "无效时间";
   }
 
+  if (showFullFlag) {
+    return FormatDateTime(date);
+  }
+
   const currentDay = Math.trunc(GetServerTimestamp() / 86400000);
 
   const checkDay = Math.trunc(date.getTime() / 86400000);
 
-  if (!showFullFLag && currentDay === checkDay) {
+  if (currentDay === checkDay) {
     return dayjs(date).format("HH:mm:ss");
   }
 
-  return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
+  return FormatDateTime(date);
 }
 
 /**

@@ -34,7 +34,7 @@ import {
   ElOrderDTO,
   GetMyOrderDTO
 } from "@/model/dto/MyOrderDTO";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
@@ -462,7 +462,7 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
           sortable
           label="创建时间"
         >
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
+          {{ FormatStringForCurrentDay(scope.row.createTime) }}
         </el-table-column>
         <el-table-column #default="scope" label="注册终端">
           {{
@@ -476,7 +476,7 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
           label="最近活跃时间"
           sortable
         >
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.lastActiveTime)) }}
+          {{ FormatStringForCurrentDay(scope.row.lastActiveTime) }}
         </el-table-column>
         <el-table-column #default="scope" label="操作" width="150">
           <el-button link type="primary" @click="editClick(scope.row)">

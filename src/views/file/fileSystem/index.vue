@@ -35,7 +35,7 @@ import CreateFolderFormEdit from "@/views/file/fileSystem/createFolderFormEdit.v
 import FileTree from "@/views/file/fileSystem/fileTree.vue";
 import RenameFormEdit from "@/views/file/fileSystem/renameFormEdit.vue";
 import UploadDialog from "@/views/file/fileSystem/uploadDialog.vue";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import { getToken } from "@/utils/auth";
 import RiFile2Line from "~icons/ri/file-2-line";
 import RiFolderOpenFill from "~icons/ri/folder-open-fill";
@@ -664,9 +664,7 @@ const imagePreviewInitialIndex = ref<number>(0);
                           </div>
                           <div>
                             创建时间：{{
-                              FormatDateTimeForCurrentDay(
-                                new Date(subItem.createTime)
-                              )
+                              FormatStringForCurrentDay(subItem.createTime)
                             }}
                           </div>
                         </div>

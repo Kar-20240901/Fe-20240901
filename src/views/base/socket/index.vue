@@ -12,7 +12,7 @@ import {
   baseSocketPage,
   BaseSocketPageDTO
 } from "@/api/http/base/BaseSocketController";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import { BaseSocketTypeMap } from "@/model/enum/socket/BaseSocketTypeEnum";
 import EpCircleCheck from "~icons/ep/circle-check";
 import EpCircleClose from "~icons/ep/circle-close";
@@ -241,7 +241,7 @@ function onSelectChange(rowArr?: BaseSocketDO[]) {
           }}
         </el-table-column>
         <el-table-column #default="scope" prop="createTime" label="创建时间">
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
+          {{ FormatStringForCurrentDay(scope.row.createTime) }}
         </el-table-column>
         <el-table-column #default="scope" prop="enableFlag" label="禁用">
           {{ scope.row.enableFlag ? "否" : "是" }}

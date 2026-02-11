@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "~icons/ep/refresh";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import {
   TempRequestCategoryEnum,
   TempRequestCategoryMap
@@ -121,7 +121,7 @@ function resetSearch() {
             }}
           </el-table-column>
           <el-table-column #default="scope" prop="createTime" label="创建时间">
-            {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
+            {{ FormatStringForCurrentDay(scope.row.createTime) }}
           </el-table-column>
         </el-table>
 

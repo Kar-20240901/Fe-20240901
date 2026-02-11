@@ -5,7 +5,7 @@ import Avatar from "@/assets/user.png";
 import RiSearchLine from "~icons/ri/search-line";
 import AddFill from "~icons/ri/add-circle-line";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import {
   baseImGroupDeleteByIdSet,
   baseImGroupPage,
@@ -205,7 +205,7 @@ function addClick() {}
         label="创建时间"
         width="160"
       >
-        {{ FormatDateTimeForCurrentDay(new Date(scope.row.groupCreateTime)) }}
+        {{ FormatStringForCurrentDay(scope.row.groupCreateTime) }}
       </el-table-column>
       <el-table-column
         #default="scope"

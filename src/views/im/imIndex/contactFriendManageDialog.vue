@@ -20,7 +20,7 @@ import {
   baseImBlockAddFriend,
   baseImBlockCancelFriend
 } from "@/api/http/base/BaseImBlockController";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import {
   baseImSessionRefUserAddNotDisturb,
   baseImSessionRefUserDeleteNotDisturb
@@ -471,7 +471,7 @@ function searchContactFriend() {
         label="创建时间"
         width="160"
       >
-        {{ FormatDateTimeForCurrentDay(new Date(scope.row.friendCreateTime)) }}
+        {{ FormatStringForCurrentDay(scope.row.friendCreateTime) }}
       </el-table-column>
       <el-table-column
         #default="scope"

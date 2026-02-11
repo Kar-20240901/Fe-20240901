@@ -24,7 +24,7 @@ import { baseApi } from "@/api/http/utils";
 import { BaseFileUploadTypeEnumEnum } from "@/model/enum/file/BaseFileUploadTypeEnum";
 import Refresh from "~icons/ep/refresh";
 import { IUploadDialogFormProps } from "@/views/file/fileSystem/types";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import { throttle } from "@pureadmin/utils";
 import CommonConstant from "@/model/constant/CommonConstant";
 import * as CryptoJS from "crypto-js";
@@ -342,7 +342,7 @@ function composeClick(row: BaseFileTransferDO) {
           #default="scope"
           prop="status"
           label="状态"
-          width="100"
+          width="200"
         >
           {{ BaseFileTransferStatusMap.get(scope.row.status) || "" }}
         </el-table-column>
@@ -352,7 +352,7 @@ function composeClick(row: BaseFileTransferDO) {
           label="创建时间"
           width="200"
         >
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
+          {{ FormatStringForCurrentDay(scope.row.createTime) }}
         </el-table-column>
         <el-table-column #default="scope" label="操作" width="120">
           <el-button

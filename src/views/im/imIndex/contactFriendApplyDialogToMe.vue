@@ -24,7 +24,7 @@ import {
   baseImBlockCancelFriend
 } from "@/api/http/base/BaseImBlockController";
 import KarOneInputTextarea from "@/components/KarOneInputTextarea/index.vue";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
 import type { R } from "@/model/vo/R";
 import {
@@ -453,7 +453,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
         label="更新时间"
         width="160"
       >
-        {{ FormatDateTimeForCurrentDay(new Date(scope.row.updateTime)) }}
+        {{ FormatStringForCurrentDay(scope.row.updateTime) }}
       </el-table-column>
       <el-table-column
         #default="scope"
@@ -461,7 +461,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
         label="申请时间"
         width="160"
       >
-        {{ FormatDateTimeForCurrentDay(new Date(scope.row.applyTime)) }}
+        {{ FormatStringForCurrentDay(scope.row.applyTime) }}
       </el-table-column>
       <el-table-column
         #default="scope"

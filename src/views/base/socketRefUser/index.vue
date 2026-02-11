@@ -12,7 +12,7 @@ import {
   baseSocketRefUserPage,
   BaseSocketRefUserPageDTO
 } from "@/api/http/base/BaseSocketRefUserController";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import { BaseSocketOnlineTypeMap } from "@/model/enum/socket/BaseSocketOnlineTypeEnum";
 import {
   TempRequestCategoryEnum,
@@ -218,7 +218,7 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
           {{ BaseSocketTypeMap.get(scope.row.type) || "" }}
         </el-table-column>
         <el-table-column #default="scope" prop="createTime" label="创建时间">
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
+          {{ FormatStringForCurrentDay(scope.row.createTime) }}
         </el-table-column>
         <el-table-column #default="scope" label="操作" width="150">
           <el-button link type="primary" @click="offlineClick(scope.row)">

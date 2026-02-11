@@ -16,7 +16,7 @@ import {
 import { BaseLiveRoomDO } from "@/api/http/base/BaseLiveRoomController";
 import { BaseLiveRoomUserAddUserRequest } from "@/api/socket/WebSocket";
 import { BaseLiveRoomUserAddUserDTO } from "./types";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import JoinFormEdit from "./joinFormEdit.vue";
 import { R } from "@/model/vo/R";
 import { useRouter } from "vue-router";
@@ -240,7 +240,7 @@ function onSelectChange(rowArr?: BaseLiveRoomDO[]) {
           {{ scope.row.code || "不需要" }}
         </el-table-column>
         <el-table-column #default="scope" prop="createTime" label="创建时间">
-          {{ FormatDateTimeForCurrentDay(new Date(scope.row.createTime)) }}
+          {{ FormatStringForCurrentDay(scope.row.createTime) }}
         </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button

@@ -20,7 +20,7 @@ import {
   baseApiTokenPage,
   BaseApiTokenPageDTO
 } from "@/api/http/base/BaseApiTokenController";
-import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import FormEdit from "./formEdit.vue";
 import { R } from "@/model/vo/R";
 import { useCopyToClipboard } from "@pureadmin/utils";
@@ -238,13 +238,7 @@ function onSelectChange(rowArr?: BaseApiTokenDO[]) {
           sortable
           label="最近使用"
         >
-          {{
-            FormatDateTimeForCurrentDay(
-              new Date(scope.row.lastUseTime),
-              false,
-              true
-            )
-          }}
+          {{ FormatStringForCurrentDay(scope.row.lastUseTime, true, true) }}
         </el-table-column>
         <el-table-column #default="scope" prop="enableFlag" label="禁用">
           {{ scope.row.enableFlag ? "否" : "是" }}
