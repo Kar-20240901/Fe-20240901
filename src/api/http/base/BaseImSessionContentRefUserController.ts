@@ -60,3 +60,33 @@ export function baseImSessionContentRefUserMyPage(
     config
   );
 }
+
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
+}
+
+// 隐藏消息内容
+export function baseImSessionContentRefUserHideSessionContentRefUser(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/imSessionContentRefUser/hideSessionContentRefUser"),
+    form,
+    config
+  );
+}
+
+// 清空聊天记录
+export function baseImSessionContentRefUserDeleteSessionContentRefUser(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/imSessionContentRefUser/deleteSessionContentRefUser"),
+    form,
+    config
+  );
+}
