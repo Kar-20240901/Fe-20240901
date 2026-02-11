@@ -49,7 +49,18 @@ const contactGroupRef = ref();
 const emit = defineEmits<{
   (e: "contactFriendClick", item: BaseImSearchBaseFriendVO): void;
   (e: "contactGroupClick", item: BaseImSearchBaseGroupVO): void;
+
+  (e: "onlySessionSearch"): void;
+  (e: "refreshSearchContent", sessionIdArr?: string[]): void;
 }>();
+
+function refreshSearchContent(sessionIdArr?: string[]) {
+  emit("refreshSearchContent", sessionIdArr);
+}
+
+function onlySessionSearch() {
+  emit("onlySessionSearch");
+}
 
 function contactFriendClick(item: BaseImFriendPageVO) {
   emit("contactFriendClick", item);
@@ -141,6 +152,8 @@ function applyOperateClick(value?: string) {
     <contact-friend-dialog
       ref="contactFriendDialogRef"
       @searchContactFriend="onSearch()"
+      @onlySessionSearch="onlySessionSearch"
+      @refreshSearchContent="refreshSearchContent"
     />
 
     <contact-group-dialog

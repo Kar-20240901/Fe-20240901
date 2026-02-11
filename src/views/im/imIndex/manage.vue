@@ -47,7 +47,13 @@ const emit = defineEmits<{
 
   (e: "contentOnlyReset"): void;
   (e: "execContentSearch"): void;
+
+  (e: "refreshSearchContent", sessionIdArr?: string[]): void;
 }>();
+
+function refreshSearchContent(sessionIdArr?: string[]) {
+  emit("refreshSearchContent", sessionIdArr);
+}
 
 const showSearchOverviewPre = ref<boolean>(false);
 
@@ -136,10 +142,14 @@ function menuSelect(index: string) {
   menuIndex.value = index;
 
   if (index === BaseImLeftSegmentedEnum.SESSION.code) {
-    sessionRef.value?.onSearch(false, false, false);
+    onlySessionSearch();
   } else if (index === BaseImLeftSegmentedEnum.CONTACT.code) {
     contactRef.value?.onSearch(false, false);
   }
+}
+
+function onlySessionSearch() {
+  sessionRef.value?.onSearch(false, false, false);
 }
 </script>
 
@@ -220,6 +230,8 @@ function menuSelect(index: string) {
         ref="contactRef"
         @contactFriendClick="searchFriendClick"
         @contactGroupClick="searchGroupClick"
+        @onlySessionSearch="onlySessionSearch"
+        @refreshSearchContent="refreshSearchContent"
       />
     </div>
   </div>

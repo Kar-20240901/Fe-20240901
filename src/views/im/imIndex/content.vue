@@ -49,6 +49,7 @@ import LocalStorageKey from "@/model/constant/LocalStorageKey";
 import { baseImSessionRefUserQueryLastContentMap } from "@/api/http/base/BaseImSessionRefUserController";
 import { throttleByKey } from "@/utils/CommonUtil";
 
+// import { buildUUID } from "@pureadmin/utils";
 // let sendTimer;
 //
 // window.startSend = function () {

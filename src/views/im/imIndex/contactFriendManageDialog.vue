@@ -96,9 +96,12 @@ function deleteBySelectIdArr() {
       await baseImFriendRemoveFriend({
         idSet: [...selectIdArr.value]
       }).then(res => {
+        refreshSearchContent([...selectSessionIdArr.value]);
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
+        searchContactFriend();
+        onlySessionSearch();
       });
     },
     undefined,
@@ -159,9 +162,11 @@ function deleteSessionContentRefUserBySelectIdArr() {
       await baseImSessionContentRefUserDeleteSessionContentRefUser({
         idSet: [...selectSessionIdArr.value]
       }).then(res => {
+        refreshSearchContent([...selectSessionIdArr.value]);
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
+        onlySessionSearch();
       });
     },
     undefined,
@@ -261,9 +266,12 @@ function deleteClick(item?: BaseImFriendPageVO) {
       await baseImFriendRemoveFriend({
         idSet: [item.friendUserId]
       }).then(res => {
+        refreshSearchContent([...selectSessionIdArr.value]);
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
+        searchContactFriend();
+        onlySessionSearch();
       });
     },
     undefined,
@@ -309,6 +317,24 @@ function cancelNotDisturbClick(item?: BaseImFriendPageVO) {
     undefined,
     `确定取消免打扰【${item.friendShowName}】吗？`
   );
+}
+
+const emit = defineEmits<{
+  (e: "searchContactFriend"): void;
+  (e: "onlySessionSearch"): void;
+  (e: "refreshSearchContent", sessionIdArr: string[]): void;
+}>();
+
+function refreshSearchContent(sessionIdArr?: string[]) {
+  emit("refreshSearchContent", sessionIdArr);
+}
+
+function onlySessionSearch() {
+  emit("onlySessionSearch");
+}
+
+function searchContactFriend() {
+  emit("searchContactFriend");
 }
 </script>
 

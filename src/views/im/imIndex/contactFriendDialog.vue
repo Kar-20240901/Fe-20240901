@@ -47,7 +47,17 @@ const tabsVal = ref<string>(contactFriendManageDialog);
 
 const emit = defineEmits<{
   (e: "searchContactFriend"): void;
+  (e: "onlySessionSearch"): void;
+  (e: "refreshSearchContent", sessionIdArr?: string[]): void;
 }>();
+
+function refreshSearchContent(sessionIdArr?: string[]) {
+  emit("refreshSearchContent", sessionIdArr);
+}
+
+function onlySessionSearch() {
+  emit("onlySessionSearch");
+}
 
 function searchContactFriend() {
   emit("searchContactFriend");
@@ -67,7 +77,12 @@ function searchContactFriend() {
     <div class="flex flex-col px-5 py-3 bg-bg_color">
       <el-tabs v-model="tabsVal" type="border-card" @tab-change="tabChange">
         <el-tab-pane label="好友管理" :name="contactFriendManageDialog">
-          <contact-friend-manage-dialog ref="contactFriendManageDialogRef" />
+          <contact-friend-manage-dialog
+            ref="contactFriendManageDialogRef"
+            @searchContactFriend="searchContactFriend"
+            @onlySessionSearch="onlySessionSearch"
+            @refreshSearchContent="refreshSearchContent"
+          />
         </el-tab-pane>
         <el-tab-pane label="发起申请" :name="contactFriendApplyDialogSend">
           <contact-friend-apply-dialog-send
@@ -82,7 +97,7 @@ function searchContactFriend() {
         <el-tab-pane label="对我申请" :name="contactFriendApplyDialogToMe">
           <contact-friend-apply-dialog-to-me
             ref="contactFriendApplyDialogToMeRef"
-            @searchContactFriend="searchContactFriend()"
+            @searchContactFriend="searchContactFriend"
           />
         </el-tab-pane>
       </el-tabs>

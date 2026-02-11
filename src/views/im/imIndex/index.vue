@@ -46,6 +46,23 @@ const contentRef = ref();
 
 const manageRef = ref();
 
+function refreshSearchContent(sessionIdArr?: string[]) {
+  if (!sessionIdArr?.length) {
+    return;
+  }
+
+  if (!sessionIdArr.includes(session.value.sessionId)) {
+    return;
+  }
+
+  contentRef.value?.doSearch(
+    { refId: session.value.sessionId, backwardFlag: false },
+    false,
+    false,
+    undefined
+  );
+}
+
 async function contentDoSearch(
   form?: ScrollListDTO,
   loadingFlag?: boolean,
@@ -247,6 +264,7 @@ function sessionRefUpdateLastContent(
           @doBaseImGroupRefUserPage="doBaseImGroupRefUserPage"
           @contentOnlyReset="contentOnlyReset"
           @execContentSearch="execContentSearch"
+          @refreshSearchContent="refreshSearchContent"
         />
       </el-splitter-panel>
 
