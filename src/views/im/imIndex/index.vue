@@ -26,6 +26,8 @@ import Manage from "@/views/im/imIndex/manage.vue";
 import Content from "@/views/im/imIndex/content.vue";
 import { getContentHeight, getMobileFlag } from "@/utils/MyLayoutUtil";
 import CommonConstant from "@/model/constant/CommonConstant";
+import { throttleByKey } from "@/utils/CommonUtil";
+import * as CryptoJS from "crypto-js";
 
 defineOptions({
   name: "ImIndex"
@@ -203,20 +205,33 @@ function doUpdateAvatarAndNickname(idSet?: string[]) {
     return;
   }
 
-  baseImSessionRefUserUpdateAvatarAndNickname({ idSet }).then(res => {
-    res.data.forEach(item => {
-      const sessionUserMapItem: IImShowInfoMap = {};
-      sessionUserMapItem.targetId = item.targetId;
-      sessionUserMapItem.avatarUrl = item.avatarUrl;
-      sessionUserMapItem.showName = item.showName;
+  const keyTemp = JSON.stringify(idSet);
 
-      if (item.targetType === BaseImTypeEnum.FRIEND.code) {
-        updateSessionUserMap(sessionUserMapItem);
-      } else if (item.targetType === BaseImTypeEnum.GROUP.code) {
-      }
-    });
-  });
+  const key = CryptoJS.MD5(keyTemp).toString();
+
+  throttleUpdateAvatarAndNickname(key, idSet);
 }
+
+const throttleUpdateAvatarAndNickname = throttleByKey(
+  idSet => {
+    baseImSessionRefUserUpdateAvatarAndNickname({ idSet }).then(res => {
+      res.data.forEach(item => {
+        const sessionUserMapItem: IImShowInfoMap = {};
+        sessionUserMapItem.targetId = item.targetId;
+        sessionUserMapItem.avatarUrl = item.avatarUrl;
+        sessionUserMapItem.showName = item.showName;
+
+        if (item.targetType === BaseImTypeEnum.FRIEND.code) {
+          updateSessionUserMap(sessionUserMapItem);
+        } else if (item.targetType === BaseImTypeEnum.GROUP.code) {
+        }
+      });
+    });
+  },
+  5000,
+  true,
+  true
+);
 
 function doBaseImGroupRefUserPage(groupId: string) {
   baseImGroupRefUserPage({ groupId, pageSize: "-1" }).then(res => {
