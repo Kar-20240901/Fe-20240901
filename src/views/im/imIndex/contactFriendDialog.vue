@@ -80,6 +80,7 @@ function searchContactFriend() {
     :close-on-press-escape="false"
     :width="getDialogWidth()"
     destroy-on-close
+    @close="searchContactFriend()"
   >
     <div class="flex flex-col px-5 py-3 bg-bg_color">
       <el-tabs v-model="tabsVal" type="border-card" @tab-change="tabChange">
