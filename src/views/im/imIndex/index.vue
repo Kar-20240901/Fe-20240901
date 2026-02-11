@@ -55,6 +55,8 @@ function refreshSearchContent(sessionIdArr?: string[]) {
     return;
   }
 
+  contentOnlyReset();
+
   contentRef.value?.doSearch(
     { refId: session.value.sessionId, backwardFlag: false },
     false,
