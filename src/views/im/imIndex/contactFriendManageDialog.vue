@@ -25,6 +25,7 @@ import {
   baseImSessionRefUserAddNotDisturb,
   baseImSessionRefUserDeleteNotDisturb
 } from "@/api/http/base/BaseImSessionRefUserController";
+import { baseImSessionContentRefUserDeleteSessionContentRefUser } from "@/api/http/base/BaseImSessionContentRefUserController";
 
 const search = ref<BaseImFriendPageDTO>({});
 
@@ -35,6 +36,7 @@ const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
 
 const selectIdArr = ref<string[]>([]);
+const selectSessionIdArr = ref<string[]>([]);
 
 const tableRef = ref();
 
@@ -62,6 +64,7 @@ defineExpose({
 
 function onSelectChange(rowArr?: BaseImFriendPageVO[]) {
   selectIdArr.value = rowArr.map(it => it.friendUserId);
+  selectSessionIdArr.value = rowArr.map(it => it.sessionId);
 }
 
 onMounted(() => {
@@ -79,6 +82,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
 
 function resetSelectIdArr() {
   selectIdArr.value = [];
+  selectSessionIdArr.value = [];
 }
 
 function deleteBySelectIdArr() {
@@ -141,6 +145,27 @@ function cancelNotDisturbBySelectIdArr() {
     },
     undefined,
     `确定取消免打扰勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function deleteSessionContentRefUserBySelectIdArr() {
+  if (!selectSessionIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImSessionContentRefUserDeleteSessionContentRefUser({
+        idSet: [...selectSessionIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定清空勾选的【${selectIdArr.value.length}】项聊天记录吗？`
   );
 }
 
@@ -326,7 +351,7 @@ function cancelNotDisturbClick(item?: BaseImFriendPageVO) {
         <el-button
           type="primary"
           :icon="useRenderIcon(RiEraserFill)"
-          @click="cancelNotDisturbBySelectIdArr"
+          @click="deleteSessionContentRefUserBySelectIdArr"
         >
           清空聊天记录
         </el-button>
