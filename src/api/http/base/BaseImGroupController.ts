@@ -9,7 +9,7 @@ export interface NotNullId {
 }
 
 export interface BaseImGroupInfoByIdVO {
-  avatarFileId?: string; // 头像 fileId（文件主键 id），格式：int64
+  avatarUrl?: string; // 群组头像地址
   bio?: string; // 群组简介
   updateTime?: string; // 修改时间，格式：date-time
   sessionId?: string; // 会话主键 id，格式：int64

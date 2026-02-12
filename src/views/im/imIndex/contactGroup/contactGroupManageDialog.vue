@@ -24,6 +24,7 @@ import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
 import { R } from "@/model/vo/R";
 import { baseImGroupRefUserLeaveSelf } from "@/api/http/base/BaseImGroupRefUserController";
 import { getMinDialogWidth } from "@/utils/MyLayoutUtil";
+import CommonConstant from "@/model/constant/CommonConstant";
 
 const search = ref<BaseImGroupPageDTO>({});
 
@@ -437,6 +438,44 @@ function confirmClick() {
           </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
+            <el-form-item label="群组头像">
+              <div>
+                <el-image
+                  :src="form.avatarUrl"
+                  fit="cover"
+                  class="w-10 h-10 rounded-full"
+                  :preview-src-list="form.avatarUrl ? [form.avatarUrl] : []"
+                  preview-teleported
+                >
+                  <template #error>
+                    <el-image
+                      :src="Avatar"
+                      fit="cover"
+                      class="w-10 h-10 rounded-full"
+                    />
+                  </template>
+                </el-image>
+
+                <el-upload
+                  ref="uploadRef"
+                  :accept="CommonConstant.IMAGE_FILE_ACCEPT_TYPE"
+                  :limit="1"
+                  :show-file-list="false"
+                  :auto-upload="false"
+                  class="ml-[12px]"
+                  :on-change="onChangeFun"
+                  :before-upload="onBeforeUpload"
+                  drag
+                >
+                  <el-button type="primary" :icon="useRenderIcon(EpUpload)">
+                    上传
+                  </el-button>
+                </el-upload>
+              </div>
+            </el-form-item>
+          </re-col>
+
+          <re-col :value="12" :xs="24" :sm="24">
             <el-form-item label="群组简介" prop="bio">
               <el-input
                 v-model="form.bio"
@@ -501,5 +540,10 @@ function confirmClick() {
 
 :deep(.el-button + .el-button) {
   margin-left: 0;
+}
+
+:deep(.el-upload-dragger) {
+  padding: 0;
+  border: none;
 }
 </style>

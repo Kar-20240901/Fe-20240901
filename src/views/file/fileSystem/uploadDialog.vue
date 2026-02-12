@@ -8,7 +8,7 @@ import {
 } from "@/api/http/base/BaseFileTransferController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Delete from "~icons/ep/delete";
-import { UploadFile, UploadFiles } from "element-plus";
+import { UploadFile } from "element-plus";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
   BaseFileTransferStatusEnum,
@@ -76,15 +76,12 @@ defineExpose({
 const props = defineProps<IUploadDialogFormProps>();
 
 const uploadRef = ref();
-const uploadFilesRef = ref<UploadFiles>([]);
 
 function onBeforeUpload() {
   return true;
 }
 
-function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
-  uploadFilesRef.value = uploadFiles;
-
+function onChangeFun(uploadFile: UploadFile) {
   if (uploadFile.size >= CommonConstant.FILE_CHUNK_SIZE * 1.5) {
     // 分片上传文件
     uploadFileSystemChunk(uploadFile);
@@ -231,7 +228,7 @@ function deleteBySelectIdArr() {
       });
     },
     undefined,
-    `确定删除勾选的【${selectIdArr.value.length}】项数据吗？`
+    `确定删除勾选的【${selectIdArr.value.length}】项上传记录吗？`
   );
 }
 
@@ -248,7 +245,7 @@ function deleteClick(row: BaseFileTransferDO) {
       });
     },
     undefined,
-    `确定删除【${row.showFileName}】吗？`
+    `确定删除【${row.showFileName}】上传记录吗？`
   );
 }
 
@@ -293,7 +290,6 @@ function composeClick(row: BaseFileTransferDO) {
             class="mr-[12px]"
             :on-change="onChangeFun"
             :before-upload="onBeforeUpload"
-            :file-list="uploadFilesRef"
             drag
           >
             <el-button type="primary" :icon="useRenderIcon(EpUpload)">
@@ -367,7 +363,7 @@ function composeClick(row: BaseFileTransferDO) {
             合并
           </el-button>
           <el-button link type="primary" @click="deleteClick(scope.row)">
-            删除
+            删除记录
           </el-button>
         </el-table-column>
       </el-table>
