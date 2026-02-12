@@ -64,11 +64,15 @@ function searchContactGroup() {
     :close-on-press-escape="false"
     :width="getDialogWidth()"
     destroy-on-close
+    @close="searchContactGroup()"
   >
     <div class="flex flex-col px-5 py-3 bg-bg_color">
       <el-tabs v-model="tabsVal" type="border-card" @tab-change="tabChange">
         <el-tab-pane label="群组管理" :name="contactGroupManageDialogStr">
-          <contact-group-manage-dialog ref="contactGroupManageDialogRef" />
+          <contact-group-manage-dialog
+            ref="contactGroupManageDialogRef"
+            @searchContactGroup="searchContactGroup"
+          />
         </el-tab-pane>
         <el-tab-pane
           label="群组成员管理"
