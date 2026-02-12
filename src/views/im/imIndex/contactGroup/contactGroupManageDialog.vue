@@ -433,6 +433,18 @@ function confirmClick() {
           </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
+            <el-form-item label="群组简介" prop="bio">
+              <el-input
+                v-model="form.bio"
+                type="textarea"
+                clearable
+                :autosize="{ minRows: 2, maxRows: 2 }"
+                placeholder="请输入群组简介"
+              />
+            </el-form-item>
+          </re-col>
+
+          <re-col :value="12" :xs="24" :sm="24">
             <el-form-item label="普通成员禁言" prop="normalMuteFlag">
               <re-segmented
                 :modelValue="form.normalMuteFlag ? 0 : 1"
@@ -463,7 +475,7 @@ function confirmClick() {
       </el-form>
 
       <template #footer>
-        <div>
+        <div class="original-el-button">
           <el-button @click="visible = false">取消</el-button>
           <el-button
             :loading="confirmLoading"
@@ -479,6 +491,10 @@ function confirmClick() {
 </template>
 
 <style scoped lang="scss">
+.original-el-button .el-button + .el-button {
+  margin-left: 12px;
+}
+
 :deep(.el-button + .el-button) {
   margin-left: 0;
 }

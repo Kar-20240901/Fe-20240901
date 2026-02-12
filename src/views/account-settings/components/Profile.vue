@@ -130,6 +130,9 @@ const onSubmit = async () => {
       });
   });
 };
+
+const showImagePreview = ref<boolean>(false);
+const imagePreviewSrcList = ref<string[]>([]);
 </script>
 
 <template>
@@ -147,7 +150,18 @@ const onSubmit = async () => {
       :model="userInfo"
     >
       <el-form-item label="头像">
-        <el-avatar :size="80" :src="userAvatarUrl || Avatar" />
+        <el-avatar
+          :size="80"
+          :src="userAvatarUrl || Avatar"
+          @click="
+            () => {
+              if (userAvatarUrl) {
+                imagePreviewSrcList = [userAvatarUrl];
+                showImagePreview = true;
+              }
+            }
+          "
+        />
         <el-upload
           ref="uploadRef"
           :accept="CommonConstant.IMAGE_FILE_ACCEPT_TYPE"
@@ -156,6 +170,7 @@ const onSubmit = async () => {
           :show-file-list="false"
           :on-change="onChange"
           class="ml-4"
+          drag
         >
           <el-button plain>
             <IconifyIconOffline :icon="uploadLine" />
@@ -220,5 +235,19 @@ const onSubmit = async () => {
         </div>
       </template>
     </el-dialog>
+
+    <el-image-viewer
+      v-if="showImagePreview"
+      :url-list="imagePreviewSrcList"
+      show-progress
+      @close="showImagePreview = false"
+    />
   </div>
 </template>
+
+<style scoped lang="scss">
+:deep(.el-upload-dragger) {
+  padding: 0;
+  border: none;
+}
+</style>

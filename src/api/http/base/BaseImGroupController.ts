@@ -97,8 +97,10 @@ export function baseImGroupScroll(
 }
 
 export interface BaseImGroupInsertOrUpdateDTO {
+  showId?: string; // 展示的 id
   name?: string; // 群组名称，是否必传：true
   manageMuteFlag?: boolean; // 管理员是否禁言，群主不会被禁言
+  bio?: string; // 群组简介
   id?: string; // 主键 id，格式：int64
   normalMuteFlag?: boolean; // 普通成员是否禁言
 }
