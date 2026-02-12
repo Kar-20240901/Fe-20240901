@@ -226,7 +226,7 @@ export function getBaseFilePrivateDownloadUrl(
 }
 
 // 101 头像 801 文件系统
-type TSysFileUploadProType = "AVATAR" | "FILE_SYSTEM";
+type TSysFileUploadProType = "AVATAR" | "IM_GROUP_AVATAR";
 
 // 文件-管理 文件上传
 export function BaseFileUpload(

@@ -25,6 +25,16 @@ import { R } from "@/model/vo/R";
 import { baseImGroupRefUserLeaveSelf } from "@/api/http/base/BaseImGroupRefUserController";
 import { getMinDialogWidth } from "@/utils/MyLayoutUtil";
 import CommonConstant from "@/model/constant/CommonConstant";
+import {
+  BaseFileUpload,
+  CheckAvatarFileType,
+  CheckFileSize
+} from "@/utils/FileUtil";
+import EpUpload from "~icons/ep/upload";
+import type { UploadFile } from "element-plus";
+import { FeBaseImGroupInsertOrUpdateDTO } from "@/views/im/imIndex/contactGroup/types";
+import ReCropperPreview from "@/components/ReCropperPreview/src/index.vue";
+import { deviceDetection } from "@/store/utils";
 
 const search = ref<BaseImGroupPageDTO>({});
 
@@ -193,11 +203,12 @@ function editOpen(fun: Promise<R<any>>) {
   formRef.value?.clearValidate();
   fun.then(res => {
     form.value = res.data;
+    form.value.checkAvatarUrl = form.value.avatarUrl;
     dialogLoading.value = false;
   });
 }
 
-const form = ref<BaseImGroupInsertOrUpdateDTO>({});
+const form = ref<FeBaseImGroupInsertOrUpdateDTO>({});
 const formRef = ref();
 const dialogLoading = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
@@ -205,7 +216,28 @@ const visible = ref<boolean>(false);
 const title = ref<string>("");
 
 function confirmFun() {
-  return baseImGroupInsertOrUpdate(form.value);
+  return new Promise<R>((resolve, reject) => {
+    baseImGroupInsertOrUpdate(form.value)
+      .then(res => {
+        if (form.value.checkAvatarUrl === form.value.avatarUrl) {
+          resolve(res);
+          return;
+        }
+
+        BaseFileUpload(
+          new File([cropperBlob.value], "avatar"),
+          "IM_GROUP_AVATAR",
+          formData => {
+            formData.append("refId", res.data);
+          }
+        ).then(() => {
+          resolve(res);
+        });
+      })
+      .catch(e => {
+        reject(e);
+      });
+  });
 }
 
 function confirmAfterFun(res: R<any>, done: () => void) {
@@ -221,6 +253,48 @@ function confirmClick() {
     visible,
     confirmLoading
   );
+}
+
+const imgSrc = ref("");
+
+const onChange = (uploadFile: UploadFile) => {
+  if (!CheckAvatarFileType(uploadFile.raw.type)) {
+    ToastError("暂不支持此文件类型：" + uploadFile.raw.type + "，请重新选择");
+    uploadRef.value.clearFiles();
+    return;
+  }
+
+  if (!CheckFileSize(uploadFile.size!, 2097152)) {
+    ToastError("图片大于 2MB，请重新选择");
+    uploadRef.value.clearFiles();
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    imgSrc.value = e.target.result as string;
+    isShow.value = true;
+  };
+  reader.readAsDataURL(uploadFile.raw);
+};
+
+const cropperBlob = ref();
+const cropRef = ref();
+const uploadRef = ref();
+const isShow = ref(false);
+
+const handleClose = () => {
+  cropRef.value.hidePopover();
+  uploadRef.value.clearFiles();
+  cropperBlob.value = undefined;
+  isShow.value = false;
+};
+
+const onCropper = ({ blob }) => (cropperBlob.value = blob);
+
+function handleSubmitImage() {
+  form.value.avatarUrl = imgSrc.value;
+  isShow.value = false;
 }
 </script>
 
@@ -409,6 +483,7 @@ function confirmClick() {
       :close-on-press-escape="false"
       :width="getMinDialogWidth()"
       destroy-on-close
+      :before-close="handleClose"
     >
       <el-form
         ref="formRef"
@@ -439,7 +514,7 @@ function confirmClick() {
 
           <re-col :value="12" :xs="24" :sm="24">
             <el-form-item label="群组头像">
-              <div>
+              <div class="flex items-center">
                 <el-image
                   :src="form.avatarUrl"
                   fit="cover"
@@ -463,11 +538,10 @@ function confirmClick() {
                   :show-file-list="false"
                   :auto-upload="false"
                   class="ml-[12px]"
-                  :on-change="onChangeFun"
-                  :before-upload="onBeforeUpload"
+                  :on-change="onChange"
                   drag
                 >
-                  <el-button type="primary" :icon="useRenderIcon(EpUpload)">
+                  <el-button plain :icon="useRenderIcon(EpUpload)">
                     上传
                   </el-button>
                 </el-upload>
@@ -525,6 +599,26 @@ function confirmClick() {
             type="primary"
             @click="confirmClick"
           >
+            确定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <el-dialog
+      v-model="isShow"
+      width="40%"
+      title="编辑头像"
+      destroy-on-close
+      :closeOnClickModal="false"
+      :fullscreen="deviceDetection()"
+      draggable
+    >
+      <ReCropperPreview ref="cropRef" :imgSrc="imgSrc" @cropper="onCropper" />
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button bg text @click="isShow = false">取消</el-button>
+          <el-button bg text type="primary" @click="handleSubmitImage">
             确定
           </el-button>
         </div>

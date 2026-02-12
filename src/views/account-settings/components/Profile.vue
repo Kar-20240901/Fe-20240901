@@ -210,6 +210,7 @@ const imagePreviewSrcList = ref<string[]>([]);
         更新信息
       </el-button>
     </el-form>
+
     <el-dialog
       v-model="isShow"
       width="40%"
@@ -218,6 +219,7 @@ const imagePreviewSrcList = ref<string[]>([]);
       :closeOnClickModal="false"
       :before-close="handleClose"
       :fullscreen="deviceDetection()"
+      draggable
     >
       <ReCropperPreview ref="cropRef" :imgSrc="imgSrc" @cropper="onCropper" />
       <template #footer>

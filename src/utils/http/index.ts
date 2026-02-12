@@ -175,7 +175,7 @@ class PureHttp {
     };
 
     // 单独处理自定义请求/响应回调
-    return new Promise((resolve, reject) => {
+    return new Promise<R<T>>((resolve, reject) => {
       PureHttp.axiosInstance
         .request(config)
         .then((response: any) => {
