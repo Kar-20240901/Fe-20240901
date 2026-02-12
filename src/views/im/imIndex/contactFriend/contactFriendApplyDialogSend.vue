@@ -205,6 +205,10 @@ function sendConfirmAfterFun(res: R<any>, done: () => void) {
             :src="scope.row?.avatarUrl"
             fit="cover"
             class="w-10 h-10 rounded-full"
+            :preview-src-list="
+              scope.row?.avatarUrl ? [scope.row?.avatarUrl] : []
+            "
+            preview-teleported
           >
             <template #error>
               <el-image

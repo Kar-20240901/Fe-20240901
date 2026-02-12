@@ -127,7 +127,7 @@ export interface BaseUserPageDTO {
 export interface BaseUserPageVO {
   passwordFlag?: boolean; // 是否有密码
   lastActiveTime?: string; // 最近活跃时间，格式：date-time
-  avatarFileId?: string; // 头像 fileId（文件主键 id），备注：没有时则为 -1，格式：int64
+  avatarUrl?: string; // 头像地址
   wxOpenId?: string; // 微信 openId
   signUpType?: string; // 请求类别，枚举值：101;102;103;104;105;106;201;202;203;301;302;303;401;402;403;501;502;601;701
   ip?: string; // ip

@@ -239,7 +239,6 @@ const imagePreviewSrcList = ref<string[]>([]);
     <el-image-viewer
       v-if="showImagePreview"
       :url-list="imagePreviewSrcList"
-      show-progress
       @close="showImagePreview = false"
     />
   </div>

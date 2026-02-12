@@ -157,7 +157,7 @@ export function baseImGroupChangeBelongId(
 export interface BaseImGroupPageDTO {
   current?: string; // 第几页，格式：int64
   groupId?: string; // 群组主键 id，格式：int64
-  manageQueryFlag?: boolean; // 是否是好友管理查询
+  manageQueryFlag?: boolean; // 是否是群组管理查询
   pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   onlyQueryBelongFlag?: boolean; // 只查询我创建的群
   searchKey?: string; // 搜索关键字

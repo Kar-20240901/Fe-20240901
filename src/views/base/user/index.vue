@@ -49,6 +49,7 @@ import EpDownload from "~icons/ep/download";
 import { UploadFile, UploadFiles } from "element-plus";
 import { baseApi } from "@/api/http/utils";
 import { ExecFileDownload, FileUpload } from "@/utils/FileUtil";
+import Avatar from "@/assets/user.png";
 
 defineOptions({
   name: "BaseUser"
@@ -446,7 +447,30 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
         @sort-change="onSortChange"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="nickname" label="用户昵称" />
+        <el-table-column #default="scope" label="用户" width="160">
+          <div class="flex items-center">
+            <el-image
+              :src="scope.row?.avatarUrl"
+              fit="cover"
+              class="w-10 h-10 rounded-full"
+              :preview-src-list="
+                scope.row?.avatarUrl ? [scope.row?.avatarUrl] : []
+              "
+              preview-teleported
+            >
+              <template #error>
+                <el-image
+                  :src="Avatar"
+                  fit="cover"
+                  class="w-10 h-10 rounded-full"
+                />
+              </template>
+            </el-image>
+            <div class="text-sm ml-2">
+              {{ scope.row?.nickname }}
+            </div>
+          </div>
+        </el-table-column>
         <el-table-column
           #default="scope"
           prop="enableFlag"
@@ -464,7 +488,7 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
         >
           {{ FormatStringForCurrentDay(scope.row.createTime) }}
         </el-table-column>
-        <el-table-column #default="scope" label="注册终端">
+        <el-table-column #default="scope" label="注册终端" width="120">
           {{
             TempRequestCategoryMap.get(scope.row.signUpType) ||
             TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
