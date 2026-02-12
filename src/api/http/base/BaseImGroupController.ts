@@ -4,6 +4,41 @@ import { http } from "@/utils/http";
 import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
+export interface NotNullId {
+  id?: string; // 主键 id，是否必传：true，格式：int64
+}
+
+export interface BaseImGroupInfoByIdVO {
+  avatarFileId?: string; // 头像 fileId（文件主键 id），格式：int64
+  bio?: string; // 群组简介
+  updateTime?: string; // 修改时间，格式：date-time
+  sessionId?: string; // 会话主键 id，格式：int64
+  normalMuteFlag?: boolean; // 普通成员是否禁言
+  updateId?: string; // 修改人id，格式：int64
+  showId?: string; // 展示的 id
+  createTime?: string; // 创建时间，格式：date-time
+  manageFlag?: boolean; // 是否是管理员
+  createId?: string; // 创建人id，格式：int64
+  name?: string; // 群组名称
+  belongId?: string; // 归属者主键 id，格式：int64
+  manageMuteFlag?: boolean; // 管理员是否禁言，群主不会被禁言
+  belongFlag?: boolean; // 是否是群主
+  id?: string; // 主键 id，格式：int64
+}
+
+// 通过主键id，查看详情
+export function baseImGroupInfoById(
+  form: NotNullId,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<BaseImGroupInfoByIdVO>(
+    "post",
+    baseApi("/base/imGroup/infoById"),
+    form,
+    config
+  );
+}
+
 export interface NotEmptyIdSet {
   idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
 }
@@ -36,9 +71,16 @@ export interface ScrollListDTO {
 export interface BaseImGroupPageVO {
   groupShowId?: string; // 群组显示的 id
   groupShowName?: string; // 显示的名称
-  avatarUrl?: string; // 头像地址
+  avatarUrl?: string; // 群组头像地址
+  manageFlag?: boolean; // 是否是管理员，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  createTime?: string; // 创建时间，备注：只有 dto的 manageQueryFlag生效时，才会返回该值，格式：date-time
   groupId?: string; // 群组主键 id
+  bio?: string; // 群组简介，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  muteFlag?: boolean; // 是否被禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  manageMuteFlag?: boolean; // 管理员是否禁言，群主不会被禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  belongFlag?: boolean; // 是否是群主，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
   sessionId?: string; // 会话主键 id，格式：int64
+  normalMuteFlag?: boolean; // 普通成员是否禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
 }
 
 // 滚动加载
@@ -56,7 +98,9 @@ export function baseImGroupScroll(
 
 export interface BaseImGroupInsertOrUpdateDTO {
   name?: string; // 群组名称，是否必传：true
+  manageMuteFlag?: boolean; // 管理员是否禁言，群主不会被禁言
   id?: string; // 主键 id，格式：int64
+  normalMuteFlag?: boolean; // 普通成员是否禁言
 }
 
 // 新增/修改
@@ -111,7 +155,9 @@ export function baseImGroupChangeBelongId(
 export interface BaseImGroupPageDTO {
   current?: string; // 第几页，格式：int64
   groupId?: string; // 群组主键 id，格式：int64
+  manageQueryFlag?: boolean; // 是否是好友管理查询
   pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
+  onlyQueryBelongFlag?: boolean; // 只查询我创建的群
   searchKey?: string; // 搜索关键字
   order?: MyOrderDTO; // 排序字段
 }

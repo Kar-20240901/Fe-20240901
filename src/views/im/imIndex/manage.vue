@@ -4,7 +4,7 @@ import { nextTick, ref } from "vue";
 import Session from "@/views/im/imIndex/session.vue";
 import Contact from "@/views/im/imIndex/contact.vue";
 import { BaseImSessionRefUserPageVO } from "@/api/http/base/BaseImSessionRefUserController";
-import SearchOverviewPre from "@/views/im/imIndex/searchOverviewPre.vue";
+import SearchOverviewPre from "@/views/im/imIndex/search/searchOverviewPre.vue";
 import {
   BaseImSearchBaseContentVO,
   BaseImSearchBaseFriendVO,

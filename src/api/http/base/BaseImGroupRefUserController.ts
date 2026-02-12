@@ -4,6 +4,23 @@ import { http } from "@/utils/http";
 import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
+}
+
+// 群员退出-自我
+export function baseImGroupRefUserLeaveSelf(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/imGroupRefUser/leaveSelf"),
+    form,
+    config
+  );
+}
+
 export interface BaseImGroupRefUserMutePageDTO {
   current?: string; // 第几页，格式：int64
   groupId?: string; // 群组主键 id，是否必传：true，格式：int64

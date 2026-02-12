@@ -11,7 +11,7 @@ import {
   BaseImSearchHistoryVO
 } from "@/api/http/base/BaseImSearchController";
 import { ToastSuccess } from "@/utils/ToastUtil";
-import SearchOverview from "@/views/im/imIndex/searchOverview.vue";
+import SearchOverview from "@/views/im/imIndex/search/searchOverview.vue";
 import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
 import {
   IImSearchOverviewPreProps,
@@ -19,8 +19,8 @@ import {
 } from "@/views/im/imIndex/types";
 import { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import FaSearch from "~icons/fa/search";
-import SearchOverviewMore from "@/views/im/imIndex/searchOverviewMore.vue";
-import SearchOverviewContentInfo from "@/views/im/imIndex/searchOverviewContentInfo.vue";
+import SearchOverviewMore from "@/views/im/imIndex/search/searchOverviewMore.vue";
+import SearchOverviewContentInfo from "@/views/im/imIndex/search/searchOverviewContentInfo.vue";
 import EpBack from "~icons/ep/back";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 

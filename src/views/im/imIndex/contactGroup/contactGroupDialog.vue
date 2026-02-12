@@ -2,6 +2,7 @@
 import { nextTick, ref } from "vue";
 import { getDialogWidth } from "@/utils/MyLayoutUtil";
 import { TabPaneName } from "element-plus";
+import ContactGroupManageDialog from "@/views/im/imIndex/contactGroup/contactGroupManageDialog.vue";
 
 const visible = ref<boolean>(false);
 
@@ -23,27 +24,27 @@ function tabChange(name: TabPaneName) {
   tabsVal.value = name as unknown as string;
 
   nextTick(() => {
-    if (name === contactGroupManageDialog) {
+    if (name === contactGroupManageDialogStr) {
       contactGroupManageDialogRef.value?.onSearch();
-    } else if (name === contactGroupUserManageDialog) {
+    } else if (name === contactGroupUserManageDialogStr) {
       contactGroupUserManageDialogRef.value?.onSearch();
-    } else if (name === contactGroupApplyDialogSend) {
+    } else if (name === contactGroupApplyDialogSendStr) {
       contactGroupApplyDialogSendRef.value?.onSearch();
-    } else if (name === contactGroupApplyDialogFromMe) {
+    } else if (name === contactGroupApplyDialogFromMeStr) {
       contactGroupApplyDialogFromMeRef.value?.onSearch();
-    } else if (name === contactGroupApplyDialogToMe) {
+    } else if (name === contactGroupApplyDialogToMeStr) {
       contactGroupApplyDialogToMeRef.value?.onSearch();
     }
   });
 }
 
-const contactGroupManageDialog = "contactGroupManageDialog";
-const contactGroupUserManageDialog = "contactGroupUserManageDialog";
-const contactGroupApplyDialogSend = "contactGroupApplyDialogSend";
-const contactGroupApplyDialogFromMe = "contactGroupApplyDialogFromMe";
-const contactGroupApplyDialogToMe = "contactGroupApplyDialogToMe";
+const contactGroupManageDialogStr = "contactGroupManageDialogName";
+const contactGroupUserManageDialogStr = "contactGroupUserManageDialog";
+const contactGroupApplyDialogSendStr = "contactGroupApplyDialogSend";
+const contactGroupApplyDialogFromMeStr = "contactGroupApplyDialogFromMe";
+const contactGroupApplyDialogToMeStr = "contactGroupApplyDialogToMe";
 
-const tabsVal = ref<string>(contactGroupManageDialog);
+const tabsVal = ref<string>(contactGroupManageDialogStr);
 
 const emit = defineEmits<{
   (e: "searchContactGroup"): void;
@@ -66,14 +67,19 @@ function searchContactGroup() {
   >
     <div class="flex flex-col px-5 py-3 bg-bg_color">
       <el-tabs v-model="tabsVal" type="border-card" @tab-change="tabChange">
-        <el-tab-pane label="群组管理" :name="contactGroupManageDialog" />
+        <el-tab-pane label="群组管理" :name="contactGroupManageDialogStr">
+          <contact-group-manage-dialog ref="contactGroupManageDialogRef" />
+        </el-tab-pane>
         <el-tab-pane
           label="群组成员管理"
-          :name="contactGroupUserManageDialog"
+          :name="contactGroupUserManageDialogStr"
         />
-        <el-tab-pane label="发起申请" :name="contactGroupApplyDialogSend" />
-        <el-tab-pane label="我的申请" :name="contactGroupApplyDialogFromMe" />
-        <el-tab-pane label="对我申请" :name="contactGroupApplyDialogToMe" />
+        <el-tab-pane label="发起申请" :name="contactGroupApplyDialogSendStr" />
+        <el-tab-pane
+          label="我的申请"
+          :name="contactGroupApplyDialogFromMeStr"
+        />
+        <el-tab-pane label="对我申请" :name="contactGroupApplyDialogToMeStr" />
       </el-tabs>
     </div>
   </el-dialog>

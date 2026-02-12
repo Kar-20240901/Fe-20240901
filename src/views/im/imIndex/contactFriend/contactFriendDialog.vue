@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
 import { getDialogWidth } from "@/utils/MyLayoutUtil";
-import ContactFriendManageDialog from "@/views/im/imIndex/contactFriendManageDialog.vue";
-import ContactFriendApplyDialogToMe from "@/views/im/imIndex/contactFriendApplyDialogToMe.vue";
-import ContactFriendApplyDialogFromMe from "@/views/im/imIndex/contactFriendApplyDialogFromMe.vue";
-import ContactFriendApplyDialogSend from "@/views/im/imIndex/contactFriendApplyDialogSend.vue";
+import ContactFriendManageDialog from "@/views/im/imIndex/contactFriend/contactFriendManageDialog.vue";
+import ContactFriendApplyDialogToMe from "@/views/im/imIndex/contactFriend/contactFriendApplyDialogToMe.vue";
+import ContactFriendApplyDialogFromMe from "@/views/im/imIndex/contactFriend/contactFriendApplyDialogFromMe.vue";
+import ContactFriendApplyDialogSend from "@/views/im/imIndex/contactFriend/contactFriendApplyDialogSend.vue";
 import { TabPaneName } from "element-plus";
 
 const visible = ref<boolean>(false);
@@ -26,24 +26,24 @@ function tabChange(name: TabPaneName) {
   tabsVal.value = name as unknown as string;
 
   nextTick(() => {
-    if (name === contactFriendManageDialog) {
+    if (name === contactFriendManageDialogStr) {
       contactFriendManageDialogRef.value?.onSearch();
-    } else if (name === contactFriendApplyDialogSend) {
+    } else if (name === contactFriendApplyDialogSendStr) {
       contactFriendApplyDialogSendRef.value?.onSearch();
-    } else if (name === contactFriendApplyDialogFromMe) {
+    } else if (name === contactFriendApplyDialogFromMeStr) {
       contactFriendApplyDialogFromMeRef.value?.onSearch();
-    } else if (name === contactFriendApplyDialogToMe) {
+    } else if (name === contactFriendApplyDialogToMeStr) {
       contactFriendApplyDialogToMeRef.value?.onSearch();
     }
   });
 }
 
-const contactFriendManageDialog = "contactFriendManageDialog";
-const contactFriendApplyDialogSend = "contactFriendApplyDialogSend";
-const contactFriendApplyDialogFromMe = "contactFriendApplyDialogFromMe";
-const contactFriendApplyDialogToMe = "contactFriendApplyDialogToMe";
+const contactFriendManageDialogStr = "contactFriendManageDialog";
+const contactFriendApplyDialogSendStr = "contactFriendApplyDialogSend";
+const contactFriendApplyDialogFromMeStr = "contactFriendApplyDialogFromMe";
+const contactFriendApplyDialogToMeStr = "contactFriendApplyDialogToMe";
 
-const tabsVal = ref<string>(contactFriendManageDialog);
+const tabsVal = ref<string>(contactFriendManageDialogStr);
 
 const emit = defineEmits<{
   (e: "searchContactFriend"): void;
@@ -84,7 +84,7 @@ function searchContactFriend() {
   >
     <div class="flex flex-col px-5 py-3 bg-bg_color">
       <el-tabs v-model="tabsVal" type="border-card" @tab-change="tabChange">
-        <el-tab-pane label="好友管理" :name="contactFriendManageDialog">
+        <el-tab-pane label="好友管理" :name="contactFriendManageDialogStr">
           <contact-friend-manage-dialog
             ref="contactFriendManageDialogRef"
             @searchContactFriend="searchContactFriend"
@@ -92,17 +92,17 @@ function searchContactFriend() {
             @refreshSearchContent="refreshSearchContent"
           />
         </el-tab-pane>
-        <el-tab-pane label="发起申请" :name="contactFriendApplyDialogSend">
+        <el-tab-pane label="发起申请" :name="contactFriendApplyDialogSendStr">
           <contact-friend-apply-dialog-send
             ref="contactFriendApplyDialogSendRef"
           />
         </el-tab-pane>
-        <el-tab-pane label="我的申请" :name="contactFriendApplyDialogFromMe">
+        <el-tab-pane label="我的申请" :name="contactFriendApplyDialogFromMeStr">
           <contact-friend-apply-dialog-from-me
             ref="contactFriendApplyDialogFromMeRef"
           />
         </el-tab-pane>
-        <el-tab-pane label="对我申请" :name="contactFriendApplyDialogToMe">
+        <el-tab-pane label="对我申请" :name="contactFriendApplyDialogToMeStr">
           <contact-friend-apply-dialog-to-me
             ref="contactFriendApplyDialogToMeRef"
             @searchContactFriend="searchContactFriend"

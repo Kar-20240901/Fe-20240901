@@ -55,9 +55,16 @@ export interface BaseImSearchBaseDTO {
 export interface BaseImSearchBaseGroupVO {
   groupShowId?: string; // 群组显示的 id
   groupShowName?: string; // 显示的名称
-  avatarUrl?: string; // 头像地址
+  avatarUrl?: string; // 群组头像地址
+  manageFlag?: boolean; // 是否是管理员，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  createTime?: string; // 创建时间，备注：只有 dto的 manageQueryFlag生效时，才会返回该值，格式：date-time
   groupId?: string; // 群组主键 id
+  bio?: string; // 群组简介，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  muteFlag?: boolean; // 是否被禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  manageMuteFlag?: boolean; // 管理员是否禁言，群主不会被禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  belongFlag?: boolean; // 是否是群主，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
   sessionId?: string; // 会话主键 id，格式：int64
+  normalMuteFlag?: boolean; // 普通成员是否禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
 }
 
 export interface BaseImSearchBaseFriendVO {

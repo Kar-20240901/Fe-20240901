@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { BaseImContactSegmentedEnum } from "@/model/enum/im/BaseImContactSegmentedEnum";
 import { ref } from "vue";
-import ContactFriend from "@/views/im/imIndex/contactFriend.vue";
-import ContactGroup from "@/views/im/imIndex/contactGroup.vue";
+import ContactFriend from "@/views/im/imIndex/contactFriend/contactFriend.vue";
+import ContactGroup from "@/views/im/imIndex/contactGroup/contactGroup.vue";
 import { BaseImFriendPageVO } from "@/api/http/base/BaseImFriendController";
 import {
   BaseImSearchBaseFriendVO,
@@ -11,8 +11,8 @@ import {
 import { BaseImGroupPageVO } from "@/api/http/base/BaseImGroupController";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import EpArrowRight from "~icons/ep/ArrowRight";
-import ContactFriendDialog from "@/views/im/imIndex/contactFriendDialog.vue";
-import ContactGroupDialog from "@/views/im/imIndex/contactGroupDialog.vue";
+import ContactFriendDialog from "@/views/im/imIndex/contactFriend/contactFriendDialog.vue";
+import ContactGroupDialog from "@/views/im/imIndex/contactGroup/contactGroupDialog.vue";
 
 const SegmentedOptionArr = [
   {
