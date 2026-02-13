@@ -50,6 +50,7 @@ import { baseImSessionRefUserQueryLastContentMap } from "@/api/http/base/BaseImS
 import { throttleByKey } from "@/utils/CommonUtil";
 
 // import { buildUUID } from "@pureadmin/utils";
+//
 // let sendTimer;
 //
 // window.startSend = function () {
@@ -63,6 +64,14 @@ import { throttleByKey } from "@/utils/CommonUtil";
 // window.stopSend = function () {
 //   clearInterval(sendTimer);
 // };
+//
+// onMounted(() => {
+//   window.startSend();
+// });
+//
+// onUnmounted(() => {
+//   window.stopSend();
+// });
 
 const props = defineProps<IImContentProps>();
 
