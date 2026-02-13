@@ -21,6 +21,7 @@ export interface BaseImFriendPageVO {
   friendCreateTime?: string; // 好友创建时间，备注：只有 dto的 manageQueryFlag生效时，才会返回该值，格式：date-time
   blockFlag?: boolean; // 是否已经拉黑，备注：只有 dto的 queryBlockFlag生效时，才会返回该值
   avatarUrl?: string; // 好友头像
+  imFriendId?: string; // im好友主键 id，格式：int64
   friendShowId?: string; // 好友显示的 id
   bio?: string; // 个人简介，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
   friendUserId?: string; // 好友用户主键 id，格式：int64
@@ -60,10 +61,10 @@ export function baseImFriendRemoveFriend(
 
 export interface BaseImFriendPageDTO {
   current?: string; // 第几页，格式：int64
+  imFriendId?: string; // 好友用户主键 id，格式：int64
   manageQueryFlag?: boolean; // 是否是好友管理查询
   pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   queryBlockFlag?: boolean; // 是否查询拉黑情况
-  friendUserId?: string; // 好友用户主键 id，格式：int64
   searchKey?: string; // 搜索关键字
   order?: MyOrderDTO; // 排序字段
 }

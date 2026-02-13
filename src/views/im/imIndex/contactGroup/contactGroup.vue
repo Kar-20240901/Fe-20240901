@@ -100,7 +100,7 @@ function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   baseImGroupScroll({
     pageSize: String(pageSize),
     id: groupId,
-    backwardFlag: true,
+    backwardFlag: false,
     containsCurrentIdFlag: false
   })
     .then(res => {

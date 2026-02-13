@@ -89,18 +89,18 @@ function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
     loading.value = true;
   }
 
-  let friendUserId = undefined;
+  let imFriendId = undefined;
 
   if (scrollFlag) {
-    friendUserId = friendList.value.length
-      ? friendList.value[friendList.value.length - 1].friendUserId
+    imFriendId = friendList.value.length
+      ? friendList.value[friendList.value.length - 1].imFriendId
       : undefined;
   }
 
   baseImFriendScroll({
     pageSize: String(pageSize),
-    id: friendUserId,
-    backwardFlag: true,
+    id: imFriendId,
+    backwardFlag: false,
     containsCurrentIdFlag: false
   })
     .then(res => {
