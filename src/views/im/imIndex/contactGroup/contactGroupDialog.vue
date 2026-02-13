@@ -48,7 +48,25 @@ const tabsVal = ref<string>(contactGroupManageDialogStr);
 
 const emit = defineEmits<{
   (e: "searchContactGroup"): void;
+
+  (e: "onlySessionSearch"): void;
+  (
+    e: "refreshSearchContent",
+    sessionIdArr?: string[],
+    removeSessionFlag?: boolean
+  ): void;
 }>();
+
+function refreshSearchContent(
+  sessionIdArr?: string[],
+  removeSessionFlag?: boolean
+) {
+  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
+}
+
+function onlySessionSearch() {
+  emit("onlySessionSearch");
+}
 
 function searchContactGroup() {
   emit("searchContactGroup");
@@ -72,6 +90,8 @@ function searchContactGroup() {
           <contact-group-manage-dialog
             ref="contactGroupManageDialogRef"
             @searchContactGroup="searchContactGroup"
+            @onlySessionSearch="onlySessionSearch"
+            @refreshSearchContent="refreshSearchContent"
           />
         </el-tab-pane>
         <el-tab-pane

@@ -45,8 +45,34 @@ const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
 
 const selectIdArr = ref<string[]>([]);
+const selectSessionIdArr = ref<string[]>([]);
 
 const tableRef = ref();
+
+const emit = defineEmits<{
+  (e: "searchContactGroup"): void;
+  (e: "onlySessionSearch"): void;
+  (
+    e: "refreshSearchContent",
+    sessionIdArr: string[],
+    removeSessionFlag?: boolean
+  ): void;
+}>();
+
+function refreshSearchContent(
+  sessionIdArr?: string[],
+  removeSessionFlag?: boolean
+) {
+  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
+}
+
+function onlySessionSearch() {
+  emit("onlySessionSearch");
+}
+
+function searchContactGroup() {
+  emit("searchContactGroup");
+}
 
 function onSearch() {
   loading.value = true;
@@ -71,6 +97,7 @@ defineExpose({
 
 function onSelectChange(rowArr?: BaseImGroupPageVO[]) {
   selectIdArr.value = rowArr.map(it => it.groupId);
+  selectSessionIdArr.value = rowArr.map(it => it.sessionId);
 }
 
 onMounted(() => {
@@ -88,6 +115,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
 
 function resetSelectIdArr() {
   selectIdArr.value = [];
+  selectSessionIdArr.value = [];
 }
 
 function deleteBySelectIdArr() {
@@ -101,9 +129,12 @@ function deleteBySelectIdArr() {
       await baseImGroupDeleteByIdSet({
         idSet: [...selectIdArr.value]
       }).then(res => {
+        refreshSearchContent([...selectSessionIdArr.value], true);
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
+        searchContactGroup();
+        onlySessionSearch();
       });
     },
     undefined,
@@ -122,9 +153,12 @@ function leaveSelfBySelectIdArr() {
       await baseImGroupRefUserLeaveSelf({
         idSet: [...selectIdArr.value]
       }).then(res => {
+        refreshSearchContent([...selectSessionIdArr.value], true);
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
+        searchContactGroup();
+        onlySessionSearch();
       });
     },
     undefined,
@@ -142,9 +176,12 @@ function deleteClick(item?: BaseImGroupPageVO) {
       await baseImGroupDeleteByIdSet({
         idSet: [item.groupId]
       }).then(res => {
+        refreshSearchContent([item.sessionId], true);
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
+        searchContactGroup();
+        onlySessionSearch();
       });
     },
     undefined,
@@ -162,9 +199,12 @@ function leaveSelfClick(item?: BaseImGroupPageVO) {
       await baseImGroupRefUserLeaveSelf({
         idSet: [item.groupId]
       }).then(res => {
+        refreshSearchContent([item.sessionId], true);
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
+        searchContactGroup();
+        onlySessionSearch();
       });
     },
     undefined,

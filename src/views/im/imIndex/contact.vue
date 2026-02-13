@@ -35,10 +35,18 @@ function menuSelect(index: string) {
 
 function onSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   if (menuIndex.value === BaseImContactSegmentedEnum.FRIEND.code) {
-    contactFriendRef.value?.doSearch(loadingFlag, scrollFlag);
+    searchContactFriend(loadingFlag, scrollFlag);
   } else if (menuIndex.value === BaseImContactSegmentedEnum.GROUP.code) {
-    contactGroupRef.value?.doSearch(loadingFlag, scrollFlag);
+    searchContactGroup(loadingFlag, scrollFlag);
   }
+}
+
+function searchContactFriend(loadingFlag?: boolean, scrollFlag?: boolean) {
+  contactFriendRef.value?.doSearch(loadingFlag, scrollFlag);
+}
+
+function searchContactGroup(loadingFlag?: boolean, scrollFlag?: boolean) {
+  contactGroupRef.value?.doSearch(loadingFlag, scrollFlag);
 }
 
 defineExpose({ onSearch });
@@ -158,14 +166,16 @@ function applyOperateClick(value?: string) {
 
     <contact-friend-dialog
       ref="contactFriendDialogRef"
-      @searchContactFriend="onSearch()"
+      @searchContactFriend="searchContactFriend()"
       @onlySessionSearch="onlySessionSearch"
       @refreshSearchContent="refreshSearchContent"
     />
 
     <contact-group-dialog
       ref="contactGroupDialogRef"
-      @searchContactGroup="onSearch()"
+      @searchContactGroup="searchContactGroup()"
+      @onlySessionSearch="onlySessionSearch"
+      @refreshSearchContent="refreshSearchContent"
     />
   </div>
 </template>
