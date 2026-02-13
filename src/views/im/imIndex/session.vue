@@ -36,11 +36,9 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   updateLastContent({
     sessionId: item.sessionId,
     lastContent: undefined,
-    lastContentCreateTs: undefined,
+    lastReceiveTs: undefined,
     unReadCountAddNumber: 0,
-    unReadCountAddNumberUpdateFlag: true,
-    topFlag: false,
-    mustTopFlag: false
+    unReadCountAddNumberUpdateFlag: true
   });
 }
 
@@ -71,8 +69,6 @@ function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
     }
 
     if (dataListSessionIdSet.has(sessionId)) {
-      handleLastContentInfo(sessionId, sessionId);
-
       return;
     }
 
@@ -80,11 +76,9 @@ function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
 
     item.unReadCountCalc = item.unReadCount || 0;
     item.lastContentCalc = item.lastContent;
-    item.lastContentCreateTsCalc = item.lastContentCreateTs;
+    item.lastReceiveTsCalc = item.lastReceiveTs;
 
     dataList.value.push(item);
-
-    handleLastContentInfo(sessionId, sessionId);
 
     addFlag = true;
   });
@@ -93,7 +87,11 @@ function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
     return;
   }
 
-  // 排序
+  doSortDataListThrottle();
+}
+
+// 排序
+function sortDataList() {
   dataList.value.sort((a, b) => {
     const lastReceiveTsOne = Number(a.lastReceiveTs);
 
@@ -107,9 +105,22 @@ function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
   });
 }
 
+const sortDataListThrottle = throttleByKey(
+  () => {
+    sortDataList();
+  },
+  500,
+  true,
+  true
+);
+
+const doSortDataListThrottle = () => {
+  sortDataListThrottle("sort");
+};
+
 const doSearchNewThrottle = throttle(() => {
   onSearch(false, false, true);
-}, 500) as () => void;
+}, 1000) as () => void;
 
 function onSearch(
   loadingFlag?: boolean,
@@ -190,7 +201,7 @@ onMounted(() => {
   if (!DevFlag()) {
     timer = window.setInterval(() => {
       onSearch(false, false, false);
-    }, 10000);
+    }, 20000);
   }
 });
 
@@ -267,39 +278,9 @@ function handleScroll(event: Event) {
   }
 }
 
-defineExpose({ onSearch, updateLastContent, doSearchThrottle });
+defineExpose({ updateLastContent, doSearchThrottle });
 
 const props = defineProps<IImSessionProps>();
-
-// 置顶
-const pinToTop = throttleByKey(
-  (sessionId, mustTopFlag) => {
-    const findIndex = dataList.value.findIndex(
-      item => item.sessionId === sessionId
-    );
-
-    if (findIndex === -1) {
-      onSearch(false, false, false);
-
-      return;
-    }
-
-    const itemArr = dataList.value.splice(findIndex, 1);
-
-    if (itemArr.length) {
-      dataList.value.unshift(itemArr[0]);
-    }
-
-    if (shouldAutoScroll || mustTopFlag) {
-      nextTick(() => {
-        scrollToItemBySessionId(sessionId);
-      });
-    }
-  },
-  1500,
-  true,
-  true
-);
 
 const handleLastContentInfo = throttleByKey(
   sessionId => {
@@ -308,7 +289,7 @@ const handleLastContentInfo = throttleByKey(
     );
 
     if (findIndex === -1) {
-      onSearch(false, false, false);
+      doSearchNewThrottle();
 
       return;
     }
@@ -317,9 +298,11 @@ const handleLastContentInfo = throttleByKey(
 
     item.unReadCount = item.unReadCountCalc || 0;
     item.lastContent = item.lastContentCalc;
-    item.lastContentCreateTs = item.lastContentCreateTsCalc;
+    item.lastReceiveTs = item.lastReceiveTsCalc;
+
+    doSortDataListThrottle();
   },
-  1200,
+  500,
   true,
   true
 );
@@ -334,7 +317,7 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
   );
 
   if (findIndex === -1) {
-    onSearch(false, false, false);
+    doSearchNewThrottle();
 
     return;
   }
@@ -345,13 +328,14 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
     item.lastContentCalc = updateLastContentObjTemp.lastContent;
   }
 
-  if (updateLastContentObjTemp.lastContentCreateTs) {
-    item.lastContentCreateTsCalc = updateLastContentObjTemp.lastContentCreateTs;
+  if (updateLastContentObjTemp.lastReceiveTs) {
+    item.lastReceiveTsCalc = updateLastContentObjTemp.lastReceiveTs;
   }
 
   if (updateLastContentObjTemp.unReadCountAddNumber !== undefined) {
     if (updateLastContentObjTemp.unReadCountAddNumberUpdateFlag) {
       item.unReadCount = updateLastContentObjTemp.unReadCountAddNumber;
+
       item.unReadCountCalc = updateLastContentObjTemp.unReadCountAddNumber;
     } else {
       item.unReadCountCalc =
@@ -364,14 +348,6 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
     updateLastContentObjTemp.sessionId,
     updateLastContentObjTemp.sessionId
   );
-
-  if (updateLastContentObjTemp.topFlag) {
-    pinToTop(
-      updateLastContentObjTemp.sessionId,
-      updateLastContentObjTemp.sessionId,
-      updateLastContentObjTemp.mustTopFlag
-    );
-  }
 }
 
 function scrollToItemBySessionId(sessionId?: string) {
@@ -444,12 +420,7 @@ function scrollToItemBySessionId(sessionId?: string) {
                   {{ item.sessionName }}
                 </div>
                 <div class="text-xs text-gray-400 shrink-0">
-                  {{
-                    FormatTsForCurrentDay(
-                      item.lastContentCreateTs || item.lastReceiveTs,
-                      true
-                    )
-                  }}
+                  {{ FormatTsForCurrentDay(item.lastReceiveTs, true) }}
                 </div>
               </div>
 

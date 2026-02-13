@@ -156,7 +156,7 @@ function menuSelect(index: string) {
 }
 
 function onlySessionSearch() {
-  sessionRef.value?.onSearch(false, false, false);
+  sessionRefDoSearch(false, false, false);
 }
 </script>
 

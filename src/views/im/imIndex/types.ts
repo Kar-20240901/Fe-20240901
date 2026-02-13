@@ -7,17 +7,15 @@ export interface FeBaseImSessionRefUserPageVO
   extends BaseImSessionRefUserPageVO {
   unReadCountCalc?: number; // 未读数量-前端计算，格式：int32
   lastContentCalc?: string; // 最新消息-前端计算，备注：会截断或者处理
-  lastContentCreateTsCalc?: string; // 最新消息创建时间戳-前端计算，格式：int64
+  lastReceiveTsCalc?: string; // 最后一次接受到消息时的时间戳-前端计算，格式：int64
 }
 
 export interface IUpdateLastContentObj {
   sessionId?: string;
   lastContent?: string;
-  lastContentCreateTs?: string;
+  lastReceiveTs?: string;
   unReadCountAddNumber?: number;
   unReadCountAddNumberUpdateFlag?: boolean;
-  topFlag?: boolean;
-  mustTopFlag?: boolean;
 }
 
 export interface BaseImSessionRefUserQueryLastContentVO {

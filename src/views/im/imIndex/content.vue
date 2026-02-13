@@ -79,11 +79,7 @@ const objIdSet: Set<string> = new Set();
 // key：objId
 const todoSendMap = ref<Map<string, ISessionContentBO>>(new Map());
 
-function setSessionContentList(
-  sessionContentListTemp?: ISessionContentBO[],
-  topFlag?: boolean,
-  mustTopFlag?: boolean
-) {
+function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
   if (!sessionContentListTemp || !sessionContentListTemp.length) {
     return;
   }
@@ -147,11 +143,9 @@ function setSessionContentList(
   sessionRefUpdateLastContent({
     sessionId: props.session.sessionId,
     lastContent: lastContent.content,
-    lastContentCreateTs: lastContent.createTs,
+    lastReceiveTs: lastContent.createTs,
     unReadCountAddNumber: undefined,
-    unReadCountAddNumberUpdateFlag: undefined,
-    topFlag: topFlag,
-    mustTopFlag: mustTopFlag
+    unReadCountAddNumberUpdateFlag: undefined
   });
 }
 
@@ -183,7 +177,7 @@ function showTodoSendMap() {
 
   todoSendMap.value = new Map(Object.entries(todoSendObj));
 
-  setSessionContentList([...todoSendMap.value.values()], false, false);
+  setSessionContentList([...todoSendMap.value.values()]);
 }
 
 function setTodoSendMap(
@@ -280,7 +274,7 @@ async function doSearch(
     .then(res => {
       const oldListLength = sessionContentShowList.value.length - 1;
 
-      setSessionContentList(res.data, false, false);
+      setSessionContentList(res.data);
 
       if (scrollType === "up") {
         hasLess = res.data.length >= pageSize;
@@ -653,7 +647,7 @@ function doSendClick(
 
   setTodoSendMap(item, false, false);
 
-  setSessionContentList([item], true, true);
+  setSessionContentList([item]);
 
   const form: BaseImSessionContentInsertTxtForFeDTO = {
     sessionId,
@@ -806,7 +800,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
         contentId: baseImSessionContentInsertTxtVO.contentId
       };
 
-      setSessionContentList([item], true, false);
+      setSessionContentList([item]);
 
       handleShouldAutoScroll();
 
@@ -831,11 +825,9 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       sessionRefUpdateLastContent({
         sessionId: baseImSessionContentInsertTxtVO.sessionId,
         lastContent: baseImSessionContentInsertTxtVO.txt,
-        lastContentCreateTs: baseImSessionContentInsertTxtVO.createTs,
+        lastReceiveTs: baseImSessionContentInsertTxtVO.createTs,
         unReadCountAddNumber: unReadCountAddNumber,
-        unReadCountAddNumberUpdateFlag: false,
-        topFlag: true,
-        mustTopFlag: false
+        unReadCountAddNumberUpdateFlag: false
       });
 
       if (
@@ -873,11 +865,9 @@ const queryLastContentMap = throttleByKey(
       sessionRefUpdateLastContent({
         sessionId: obj.sessionId,
         lastContent: obj.lastContent,
-        lastContentCreateTs: obj.lastContentCreateTs,
+        lastReceiveTs: obj.lastContentCreateTs,
         unReadCountAddNumber: obj.unReadCount,
-        unReadCountAddNumberUpdateFlag: true,
-        topFlag: true,
-        mustTopFlag: false
+        unReadCountAddNumberUpdateFlag: true
       });
     });
   },
