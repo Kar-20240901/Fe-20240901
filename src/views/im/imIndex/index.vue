@@ -228,8 +228,8 @@ const throttleUpdateAvatarAndNickname = throttleByKey(
       });
     });
   },
-  5000,
-  true,
+  10000,
+  false,
   true
 );
 
