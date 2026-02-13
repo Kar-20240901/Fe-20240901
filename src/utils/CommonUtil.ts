@@ -55,6 +55,7 @@ export function throttleByKey(
     const remainingTime = delay - (now - lastExecuteTime[key]);
 
     if (remainingTime <= 0) {
+      console.log("执行-1", { key, value: timers[key], remainingTime });
       if (timers[key]) {
         clearTimeout(timers[key]);
         timers[key] = null;
@@ -63,12 +64,14 @@ export function throttleByKey(
       lastExecuteTime[key] = now;
     } else if (trailing) {
       if (timers[key]) {
+        console.log("清除", { key, value: timers[key], remainingTime });
         clearTimeout(timers[key]);
         timers[key] = null;
       }
 
       timers[key] = window.setTimeout(() => {
-        lastExecuteTime[key] = Date.now();
+        console.log("执行-2", { key, value: timers[key] });
+        lastExecuteTime[key] = leading ? Date.now() : undefined;
         fn(...args);
         timers[key] = null;
       }, remainingTime);

@@ -238,7 +238,7 @@ function textareaInputRefFocus() {
 
 const pageSize = 20;
 
-const doSearchThrottle = throttle(
+const searchThrottleByKeyForScroll = throttleByKey(
   (
     form?: ScrollListDTO,
     loadingFlag?: boolean,
@@ -247,13 +247,54 @@ const doSearchThrottle = throttle(
   ) => {
     doSearch(form, loadingFlag, scrollToItemFlag, scrollType);
   },
-  300
-) as (
+  1000,
+  false,
+  true
+);
+
+const searchThrottleByKey = throttleByKey(
+  (
+    form?: ScrollListDTO,
+    loadingFlag?: boolean,
+    scrollToItemFlag?: boolean,
+    scrollType?: "up" | "down"
+  ) => {
+    doSearch(form, loadingFlag, scrollToItemFlag, scrollType);
+  },
+  1000,
+  true,
+  true
+);
+
+function doSearchThrottleByKey(
   form?: ScrollListDTO,
   loadingFlag?: boolean,
   scrollToItemFlag?: boolean,
   scrollType?: "up" | "down"
-) => void;
+) {
+  searchThrottleByKey(
+    "search",
+    form,
+    loadingFlag,
+    scrollToItemFlag,
+    scrollType
+  );
+}
+
+function doSearchThrottleByKeyForScroll(
+  form?: ScrollListDTO,
+  loadingFlag?: boolean,
+  scrollToItemFlag?: boolean,
+  scrollType?: "up" | "down"
+) {
+  searchThrottleByKeyForScroll(
+    "searchForScroll",
+    form,
+    loadingFlag,
+    scrollToItemFlag,
+    scrollType
+  );
+}
 
 async function doSearch(
   form?: ScrollListDTO,
@@ -278,7 +319,7 @@ async function doSearch(
     id: form?.id,
     pageSize: String(pageSize),
     queryMoreFlag: form.queryMoreFlag ?? false,
-    boolean1: form.boolean1 ?? true
+    boolean1: form.boolean1 ?? false
   })
     .then(res => {
       const oldListLength = sessionContentShowList.value.length - 1;
@@ -752,7 +793,7 @@ function doSendToServer(form: BaseImSessionContentInsertTxtForFeDTO) {
 
     setTodoSendMap({ objId: objId, sessionId: form.sessionId }, true, false);
 
-    doSearchThrottle(
+    doSearchThrottleByKey(
       {
         id: res.data,
         backwardFlag: true,
@@ -813,7 +854,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
 
       handleShouldAutoScroll();
 
-      doSearchThrottle(
+      doSearchThrottleByKey(
         {
           id: baseImSessionContentInsertTxtVO.contentId,
           backwardFlag: true,
@@ -908,7 +949,7 @@ function handleScroll(event: Event) {
     hasLess &&
     !scrollStopSearchFlag
   ) {
-    doSearchThrottle(
+    doSearchThrottleByKeyForScroll(
       { id: getFirstContentId(), backwardFlag: false },
       false,
       false,
@@ -919,7 +960,7 @@ function handleScroll(event: Event) {
     !sessionContentLoading.value &&
     !scrollStopSearchFlag
   ) {
-    doSearchThrottle(
+    doSearchThrottleByKeyForScroll(
       {
         id: getLastContentId(),
         backwardFlag: true
