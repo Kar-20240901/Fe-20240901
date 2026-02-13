@@ -17,7 +17,7 @@ import { FormatTsForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
 import { DevFlag } from "@/utils/SysUtil";
 import { throttle, useResizeObserver } from "@pureadmin/utils";
-import { debounceByKey, throttleByKey } from "@/utils/CommonUtil";
+import { throttleByKey } from "@/utils/CommonUtil";
 
 const loading = ref<boolean>(false);
 const dataList = ref<FeBaseImSessionRefUserPageVO[]>([]);
@@ -272,7 +272,7 @@ defineExpose({ onSearch, updateLastContent, doSearchThrottle });
 const props = defineProps<IImSessionProps>();
 
 // 置顶
-const pinToTop = debounceByKey(
+const pinToTop = throttleByKey(
   (sessionId, mustTopFlag) => {
     const findIndex = dataList.value.findIndex(
       item => item.sessionId === sessionId
@@ -296,7 +296,8 @@ const pinToTop = debounceByKey(
       });
     }
   },
-  1000,
+  1500,
+  true,
   true
 );
 
@@ -318,7 +319,7 @@ const handleLastContentInfo = throttleByKey(
     item.lastContent = item.lastContentCalc;
     item.lastContentCreateTs = item.lastContentCreateTsCalc;
   },
-  1000,
+  1200,
   true,
   true
 );
