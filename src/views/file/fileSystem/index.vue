@@ -538,8 +538,8 @@ const imagePreviewInitialIndex = ref<number>(0);
     </div>
 
     <div class="flex flex-col px-5 py-3 bg-bg_color flex-1">
-      <div class="pb-3 flex justify-between shrink-0">
-        <div>
+      <div class="pb-3 flex justify-between shrink-0 gap-3">
+        <div class="flex flex-wrap flex-1 gap-x-2 gap-y-3">
           <el-button
             v-if="
               search.pid !== CommonConstant.TOP_PID_STR && !search.globalFlag
@@ -601,7 +601,7 @@ const imagePreviewInitialIndex = ref<number>(0);
           </el-button>
         </div>
 
-        <div class="flex">
+        <div class="flex flex-wrap gap-x-2 gap-y-3">
           <el-button
             type="primary"
             :icon="useRenderIcon(EpUpload)"
@@ -782,3 +782,9 @@ const imagePreviewInitialIndex = ref<number>(0);
     />
   </div>
 </template>
+
+<style scoped lang="scss">
+:deep(.el-button + .el-button) {
+  margin-left: 0;
+}
+</style>
