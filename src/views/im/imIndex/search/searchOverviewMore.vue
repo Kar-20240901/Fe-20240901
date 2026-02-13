@@ -185,14 +185,14 @@ defineExpose({
             <div class="truncate text-sm text-gray-400 flex">
               <div
                 v-for="(part, index) in safeHighlight(
-                  item.groupShowId,
+                  item.groupUuid,
                   props.searchKey
                 )"
                 :key="index"
                 :class="
                   part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
                 "
-                :title="item.groupShowId"
+                :title="item.groupUuid"
               >
                 {{ part.text }}
               </div>

@@ -435,7 +435,7 @@ function handleSubmitImage() {
           </div>
         </div>
       </el-table-column>
-      <el-table-column prop="groupShowId" label="群组编码" width="270" />
+      <el-table-column prop="groupUuid" label="群组编码" width="270" />
       <el-table-column prop="bio" label="群组简介" width="220" />
       <el-table-column
         #default="scope"

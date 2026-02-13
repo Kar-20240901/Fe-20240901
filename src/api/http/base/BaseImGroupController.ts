@@ -13,9 +13,9 @@ export interface BaseImGroupInfoByIdVO {
   bio?: string; // 群组简介
   updateTime?: string; // 修改时间，格式：date-time
   sessionId?: string; // 会话主键 id，格式：int64
+  uuid?: string; // 群聊的 id
   normalMuteFlag?: boolean; // 普通成员是否禁言
   updateId?: string; // 修改人id，格式：int64
-  showId?: string; // 展示的 id
   createTime?: string; // 创建时间，格式：date-time
   manageFlag?: boolean; // 是否是管理员
   createId?: string; // 创建人id，格式：int64
@@ -69,11 +69,11 @@ export interface ScrollListDTO {
 }
 
 export interface BaseImGroupPageVO {
-  groupShowId?: string; // 群组显示的 id
   groupShowName?: string; // 显示的名称
   avatarUrl?: string; // 群组头像地址
   manageFlag?: boolean; // 是否是管理员，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
   createTime?: string; // 创建时间，备注：只有 dto的 manageQueryFlag生效时，才会返回该值，格式：date-time
+  groupUuid?: string; // 群组的 uuid
   groupId?: string; // 群组主键 id
   bio?: string; // 群组简介，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
   muteFlag?: boolean; // 是否被禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
@@ -97,7 +97,6 @@ export function baseImGroupScroll(
 }
 
 export interface BaseImGroupInsertOrUpdateDTO {
-  showId?: string; // 展示的 id
   name?: string; // 群组名称，是否必传：true
   manageMuteFlag?: boolean; // 管理员是否禁言，群主不会被禁言
   bio?: string; // 群组简介

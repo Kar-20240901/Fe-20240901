@@ -90,8 +90,8 @@ export function baseImApplyGroupPageSelf(
 }
 
 export interface BaseImApplyFriendSearchApplyGroupDTO {
-  groupShowId?: string; // 群组展示的id，格式：int64
   current?: string; // 第几页，格式：int64
+  groupUuid?: string; // 群组的 uuid，格式：int64
   name?: string; // 群组名称
   pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   order?: MyOrderDTO; // 排序字段
