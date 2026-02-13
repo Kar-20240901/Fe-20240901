@@ -33,7 +33,7 @@ defineOptions({
   name: "ImIndex"
 });
 
-// key：user主键 id
+// key：user主键 id，备注：key 不包含群组
 const sessionUserMap = ref<Record<string, IImShowInfoMap>>({});
 
 function updateSessionUserMap(item: IImShowInfoMap) {
