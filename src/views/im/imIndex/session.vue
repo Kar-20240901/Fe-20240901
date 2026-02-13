@@ -443,7 +443,12 @@ function scrollToItemBySessionId(sessionId?: string) {
                   {{ item.sessionName }}
                 </div>
                 <div class="text-xs text-gray-400 shrink-0">
-                  {{ FormatTsForCurrentDay(item.lastContentCreateTs, true) }}
+                  {{
+                    FormatTsForCurrentDay(
+                      item.lastContentCreateTs || item.lastReceiveTs,
+                      true
+                    )
+                  }}
                 </div>
               </div>
 
