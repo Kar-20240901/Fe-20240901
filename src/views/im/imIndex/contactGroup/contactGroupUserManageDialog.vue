@@ -40,6 +40,8 @@ const selectIdArr = ref<string[]>([]);
 
 const tableRef = ref();
 
+const searchGroupDictVO = ref<DictVO>({});
+
 function onSearch() {
   if (!search.value.groupId) {
     return;
@@ -61,15 +63,23 @@ function onSearch() {
 }
 
 function setGroupId(groupId?: string) {
+  handleChangeGroupId(groupId);
+}
+
+function handleChangeGroupId(groupId?: string) {
   if (!groupId) {
     return;
   }
 
-  if (!groupIdSet.value.has(groupId)) {
+  const index = groupIdMap.value.get(groupId);
+
+  if (index === undefined) {
     return;
   }
 
   search.value.groupId = groupId;
+
+  searchGroupDictVO.value = groupDictList.value[index];
 
   onSearch();
 }
@@ -121,7 +131,7 @@ function addManageBySelectIdArr() {}
 
 function deleteManageBySelectIdArr() {}
 
-function changeBelongId() {
+function changeBelongId(item?: BaseImGroupRefUserPageVO) {
   baseImGroupChangeBelongId({}).then(res => {
     ToastSuccess(res.msg);
     onSearch();
@@ -268,20 +278,50 @@ function removeUserClick(item?: BaseImGroupRefUserPageVO) {
   );
 }
 
+function changeBelongIdClick(item?: BaseImGroupRefUserPageVO) {
+  if (!search.value.groupId || !item?.userId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImGroupChangeBelongId({
+        groupId: search.value.groupId,
+        newBelongId: item.userId
+      }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定任命【${item.nickname}】为新群主吗？`
+  );
+}
+
 const groupDictList = ref<DictVO[]>([]);
-const groupIdSet = ref<Set<string>>(new Set<string>());
+
+// key：groupId，value：数组下标
+const groupIdMap = ref<Map<string, number>>(new Map<string, number>());
 
 function initGroupDictList() {
   groupDictList.value = [];
-  groupIdSet.value.clear();
+  groupIdMap.value.clear();
 
   baseImGroupDictList().then(res => {
     groupDictList.value = res.data.records || [];
 
-    groupDictList.value.forEach(item => {
-      groupIdSet.value.add(item.id);
+    groupDictList.value.forEach((item, index) => {
+      groupIdMap.value.set(item.id, index);
     });
+
+    if (groupDictList.value.length) {
+      handleChangeGroupId(groupDictList.value[0].id);
+    }
   });
+}
+
+function groupIdChange(groupId?: string) {
+  handleChangeGroupId(groupId);
 }
 </script>
 
@@ -358,7 +398,7 @@ function initGroupDictList() {
                 label: 'name',
                 value: 'id'
               }"
-              @change="onSearch()"
+              @change="groupIdChange"
             >
               <template #label="{ index }">
                 <div class="w-full h-full flex items-center">
@@ -460,12 +500,12 @@ function initGroupDictList() {
         </div>
       </el-table-column>
       <el-table-column prop="uuid" label="用户编码" width="270" />
-      <el-table-column prop="bio" label="个人简介" width="220" />
+      <el-table-column prop="bio" label="个人简介" width="200" />
       <el-table-column
         #default="scope"
         prop="createTime"
         label="入群时间"
-        width="160"
+        width="170"
       >
         {{ FormatStringForCurrentDay(scope.row.createTime) }}
       </el-table-column>
@@ -483,7 +523,7 @@ function initGroupDictList() {
         label="管理员"
         width="100"
       >
-        {{ scope.row.manageFlag ? "是" : "否" }}
+        {{ scope.row.belongFlag ? "-" : scope.row.manageFlag ? "是" : "否" }}
       </el-table-column>
       <el-table-column
         #default="scope"
@@ -503,7 +543,10 @@ function initGroupDictList() {
       </el-table-column>
       <el-table-column #default="scope" label="操作" fixed="right" width="200">
         <el-button
-          v-if="!scope.row.notDisturbFlag && (scope.row.b1 || scope.row.b2)"
+          v-if="
+            !scope.row.muteFlag &&
+            (searchGroupDictVO.b1 || searchGroupDictVO.b2)
+          "
           link
           type="primary"
           @click="addMuteClick(scope.row)"
@@ -511,7 +554,9 @@ function initGroupDictList() {
           禁言
         </el-button>
         <el-button
-          v-if="scope.row.notDisturbFlag && (scope.row.b1 || scope.row.b2)"
+          v-if="
+            scope.row.muteFlag && (searchGroupDictVO.b1 || searchGroupDictVO.b2)
+          "
           link
           type="primary"
           @click="deleteMuteClick(scope.row)"
@@ -519,7 +564,11 @@ function initGroupDictList() {
           取消禁言
         </el-button>
         <el-button
-          v-if="!scope.row.notDisturbFlag && (scope.row.b1 || scope.row.b2)"
+          v-if="
+            !scope.row.manageFlag &&
+            !scope.row.belongFlag &&
+            searchGroupDictVO.b1
+          "
           link
           type="primary"
           @click="addManageClick(scope.row)"
@@ -527,7 +576,11 @@ function initGroupDictList() {
           任命管理员
         </el-button>
         <el-button
-          v-if="scope.row.notDisturbFlag && (scope.row.b1 || scope.row.b2)"
+          v-if="
+            scope.row.manageFlag &&
+            !scope.row.belongFlag &&
+            searchGroupDictVO.b1
+          "
           link
           type="primary"
           @click="deleteManageClick(scope.row)"
@@ -535,7 +588,10 @@ function initGroupDictList() {
           取消管理员
         </el-button>
         <el-button
-          v-if="!scope.row.blockFlag && (scope.row.b1 || scope.row.b2)"
+          v-if="
+            !scope.row.blockFlag &&
+            (searchGroupDictVO.b1 || searchGroupDictVO.b2)
+          "
           link
           type="primary"
           @click="blockClick(scope.row)"
@@ -543,12 +599,23 @@ function initGroupDictList() {
           拉黑
         </el-button>
         <el-button
-          v-if="scope.row.blockFlag && (scope.row.b1 || scope.row.b2)"
+          v-if="
+            scope.row.blockFlag &&
+            (searchGroupDictVO.b1 || searchGroupDictVO.b2)
+          "
           link
           type="primary"
           @click="cancelBlockClick(scope.row)"
         >
           取消拉黑
+        </el-button>
+        <el-button
+          v-if="!scope.row.belongFlag && searchGroupDictVO.b1"
+          link
+          type="primary"
+          @click="changeBelongIdClick(scope.row)"
+        >
+          任命群主
         </el-button>
         <el-button
           v-if="scope.row.b1 || scope.row.b2"
