@@ -132,22 +132,18 @@ function viewClick(row: BaseRequestDO) {
     <div class="bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
         <el-form-item label="用户：" prop="createId">
-          <el-select
+          <el-select-v2
             v-model="search.createId"
             placeholder="请选择"
             class="!w-[180px]"
             clearable
             filterable
-          >
-            <el-option
-              v-for="item in userDictList"
-              :key="item.id"
-              :value="item.id"
-              :label="item.name"
-            >
-              {{ item.name }}
-            </el-option>
-          </el-select>
+            :options="userDictList"
+            :props="{
+              label: 'name',
+              value: 'id'
+            }"
+          />
         </el-form-item>
         <el-form-item>
           <el-button

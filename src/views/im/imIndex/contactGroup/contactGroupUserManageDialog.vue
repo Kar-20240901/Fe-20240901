@@ -347,12 +347,17 @@ function initGroupDictList() {
           :model="search"
         >
           <el-form-item prop="groupId">
-            <el-select
+            <el-select-v2
               v-model="search.groupId"
               placeholder="请选择群聊"
               class="!w-[220px]"
               clearable
               filterable
+              :options="groupDictList"
+              :props="{
+                label: 'name',
+                value: 'id'
+              }"
               @change="onSearch()"
             >
               <template #label="{ index }">
@@ -366,7 +371,7 @@ function initGroupDictList() {
                       <el-image
                         :src="Avatar"
                         fit="cover"
-                        class="w-6 h-6 rounded-full"
+                        class="w-6 h-6 rounded-full shrink-0"
                       />
                     </template>
                   </el-image>
@@ -377,23 +382,18 @@ function initGroupDictList() {
                   </div>
                 </div>
               </template>
-              <el-option
-                v-for="item in groupDictList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"
-              >
+              <template #default="{ item }">
                 <div class="w-full h-full flex items-center">
                   <el-image
                     :src="item.str2"
                     fit="cover"
-                    class="w-6 h-6 rounded-full"
+                    class="w-6 h-6 rounded-full shrink-0"
                   >
                     <template #error>
                       <el-image
                         :src="Avatar"
                         fit="cover"
-                        class="w-6 h-6 rounded-full"
+                        class="w-6 h-6 rounded-full shrink-0"
                       />
                     </template>
                   </el-image>
@@ -401,8 +401,8 @@ function initGroupDictList() {
                     {{ item.name }}（{{ item.str1 }}）
                   </div>
                 </div>
-              </el-option>
-            </el-select>
+              </template>
+            </el-select-v2>
           </el-form-item>
           <el-form-item prop="searchKey">
             <el-input

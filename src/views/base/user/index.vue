@@ -347,7 +347,7 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
             class="!w-[180px]"
           />
         </el-form-item>
-        <el-form-item>
+        <el-form-item class="original-el-button">
           <el-button
             type="primary"
             :icon="useRenderIcon(RiSearchLine)"
@@ -364,7 +364,7 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
     </div>
 
     <div class="flex flex-col px-5 py-3 bg-bg_color">
-      <div class="pb-3 flex flex-wrap gap-y-1">
+      <div class="pb-3 flex flex-wrap gap-x-2 gap-y-3">
         <el-button
           type="primary"
           :icon="useRenderIcon(AddFill)"
@@ -591,8 +591,16 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
 </template>
 
 <style scoped lang="scss">
+.original-el-button .el-button + .el-button {
+  margin-left: 12px;
+}
+
 :deep(.el-upload-dragger) {
   padding: 0;
   border: none;
+}
+
+:deep(.el-button + .el-button) {
+  margin-left: 0;
 }
 </style>

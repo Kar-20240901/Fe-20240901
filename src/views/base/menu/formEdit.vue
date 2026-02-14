@@ -211,7 +211,7 @@ function confirmClick() {
 
         <re-col>
           <el-form-item label="关联角色" prop="roleIdSet">
-            <el-select
+            <el-select-v2
               v-model="form.roleIdSet"
               placeholder="请选择"
               class="w-full"
@@ -220,16 +220,12 @@ function confirmClick() {
               filterable
               collapse-tags
               collapse-tags-tooltip
-            >
-              <el-option
-                v-for="item in props.roleDictList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"
-              >
-                {{ item.name }}
-              </el-option>
-            </el-select>
+              :options="roleDictList"
+              :props="{
+                label: 'name',
+                value: 'id'
+              }"
+            />
           </el-form-item>
         </re-col>
       </el-row>

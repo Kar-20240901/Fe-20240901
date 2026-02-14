@@ -152,7 +152,7 @@ function confirmClick() {
 
         <re-col>
           <el-form-item label="关联用户" prop="userIdSet">
-            <el-select
+            <el-select-v2
               v-model="form.userIdSet"
               placeholder="请选择"
               class="w-full"
@@ -161,16 +161,12 @@ function confirmClick() {
               filterable
               collapse-tags
               collapse-tags-tooltip
-            >
-              <el-option
-                v-for="item in props.userDictList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"
-              >
-                {{ item.name }}
-              </el-option>
-            </el-select>
+              :options="userDictList"
+              :props="{
+                label: 'name',
+                value: 'id'
+              }"
+            />
           </el-form-item>
         </re-col>
       </el-row>

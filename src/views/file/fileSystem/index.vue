@@ -521,7 +521,7 @@ const imagePreviewInitialIndex = ref<number>(0);
             "
           />
         </el-form-item>
-        <el-form-item>
+        <el-form-item class="original-el-button">
           <el-button
             type="primary"
             :icon="useRenderIcon(RiSearchLine)"
@@ -784,6 +784,10 @@ const imagePreviewInitialIndex = ref<number>(0);
 </template>
 
 <style scoped lang="scss">
+.original-el-button .el-button + .el-button {
+  margin-left: 12px;
+}
+
 :deep(.el-button + .el-button) {
   margin-left: 0;
 }
