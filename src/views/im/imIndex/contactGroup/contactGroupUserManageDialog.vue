@@ -11,7 +11,7 @@ import {
   baseImGroupDictList,
   baseImGroupRemoveUser
 } from "@/api/http/base/BaseImGroupController";
-import { ExecConfirm, ToastSuccess } from "@/utils/ToastUtil";
+import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
   baseImGroupRefUserAddManage,
   baseImGroupRefUserAddMute,
@@ -117,25 +117,193 @@ function resetSelectIdArr() {
   selectIdArr.value = [];
 }
 
-function blockBySelectIdArr() {}
+function blockBySelectIdArr() {
+  if (!search.value.groupId) {
+    ToastError("请选择群聊");
+    return;
+  }
 
-function cancelBlockBySelectIdArr() {}
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
 
-function removeUserBySelectIdArr() {}
+  ExecConfirm(
+    async () => {
+      await baseImBlockGroupAddUser({
+        groupId: search.value.groupId,
+        userIdSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定拉黑勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
 
-function addMuteBySelectIdArr() {}
+function cancelBlockBySelectIdArr() {
+  if (!search.value.groupId) {
+    ToastError("请选择群聊");
+    return;
+  }
 
-function deleteMuteBySelectIdArr() {}
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
 
-function addManageBySelectIdArr() {}
+  ExecConfirm(
+    async () => {
+      await baseImBlockGroupCancelUser({
+        groupId: search.value.groupId,
+        userIdSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定取消拉黑勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
 
-function deleteManageBySelectIdArr() {}
+function removeUserBySelectIdArr() {
+  if (!search.value.groupId) {
+    ToastError("请选择群聊");
+    return;
+  }
 
-function changeBelongId(item?: BaseImGroupRefUserPageVO) {
-  baseImGroupChangeBelongId({}).then(res => {
-    ToastSuccess(res.msg);
-    onSearch();
-  });
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImGroupRemoveUser({
+        groupId: search.value.groupId,
+        userIdSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定移除勾选的【${selectIdArr.value.length}】个成员吗？`
+  );
+}
+
+function addMuteBySelectIdArr() {
+  if (!search.value.groupId) {
+    ToastError("请选择群聊");
+    return;
+  }
+
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImGroupRefUserAddMute({
+        groupId: search.value.groupId,
+        userIdSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定禁言勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function deleteMuteBySelectIdArr() {
+  if (!search.value.groupId) {
+    ToastError("请选择群聊");
+    return;
+  }
+
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImGroupRefUserDeleteMute({
+        groupId: search.value.groupId,
+        userIdSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定取消禁言勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function addManageBySelectIdArr() {
+  if (!search.value.groupId) {
+    ToastError("请选择群聊");
+    return;
+  }
+
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImGroupRefUserAddManage({
+        groupId: search.value.groupId,
+        userIdSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定任命勾选的【${selectIdArr.value.length}】个成员为管理员吗？`
+  );
+}
+
+function deleteManageBySelectIdArr() {
+  if (!search.value.groupId) {
+    ToastError("请选择群聊");
+    return;
+  }
+
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImGroupRefUserDeleteManage({
+        groupId: search.value.groupId,
+        userIdSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定取消勾选的【${selectIdArr.value.length}】个管理员身份吗？`
+  );
 }
 
 function addMuteClick(item?: BaseImGroupRefUserPageVO) {
@@ -376,7 +544,7 @@ function groupIdChange(groupId?: string) {
           :icon="useRenderIcon(RiUserMinusFill)"
           @click="removeUserBySelectIdArr"
         >
-          踢出群员
+          移除群员
         </el-button>
       </div>
 
