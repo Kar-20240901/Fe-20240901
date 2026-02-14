@@ -375,7 +375,7 @@ function composeClick(row: BaseFileTransferDO) {
         layout="->, prev, pager, next, jumper, sizes, total"
         :total="total"
         :page-sizes="[10, 50, 100]"
-        @change="onSearch"
+        @change="onSearch()"
       />
     </div>
   </el-dialog>

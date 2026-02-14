@@ -353,6 +353,7 @@ function initGroupDictList() {
               class="!w-[220px]"
               clearable
               filterable
+              @change="onSearch()"
             >
               <template #label="{ index }">
                 <div class="w-full h-full flex items-center">
@@ -567,7 +568,7 @@ function initGroupDictList() {
       layout="->, prev, pager, next, jumper, sizes, total"
       :total="total"
       :page-sizes="[10, 50, 100]"
-      @change="onSearch"
+      @change="onSearch()"
     />
   </div>
 </template>

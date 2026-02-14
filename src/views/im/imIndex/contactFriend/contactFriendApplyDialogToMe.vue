@@ -521,7 +521,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
       layout="->, prev, pager, next, jumper, sizes, total"
       :total="total"
       :page-sizes="[10, 50, 100]"
-      @change="onSearch"
+      @change="onSearch()"
     />
 
     <kar-one-input-textarea

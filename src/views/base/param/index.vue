@@ -210,7 +210,7 @@ function onSelectChange(rowArr?: BaseParamDO[]) {
         layout="->, prev, pager, next, jumper, sizes, total"
         :total="total"
         :page-sizes="[15, 50, 100]"
-        @change="onSearch"
+        @change="onSearch()"
       />
     </div>
 
