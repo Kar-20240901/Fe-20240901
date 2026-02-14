@@ -47,7 +47,8 @@ function onSearchKeyChange(val: string) {
 }
 
 const onSearchKeyChangeDebounce: () => void = debounce(
-  onSearchKeyChangeDebounceFun
+  onSearchKeyChangeDebounceFun,
+  500
 );
 
 function onSearchKeyChangeDebounceFun() {

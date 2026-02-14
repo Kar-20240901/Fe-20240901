@@ -2,7 +2,6 @@
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { onMounted, ref } from "vue";
 import Avatar from "@/assets/user.png";
-import RiSearchLine from "~icons/ri/search-line";
 import RiUserForbidFill from "~icons/ri/user-forbid-fill";
 import RiUserFollowFill from "~icons/ri/user-follow-fill";
 import RiUserMinusFill from "~icons/ri/UserMinusFill";
@@ -27,6 +26,7 @@ import {
   baseImBlockGroupCancelUser
 } from "@/api/http/base/BaseImBlockController";
 import { DictVO } from "@/api/http/base/BaseRoleController";
+import { debounce } from "@/store/utils";
 
 const search = ref<BaseImGroupRefUserPageDTO>({});
 
@@ -89,14 +89,19 @@ onMounted(() => {
   initGroupDictList();
 });
 
-function handleSearchInputKeydown(e: KeyboardEvent) {
-  const isEnter = e.key === "Enter" || e.key === "NumpadEnter";
-
-  if (isEnter) {
-    e.preventDefault();
-    onSearch();
-  }
+function onSearchKeyClear() {
+  onSearchKeyChangeDebounce();
 }
+
+function onSearchKeyKeydown() {
+  onSearchKeyChangeDebounce();
+}
+
+function onSearchKeyChange() {
+  onSearchKeyChangeDebounce();
+}
+
+const onSearchKeyChangeDebounce: () => void = debounce(onSearch, 500);
 
 function resetSelectIdArr() {
   selectIdArr.value = [];
@@ -404,18 +409,10 @@ function initGroupDictList() {
               placeholder="请输入用户昵称、用户编码"
               clearable
               class="!w-[220px]"
-              @keydown="handleSearchInputKeydown"
+              @input="onSearchKeyChange"
+              @clear="onSearchKeyClear"
+              @keydown.enter="onSearchKeyKeydown"
             />
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              type="primary"
-              :icon="useRenderIcon(RiSearchLine)"
-              :loading="loading"
-              @click="onSearch"
-            >
-              搜索
-            </el-button>
           </el-form-item>
         </el-form>
       </div>
