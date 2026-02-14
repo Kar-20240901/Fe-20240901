@@ -60,13 +60,12 @@ function resetSearch() {
   <div
     :class="[
       'min-w-[180px]',
-      deviceDetection() ? 'max-w-[100%]' : 'max-w-[70%]'
+      deviceDetection() ? 'max-w-[100%]' : 'max-w-[80%]'
     ]"
   >
-    <h3 class="my-8">安全日志</h3>
-
+    <h3 class="pb-5">安全日志</h3>
     <div class="flex flex-col">
-      <div class="bg-bg_color px-8 pt-[12px] mb-3">
+      <div class="bg-bg_color px-6">
         <el-form ref="searchRef" :inline="true" :model="search">
           <el-form-item label="ip：" prop="ip">
             <el-input
@@ -92,12 +91,7 @@ function resetSearch() {
         </el-form>
       </div>
 
-      <div class="flex flex-col px-5 py-3 bg-bg_color">
-        <div class="pb-3 flex justify-between">
-          <div />
-          <div />
-        </div>
-
+      <div class="flex flex-col px-5 bg-bg_color">
         <el-table
           ref="tableRef"
           v-loading="loading"

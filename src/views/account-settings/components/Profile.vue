@@ -142,7 +142,7 @@ const imagePreviewSrcList = ref<string[]>([]);
       deviceDetection() ? 'max-w-[100%]' : 'max-w-[70%]'
     ]"
   >
-    <h3 class="my-8">个人信息</h3>
+    <h3 class="pb-3">个人信息</h3>
     <el-form
       ref="userInfoFormRef"
       label-position="top"

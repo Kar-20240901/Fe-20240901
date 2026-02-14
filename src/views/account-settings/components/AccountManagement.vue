@@ -150,7 +150,7 @@ function onClick(index, item) {
       deviceDetection() ? 'max-w-[100%]' : 'max-w-[70%]'
     ]"
   >
-    <h3 class="my-8">账户管理</h3>
+    <h3 class="pb-3">账户管理</h3>
     <div v-for="(item, index) in list" :key="index">
       <div class="flex items-center">
         <div class="flex-1">
