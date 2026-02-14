@@ -331,7 +331,7 @@ function initGroupDictList() {
                   <el-image
                     :src="groupDictList[index].str2"
                     fit="cover"
-                    class="w-6 h-6 rounded-full"
+                    class="w-6 h-6 rounded-full shrink-0"
                   >
                     <template #error>
                       <el-image
@@ -410,7 +410,7 @@ function initGroupDictList() {
       show-overflow-tooltip
       stripe
       highlight-current-row
-      height="45vh"
+      height="42vh"
       @selection-change="onSelectChange"
     >
       <el-table-column type="selection" />
@@ -434,27 +434,43 @@ function initGroupDictList() {
             </template>
           </el-image>
           <div class="text-sm ml-2">
-            {{ scope.row?.name }}
+            {{ scope.row?.nickname }}
           </div>
         </div>
       </el-table-column>
-      <el-table-column prop="friendShowId" label="用户编码" width="270" />
+      <el-table-column prop="uuid" label="用户编码" width="270" />
       <el-table-column prop="bio" label="个人简介" width="220" />
       <el-table-column
         #default="scope"
-        prop="friendCreateTime"
-        label="创建时间"
+        prop="createTime"
+        label="入群时间"
         width="160"
       >
-        {{ FormatStringForCurrentDay(scope.row.friendCreateTime) }}
+        {{ FormatStringForCurrentDay(scope.row.createTime) }}
       </el-table-column>
       <el-table-column
         #default="scope"
-        prop="notDisturbFlag"
-        label="免打扰"
+        prop="muteFlag"
+        label="禁言"
         width="100"
       >
-        {{ scope.row.notDisturbFlag ? "是" : "否" }}
+        {{ scope.row.muteFlag ? "是" : "否" }}
+      </el-table-column>
+      <el-table-column
+        #default="scope"
+        prop="manageFlag"
+        label="管理员"
+        width="100"
+      >
+        {{ scope.row.manageFlag ? "是" : "否" }}
+      </el-table-column>
+      <el-table-column
+        #default="scope"
+        prop="belongFlag"
+        label="群组创建人"
+        width="130"
+      >
+        {{ scope.row.belongFlag ? "是" : "否" }}
       </el-table-column>
       <el-table-column
         #default="scope"
@@ -466,7 +482,7 @@ function initGroupDictList() {
       </el-table-column>
       <el-table-column #default="scope" label="操作" fixed="right" width="200">
         <el-button
-          v-if="!scope.row.notDisturbFlag"
+          v-if="!scope.row.notDisturbFlag && (scope.row.b1 || scope.row.b2)"
           link
           type="primary"
           @click="addMuteClick(scope.row)"
@@ -474,7 +490,7 @@ function initGroupDictList() {
           禁言
         </el-button>
         <el-button
-          v-if="scope.row.notDisturbFlag"
+          v-if="scope.row.notDisturbFlag && (scope.row.b1 || scope.row.b2)"
           link
           type="primary"
           @click="deleteMuteClick(scope.row)"
@@ -482,7 +498,7 @@ function initGroupDictList() {
           取消禁言
         </el-button>
         <el-button
-          v-if="!scope.row.notDisturbFlag"
+          v-if="!scope.row.notDisturbFlag && (scope.row.b1 || scope.row.b2)"
           link
           type="primary"
           @click="addManageClick(scope.row)"
@@ -490,7 +506,7 @@ function initGroupDictList() {
           任命管理员
         </el-button>
         <el-button
-          v-if="scope.row.notDisturbFlag"
+          v-if="scope.row.notDisturbFlag && (scope.row.b1 || scope.row.b2)"
           link
           type="primary"
           @click="deleteManageClick(scope.row)"
@@ -498,7 +514,7 @@ function initGroupDictList() {
           取消管理员
         </el-button>
         <el-button
-          v-if="!scope.row.blockFlag"
+          v-if="!scope.row.blockFlag && (scope.row.b1 || scope.row.b2)"
           link
           type="primary"
           @click="blockClick(scope.row)"
@@ -506,14 +522,19 @@ function initGroupDictList() {
           拉黑
         </el-button>
         <el-button
-          v-if="scope.row.blockFlag"
+          v-if="scope.row.blockFlag && (scope.row.b1 || scope.row.b2)"
           link
           type="primary"
           @click="cancelBlockClick(scope.row)"
         >
           取消拉黑
         </el-button>
-        <el-button link type="primary" @click="removeUserClick(scope.row)">
+        <el-button
+          v-if="scope.row.b1 || scope.row.b2"
+          link
+          type="primary"
+          @click="removeUserClick(scope.row)"
+        >
           移除
         </el-button>
       </el-table-column>

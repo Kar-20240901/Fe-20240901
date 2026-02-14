@@ -333,12 +333,14 @@ export function baseUserSelfUpdateUuid(
 }
 
 export interface DictVO {
+  b2?: boolean; // Boolean-2
   l1?: string; // Long-1，格式：int64
   str1?: string; // 字符串-1
   l2?: string; // Long-2，格式：int64
   str2?: string; // 字符串-2
   name?: string; // 显示用
   id?: string; // 传值用，格式：int64
+  b1?: boolean; // Boolean-1
 }
 
 // 下拉列表

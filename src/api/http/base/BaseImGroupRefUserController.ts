@@ -30,9 +30,16 @@ export interface BaseImGroupRefUserPageDTO {
 }
 
 export interface BaseImGroupRefUserPageVO {
+  blockFlag?: boolean; // 是否拉黑
   avatarUrl?: string; // 头像地址
+  manageFlag?: boolean; // 是否管理员：可以：审批入群，修改群名称，群头像，踢出群员，禁言群员，不能：赋权另外一个管理员，群组创建人不用该字段，并且群组创建人该字段为 false
+  createTime?: string; // 入群时间，格式：date-time
   nickname?: string; // 用户昵称
+  bio?: string; // 个人简介
+  muteFlag?: boolean; // 是否禁言
+  belongFlag?: boolean; // 是否群组创建人
   userId?: string; // 用户主键 id，格式：int64
+  uuid?: string; // 用户编码
 }
 
 // 群组分页排序查询群员

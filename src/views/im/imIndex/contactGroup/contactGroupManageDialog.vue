@@ -221,7 +221,7 @@ function editClick(row: BaseImGroupPageVO) {
   editOpen(baseImGroupInfoById({ id: row.groupId }));
 }
 
-function manageClick(row: BaseImGroupPageVO) {}
+function groupUserClick(row: BaseImGroupPageVO) {}
 
 function addClick() {
   title.value = "新增群组";
@@ -612,9 +612,9 @@ function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
           v-if="scope.row.belongFlag || scope.row.manageFlag"
           link
           type="primary"
-          @click="manageClick(scope.row)"
+          @click="groupUserClick(scope.row)"
         >
-          管理
+          成员
         </el-button>
         <el-button
           v-if="!scope.row.notDisturbFlag"
