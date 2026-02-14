@@ -3,6 +3,7 @@ import { nextTick, ref } from "vue";
 import { getDialogWidth } from "@/utils/MyLayoutUtil";
 import { TabPaneName } from "element-plus";
 import ContactGroupManageDialog from "@/views/im/imIndex/contactGroup/contactGroupManageDialog.vue";
+import ContactGroupUserManageDialog from "@/views/im/imIndex/contactGroup/contactGroupUserManageDialog.vue";
 
 const visible = ref<boolean>(false);
 
@@ -71,6 +72,10 @@ function onlySessionSearch() {
 function searchContactGroup() {
   emit("searchContactGroup");
 }
+
+function changeToGroupUserManage() {
+  tabsVal.value = contactGroupUserManageDialogStr;
+}
 </script>
 
 <template>
@@ -97,7 +102,11 @@ function searchContactGroup() {
         <el-tab-pane
           label="群组成员管理"
           :name="contactGroupUserManageDialogStr"
-        />
+        >
+          <contact-group-user-manage-dialog
+            ref="contactGroupUserManageDialogRef"
+          />
+        </el-tab-pane>
         <el-tab-pane label="发起申请" :name="contactGroupApplyDialogSendStr" />
         <el-tab-pane
           label="我的申请"

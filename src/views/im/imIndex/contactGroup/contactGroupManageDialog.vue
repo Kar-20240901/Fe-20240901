@@ -35,6 +35,12 @@ import type { UploadFile } from "element-plus";
 import { FeBaseImGroupInsertOrUpdateDTO } from "@/views/im/imIndex/contactGroup/types";
 import ReCropperPreview from "@/components/ReCropperPreview/src/index.vue";
 import { deviceDetection } from "@/store/utils";
+import {
+  baseImSessionRefUserAddNotDisturb,
+  baseImSessionRefUserDeleteNotDisturb
+} from "@/api/http/base/BaseImSessionRefUserController";
+import RiMailForbidFill from "~icons/ri/MailForbidFill";
+import RiMailCheckFill from "~icons/ri/MailCheckFill";
 
 const search = ref<BaseImGroupPageDTO>({});
 
@@ -177,7 +183,6 @@ function deleteClick(item?: BaseImGroupPageVO) {
         idSet: [item.groupId]
       }).then(res => {
         refreshSearchContent([item.sessionId], true);
-        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
         searchContactGroup();
@@ -200,7 +205,6 @@ function leaveSelfClick(item?: BaseImGroupPageVO) {
         idSet: [item.groupId]
       }).then(res => {
         refreshSearchContent([item.sessionId], true);
-        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
         searchContactGroup();
@@ -216,6 +220,8 @@ function editClick(row: BaseImGroupPageVO) {
   title.value = "修改群组";
   editOpen(baseImGroupInfoById({ id: row.groupId }));
 }
+
+function manageClick(row: BaseImGroupPageVO) {}
 
 function addClick() {
   title.value = "新增群组";
@@ -324,10 +330,11 @@ const uploadRef = ref();
 const isShow = ref(false);
 
 const handleClose = () => {
-  cropRef.value.hidePopover();
-  uploadRef.value.clearFiles();
+  cropRef.value?.hidePopover();
+  uploadRef.value?.clearFiles();
   cropperBlob.value = undefined;
   isShow.value = false;
+  visible.value = false;
 };
 
 const onCropper = ({ blob }) => (cropperBlob.value = blob);
@@ -335,6 +342,86 @@ const onCropper = ({ blob }) => (cropperBlob.value = blob);
 function handleSubmitImage() {
   form.value.avatarUrl = imgSrc.value;
   isShow.value = false;
+}
+
+function notDisturbBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImSessionRefUserAddNotDisturb({
+        groupIdSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定免打扰勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function cancelNotDisturbBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImSessionRefUserDeleteNotDisturb({
+        groupIdSet: [...selectIdArr.value]
+      }).then(res => {
+        resetSelectIdArr();
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定取消免打扰勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function notDisturbClick(item?: BaseImGroupPageVO) {
+  if (!item?.groupId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImSessionRefUserAddNotDisturb({
+        groupIdSet: [item.groupId]
+      }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定免打扰【${item.groupShowName}】吗？`
+  );
+}
+
+function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
+  if (!item?.groupId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImSessionRefUserDeleteNotDisturb({
+        groupIdSet: [item.groupId]
+      }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定取消免打扰【${item.groupShowName}】吗？`
+  );
 }
 </script>
 
@@ -348,6 +435,21 @@ function handleSubmitImage() {
           @click="addClick"
         >
           新增群组
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(RiMailForbidFill)"
+          @click="notDisturbBySelectIdArr"
+        >
+          批量免打扰
+        </el-button>
+
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(RiMailCheckFill)"
+          @click="cancelNotDisturbBySelectIdArr"
+        >
+          取消免打扰
         </el-button>
         <el-button
           type="primary"
@@ -447,6 +549,14 @@ function handleSubmitImage() {
       </el-table-column>
       <el-table-column
         #default="scope"
+        prop="notDisturbFlag"
+        label="免打扰"
+        width="100"
+      >
+        {{ scope.row.notDisturbFlag ? "是" : "否" }}
+      </el-table-column>
+      <el-table-column
+        #default="scope"
         prop="muteFlag"
         label="被禁言"
         width="150"
@@ -467,7 +577,13 @@ function handleSubmitImage() {
         label="普通成员禁言"
         width="150"
       >
-        {{ scope.row.normalMuteFlag ? "是" : "否" }}
+        {{
+          scope.row.normalMuteFlag === undefined
+            ? "-"
+            : scope.row.normalMuteFlag
+              ? "是"
+              : "否"
+        }}
       </el-table-column>
       <el-table-column
         #default="scope"
@@ -475,9 +591,15 @@ function handleSubmitImage() {
         label="管理员禁言"
         width="100"
       >
-        {{ scope.row.manageMuteFlag ? "是" : "否" }}
+        {{
+          scope.row.manageMuteFlag === undefined
+            ? "-"
+            : scope.row.manageMuteFlag
+              ? "是"
+              : "否"
+        }}
       </el-table-column>
-      <el-table-column #default="scope" label="操作" fixed="right" width="200">
+      <el-table-column #default="scope" label="操作" fixed="right" width="210">
         <el-button
           v-if="scope.row.belongFlag || scope.row.manageFlag"
           link
@@ -485,6 +607,30 @@ function handleSubmitImage() {
           @click="editClick(scope.row)"
         >
           编辑
+        </el-button>
+        <el-button
+          v-if="scope.row.belongFlag || scope.row.manageFlag"
+          link
+          type="primary"
+          @click="manageClick(scope.row)"
+        >
+          管理
+        </el-button>
+        <el-button
+          v-if="!scope.row.notDisturbFlag"
+          link
+          type="primary"
+          @click="notDisturbClick(scope.row)"
+        >
+          免打扰
+        </el-button>
+        <el-button
+          v-if="scope.row.notDisturbFlag"
+          link
+          type="primary"
+          @click="cancelNotDisturbClick(scope.row)"
+        >
+          取消免打扰
         </el-button>
         <el-button
           v-if="scope.row.belongFlag"

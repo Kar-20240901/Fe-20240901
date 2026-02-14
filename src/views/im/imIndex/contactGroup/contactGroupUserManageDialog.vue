@@ -3,51 +3,53 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { onMounted, ref } from "vue";
 import Avatar from "@/assets/user.png";
 import RiSearchLine from "~icons/ri/search-line";
-import {
-  baseImFriendPage,
-  BaseImFriendPageDTO,
-  BaseImFriendPageVO,
-  baseImFriendRemoveFriend
-} from "@/api/http/base/BaseImFriendController";
 import RiUserForbidFill from "~icons/ri/user-forbid-fill";
 import RiUserFollowFill from "~icons/ri/user-follow-fill";
-import RiMailForbidFill from "~icons/ri/MailForbidFill";
-import RiMailCheckFill from "~icons/ri/MailCheckFill";
-import RiEraserFill from "~icons/ri/EraserFill";
 import RiUserMinusFill from "~icons/ri/UserMinusFill";
-import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
-import {
-  baseImBlockAddFriend,
-  baseImBlockCancelFriend
-} from "@/api/http/base/BaseImBlockController";
 import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import {
-  baseImSessionRefUserAddNotDisturb,
-  baseImSessionRefUserDeleteNotDisturb
-} from "@/api/http/base/BaseImSessionRefUserController";
-import { baseImSessionContentRefUserDeleteSessionContentRefUser } from "@/api/http/base/BaseImSessionContentRefUserController";
+  baseImGroupChangeBelongId,
+  baseImGroupDictList,
+  baseImGroupRemoveUser
+} from "@/api/http/base/BaseImGroupController";
+import { ExecConfirm, ToastSuccess } from "@/utils/ToastUtil";
+import {
+  baseImGroupRefUserAddManage,
+  baseImGroupRefUserAddMute,
+  baseImGroupRefUserDeleteManage,
+  baseImGroupRefUserDeleteMute,
+  baseImGroupRefUserPage,
+  BaseImGroupRefUserPageDTO,
+  BaseImGroupRefUserPageVO
+} from "@/api/http/base/BaseImGroupRefUserController";
+import {
+  baseImBlockGroupAddUser,
+  baseImBlockGroupCancelUser
+} from "@/api/http/base/BaseImBlockController";
+import { DictVO } from "@/api/http/base/BaseRoleController";
 
-const search = ref<BaseImFriendPageDTO>({});
+const search = ref<BaseImGroupRefUserPageDTO>({});
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseImFriendPageVO[]>([]);
+const dataList = ref<BaseImGroupRefUserPageVO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
 
 const selectIdArr = ref<string[]>([]);
-const selectSessionIdArr = ref<string[]>([]);
 
 const tableRef = ref();
 
 function onSearch() {
+  if (!search.value.groupId) {
+    return;
+  }
+
   loading.value = true;
-  baseImFriendPage({
+  baseImGroupRefUserPage({
     ...search.value,
     current: currentPage.value as any,
-    pageSize: pageSize.value as any,
-    queryBlockFlag: true,
-    manageQueryFlag: true
+    pageSize: pageSize.value as any
   })
     .then(res => {
       dataList.value = res.data.records;
@@ -62,13 +64,14 @@ defineExpose({
   onSearch
 });
 
-function onSelectChange(rowArr?: BaseImFriendPageVO[]) {
-  selectIdArr.value = rowArr.map(it => it.friendUserId);
-  selectSessionIdArr.value = rowArr.map(it => it.sessionId);
+function onSelectChange(rowArr?: BaseImGroupRefUserPageVO[]) {
+  selectIdArr.value = rowArr.map(it => it.userId);
 }
 
 onMounted(() => {
   onSearch();
+
+  initGroupDictList();
 });
 
 function handleSearchInputKeydown(e: KeyboardEvent) {
@@ -82,268 +85,182 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
 
 function resetSelectIdArr() {
   selectIdArr.value = [];
-  selectSessionIdArr.value = [];
 }
 
-function deleteBySelectIdArr() {
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
+function blockBySelectIdArr() {}
+
+function cancelBlockBySelectIdArr() {}
+
+function removeUserBySelectIdArr() {}
+
+function addMuteBySelectIdArr() {}
+
+function deleteMuteBySelectIdArr() {}
+
+function addManageBySelectIdArr() {}
+
+function deleteManageBySelectIdArr() {}
+
+function changeBelongId() {
+  baseImGroupChangeBelongId({}).then(res => {
+    ToastSuccess(res.msg);
+    onSearch();
+  });
+}
+
+function addMuteClick(item?: BaseImGroupRefUserPageVO) {
+  if (!search.value.groupId || !item?.userId) {
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImFriendRemoveFriend({
-        idSet: [...selectIdArr.value]
-      }).then(res => {
-        refreshSearchContent([...selectSessionIdArr.value], true);
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-        searchContactFriend();
-        onlySessionSearch();
-      });
-    },
-    undefined,
-    `确定删除勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
-}
-
-function notDisturbBySelectIdArr() {
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImSessionRefUserAddNotDisturb({
-        friendUserIdSet: [...selectIdArr.value]
-      }).then(res => {
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定免打扰勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
-}
-
-function cancelNotDisturbBySelectIdArr() {
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImSessionRefUserDeleteNotDisturb({
-        friendUserIdSet: [...selectIdArr.value]
-      }).then(res => {
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定取消免打扰勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
-}
-
-function deleteSessionContentRefUserBySelectIdArr() {
-  if (!selectSessionIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImSessionContentRefUserDeleteSessionContentRefUser({
-        idSet: [...selectSessionIdArr.value]
-      }).then(res => {
-        refreshSearchContent([...selectSessionIdArr.value]);
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-        onlySessionSearch();
-      });
-    },
-    undefined,
-    `确定清空勾选的【${selectIdArr.value.length}】项聊天记录吗？`
-  );
-}
-
-function blockBySelectIdArr() {
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImBlockAddFriend({
-        idSet: [...selectIdArr.value]
-      }).then(res => {
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定拉黑勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
-}
-
-function cancelBlockBySelectIdArr() {
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImBlockCancelFriend({
-        idSet: [...selectIdArr.value]
-      }).then(res => {
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定取消拉黑勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
-}
-
-function blockClick(item?: BaseImFriendPageVO) {
-  if (!item?.friendUserId) {
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImBlockAddFriend({
-        idSet: [item.friendUserId]
+      await baseImGroupRefUserAddMute({
+        groupId: search.value.groupId,
+        userIdSet: [item.userId]
       }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
-    `确定拉黑【${item.friendShowName}】吗？`
+    `确定禁言【${item.nickname}】吗？`
   );
 }
 
-function cancelBlockClick(item?: BaseImFriendPageVO) {
-  if (!item?.friendUserId) {
+function deleteMuteClick(item?: BaseImGroupRefUserPageVO) {
+  if (!search.value.groupId || !item?.userId) {
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImBlockCancelFriend({
-        idSet: [item.friendUserId]
+      await baseImGroupRefUserDeleteMute({
+        groupId: search.value.groupId,
+        userIdSet: [item.userId]
       }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
-    `确定取消拉黑【${item.friendShowName}】吗？`
+    `确定取消禁言【${item.nickname}】吗？`
   );
 }
 
-function deleteClick(item?: BaseImFriendPageVO) {
-  if (!item?.friendUserId) {
+function addManageClick(item?: BaseImGroupRefUserPageVO) {
+  if (!search.value.groupId || !item?.userId) {
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImFriendRemoveFriend({
-        idSet: [item.friendUserId]
-      }).then(res => {
-        refreshSearchContent([item.sessionId], true);
-        ToastSuccess(res.msg);
-        onSearch();
-        searchContactFriend();
-        onlySessionSearch();
-      });
-    },
-    undefined,
-    `确定删除【${item.friendShowName}】吗？`
-  );
-}
-
-function notDisturbClick(item?: BaseImFriendPageVO) {
-  if (!item?.friendUserId) {
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImSessionRefUserAddNotDisturb({
-        friendUserIdSet: [item.friendUserId]
+      await baseImGroupRefUserAddManage({
+        groupId: search.value.groupId,
+        userIdSet: [item.userId]
       }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
-    `确定免打扰【${item.friendShowName}】吗？`
+    `确定任命【${item.nickname}】为管理员吗？`
   );
 }
 
-function cancelNotDisturbClick(item?: BaseImFriendPageVO) {
-  if (!item?.friendUserId) {
+function deleteManageClick(item?: BaseImGroupRefUserPageVO) {
+  if (!search.value.groupId || !item?.userId) {
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImSessionRefUserDeleteNotDisturb({
-        friendUserIdSet: [item.friendUserId]
+      await baseImGroupRefUserDeleteManage({
+        groupId: search.value.groupId,
+        userIdSet: [item.userId]
       }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
-    `确定取消免打扰【${item.friendShowName}】吗？`
+    `确定取消【${item.nickname}】的管理员吗？`
   );
 }
 
-const emit = defineEmits<{
-  (e: "searchContactFriend"): void;
-  (e: "onlySessionSearch"): void;
-  (
-    e: "refreshSearchContent",
-    sessionIdArr: string[],
-    removeSessionFlag?: boolean
-  ): void;
-}>();
+function blockClick(item?: BaseImGroupRefUserPageVO) {
+  if (!search.value.groupId || !item?.userId) {
+    return;
+  }
 
-function refreshSearchContent(
-  sessionIdArr?: string[],
-  removeSessionFlag?: boolean
-) {
-  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
+  ExecConfirm(
+    async () => {
+      await baseImBlockGroupAddUser({
+        groupId: search.value.groupId,
+        userIdSet: [item.userId]
+      }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定拉黑【${item.nickname}】吗？`
+  );
 }
 
-function onlySessionSearch() {
-  emit("onlySessionSearch");
+function cancelBlockClick(item?: BaseImGroupRefUserPageVO) {
+  if (!search.value.groupId || !item?.userId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImBlockGroupCancelUser({
+        groupId: search.value.groupId,
+        userIdSet: [item.userId]
+      }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定取消拉黑【${item.nickname}】吗？`
+  );
 }
 
-function searchContactFriend() {
-  emit("searchContactFriend");
+function removeUserClick(item?: BaseImGroupRefUserPageVO) {
+  if (!search.value.groupId || !item?.userId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImGroupRemoveUser({
+        groupId: search.value.groupId,
+        userIdSet: [item.userId]
+      }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定移除成员【${item.nickname}】吗？`
+  );
+}
+
+const groupDictList = ref<DictVO[]>([]);
+
+function initGroupDictList() {
+  baseImGroupDictList().then(res => {
+    groupDictList.value = res.data.records;
+  });
 }
 </script>
 
 <template>
   <div class="flex flex-col">
     <div class="flex justify-between gap-3">
-      <div class="flex flex-wrap flex-1 gap-x-2 gap-y-3 mb-3">
+      <div class="flex flex-wrap flex-1 gap-x-2 gap-y-3 mb-3 content-start">
         <el-button
           type="primary"
           :icon="useRenderIcon(RiUserForbidFill)"
@@ -351,7 +268,6 @@ function searchContactFriend() {
         >
           批量拉黑
         </el-button>
-
         <el-button
           type="primary"
           :icon="useRenderIcon(RiUserFollowFill)"
@@ -359,36 +275,40 @@ function searchContactFriend() {
         >
           取消拉黑
         </el-button>
-
         <el-button
           type="primary"
-          :icon="useRenderIcon(RiMailForbidFill)"
-          @click="notDisturbBySelectIdArr"
+          :icon="useRenderIcon(RiUserForbidFill)"
+          @click="addMuteBySelectIdArr"
         >
-          批量免打扰
+          批量禁言
         </el-button>
-
         <el-button
           type="primary"
-          :icon="useRenderIcon(RiMailCheckFill)"
-          @click="cancelNotDisturbBySelectIdArr"
+          :icon="useRenderIcon(RiUserFollowFill)"
+          @click="deleteMuteBySelectIdArr"
         >
-          取消免打扰
+          取消禁言
         </el-button>
-
         <el-button
           type="primary"
-          :icon="useRenderIcon(RiEraserFill)"
-          @click="deleteSessionContentRefUserBySelectIdArr"
+          :icon="useRenderIcon(RiUserForbidFill)"
+          @click="addManageBySelectIdArr"
         >
-          清空聊天记录
+          批量管理员
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(RiUserFollowFill)"
+          @click="deleteManageBySelectIdArr"
+        >
+          取消管理员
         </el-button>
         <el-button
           type="primary"
           :icon="useRenderIcon(RiUserMinusFill)"
-          @click="deleteBySelectIdArr"
+          @click="removeUserBySelectIdArr"
         >
-          删除好友
+          踢出群员
         </el-button>
       </div>
 
@@ -396,9 +316,65 @@ function searchContactFriend() {
         <el-form
           ref="searchRef"
           class="last-not-margin-right-form"
-          :inline="true"
           :model="search"
         >
+          <el-form-item prop="groupId">
+            <el-select
+              v-model="search.groupId"
+              placeholder="请选择群聊"
+              class="!w-[220px]"
+              clearable
+              filterable
+            >
+              <template #label="{ index }">
+                <div class="w-full h-full flex items-center">
+                  <el-image
+                    :src="groupDictList[index].str2"
+                    fit="cover"
+                    class="w-6 h-6 rounded-full"
+                  >
+                    <template #error>
+                      <el-image
+                        :src="Avatar"
+                        fit="cover"
+                        class="w-6 h-6 rounded-full"
+                      />
+                    </template>
+                  </el-image>
+                  <div class="text-sm ml-2">
+                    {{ groupDictList[index].name }}（{{
+                      groupDictList[index].str1
+                    }}）
+                  </div>
+                </div>
+              </template>
+              <el-option
+                v-for="item in groupDictList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"
+              >
+                <div class="w-full h-full flex items-center">
+                  <el-image
+                    :src="item.str2"
+                    fit="cover"
+                    class="w-6 h-6 rounded-full"
+                  >
+                    <template #error>
+                      <el-image
+                        :src="Avatar"
+                        fit="cover"
+                        class="w-6 h-6 rounded-full"
+                      />
+                    </template>
+                  </el-image>
+                  <div class="text-sm ml-2">
+                    {{ item.name }}（{{ item.str1 }}）
+                  </div>
+                </div>
+              </el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item prop="searchKey">
             <el-input
               v-model="search.searchKey"
@@ -458,7 +434,7 @@ function searchContactFriend() {
             </template>
           </el-image>
           <div class="text-sm ml-2">
-            {{ scope.row?.friendShowName }}
+            {{ scope.row?.name }}
           </div>
         </div>
       </el-table-column>
@@ -493,17 +469,33 @@ function searchContactFriend() {
           v-if="!scope.row.notDisturbFlag"
           link
           type="primary"
-          @click="notDisturbClick(scope.row)"
+          @click="addMuteClick(scope.row)"
         >
-          免打扰
+          禁言
         </el-button>
         <el-button
           v-if="scope.row.notDisturbFlag"
           link
           type="primary"
-          @click="cancelNotDisturbClick(scope.row)"
+          @click="deleteMuteClick(scope.row)"
         >
-          取消免打扰
+          取消禁言
+        </el-button>
+        <el-button
+          v-if="!scope.row.notDisturbFlag"
+          link
+          type="primary"
+          @click="addManageClick(scope.row)"
+        >
+          任命管理员
+        </el-button>
+        <el-button
+          v-if="scope.row.notDisturbFlag"
+          link
+          type="primary"
+          @click="deleteManageClick(scope.row)"
+        >
+          取消管理员
         </el-button>
         <el-button
           v-if="!scope.row.blockFlag"
@@ -521,8 +513,8 @@ function searchContactFriend() {
         >
           取消拉黑
         </el-button>
-        <el-button link type="primary" @click="deleteClick(scope.row)">
-          删除
+        <el-button link type="primary" @click="removeUserClick(scope.row)">
+          移除
         </el-button>
       </el-table-column>
     </el-table>

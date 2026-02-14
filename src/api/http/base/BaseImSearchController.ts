@@ -55,16 +55,17 @@ export interface BaseImSearchBaseDTO {
 export interface BaseImSearchBaseGroupVO {
   groupShowName?: string; // 显示的名称
   avatarUrl?: string; // 群组头像地址
-  manageFlag?: boolean; // 是否是管理员，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
-  createTime?: string; // 创建时间，备注：只有 dto的 manageQueryFlag生效时，才会返回该值，格式：date-time
   groupUuid?: string; // 群组的 uuid
   groupId?: string; // 群组主键 id
   bio?: string; // 群组简介，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  sessionId?: string; // 会话主键 id，格式：int64
+  normalMuteFlag?: boolean; // 普通成员是否禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  notDisturbFlag?: boolean; // 是否免打扰，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  manageFlag?: boolean; // 是否是管理员，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
+  createTime?: string; // 创建时间，备注：只有 dto的 manageQueryFlag生效时，才会返回该值，格式：date-time
   muteFlag?: boolean; // 是否被禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
   manageMuteFlag?: boolean; // 管理员是否禁言，群主不会被禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
   belongFlag?: boolean; // 是否是群主，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
-  sessionId?: string; // 会话主键 id，格式：int64
-  normalMuteFlag?: boolean; // 普通成员是否禁言，备注：只有 dto的 manageQueryFlag生效时，才会返回该值
 }
 
 export interface BaseImSearchBaseFriendVO {
