@@ -63,7 +63,13 @@ const emit = defineEmits<{
     sessionIdArr: string[],
     removeSessionFlag?: boolean
   ): void;
+
+  (e: "changeToGroupUserManage", groupId?: string): void;
 }>();
+
+function changeToGroupUserManage(groupId?: string) {
+  emit("changeToGroupUserManage", groupId);
+}
 
 function refreshSearchContent(
   sessionIdArr?: string[],
@@ -221,7 +227,9 @@ function editClick(row: BaseImGroupPageVO) {
   editOpen(baseImGroupInfoById({ id: row.groupId }));
 }
 
-function groupUserClick(row: BaseImGroupPageVO) {}
+function groupUserClick(row: BaseImGroupPageVO) {
+  changeToGroupUserManage(row.groupId);
+}
 
 function addClick() {
   title.value = "新增群组";

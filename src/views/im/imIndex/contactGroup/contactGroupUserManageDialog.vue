@@ -60,8 +60,23 @@ function onSearch() {
     });
 }
 
+function setGroupId(groupId?: string) {
+  if (!groupId) {
+    return;
+  }
+
+  if (!groupIdSet.value.has(groupId)) {
+    return;
+  }
+
+  search.value.groupId = groupId;
+
+  onSearch();
+}
+
 defineExpose({
-  onSearch
+  onSearch,
+  setGroupId
 });
 
 function onSelectChange(rowArr?: BaseImGroupRefUserPageVO[]) {
@@ -249,10 +264,18 @@ function removeUserClick(item?: BaseImGroupRefUserPageVO) {
 }
 
 const groupDictList = ref<DictVO[]>([]);
+const groupIdSet = ref<Set<string>>(new Set<string>());
 
 function initGroupDictList() {
+  groupDictList.value = [];
+  groupIdSet.value.clear();
+
   baseImGroupDictList().then(res => {
-    groupDictList.value = res.data.records;
+    groupDictList.value = res.data.records || [];
+
+    groupDictList.value.forEach(item => {
+      groupIdSet.value.add(item.id);
+    });
   });
 }
 </script>

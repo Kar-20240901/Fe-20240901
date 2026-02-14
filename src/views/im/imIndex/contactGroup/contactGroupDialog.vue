@@ -73,8 +73,10 @@ function searchContactGroup() {
   emit("searchContactGroup");
 }
 
-function changeToGroupUserManage() {
+function changeToGroupUserManage(groupId?: string) {
   tabsVal.value = contactGroupUserManageDialogStr;
+
+  contactGroupUserManageDialogRef.value?.setGroupId(groupId);
 }
 </script>
 
@@ -97,6 +99,7 @@ function changeToGroupUserManage() {
             @searchContactGroup="searchContactGroup"
             @onlySessionSearch="onlySessionSearch"
             @refreshSearchContent="refreshSearchContent"
+            @changeToGroupUserManage="changeToGroupUserManage"
           />
         </el-tab-pane>
         <el-tab-pane
