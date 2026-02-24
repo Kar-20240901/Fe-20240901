@@ -16,7 +16,7 @@ export const BaseImContactSegmentedEnum: IBaseImContactSegmentedEnum = {
 
   GROUP: {
     code: "group",
-    name: "群组"
+    name: "群聊"
   }
 };
 

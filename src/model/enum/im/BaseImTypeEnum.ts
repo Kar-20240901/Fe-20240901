@@ -23,7 +23,7 @@ export const BaseImTypeEnum: IBaseImTypeEnum = {
 
   GROUP: {
     code: 201,
-    name: "群组"
+    name: "群聊"
   }
 };
 

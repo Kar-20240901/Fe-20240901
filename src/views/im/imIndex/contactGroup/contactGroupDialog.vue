@@ -4,6 +4,7 @@ import { getDialogWidth } from "@/utils/MyLayoutUtil";
 import { TabPaneName } from "element-plus";
 import ContactGroupManageDialog from "@/views/im/imIndex/contactGroup/contactGroupManageDialog.vue";
 import ContactGroupUserManageDialog from "@/views/im/imIndex/contactGroup/contactGroupUserManageDialog.vue";
+import ContactGroupApplyDialogSend from "@/views/im/imIndex/contactGroup/contactGroupApplyDialogSend.vue";
 
 const visible = ref<boolean>(false);
 
@@ -83,7 +84,7 @@ function changeToGroupUserManage(groupId?: string) {
 <template>
   <el-dialog
     v-model="visible"
-    title="群组管理"
+    title="群聊管理"
     draggable
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -93,7 +94,7 @@ function changeToGroupUserManage(groupId?: string) {
   >
     <div class="flex flex-col px-5 py-3 bg-bg_color">
       <el-tabs v-model="tabsVal" type="border-card" @tab-change="tabChange">
-        <el-tab-pane label="群组管理" :name="contactGroupManageDialogStr">
+        <el-tab-pane label="群聊管理" :name="contactGroupManageDialogStr">
           <contact-group-manage-dialog
             ref="contactGroupManageDialogRef"
             @searchContactGroup="searchContactGroup"
@@ -103,14 +104,18 @@ function changeToGroupUserManage(groupId?: string) {
           />
         </el-tab-pane>
         <el-tab-pane
-          label="群组成员管理"
+          label="群聊成员管理"
           :name="contactGroupUserManageDialogStr"
         >
           <contact-group-user-manage-dialog
             ref="contactGroupUserManageDialogRef"
           />
         </el-tab-pane>
-        <el-tab-pane label="发起申请" :name="contactGroupApplyDialogSendStr" />
+        <el-tab-pane label="发起申请" :name="contactGroupApplyDialogSendStr">
+          <contact-group-apply-dialog-send
+            ref="contactGroupApplyDialogSendRef"
+          />
+        </el-tab-pane>
         <el-tab-pane
           label="我的申请"
           :name="contactGroupApplyDialogFromMeStr"

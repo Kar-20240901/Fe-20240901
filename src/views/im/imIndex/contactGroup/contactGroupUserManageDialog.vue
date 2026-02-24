@@ -696,7 +696,7 @@ function groupIdChange(groupId?: string) {
       <el-table-column
         #default="scope"
         prop="belongFlag"
-        label="群组创建人"
+        label="群聊创建人"
         width="130"
       >
         {{ scope.row.belongFlag ? "是" : "否" }}

@@ -97,7 +97,7 @@ const ApplyOperateArr = [
     value: OperateFriendValue
   },
   {
-    label: "群组管理",
+    label: "群聊管理",
     value: OperateGroupValue
   },
   {

@@ -13,7 +13,7 @@ export interface BaseImGroupInfoByIdVO {
   bio?: string; // 群组简介
   updateTime?: string; // 修改时间，格式：date-time
   sessionId?: string; // 会话主键 id，格式：int64
-  uuid?: string; // 群聊的 id
+  uuid?: string; // 群聊的 uuid
   normalMuteFlag?: boolean; // 普通成员是否禁言
   updateId?: string; // 修改人id，格式：int64
   createTime?: string; // 创建时间，格式：date-time
@@ -123,7 +123,7 @@ export interface BaseImGroupRemoveUserDTO {
   groupId?: string; // 群组主键 id，是否必传：true，格式：int64
 }
 
-// 踢出群员
+// 移除群员
 export function baseImGroupRemoveUser(
   form: BaseImGroupRemoveUserDTO,
   config?: PureHttpRequestConfig

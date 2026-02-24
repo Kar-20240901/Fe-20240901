@@ -223,7 +223,7 @@ function leaveSelfClick(item?: BaseImGroupPageVO) {
 }
 
 function editClick(row: BaseImGroupPageVO) {
-  title.value = "修改群组";
+  title.value = "修改群聊";
   editOpen(baseImGroupInfoById({ id: row.groupId }));
 }
 
@@ -232,7 +232,7 @@ function groupUserClick(row: BaseImGroupPageVO) {
 }
 
 function addClick() {
-  title.value = "新增群组";
+  title.value = "新增群聊";
   addOpen();
 }
 
@@ -442,7 +442,7 @@ function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
           :icon="useRenderIcon(AddFill)"
           @click="addClick"
         >
-          新增群组
+          新增群聊
         </el-button>
         <el-button
           type="primary"
@@ -485,7 +485,7 @@ function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
           <el-form-item prop="searchKey">
             <el-input
               v-model="search.searchKey"
-              placeholder="请输入群组名称、群组编码"
+              placeholder="请输入群聊名称、群聊编码"
               clearable
               class="!w-[220px]"
               @keydown="handleSearchInputKeydown"
@@ -521,7 +521,7 @@ function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
       @selection-change="onSelectChange"
     >
       <el-table-column type="selection" />
-      <el-table-column #default="scope" label="群组" width="180">
+      <el-table-column #default="scope" label="群聊" width="180">
         <div class="flex items-center">
           <el-image
             :src="scope.row?.avatarUrl"
@@ -545,8 +545,8 @@ function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
           </div>
         </div>
       </el-table-column>
-      <el-table-column prop="groupUuid" label="群组编码" width="270" />
-      <el-table-column prop="bio" label="群组简介" width="220" />
+      <el-table-column prop="groupUuid" label="群聊编码" width="270" />
+      <el-table-column prop="bio" label="群聊简介" width="220" />
       <el-table-column
         #default="scope"
         prop="groupCreateTime"
@@ -688,12 +688,12 @@ function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
         <el-row :gutter="30">
           <re-col :value="12" :xs="24" :sm="24">
             <el-form-item
-              label="群组名称"
+              label="群聊名称"
               prop="name"
               :rules="[
                 {
                   required: true,
-                  message: '群组名称为必填项',
+                  message: '群聊名称为必填项',
                   trigger: 'blur'
                 }
               ]"
@@ -701,13 +701,13 @@ function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
               <el-input
                 v-model="form.name"
                 clearable
-                placeholder="请输入群组名称"
+                placeholder="请输入群聊名称"
               />
             </el-form-item>
           </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
-            <el-form-item label="群组头像">
+            <el-form-item label="群聊头像">
               <div class="flex items-center">
                 <el-image
                   :src="form.avatarUrl"
@@ -744,13 +744,13 @@ function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
           </re-col>
 
           <re-col :value="12" :xs="24" :sm="24">
-            <el-form-item label="群组简介" prop="bio">
+            <el-form-item label="群聊简介" prop="bio">
               <el-input
                 v-model="form.bio"
                 type="textarea"
                 clearable
                 :autosize="{ minRows: 2, maxRows: 2 }"
-                placeholder="请输入群组简介"
+                placeholder="请输入群聊简介"
               />
             </el-form-item>
           </re-col>

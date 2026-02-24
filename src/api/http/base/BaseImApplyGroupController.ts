@@ -40,8 +40,8 @@ export function baseImApplyGroupHiddenSelf(
 }
 
 export interface BaseImApplyGroupSendDTO {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
   applyContent?: string; // 申请内容
-  id?: string; // 主键 id，是否必传：true，格式：int64
 }
 
 // 发送入群申请
@@ -59,8 +59,6 @@ export function baseImApplyGroupSend(
 
 export interface BaseImApplyGroupPageSelfDTO {
   current?: string; // 第几页，格式：int64
-  groupName?: string; // 群组名
-  applyContent?: string; // 申请内容
   pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   searchKey?: string; // 搜索关键字
   order?: MyOrderDTO; // 排序字段
@@ -69,11 +67,10 @@ export interface BaseImApplyGroupPageSelfDTO {
 export interface BaseImApplyGroupPageSelfVO {
   groupName?: string; // 目标群组名
   avatarUrl?: string; // 目标群组头像
-  avatarFileId?: string; // 目标群组头像文件 id，格式：int64
   applyContent?: string; // 申请内容
   id?: string; // 主键 id，格式：int64
   applyTime?: string; // 申请时间，格式：date-time
-  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301;401
+  status?: string; // 状态：101 申请中 201 已通过 301 已拒绝 401 已取消，枚举值：101;201;301;401
 }
 
 // 分页排序查询-我的入群申请
@@ -89,26 +86,27 @@ export function baseImApplyGroupPageSelf(
   );
 }
 
-export interface BaseImApplyFriendSearchApplyGroupDTO {
+export interface BaseImApplyGroupSearchApplyGroupDTO {
   current?: string; // 第几页，格式：int64
-  groupUuid?: string; // 群组的 uuid，格式：int64
-  name?: string; // 群组名称
   pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
+  searchKey?: string; // 搜索关键字
   order?: MyOrderDTO; // 排序字段
 }
 
-export interface BaseImApplyFriendSearchApplyGroupVO {
+export interface BaseImApplyGroupSearchApplyGroupVO {
   avatarUrl?: string; // 头像地址
   groupId?: string; // 群组主键 id，格式：int64
   name?: string; // 群组名称
+  bio?: string; // 群组简介
+  uuid?: string; // 群聊的 uuid
 }
 
 // 搜索要添加的群组
 export function baseImApplyGroupSearchApplyGroup(
-  form: BaseImApplyFriendSearchApplyGroupDTO,
+  form: BaseImApplyGroupSearchApplyGroupDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<Page<BaseImApplyFriendSearchApplyGroupVO>>(
+  return http.request<Page<BaseImApplyGroupSearchApplyGroupVO>>(
     "post",
     baseApi("/base/imApplyGroup/searchApplyGroup"),
     form,
@@ -163,7 +161,6 @@ export interface BaseImApplyGroupPageGroupDTO {
 
 export interface BaseImApplyGroupPageGroupVO {
   avatarUrl?: string; // 目标用户头像
-  avatarFileId?: string; // 目标用户头像文件 id，格式：int64
   applyContent?: string; // 申请内容
   nickname?: string; // 目标用户昵称
   id?: string; // 主键 id，格式：int64

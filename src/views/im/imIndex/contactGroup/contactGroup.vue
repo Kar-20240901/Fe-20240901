@@ -184,7 +184,7 @@ function handleScroll(event: Event) {
         v-if="!groupList.length && !loading"
         class="flex text-[15px] w-full h-full justify-center items-center text-gray-400"
       >
-        暂无群组。
+        暂无群聊。
       </div>
     </div>
   </div>
