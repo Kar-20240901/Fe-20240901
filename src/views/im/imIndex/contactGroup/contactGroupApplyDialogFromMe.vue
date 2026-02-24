@@ -3,12 +3,6 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import CircleClose from "~icons/ep/circle-close";
 import Hide from "~icons/ep/hide";
 import { onMounted, ref } from "vue";
-import {
-  baseImApplyFriendCancel,
-  baseImApplyFriendHidden,
-  BaseImApplyFriendPageDTO,
-  BaseImApplyFriendPageVO
-} from "@/api/http/base/BaseImApplyFriendController";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
   BaseImApplyStatusEnum,
@@ -17,12 +11,18 @@ import {
 import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
 import RiSearchLine from "~icons/ri/search-line";
-import { baseImApplyGroupPageSelf } from "@/api/http/base/BaseImApplyGroupController";
+import {
+  baseImApplyGroupCancelSelf,
+  baseImApplyGroupHiddenSelf,
+  baseImApplyGroupPageSelf,
+  BaseImApplyGroupPageSelfDTO,
+  BaseImApplyGroupPageSelfVO
+} from "@/api/http/base/BaseImApplyGroupController";
 
-const search = ref<BaseImApplyFriendPageDTO>({});
+const search = ref<BaseImApplyGroupPageSelfDTO>({});
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseImApplyFriendPageVO[]>([]);
+const dataList = ref<BaseImApplyGroupPageSelfVO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
@@ -58,7 +58,7 @@ function cancelBySelectIdArr() {
 
   ExecConfirm(
     async () => {
-      await baseImApplyFriendCancel({
+      await baseImApplyGroupCancelSelf({
         idSet: [...selectIdArr.value]
       }).then(res => {
         selectIdArr.value = [];
@@ -71,18 +71,18 @@ function cancelBySelectIdArr() {
   );
 }
 
-function onSelectChange(rowArr?: BaseImApplyFriendPageVO[]) {
+function onSelectChange(rowArr?: BaseImApplyGroupPageSelfVO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 }
 
-function cancelClick(item?: BaseImApplyFriendPageVO) {
+function cancelClick(item?: BaseImApplyGroupPageSelfVO) {
   if (!item?.id) {
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImApplyFriendCancel({
+      await baseImApplyGroupCancelSelf({
         idSet: [item.id]
       }).then(res => {
         selectIdArr.value = [];
@@ -91,7 +91,7 @@ function cancelClick(item?: BaseImApplyFriendPageVO) {
       });
     },
     undefined,
-    `确定取消对【${item.nickname}】的好友申请吗？`
+    `确定取消对【${item.groupName}】的群聊申请吗？`
   );
 }
 
@@ -107,7 +107,7 @@ function hiddenBySelectIdArr() {
 
   ExecConfirm(
     async () => {
-      await baseImApplyFriendHidden({
+      await baseImApplyGroupHiddenSelf({
         idSet: [...selectIdArr.value]
       }).then(res => {
         selectIdArr.value = [];
@@ -120,14 +120,14 @@ function hiddenBySelectIdArr() {
   );
 }
 
-function hiddenClick(item?: BaseImApplyFriendPageVO) {
+function hiddenClick(item?: BaseImApplyGroupPageSelfVO) {
   if (!item?.id) {
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImApplyFriendHidden({
+      await baseImApplyGroupHiddenSelf({
         idSet: [item.id]
       }).then(res => {
         selectIdArr.value = [];
@@ -136,7 +136,7 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
       });
     },
     undefined,
-    `确定隐藏对【${item.nickname}】的好友申请吗？`
+    `确定隐藏对【${item.groupName}】的群聊申请吗？`
   );
 }
 
@@ -181,7 +181,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
           <el-form-item prop="searchKey">
             <el-input
               v-model="search.searchKey"
-              placeholder="请输入用户昵称、用户编码"
+              placeholder="请输入群聊昵称、群聊编码"
               clearable
               class="!w-[220px]"
               @keydown="handleSearchInputKeydown"
@@ -217,7 +217,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
       @selection-change="onSelectChange"
     >
       <el-table-column type="selection" />
-      <el-table-column #default="scope" label="用户" width="180">
+      <el-table-column #default="scope" label="群聊" width="180">
         <div class="flex items-center">
           <el-image
             :src="scope.row?.avatarUrl"
@@ -237,7 +237,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
             </template>
           </el-image>
           <div class="text-sm ml-2">
-            {{ scope.row?.nickname }}
+            {{ scope.row?.groupName }}
           </div>
         </div>
       </el-table-column>

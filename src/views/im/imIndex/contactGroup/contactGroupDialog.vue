@@ -5,6 +5,8 @@ import { TabPaneName } from "element-plus";
 import ContactGroupManageDialog from "@/views/im/imIndex/contactGroup/contactGroupManageDialog.vue";
 import ContactGroupUserManageDialog from "@/views/im/imIndex/contactGroup/contactGroupUserManageDialog.vue";
 import ContactGroupApplyDialogSend from "@/views/im/imIndex/contactGroup/contactGroupApplyDialogSend.vue";
+import ContactGroupApplyDialogFromMe from "@/views/im/imIndex/contactGroup/contactGroupApplyDialogFromMe.vue";
+import ContactGroupApplyDialogToMe from "@/views/im/imIndex/contactGroup/contactGroupApplyDialogToMe.vue";
 
 const visible = ref<boolean>(false);
 
@@ -116,11 +118,17 @@ function changeToGroupUserManage(groupId?: string) {
             ref="contactGroupApplyDialogSendRef"
           />
         </el-tab-pane>
-        <el-tab-pane
-          label="我的申请"
-          :name="contactGroupApplyDialogFromMeStr"
-        />
-        <el-tab-pane label="对我申请" :name="contactGroupApplyDialogToMeStr" />
+        <el-tab-pane label="我的申请" :name="contactGroupApplyDialogFromMeStr">
+          <contact-group-apply-dialog-from-me
+            ref="contactGroupApplyDialogFromMeRef"
+          />
+        </el-tab-pane>
+        <el-tab-pane label="对我申请" :name="contactGroupApplyDialogToMeStr">
+          <contact-group-apply-dialog-to-me
+            ref="contactGroupApplyDialogToMeRef"
+            @searchContactGroup="searchContactGroup"
+          />
+        </el-tab-pane>
       </el-tabs>
     </div>
   </el-dialog>

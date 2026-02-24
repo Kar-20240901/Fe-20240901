@@ -22,6 +22,7 @@ import {
   BaseImGroupRefUserPageVO
 } from "@/api/http/base/BaseImGroupRefUserController";
 import {
+  BaseImApplyGroupItemDTO,
   baseImBlockGroupAddUser,
   baseImBlockGroupCancelUser
 } from "@/api/http/base/BaseImBlockController";
@@ -131,8 +132,7 @@ function blockBySelectIdArr() {
   ExecConfirm(
     async () => {
       await baseImBlockGroupAddUser({
-        groupId: search.value.groupId,
-        userIdSet: [...selectIdArr.value]
+        list: getList([...selectIdArr.value])
       }).then(res => {
         resetSelectIdArr();
         ToastSuccess(res.msg);
@@ -142,6 +142,16 @@ function blockBySelectIdArr() {
     undefined,
     `确定拉黑勾选的【${selectIdArr.value.length}】项数据吗？`
   );
+}
+
+function getList(idArr?: string[]) {
+  const list: BaseImApplyGroupItemDTO[] = [];
+
+  for (let item of idArr) {
+    list.push({ groupId: search.value.groupId, userId: item });
+  }
+
+  return list;
 }
 
 function cancelBlockBySelectIdArr() {
@@ -158,8 +168,7 @@ function cancelBlockBySelectIdArr() {
   ExecConfirm(
     async () => {
       await baseImBlockGroupCancelUser({
-        groupId: search.value.groupId,
-        userIdSet: [...selectIdArr.value]
+        list: getList([...selectIdArr.value])
       }).then(res => {
         resetSelectIdArr();
         ToastSuccess(res.msg);
@@ -394,8 +403,7 @@ function blockClick(item?: BaseImGroupRefUserPageVO) {
   ExecConfirm(
     async () => {
       await baseImBlockGroupAddUser({
-        groupId: search.value.groupId,
-        userIdSet: [item.userId]
+        list: getList([item.userId])
       }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
@@ -414,8 +422,7 @@ function cancelBlockClick(item?: BaseImGroupRefUserPageVO) {
   ExecConfirm(
     async () => {
       await baseImBlockGroupCancelUser({
-        groupId: search.value.groupId,
-        userIdSet: [item.userId]
+        list: getList([item.userId])
       }).then(res => {
         ToastSuccess(res.msg);
         onSearch();

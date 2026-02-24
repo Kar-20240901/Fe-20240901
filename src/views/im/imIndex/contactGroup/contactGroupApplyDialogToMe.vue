@@ -6,22 +6,15 @@ import Hide from "~icons/ep/hide";
 import RiUserForbidFill from "~icons/ri/user-forbid-fill";
 import RiUserFollowFill from "~icons/ri/user-follow-fill";
 import { onMounted, ref, useTemplateRef } from "vue";
-import {
-  baseImApplyFriendAgree,
-  baseImApplyFriendHidden,
-  baseImApplyFriendPage,
-  BaseImApplyFriendPageDTO,
-  BaseImApplyFriendPageVO,
-  baseImApplyFriendReject
-} from "@/api/http/base/BaseImApplyFriendController";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
   BaseImApplyStatusEnum,
   BaseImApplyStatusEnumMap
 } from "@/model/enum/im/BaseImApplyStatusEnum";
 import {
-  baseImBlockAddFriend,
-  baseImBlockCancelFriend
+  BaseImApplyGroupItemDTO,
+  baseImBlockGroupAddUser,
+  baseImBlockGroupCancelUser
 } from "@/api/http/base/BaseImBlockController";
 import KarOneInputTextarea from "@/components/KarOneInputTextarea/index.vue";
 import { FormatStringForCurrentDay } from "@/utils/DateUtil";
@@ -32,28 +25,37 @@ import {
   IOneInputDialogFormDefineExpose
 } from "@/model/types/IDialogFormProps";
 import RiSearchLine from "~icons/ri/search-line";
+import {
+  baseImApplyGroupAgree,
+  baseImApplyGroupHiddenGroup,
+  baseImApplyGroupPageGroup,
+  BaseImApplyGroupPageGroupDTO,
+  BaseImApplyGroupPageGroupVO,
+  baseImApplyGroupReject
+} from "@/api/http/base/BaseImApplyGroupController";
 
-const search = ref<BaseImApplyFriendPageDTO>({});
+const search = ref<BaseImApplyGroupPageGroupDTO>({});
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseImApplyFriendPageVO[]>([]);
+const dataList = ref<BaseImApplyGroupPageGroupVO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
 
 const selectIdArr = ref<string[]>([]);
-const selectUserIdArr = ref<string[]>([]);
+
+const selectListArr = ref<BaseImApplyGroupItemDTO[]>([]);
 
 function resetSelectIdArr() {
   selectIdArr.value = [];
-  selectUserIdArr.value = [];
+
+  selectListArr.value = [];
 }
 
 function onSearch() {
   loading.value = true;
-  baseImApplyFriendPage({
+  baseImApplyGroupPageGroup({
     ...search.value,
-    toMeFlag: true,
     current: currentPage.value as any,
     pageSize: pageSize.value as any
   })
@@ -71,34 +73,34 @@ defineExpose({
 });
 
 function agreeBySelectIdArr() {
-  if (!selectUserIdArr.value.length) {
+  if (!selectIdArr.value.length) {
     ToastError("请勾选数据");
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImApplyFriendAgree({
-        idSet: [...selectUserIdArr.value]
+      await baseImApplyGroupAgree({
+        list: [...selectListArr.value]
       }).then(res => {
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
-        searchContactFriend();
+        searchContactGroup();
       });
     },
     undefined,
-    `确定同意勾选的【${selectUserIdArr.value.length}】项数据吗？`
+    `确定同意勾选的【${selectIdArr.value.length}】项数据吗？`
   );
 }
 
 function rejectBySelectIdArr() {
-  if (!selectUserIdArr.value.length) {
+  if (!selectIdArr.value.length) {
     ToastError("请勾选数据");
     return;
   }
 
-  rejectIdArr = [...selectUserIdArr.value];
+  rejectIdArr = [...selectListArr.value];
 
   rejectBatchFlag = true;
 
@@ -113,8 +115,8 @@ function hiddenBySelectIdArr() {
 
   ExecConfirm(
     async () => {
-      await baseImApplyFriendHidden({
-        idSet: [...selectIdArr.value]
+      await baseImApplyGroupHiddenGroup({
+        list: [...selectListArr.value]
       }).then(res => {
         resetSelectIdArr();
         ToastSuccess(res.msg);
@@ -127,15 +129,15 @@ function hiddenBySelectIdArr() {
 }
 
 function blockBySelectIdArr() {
-  if (!selectUserIdArr.value.length) {
+  if (!selectListArr.value.length) {
     ToastError("请勾选数据");
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImBlockAddFriend({
-        idSet: [...selectUserIdArr.value]
+      await baseImBlockGroupAddUser({
+        list: [...selectListArr.value]
       }).then(res => {
         resetSelectIdArr();
         ToastSuccess(res.msg);
@@ -143,20 +145,20 @@ function blockBySelectIdArr() {
       });
     },
     undefined,
-    `确定拉黑勾选的【${selectUserIdArr.value.length}】项数据吗？`
+    `确定拉黑勾选的【${selectListArr.value.length}】项数据吗？`
   );
 }
 
 function cancelBlockBySelectIdArr() {
-  if (!selectUserIdArr.value.length) {
+  if (!selectListArr.value.length) {
     ToastError("请勾选数据");
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImBlockCancelFriend({
-        idSet: [...selectUserIdArr.value]
+      await baseImBlockGroupCancelUser({
+        list: [...selectListArr.value]
       }).then(res => {
         resetSelectIdArr();
         ToastSuccess(res.msg);
@@ -164,61 +166,81 @@ function cancelBlockBySelectIdArr() {
       });
     },
     undefined,
-    `确定取消拉黑勾选的【${selectUserIdArr.value.length}】项数据吗？`
+    `确定取消拉黑勾选的【${selectListArr.value.length}】项数据吗？`
   );
 }
 
-function onSelectChange(rowArr?: BaseImApplyFriendPageVO[]) {
+function onSelectChange(rowArr?: BaseImApplyGroupPageGroupVO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 
-  selectUserIdArr.value = rowArr.map(it => it.userId);
+  selectListArr.value = rowArr.map(it => {
+    return {
+      groupId: it.groupId,
+      userId: it.applyUserId
+    };
+  });
 }
 
-function agreeClick(item?: BaseImApplyFriendPageVO) {
-  if (!item?.userId) {
+function agreeClick(item?: BaseImApplyGroupPageGroupVO) {
+  if (!item?.groupId || !item?.applyUserId) {
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImApplyFriendAgree({
-        idSet: [item.userId]
+      await baseImApplyGroupAgree({
+        list: [
+          {
+            groupId: item.groupId,
+            userId: item.applyUserId
+          }
+        ]
       }).then(res => {
         resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
-        searchContactFriend();
+        searchContactGroup();
       });
     },
     undefined,
-    `确定同意【${item.nickname}】的好友申请吗？`
+    `确定同意【${item.nickname}】的群聊申请吗？`
   );
 }
 
-let rejectIdArr: string[] = [];
+let rejectIdArr: BaseImApplyGroupItemDTO[] = [];
 let rejectBatchFlag: boolean = false;
 
-function rejectClick(item?: BaseImApplyFriendPageVO) {
-  if (!item?.userId) {
+function rejectClick(item?: BaseImApplyGroupPageGroupVO) {
+  if (!item?.id) {
     return;
   }
 
   rejectBatchFlag = false;
 
-  rejectIdArr = [item.userId];
+  rejectIdArr = [
+    {
+      groupId: item.groupId,
+      userId: item.applyUserId
+    }
+  ];
 
   rejectDialogRef.value?.open();
 }
 
-function blockClick(item?: BaseImApplyFriendPageVO) {
-  if (!item?.userId) {
+function blockClick(item?: BaseImApplyGroupPageGroupVO) {
+  if (!item?.groupId || !item?.applyUserId) {
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImBlockAddFriend({
-        idSet: [item.userId]
+      await baseImBlockGroupAddUser({
+        list: [
+          {
+            groupId: item.groupId,
+            userId: item.applyUserId
+          }
+        ]
       }).then(res => {
         resetSelectIdArr();
         ToastSuccess(res.msg);
@@ -230,15 +252,20 @@ function blockClick(item?: BaseImApplyFriendPageVO) {
   );
 }
 
-function cancelBlockClick(item?: BaseImApplyFriendPageVO) {
-  if (!item?.userId) {
+function cancelBlockClick(item?: BaseImApplyGroupPageGroupVO) {
+  if (!item?.groupId || !item?.applyUserId) {
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImBlockCancelFriend({
-        idSet: [item.userId]
+      await baseImBlockGroupCancelUser({
+        list: [
+          {
+            groupId: item.groupId,
+            userId: item.applyUserId
+          }
+        ]
       }).then(res => {
         resetSelectIdArr();
         ToastSuccess(res.msg);
@@ -250,15 +277,20 @@ function cancelBlockClick(item?: BaseImApplyFriendPageVO) {
   );
 }
 
-function hiddenClick(item?: BaseImApplyFriendPageVO) {
-  if (!item?.id) {
+function hiddenClick(item?: BaseImApplyGroupPageGroupVO) {
+  if (!item?.groupId || !item?.applyUserId) {
     return;
   }
 
   ExecConfirm(
     async () => {
-      await baseImApplyFriendHidden({
-        idSet: [item.id]
+      await baseImApplyGroupHiddenGroup({
+        list: [
+          {
+            groupId: item.groupId,
+            userId: item.applyUserId
+          }
+        ]
       }).then(res => {
         resetSelectIdArr();
         ToastSuccess(res.msg);
@@ -282,8 +314,8 @@ function rejectConfirmFun() {
     return new Promise<R<any>>((resolve, reject) => {
       ExecConfirm(
         async () => {
-          await baseImApplyFriendReject({
-            idSet: rejectIdArr,
+          await baseImApplyGroupReject({
+            list: rejectIdArr,
             rejectReason: inputValue
           }).then(res => {
             resolve(res);
@@ -296,8 +328,8 @@ function rejectConfirmFun() {
       );
     });
   } else {
-    return baseImApplyFriendReject({
-      idSet: rejectIdArr,
+    return baseImApplyGroupReject({
+      list: rejectIdArr,
       rejectReason: inputValue
     });
   }
@@ -314,11 +346,11 @@ onMounted(() => {
 });
 
 const emit = defineEmits<{
-  (e: "searchContactFriend"): void;
+  (e: "searchContactGroup"): void;
 }>();
 
-function searchContactFriend() {
-  emit("searchContactFriend");
+function searchContactGroup() {
+  emit("searchContactGroup");
 }
 
 function handleSearchInputKeydown(e: KeyboardEvent) {

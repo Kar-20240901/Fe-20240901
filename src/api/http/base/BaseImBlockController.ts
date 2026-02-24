@@ -2,9 +2,13 @@ import { http } from "@/utils/http";
 import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
-export interface BaseImBlockGroupAddUserDTO {
-  userIdSet?: string[]; // 用户主键 id集合，是否必传：true，格式：int64
+export interface BaseImApplyGroupItemDTO {
   groupId?: string; // 群组主键 id，是否必传：true，格式：int64
+  userId?: string; // 用户主键 id，是否必传：true，格式：int64
+}
+
+export interface BaseImBlockGroupAddUserDTO {
+  list?: BaseImApplyGroupItemDTO[]; // 群聊信息集合
 }
 
 // 取消群组拉黑用户

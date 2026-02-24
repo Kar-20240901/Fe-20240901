@@ -4,9 +4,13 @@ import { http } from "@/utils/http";
 import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
-export interface BaseImApplyGroupHiddenGroupDTO {
-  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
+export interface BaseImApplyGroupItemDTO {
   groupId?: string; // 群组主键 id，是否必传：true，格式：int64
+  userId?: string; // 用户主键 id，是否必传：true，格式：int64
+}
+
+export interface BaseImApplyGroupHiddenGroupDTO {
+  list?: BaseImApplyGroupItemDTO[]; // 群聊信息集合
 }
 
 // 隐藏-群组
@@ -68,6 +72,7 @@ export interface BaseImApplyGroupPageSelfVO {
   groupName?: string; // 目标群组名
   avatarUrl?: string; // 目标群组头像
   applyContent?: string; // 申请内容
+  groupId?: string; // 群组主键 id，格式：int64
   id?: string; // 主键 id，格式：int64
   applyTime?: string; // 申请时间，格式：date-time
   status?: string; // 状态：101 申请中 201 已通过 301 已拒绝 401 已取消，枚举值：101;201;301;401
@@ -114,10 +119,22 @@ export function baseImApplyGroupSearchApplyGroup(
   );
 }
 
+// 取消-自我
+export function baseImApplyGroupCancelSelf(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/imApplyGroup/cancelSelf"),
+    form,
+    config
+  );
+}
+
 export interface BaseImApplyGroupRejectDTO {
-  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
   rejectReason?: string; // 拒绝理由
-  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
+  list?: BaseImApplyGroupItemDTO[]; // 群聊信息集合
 }
 
 // 拒绝
@@ -134,8 +151,7 @@ export function baseImApplyGroupReject(
 }
 
 export interface BaseImApplyGroupAgreeDTO {
-  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
-  groupId?: string; // 群组主键 id，是否必传：true，格式：int64
+  list?: BaseImApplyGroupItemDTO[]; // 群聊信息集合
 }
 
 // 同意
@@ -162,9 +178,11 @@ export interface BaseImApplyGroupPageGroupDTO {
 export interface BaseImApplyGroupPageGroupVO {
   avatarUrl?: string; // 目标用户头像
   applyContent?: string; // 申请内容
+  groupId?: string; // 群组主键 id，格式：int64
   nickname?: string; // 目标用户昵称
   id?: string; // 主键 id，格式：int64
   applyTime?: string; // 申请时间，格式：date-time
+  applyUserId?: string; // 发起申请的用户主键 id，格式：int64
   status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301;401
 }
 
