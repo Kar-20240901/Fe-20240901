@@ -28,7 +28,15 @@ const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
 
 const selectIdArr = ref<string[]>([]);
+const selectGroupIdArr = ref<string[]>([]);
+
 const tableRef = ref();
+
+function resetSelectIdArr() {
+  selectIdArr.value = [];
+
+  selectGroupIdArr.value = [];
+}
 
 function onSearch() {
   loading.value = true;
@@ -51,7 +59,7 @@ defineExpose({
 });
 
 function cancelBySelectIdArr() {
-  if (!selectIdArr.value.length) {
+  if (!selectGroupIdArr.value.length) {
     ToastError("请勾选数据");
     return;
   }
@@ -59,20 +67,22 @@ function cancelBySelectIdArr() {
   ExecConfirm(
     async () => {
       await baseImApplyGroupCancelSelf({
-        idSet: [...selectIdArr.value]
+        idSet: [...selectGroupIdArr.value]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
-    `确定取消申请对勾选的【${selectIdArr.value.length}】项数据吗？`
+    `确定取消申请对勾选的【${selectGroupIdArr.value.length}】项数据吗？`
   );
 }
 
 function onSelectChange(rowArr?: BaseImApplyGroupPageSelfVO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
+
+  selectGroupIdArr.value = rowArr.map(it => it.groupId);
 }
 
 function cancelClick(item?: BaseImApplyGroupPageSelfVO) {
@@ -85,7 +95,7 @@ function cancelClick(item?: BaseImApplyGroupPageSelfVO) {
       await baseImApplyGroupCancelSelf({
         idSet: [item.id]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -110,7 +120,7 @@ function hiddenBySelectIdArr() {
       await baseImApplyGroupHiddenSelf({
         idSet: [...selectIdArr.value]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -130,7 +140,7 @@ function hiddenClick(item?: BaseImApplyGroupPageSelfVO) {
       await baseImApplyGroupHiddenSelf({
         idSet: [item.id]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });

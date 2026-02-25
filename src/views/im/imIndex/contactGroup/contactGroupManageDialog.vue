@@ -619,6 +619,22 @@ function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
               : "否"
         }}
       </el-table-column>
+      <el-table-column
+        #default="scope"
+        prop="manageFlag"
+        label="管理员"
+        width="100"
+      >
+        {{ scope.row.belongFlag ? "-" : scope.row.manageFlag ? "是" : "否" }}
+      </el-table-column>
+      <el-table-column
+        #default="scope"
+        prop="belongFlag"
+        label="群聊创建人"
+        width="130"
+      >
+        {{ scope.row.belongFlag ? "是" : "否" }}
+      </el-table-column>
       <el-table-column #default="scope" label="操作" fixed="right" width="210">
         <el-button
           v-if="scope.row.belongFlag || scope.row.manageFlag"
