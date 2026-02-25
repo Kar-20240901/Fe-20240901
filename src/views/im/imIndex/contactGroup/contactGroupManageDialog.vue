@@ -65,7 +65,13 @@ const emit = defineEmits<{
   ): void;
 
   (e: "changeToGroupUserManage", groupId?: string): void;
+
+  (e: "initGroupDictList"): void;
 }>();
+
+function initGroupDictList() {
+  emit("initGroupDictList");
+}
 
 function changeToGroupUserManage(groupId?: string) {
   emit("changeToGroupUserManage", groupId);
@@ -147,6 +153,8 @@ function deleteBySelectIdArr() {
         onSearch();
         searchContactGroup();
         onlySessionSearch();
+
+        initGroupDictList();
       });
     },
     undefined,
@@ -193,6 +201,8 @@ function deleteClick(item?: BaseImGroupPageVO) {
         onSearch();
         searchContactGroup();
         onlySessionSearch();
+
+        initGroupDictList();
       });
     },
     undefined,
@@ -298,6 +308,8 @@ function confirmAfterFun(res: R<any>, done: () => void) {
   done();
   ToastSuccess(res.msg);
   onSearch();
+
+  initGroupDictList();
 }
 
 function confirmClick() {

@@ -81,6 +81,10 @@ function changeToGroupUserManage(groupId?: string) {
 
   contactGroupUserManageDialogRef.value?.setGroupId(groupId);
 }
+
+function initGroupDictList() {
+  contactGroupUserManageDialogRef.value?.initGroupDictList();
+}
 </script>
 
 <template>
@@ -103,6 +107,7 @@ function changeToGroupUserManage(groupId?: string) {
             @onlySessionSearch="onlySessionSearch"
             @refreshSearchContent="refreshSearchContent"
             @changeToGroupUserManage="changeToGroupUserManage"
+            @initGroupDictList="initGroupDictList"
           />
         </el-tab-pane>
         <el-tab-pane

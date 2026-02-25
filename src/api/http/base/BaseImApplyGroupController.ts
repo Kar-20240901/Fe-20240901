@@ -73,6 +73,7 @@ export interface BaseImApplyGroupPageSelfVO {
   avatarUrl?: string; // 目标群组头像
   applyContent?: string; // 申请内容
   groupId?: string; // 群组主键 id，格式：int64
+  updateTime?: string; // 更新时间，格式：date-time
   id?: string; // 主键 id，格式：int64
   applyTime?: string; // 申请时间，格式：date-time
   status?: string; // 状态：101 申请中 201 已通过 301 已拒绝 401 已取消，枚举值：101;201;301;401
@@ -180,6 +181,7 @@ export interface BaseImApplyGroupPageGroupVO {
   applyContent?: string; // 申请内容
   groupId?: string; // 群组主键 id，格式：int64
   nickname?: string; // 目标用户昵称
+  updateTime?: string; // 更新时间，格式：date-time
   id?: string; // 主键 id，格式：int64
   applyTime?: string; // 申请时间，格式：date-time
   applyUserId?: string; // 发起申请的用户主键 id，格式：int64

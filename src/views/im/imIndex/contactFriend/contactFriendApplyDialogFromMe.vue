@@ -28,6 +28,7 @@ const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
 
 const selectIdArr = ref<string[]>([]);
+const selectUserIdArr = ref<string[]>([]);
 const tableRef = ref();
 
 function onSearch() {
@@ -51,8 +52,13 @@ defineExpose({
   onSearch
 });
 
+function resetSelectIdArr() {
+  selectIdArr.value = [];
+  selectUserIdArr.value = [];
+}
+
 function cancelBySelectIdArr() {
-  if (!selectIdArr.value.length) {
+  if (!selectUserIdArr.value.length) {
     ToastError("请勾选数据");
     return;
   }
@@ -60,9 +66,9 @@ function cancelBySelectIdArr() {
   ExecConfirm(
     async () => {
       await baseImApplyFriendCancel({
-        idSet: [...selectIdArr.value]
+        idSet: [...selectUserIdArr.value]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -74,19 +80,21 @@ function cancelBySelectIdArr() {
 
 function onSelectChange(rowArr?: BaseImApplyFriendPageVO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
+
+  selectUserIdArr.value = rowArr.map(it => it.userId);
 }
 
 function cancelClick(item?: BaseImApplyFriendPageVO) {
-  if (!item?.id) {
+  if (!item?.userId) {
     return;
   }
 
   ExecConfirm(
     async () => {
       await baseImApplyFriendCancel({
-        idSet: [item.id]
+        idSet: [item.userId]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -111,7 +119,7 @@ function hiddenBySelectIdArr() {
       await baseImApplyFriendHidden({
         idSet: [...selectIdArr.value]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -131,7 +139,7 @@ function hiddenClick(item?: BaseImApplyFriendPageVO) {
       await baseImApplyFriendHidden({
         idSet: [item.id]
       }).then(res => {
-        selectIdArr.value = [];
+        resetSelectIdArr();
         ToastSuccess(res.msg);
         onSearch();
       });

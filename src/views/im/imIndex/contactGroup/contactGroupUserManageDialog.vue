@@ -87,7 +87,8 @@ function handleChangeGroupId(groupId?: string) {
 
 defineExpose({
   onSearch,
-  setGroupId
+  setGroupId,
+  initGroupDictList
 });
 
 function onSelectChange(rowArr?: BaseImGroupRefUserPageVO[]) {
@@ -578,7 +579,7 @@ function groupIdChange(groupId?: string) {
               <template #label="{ index }">
                 <div class="w-full h-full flex items-center">
                   <el-image
-                    :src="groupDictList[index].str2"
+                    :src="groupDictList[index]?.str2"
                     fit="cover"
                     class="w-6 h-6 rounded-full shrink-0"
                   >
@@ -591,8 +592,8 @@ function groupIdChange(groupId?: string) {
                     </template>
                   </el-image>
                   <div class="text-sm ml-2">
-                    {{ groupDictList[index].name }}（{{
-                      groupDictList[index].str1
+                    {{ groupDictList[index]?.name }}（{{
+                      groupDictList[index]?.str1
                     }}）
                   </div>
                 </div>
@@ -600,7 +601,7 @@ function groupIdChange(groupId?: string) {
               <template #default="{ item }">
                 <div class="w-full h-full flex items-center">
                   <el-image
-                    :src="item.str2"
+                    :src="item?.str2"
                     fit="cover"
                     class="w-6 h-6 rounded-full shrink-0"
                   >
@@ -613,7 +614,7 @@ function groupIdChange(groupId?: string) {
                     </template>
                   </el-image>
                   <div class="text-sm ml-2">
-                    {{ item.name }}（{{ item.str1 }}）
+                    {{ item?.name }}（{{ item?.str1 }}）
                   </div>
                 </div>
               </template>
