@@ -24,7 +24,6 @@ import {
   IDialogFormOneInputDTO,
   IOneInputDialogFormDefineExpose
 } from "@/model/types/IDialogFormProps";
-import RiSearchLine from "~icons/ri/search-line";
 import {
   baseImApplyGroupAgree,
   baseImApplyGroupHiddenGroup,
@@ -33,6 +32,9 @@ import {
   BaseImApplyGroupPageGroupVO,
   baseImApplyGroupReject
 } from "@/api/http/base/BaseImApplyGroupController";
+import { DictVO } from "@/api/http/base/BaseRoleController";
+import { baseImGroupDictList } from "@/api/http/base/BaseImGroupController";
+import { debounce } from "@/store/utils";
 
 const search = ref<BaseImApplyGroupPageGroupDTO>({});
 
@@ -343,6 +345,8 @@ function rejectConfirmAfterFun(res: R<any>, done: () => void) {
 
 onMounted(() => {
   onSearch();
+
+  initGroupDictList();
 });
 
 const emit = defineEmits<{
@@ -358,8 +362,56 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
 
   if (isEnter) {
     e.preventDefault();
-    onSearch();
+    onSearchKeyChangeDebounce();
   }
+}
+
+function onSearchKeyClear() {
+  onSearchKeyChangeDebounce();
+}
+
+function onSearchKeyChange() {
+  onSearchKeyChangeDebounce();
+}
+
+const onSearchKeyChangeDebounce: () => void = debounce(onSearch, 500);
+
+const groupDictList = ref<DictVO[]>([]);
+
+// key：groupId，value：数组下标
+const groupIdMap = ref<Map<string, number>>(new Map<string, number>());
+
+function initGroupDictList() {
+  groupDictList.value = [];
+  groupIdMap.value.clear();
+
+  baseImGroupDictList().then(res => {
+    groupDictList.value = res.data.records || [];
+
+    groupDictList.value.forEach((item, index) => {
+      groupIdMap.value.set(item.id, index);
+    });
+  });
+}
+
+function groupIdChange(groupId?: string) {
+  handleChangeGroupId(groupId);
+}
+
+function handleChangeGroupId(groupId?: string) {
+  if (!groupId) {
+    return;
+  }
+
+  const index = groupIdMap.value.get(groupId);
+
+  if (index === undefined) {
+    return;
+  }
+
+  search.value.groupId = groupId;
+
+  onSearch();
 }
 </script>
 
@@ -412,27 +464,76 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
         <el-form
           ref="searchRef"
           class="last-not-margin-right-form"
-          :inline="true"
           :model="search"
         >
+          <el-form-item prop="groupId">
+            <el-select-v2
+              v-model="search.groupId"
+              placeholder="请选择群聊"
+              class="!w-[220px]"
+              clearable
+              filterable
+              :options="groupDictList"
+              :props="{
+                label: 'name',
+                value: 'id'
+              }"
+              @change="groupIdChange"
+            >
+              <template #label="{ index }">
+                <div class="w-full h-full flex items-center">
+                  <el-image
+                    :src="groupDictList[index]?.str2"
+                    fit="cover"
+                    class="w-6 h-6 rounded-full shrink-0"
+                  >
+                    <template #error>
+                      <el-image
+                        :src="Avatar"
+                        fit="cover"
+                        class="w-6 h-6 rounded-full shrink-0"
+                      />
+                    </template>
+                  </el-image>
+                  <div class="text-sm ml-2">
+                    {{ groupDictList[index]?.name }}（{{
+                      groupDictList[index]?.str1
+                    }}）
+                  </div>
+                </div>
+              </template>
+              <template #default="{ item }">
+                <div class="w-full h-full flex items-center">
+                  <el-image
+                    :src="item?.str2"
+                    fit="cover"
+                    class="w-6 h-6 rounded-full shrink-0"
+                  >
+                    <template #error>
+                      <el-image
+                        :src="Avatar"
+                        fit="cover"
+                        class="w-6 h-6 rounded-full shrink-0"
+                      />
+                    </template>
+                  </el-image>
+                  <div class="text-sm ml-2">
+                    {{ item?.name }}（{{ item?.str1 }}）
+                  </div>
+                </div>
+              </template>
+            </el-select-v2>
+          </el-form-item>
           <el-form-item prop="searchKey">
             <el-input
               v-model="search.searchKey"
               placeholder="请输入用户昵称、用户编码"
               clearable
               class="!w-[220px]"
+              @input="onSearchKeyChange"
+              @clear="onSearchKeyClear"
               @keydown="handleSearchInputKeydown"
             />
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              type="primary"
-              :icon="useRenderIcon(RiSearchLine)"
-              :loading="loading"
-              @click="onSearch"
-            >
-              搜索
-            </el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -454,6 +555,31 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
       @selection-change="onSelectChange"
     >
       <el-table-column type="selection" />
+      <el-table-column #default="scope" label="群聊" width="180">
+        <div class="flex items-center">
+          <el-image
+            :src="scope.row?.avatarUrl"
+            fit="cover"
+            class="w-10 h-10 rounded-full"
+            :preview-src-list="
+              scope.row?.avatarUrl ? [scope.row?.avatarUrl] : []
+            "
+            preview-teleported
+          >
+            <template #error>
+              <el-image
+                :src="Avatar"
+                fit="cover"
+                class="w-10 h-10 rounded-full"
+              />
+            </template>
+          </el-image>
+          <div class="text-sm ml-2">
+            {{ scope.row?.name }}
+          </div>
+        </div>
+      </el-table-column>
+      <el-table-column prop="groupUuid" label="群聊编码" width="270" />
       <el-table-column #default="scope" label="用户" width="180">
         <div class="flex items-center">
           <el-image
@@ -478,6 +604,7 @@ function handleSearchInputKeydown(e: KeyboardEvent) {
           </div>
         </div>
       </el-table-column>
+      <el-table-column prop="uuid" label="用户编码" width="270" />
       <el-table-column prop="applyContent" label="申请内容" width="220" />
       <el-table-column #default="scope" prop="status" label="状态" width="80">
         {{ BaseImApplyStatusEnumMap.get(scope.row.status) || "" }}

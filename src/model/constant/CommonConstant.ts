@@ -12,6 +12,8 @@ export default {
   DIALOG_WIDTH_75: "75%", // Dialog 宽度
   DIALOG_WIDTH_70: "70%", // Dialog 宽度
   DIALOG_WIDTH_60: "60%", // Dialog 宽度
+  DIALOG_WIDTH_55: "55%", // Dialog 宽度
+  DIALOG_WIDTH_50: "50%", // Dialog 宽度
   DIALOG_WIDTH_45: "45%", // Dialog 宽度
   DIALOG_WIDTH_40: "40%", // Dialog 宽度
   DIALOG_WIDTH_30: "30%", // Dialog 宽度

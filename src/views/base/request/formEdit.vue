@@ -18,12 +18,12 @@ function getForm() {
   return form;
 }
 
-function editOpen(fun: Promise<R<any>>) {
+function editOpen(func: Promise<R<any>>) {
   dialogLoading.value = true;
   visible.value = true;
   form.value = {};
   formRef.value?.clearValidate();
-  fun.then(res => {
+  func.then(res => {
     form.value = res.data;
     dialogLoading.value = false;
   });

@@ -32,13 +32,13 @@ function addOpen(formTemp?: BaseBulletinInsertOrUpdateDTO) {
   );
 }
 
-function editOpen(fun: Promise<R<any>>) {
+function editOpen(func: Promise<R<any>>) {
   dialogLoading.value = true;
   confirmLoading.value = false;
   visible.value = true;
   form.value = {};
   formRef.value?.clearValidate();
-  fun.then(res => {
+  func.then(res => {
     form.value = res.data;
     dialogLoading.value = false;
   });

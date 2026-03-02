@@ -46,7 +46,7 @@ export function getDialogWidth() {
   if (getMobileFlag()) {
     return CommonConstant.DIALOG_WIDTH_80;
   } else {
-    return CommonConstant.DIALOG_WIDTH_45;
+    return CommonConstant.DIALOG_WIDTH_55;
   }
 }
 

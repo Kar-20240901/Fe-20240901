@@ -35,13 +35,13 @@ function addOpen(formTemp?: BaseUserInsertOrUpdateDTO) {
   );
 }
 
-function editOpen(fun: Promise<R<any>>, formTemp: BaseUserInsertOrUpdateDTO) {
+function editOpen(func: Promise<R<any>>, formTemp: BaseUserInsertOrUpdateDTO) {
   dialogLoading.value = true;
   confirmLoading.value = false;
   visible.value = true;
   form.value = formTemp || {};
   formRef.value?.clearValidate();
-  fun.then(res => {
+  func.then(res => {
     form.value = res.data;
     dialogLoading.value = false;
   });
