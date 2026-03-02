@@ -386,11 +386,13 @@ function initGroupDictList() {
   groupIdMap.value.clear();
 
   baseImGroupDictList().then(res => {
-    groupDictList.value = res.data.records || [];
+    (res.data.records || []).forEach((item, index) => {
+      item.name = `${item.name}（${item.str1}）`;
 
-    groupDictList.value.forEach((item, index) => {
       groupIdMap.value.set(item.id, index);
     });
+
+    groupDictList.value = res.data.records || [];
   });
 }
 
@@ -496,9 +498,7 @@ function handleChangeGroupId(groupId?: string) {
                     </template>
                   </el-image>
                   <div class="text-sm ml-2">
-                    {{ groupDictList[index]?.name }}（{{
-                      groupDictList[index]?.str1
-                    }}）
+                    {{ groupDictList[index]?.name }}
                   </div>
                 </div>
               </template>
@@ -518,7 +518,7 @@ function handleChangeGroupId(groupId?: string) {
                     </template>
                   </el-image>
                   <div class="text-sm ml-2">
-                    {{ item?.name }}（{{ item?.str1 }}）
+                    {{ item?.name }}
                   </div>
                 </div>
               </template>
@@ -558,11 +558,11 @@ function handleChangeGroupId(groupId?: string) {
       <el-table-column #default="scope" label="群聊" width="180">
         <div class="flex items-center">
           <el-image
-            :src="scope.row?.avatarUrl"
+            :src="scope.row?.groupAvatarUrl"
             fit="cover"
             class="w-10 h-10 rounded-full"
             :preview-src-list="
-              scope.row?.avatarUrl ? [scope.row?.avatarUrl] : []
+              scope.row?.groupAvatarUrl ? [scope.row?.groupAvatarUrl] : []
             "
             preview-teleported
           >
@@ -575,11 +575,10 @@ function handleChangeGroupId(groupId?: string) {
             </template>
           </el-image>
           <div class="text-sm ml-2">
-            {{ scope.row?.name }}
+            {{ scope.row?.groupName }}（{{ scope.row?.groupUuid }}）
           </div>
         </div>
       </el-table-column>
-      <el-table-column prop="groupUuid" label="群聊编码" width="270" />
       <el-table-column #default="scope" label="用户" width="180">
         <div class="flex items-center">
           <el-image

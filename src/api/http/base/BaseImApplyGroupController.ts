@@ -177,15 +177,20 @@ export interface BaseImApplyGroupPageGroupDTO {
 }
 
 export interface BaseImApplyGroupPageGroupVO {
+  blockFlag?: boolean; // 是否已经拉黑
   avatarUrl?: string; // 目标用户头像
-  applyContent?: string; // 申请内容
+  groupUuid?: string; // 群聊编码
   groupId?: string; // 群组主键 id，格式：int64
-  nickname?: string; // 目标用户昵称
   updateTime?: string; // 更新时间，格式：date-time
+  uuid?: string; // 用户编码
+  applyUserId?: string; // 发起申请的用户主键 id，格式：int64
+  groupName?: string; // 群组名称
+  applyContent?: string; // 申请内容
+  nickname?: string; // 目标用户昵称
   id?: string; // 主键 id，格式：int64
   applyTime?: string; // 申请时间，格式：date-time
-  applyUserId?: string; // 发起申请的用户主键 id，格式：int64
   status?: string; // 状态：101 申请中 201 已通过 301 已拒绝，枚举值：101;201;301;401
+  groupAvatarUrl?: string; // 群组头像
 }
 
 // 分页排序查询-群组的入群申请

@@ -484,11 +484,13 @@ function initGroupDictList() {
   groupIdMap.value.clear();
 
   baseImGroupDictList().then(res => {
-    groupDictList.value = res.data.records || [];
+    (res.data.records || []).forEach((item, index) => {
+      item.name = `${item.name}（${item.str1}）`;
 
-    groupDictList.value.forEach((item, index) => {
       groupIdMap.value.set(item.id, index);
     });
+
+    groupDictList.value = res.data.records || [];
 
     if (groupDictList.value.length) {
       handleChangeGroupId(groupDictList.value[0].id);
@@ -592,9 +594,7 @@ function groupIdChange(groupId?: string) {
                     </template>
                   </el-image>
                   <div class="text-sm ml-2">
-                    {{ groupDictList[index]?.name }}（{{
-                      groupDictList[index]?.str1
-                    }}）
+                    {{ groupDictList[index]?.name }}
                   </div>
                 </div>
               </template>
@@ -614,7 +614,7 @@ function groupIdChange(groupId?: string) {
                     </template>
                   </el-image>
                   <div class="text-sm ml-2">
-                    {{ item?.name }}（{{ item?.str1 }}）
+                    {{ item?.name }}
                   </div>
                 </div>
               </template>
