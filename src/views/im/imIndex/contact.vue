@@ -13,6 +13,7 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import EpArrowRight from "~icons/ep/ArrowRight";
 import ContactFriendDialog from "@/views/im/imIndex/contactFriend/contactFriendDialog.vue";
 import ContactGroupDialog from "@/views/im/imIndex/contactGroup/contactGroupDialog.vue";
+import ContactBlockDialog from "@/views/im/imIndex/contactBlock/contactBlockDialog.vue";
 
 const SegmentedOptionArr = [
   {
@@ -108,6 +109,7 @@ const ApplyOperateArr = [
 
 const contactFriendDialogRef = ref();
 const contactGroupDialogRef = ref();
+const contactBlockDialogRef = ref();
 
 function applyOperateClick(value?: string) {
   if (value === OperateFriendValue) {
@@ -115,6 +117,7 @@ function applyOperateClick(value?: string) {
   } else if (value === OperateGroupValue) {
     contactGroupDialogRef?.value.open();
   } else if (value === BlockValue) {
+    contactBlockDialogRef?.value.open();
   }
 }
 </script>
@@ -177,6 +180,8 @@ function applyOperateClick(value?: string) {
       @onlySessionSearch="onlySessionSearch"
       @refreshSearchContent="refreshSearchContent"
     />
+
+    <contact-block-dialog ref="contactBlockDialogRef" />
   </div>
 </template>
 

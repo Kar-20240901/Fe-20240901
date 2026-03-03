@@ -4,19 +4,10 @@ import { onMounted, ref } from "vue";
 import Avatar from "@/assets/user.png";
 import RiUserForbidFill from "~icons/ri/user-forbid-fill";
 import RiUserFollowFill from "~icons/ri/user-follow-fill";
-import RiUserMinusFill from "~icons/ri/UserMinusFill";
 import { FormatStringForCurrentDay } from "@/utils/DateUtil";
-import {
-  baseImGroupChangeBelongId,
-  baseImGroupDictList,
-  baseImGroupRemoveUser
-} from "@/api/http/base/BaseImGroupController";
+import { baseImGroupDictList } from "@/api/http/base/BaseImGroupController";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import {
-  baseImGroupRefUserAddManage,
-  baseImGroupRefUserAddMute,
-  baseImGroupRefUserDeleteManage,
-  baseImGroupRefUserDeleteMute,
   baseImGroupRefUserPage,
   BaseImGroupRefUserPageDTO,
   BaseImGroupRefUserPageVO
@@ -63,10 +54,6 @@ function onSearch() {
     });
 }
 
-function setGroupId(groupId?: string) {
-  handleChangeGroupId(groupId);
-}
-
 function handleChangeGroupId(groupId?: string) {
   if (!groupId) {
     return;
@@ -87,7 +74,6 @@ function handleChangeGroupId(groupId?: string) {
 
 defineExpose({
   onSearch,
-  setGroupId,
   initGroupDictList
 });
 
@@ -181,221 +167,6 @@ function cancelBlockBySelectIdArr() {
   );
 }
 
-function removeUserBySelectIdArr() {
-  if (!search.value.groupId) {
-    ToastError("请选择群聊");
-    return;
-  }
-
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupRemoveUser({
-        groupId: search.value.groupId,
-        userIdSet: [...selectIdArr.value]
-      }).then(res => {
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定移除勾选的【${selectIdArr.value.length}】个成员吗？`
-  );
-}
-
-function addMuteBySelectIdArr() {
-  if (!search.value.groupId) {
-    ToastError("请选择群聊");
-    return;
-  }
-
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupRefUserAddMute({
-        groupId: search.value.groupId,
-        userIdSet: [...selectIdArr.value]
-      }).then(res => {
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定禁言勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
-}
-
-function deleteMuteBySelectIdArr() {
-  if (!search.value.groupId) {
-    ToastError("请选择群聊");
-    return;
-  }
-
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupRefUserDeleteMute({
-        groupId: search.value.groupId,
-        userIdSet: [...selectIdArr.value]
-      }).then(res => {
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定取消禁言勾选的【${selectIdArr.value.length}】项数据吗？`
-  );
-}
-
-function addManageBySelectIdArr() {
-  if (!search.value.groupId) {
-    ToastError("请选择群聊");
-    return;
-  }
-
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupRefUserAddManage({
-        groupId: search.value.groupId,
-        userIdSet: [...selectIdArr.value]
-      }).then(res => {
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定任命勾选的【${selectIdArr.value.length}】个成员为管理员吗？`
-  );
-}
-
-function deleteManageBySelectIdArr() {
-  if (!search.value.groupId) {
-    ToastError("请选择群聊");
-    return;
-  }
-
-  if (!selectIdArr.value.length) {
-    ToastError("请勾选数据");
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupRefUserDeleteManage({
-        groupId: search.value.groupId,
-        userIdSet: [...selectIdArr.value]
-      }).then(res => {
-        resetSelectIdArr();
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定取消勾选的【${selectIdArr.value.length}】个管理员身份吗？`
-  );
-}
-
-function addMuteClick(item?: BaseImGroupRefUserPageVO) {
-  if (!search.value.groupId || !item?.userId) {
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupRefUserAddMute({
-        groupId: search.value.groupId,
-        userIdSet: [item.userId]
-      }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定禁言【${item.nickname}】吗？`
-  );
-}
-
-function deleteMuteClick(item?: BaseImGroupRefUserPageVO) {
-  if (!search.value.groupId || !item?.userId) {
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupRefUserDeleteMute({
-        groupId: search.value.groupId,
-        userIdSet: [item.userId]
-      }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定取消禁言【${item.nickname}】吗？`
-  );
-}
-
-function addManageClick(item?: BaseImGroupRefUserPageVO) {
-  if (!search.value.groupId || !item?.userId) {
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupRefUserAddManage({
-        groupId: search.value.groupId,
-        userIdSet: [item.userId]
-      }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定任命【${item.nickname}】为管理员吗？`
-  );
-}
-
-function deleteManageClick(item?: BaseImGroupRefUserPageVO) {
-  if (!search.value.groupId || !item?.userId) {
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupRefUserDeleteManage({
-        groupId: search.value.groupId,
-        userIdSet: [item.userId]
-      }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定取消【${item.nickname}】的管理员吗？`
-  );
-}
-
 function blockClick(item?: BaseImGroupRefUserPageVO) {
   if (!search.value.groupId || !item?.userId) {
     return;
@@ -431,48 +202,6 @@ function cancelBlockClick(item?: BaseImGroupRefUserPageVO) {
     },
     undefined,
     `确定取消拉黑【${item.nickname}】吗？`
-  );
-}
-
-function removeUserClick(item?: BaseImGroupRefUserPageVO) {
-  if (!search.value.groupId || !item?.userId) {
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupRemoveUser({
-        groupId: search.value.groupId,
-        userIdSet: [item.userId]
-      }).then(res => {
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定移除成员【${item.nickname}】吗？`
-  );
-}
-
-function changeBelongIdClick(item?: BaseImGroupRefUserPageVO) {
-  if (!search.value.groupId || !item?.userId) {
-    return;
-  }
-
-  ExecConfirm(
-    async () => {
-      await baseImGroupChangeBelongId({
-        groupId: search.value.groupId,
-        newBelongId: item.userId
-      }).then(res => {
-        initGroupDictList();
-
-        ToastSuccess(res.msg);
-        onSearch();
-      });
-    },
-    undefined,
-    `确定任命【${item.nickname}】为新群主吗？`
   );
 }
 
@@ -523,47 +252,13 @@ function groupIdChange(groupId?: string) {
         >
           取消拉黑
         </el-button>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon(RiUserForbidFill)"
-          @click="addMuteBySelectIdArr"
-        >
-          批量禁言
-        </el-button>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon(RiUserFollowFill)"
-          @click="deleteMuteBySelectIdArr"
-        >
-          取消禁言
-        </el-button>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon(RiUserForbidFill)"
-          @click="addManageBySelectIdArr"
-        >
-          批量管理员
-        </el-button>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon(RiUserFollowFill)"
-          @click="deleteManageBySelectIdArr"
-        >
-          取消管理员
-        </el-button>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon(RiUserMinusFill)"
-          @click="removeUserBySelectIdArr"
-        >
-          移除群员
-        </el-button>
       </div>
 
       <div>
         <el-form
           ref="searchRef"
           class="last-not-margin-right-form"
+          :inline="true"
           :model="search"
         >
           <el-form-item prop="groupId">
@@ -719,60 +414,7 @@ function groupIdChange(groupId?: string) {
       >
         {{ scope.row.blockFlag ? "是" : "否" }}
       </el-table-column>
-      <el-table-column #default="scope" label="操作" fixed="right" width="350">
-        <el-button
-          v-if="
-            !scope.row.muteFlag &&
-            !scope.row.belongFlag &&
-            (searchGroupDictVO.b1 ||
-              (searchGroupDictVO.b2 &&
-                !scope.row.belongFlag &&
-                !scope.row.manageFlag))
-          "
-          link
-          type="primary"
-          @click="addMuteClick(scope.row)"
-        >
-          禁言
-        </el-button>
-        <el-button
-          v-if="
-            scope.row.muteFlag &&
-            (searchGroupDictVO.b1 ||
-              (searchGroupDictVO.b2 &&
-                !scope.row.belongFlag &&
-                !scope.row.manageFlag))
-          "
-          link
-          type="primary"
-          @click="deleteMuteClick(scope.row)"
-        >
-          取消禁言
-        </el-button>
-        <el-button
-          v-if="
-            !scope.row.manageFlag &&
-            !scope.row.belongFlag &&
-            searchGroupDictVO.b1
-          "
-          link
-          type="primary"
-          @click="addManageClick(scope.row)"
-        >
-          任命管理员
-        </el-button>
-        <el-button
-          v-if="
-            scope.row.manageFlag &&
-            !scope.row.belongFlag &&
-            searchGroupDictVO.b1
-          "
-          link
-          type="primary"
-          @click="deleteManageClick(scope.row)"
-        >
-          取消管理员
-        </el-button>
+      <el-table-column #default="scope" label="操作" fixed="right" width="120">
         <el-button
           v-if="
             !scope.row.blockFlag &&
@@ -801,28 +443,6 @@ function groupIdChange(groupId?: string) {
           @click="cancelBlockClick(scope.row)"
         >
           取消拉黑
-        </el-button>
-        <el-button
-          v-if="!scope.row.belongFlag && searchGroupDictVO.b1"
-          link
-          type="primary"
-          @click="changeBelongIdClick(scope.row)"
-        >
-          任命群主
-        </el-button>
-        <el-button
-          v-if="
-            !scope.row.belongFlag &&
-            (searchGroupDictVO.b1 ||
-              (searchGroupDictVO.b2 &&
-                !scope.row.belongFlag &&
-                !scope.row.manageFlag))
-          "
-          link
-          type="primary"
-          @click="removeUserClick(scope.row)"
-        >
-          移除
         </el-button>
       </el-table-column>
     </el-table>
