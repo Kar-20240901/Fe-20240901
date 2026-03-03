@@ -92,10 +92,6 @@ function setRowMax() {
 
   let rowMaxTemp = Math.floor((mainContentEleWidth - 40) / itemWidth);
 
-  const marginNumber = rowMaxTemp * 12;
-
-  rowMaxTemp = rowMaxTemp - Math.ceil(marginNumber / itemWidth);
-
   if (rowMaxTemp <= 0) {
     rowMaxTemp = 1;
   }
