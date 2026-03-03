@@ -71,7 +71,9 @@ function onSearch() {
 }
 
 defineExpose({
-  onSearch
+  onSearch,
+  initGroupDictList,
+  handleChangeGroupId
 });
 
 function agreeBySelectIdArr() {
@@ -397,11 +399,17 @@ function initGroupDictList() {
 }
 
 function groupIdChange(groupId?: string) {
-  handleChangeGroupId(groupId);
+  handleChangeGroupId(groupId, true);
 }
 
-function handleChangeGroupId(groupId?: string) {
+function handleChangeGroupId(groupId?: string, nullSearchFlag?: boolean) {
   if (!groupId) {
+    search.value.groupId = "";
+
+    if (nullSearchFlag) {
+      onSearch();
+    }
+
     return;
   }
 
@@ -555,7 +563,12 @@ function handleChangeGroupId(groupId?: string) {
       @selection-change="onSelectChange"
     >
       <el-table-column type="selection" />
-      <el-table-column #default="scope" label="群聊" width="180">
+      <el-table-column
+        v-if="!search.groupId"
+        #default="scope"
+        label="群聊"
+        width="180"
+      >
         <div class="flex items-center">
           <el-image
             :src="scope.row?.groupAvatarUrl"

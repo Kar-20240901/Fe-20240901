@@ -31,12 +31,21 @@ function tabChange(name: TabPaneName) {
     if (name === contactGroupManageDialogStr) {
       contactGroupManageDialogRef.value?.onSearch();
     } else if (name === contactGroupUserManageDialogStr) {
+      initGroupDictList();
+
       contactGroupUserManageDialogRef.value?.onSearch();
     } else if (name === contactGroupApplyDialogSendStr) {
       contactGroupApplyDialogSendRef.value?.onSearch();
     } else if (name === contactGroupApplyDialogFromMeStr) {
       contactGroupApplyDialogFromMeRef.value?.onSearch();
     } else if (name === contactGroupApplyDialogToMeStr) {
+      contactGroupApplyDialogToMeRef.value?.handleChangeGroupId(
+        undefined,
+        false
+      );
+
+      contactGroupApplyDialogToMeRef.value?.initGroupDictList();
+
       contactGroupApplyDialogToMeRef.value?.onSearch();
     }
   });

@@ -179,6 +179,8 @@ function leaveSelfBySelectIdArr() {
         onSearch();
         searchContactGroup();
         onlySessionSearch();
+
+        initGroupDictList();
       });
     },
     undefined,
@@ -630,7 +632,7 @@ function cancelNotDisturbClick(item?: BaseImGroupPageVO) {
       <el-table-column
         #default="scope"
         prop="belongFlag"
-        label="群聊创建人"
+        label="群主"
         width="130"
       >
         {{ scope.row.belongFlag ? "是" : "否" }}

@@ -465,6 +465,8 @@ function changeBelongIdClick(item?: BaseImGroupRefUserPageVO) {
         groupId: search.value.groupId,
         newBelongId: item.userId
       }).then(res => {
+        initGroupDictList();
+
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -704,7 +706,7 @@ function groupIdChange(groupId?: string) {
       <el-table-column
         #default="scope"
         prop="belongFlag"
-        label="群聊创建人"
+        label="群主"
         width="130"
       >
         {{ scope.row.belongFlag ? "是" : "否" }}
@@ -717,11 +719,14 @@ function groupIdChange(groupId?: string) {
       >
         {{ scope.row.blockFlag ? "是" : "否" }}
       </el-table-column>
-      <el-table-column #default="scope" label="操作" fixed="right" width="200">
+      <el-table-column #default="scope" label="操作" fixed="right" width="350">
         <el-button
           v-if="
             !scope.row.muteFlag &&
-            (searchGroupDictVO.b1 || searchGroupDictVO.b2)
+            (searchGroupDictVO.b1 ||
+              (searchGroupDictVO.b2 &&
+                !scope.row.belongFlag &&
+                !scope.row.manageFlag))
           "
           link
           type="primary"
@@ -731,7 +736,11 @@ function groupIdChange(groupId?: string) {
         </el-button>
         <el-button
           v-if="
-            scope.row.muteFlag && (searchGroupDictVO.b1 || searchGroupDictVO.b2)
+            scope.row.muteFlag &&
+            (searchGroupDictVO.b1 ||
+              (searchGroupDictVO.b2 &&
+                !scope.row.belongFlag &&
+                !scope.row.manageFlag))
           "
           link
           type="primary"
@@ -766,7 +775,10 @@ function groupIdChange(groupId?: string) {
         <el-button
           v-if="
             !scope.row.blockFlag &&
-            (searchGroupDictVO.b1 || searchGroupDictVO.b2)
+            (searchGroupDictVO.b1 ||
+              (searchGroupDictVO.b2 &&
+                !scope.row.belongFlag &&
+                !scope.row.manageFlag))
           "
           link
           type="primary"
@@ -777,7 +789,10 @@ function groupIdChange(groupId?: string) {
         <el-button
           v-if="
             scope.row.blockFlag &&
-            (searchGroupDictVO.b1 || searchGroupDictVO.b2)
+            (searchGroupDictVO.b1 ||
+              (searchGroupDictVO.b2 &&
+                !scope.row.belongFlag &&
+                !scope.row.manageFlag))
           "
           link
           type="primary"
@@ -794,7 +809,13 @@ function groupIdChange(groupId?: string) {
           任命群主
         </el-button>
         <el-button
-          v-if="scope.row.b1 || scope.row.b2"
+          v-if="
+            !scope.row.belongFlag &&
+            (searchGroupDictVO.b1 ||
+              (searchGroupDictVO.b2 &&
+                !scope.row.belongFlag &&
+                !scope.row.manageFlag))
+          "
           link
           type="primary"
           @click="removeUserClick(scope.row)"
