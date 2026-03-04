@@ -260,8 +260,6 @@ const doSearchThrottle = throttle(
   queryNewFlag?: boolean
 ) => void;
 
-let shouldAutoScroll: boolean = true;
-
 function handleScroll(event: Event) {
   const scrollerEl = event.target as HTMLElement;
 
@@ -270,8 +268,6 @@ function handleScroll(event: Event) {
   const { scrollTop, scrollHeight, clientHeight } = scrollerEl;
 
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
-
-  shouldAutoScroll = scrollTop <= 50;
 
   if (distanceToBottom <= 20 && !loading.value && hasMore) {
     doSearchThrottle(false, true, false);
