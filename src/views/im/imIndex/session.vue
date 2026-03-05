@@ -38,7 +38,8 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
     lastContent: undefined,
     lastReceiveTs: undefined,
     unReadCountAddNumber: 0,
-    unReadCountAddNumberUpdateFlag: true
+    unReadCountAddNumberUpdateFlag: true,
+    unReadCountAddNumberUpdateMustFlag: true
   });
 }
 
@@ -87,10 +88,6 @@ function handleDataList(
 
     dataListSessionIdSet.add(sessionId);
 
-    item.unReadCountCalc = item.unReadCount || 0;
-    item.lastContentCalc = item.lastContent;
-    item.lastReceiveTsCalc = item.lastReceiveTs;
-
     dataList.value.push(item);
 
     addFlag = true;
@@ -134,7 +131,7 @@ const sortDataListThrottle = throttleByKey(
   () => {
     sortDataList();
   },
-  2000,
+  1000,
   true,
   true
 );
@@ -324,12 +321,6 @@ function handleLastContentInfoFun(sessionId?: string) {
     return;
   }
 
-  const item: FeBaseImSessionRefUserPageVO = dataList.value[findIndex];
-
-  item.unReadCount = item.unReadCountCalc || 0;
-  item.lastContent = item.lastContentCalc;
-  item.lastReceiveTs = item.lastReceiveTsCalc;
-
   doSortDataListThrottle();
 }
 
@@ -351,22 +342,24 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
   const item: FeBaseImSessionRefUserPageVO = dataList.value[findIndex];
 
   if (updateLastContentObjTemp.lastContent) {
-    item.lastContentCalc = updateLastContentObjTemp.lastContent;
+    item.lastContent = updateLastContentObjTemp.lastContent;
   }
 
   if (updateLastContentObjTemp.lastReceiveTs) {
-    item.lastReceiveTsCalc = updateLastContentObjTemp.lastReceiveTs;
+    item.lastReceiveTs = updateLastContentObjTemp.lastReceiveTs;
   }
 
   if (updateLastContentObjTemp.unReadCountAddNumber !== undefined) {
     if (updateLastContentObjTemp.unReadCountAddNumberUpdateFlag) {
-      item.unReadCount = updateLastContentObjTemp.unReadCountAddNumber;
-
-      item.unReadCountCalc = updateLastContentObjTemp.unReadCountAddNumber;
+      if (
+        updateLastContentObjTemp.unReadCountAddNumber > item.unReadCount ||
+        updateLastContentObjTemp.unReadCountAddNumberUpdateMustFlag
+      ) {
+        item.unReadCount = updateLastContentObjTemp.unReadCountAddNumber;
+      }
     } else {
-      item.unReadCountCalc =
-        (item.unReadCountCalc || 0) +
-        updateLastContentObjTemp.unReadCountAddNumber;
+      item.unReadCount =
+        (item.unReadCount || 0) + updateLastContentObjTemp.unReadCountAddNumber;
     }
   }
 

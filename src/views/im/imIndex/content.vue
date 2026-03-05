@@ -47,7 +47,7 @@ import { storageLocal } from "@/store/utils";
 import CommonConstant from "@/model/constant/CommonConstant";
 import LocalStorageKey from "@/model/constant/LocalStorageKey";
 import { baseImSessionRefUserQueryLastContentMap } from "@/api/http/base/BaseImSessionRefUserController";
-import { debounceByKey, throttleByKey } from "@/utils/CommonUtil";
+import { throttleByKey } from "@/utils/CommonUtil";
 
 // import { buildUUID } from "@pureadmin/utils";
 
@@ -163,14 +163,28 @@ const emit = defineEmits<{
   ): void;
 }>();
 
+function getTodoSendObj(
+  sessionId?: string
+): Record<string, ISessionContentBO> | undefined {
+  if (!sessionId) {
+    sessionId = props.session.sessionId;
+  }
+
+  if (!sessionId) {
+    return undefined;
+  }
+
+  return storageLocal().getItem<Record<string, ISessionContentBO>>(
+    LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ + sessionId
+  );
+}
+
 function showTodoSendMap() {
   if (!props.session.sessionId) {
     return;
   }
 
-  const todoSendObj = storageLocal().getItem<Record<string, ISessionContentBO>>(
-    LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ + props.session.sessionId
-  );
+  const todoSendObj = getTodoSendObj(props.session.sessionId);
 
   if (!todoSendObj || !Object.keys(todoSendObj).length) {
     return;
@@ -186,40 +200,98 @@ function setTodoSendMap(
   removeFlag: boolean,
   sendErrorFlag: boolean
 ) {
-  if (props.session.sessionId !== item.sessionId) {
-    return;
+  const currentFlag = props.session.sessionId === item.sessionId;
+
+  let todoSendObj: Record<string, ISessionContentBO> | undefined;
+
+  let keyArr: string[] = [];
+
+  if (!currentFlag) {
+    todoSendObj = getTodoSendObj(item.sessionId);
+
+    console.log({
+      todoSendObj,
+      removeFlag,
+      sendErrorFlag,
+      objId: item.objId,
+      sessionId: item.sessionId
+    });
+
+    if (todoSendObj === undefined) {
+      return;
+    }
+
+    keyArr = Object.keys(todoSendObj);
+
+    if (!keyArr.length) {
+      return;
+    }
   }
 
   const objId = item.objId;
 
   if (sendErrorFlag) {
-    const value: ISessionContentBO = todoSendMap.value.get(objId);
+    if (currentFlag) {
+      const value: ISessionContentBO = todoSendMap.value.get(objId);
 
-    if (!value) {
-      return;
+      if (!value) {
+        return;
+      }
+
+      value.sendErrorFlag = true;
+
+      todoSendMap.value.set(objId, value);
+    } else {
+      const value: ISessionContentBO = todoSendObj[objId];
+
+      if (!value) {
+        return;
+      }
+
+      value.sendErrorFlag = true;
     }
-
-    value.sendErrorFlag = true;
-
-    todoSendMap.value.set(objId, value);
   } else if (removeFlag) {
-    if (!todoSendMap.value.has(objId)) {
-      return;
-    }
+    if (currentFlag) {
+      if (!todoSendMap.value.has(objId)) {
+        return;
+      }
 
-    todoSendMap.value.delete(objId);
+      todoSendMap.value.delete(objId);
+    } else {
+      if (!todoSendObj[objId]) {
+        return;
+      }
+
+      delete todoSendObj[objId];
+    }
   } else {
-    if (todoSendMap.value.has(objId)) {
-      return;
-    }
+    if (currentFlag) {
+      if (todoSendMap.value.has(objId)) {
+        return;
+      }
 
-    todoSendMap.value.set(objId, item);
+      todoSendMap.value.set(objId, item);
+    } else {
+      if (todoSendObj[objId]) {
+        return;
+      }
+
+      todoSendObj[objId] = item;
+    }
   }
 
-  storageLocal().setItem<Record<string, ISessionContentBO>>(
-    LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ + props.session.sessionId,
-    Object.fromEntries(todoSendMap.value)
-  );
+  if (currentFlag) {
+    storageLocal().setItem<Record<string, ISessionContentBO>>(
+      LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ +
+        props.session.sessionId,
+      Object.fromEntries(todoSendMap.value)
+    );
+  } else {
+    storageLocal().setItem<Record<string, ISessionContentBO>>(
+      LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ + item.sessionId,
+      todoSendObj
+    );
+  }
 }
 
 const sessionContentRecycleScrollerRef = ref();
@@ -526,9 +598,7 @@ function doSendTodoSendMap(clickFlag: boolean) {
     return;
   }
 
-  const todoSendObj = storageLocal().getItem<Record<string, ISessionContentBO>>(
-    LocalStorageKey.IM_SESSION_CONTENT_TODO_SEND_OBJ + props.session.sessionId
-  );
+  const todoSendObj = getTodoSendObj(props.session.sessionId);
 
   if (!todoSendObj) {
     return;
@@ -859,7 +929,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
   }
 });
 
-const queryLastContentMap = debounceByKey(
+const queryLastContentMap = throttleByKey(
   sessionId => {
     baseImSessionRefUserQueryLastContentMap({
       idSet: [sessionId]
@@ -884,8 +954,9 @@ const queryLastContentMap = debounceByKey(
       });
     });
   },
-  3000,
-  false
+  5000,
+  false,
+  true
 );
 
 let hasLess: boolean = true;
