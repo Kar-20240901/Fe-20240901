@@ -16,7 +16,7 @@ import {
 import { FormatTsForCurrentDay } from "@/utils/DateUtil";
 import Avatar from "@/assets/user.png";
 import { DevFlag } from "@/utils/SysUtil";
-import { throttle, useResizeObserver } from "@pureadmin/utils";
+import { debounce, throttle, useResizeObserver } from "@pureadmin/utils";
 import { throttleByKey } from "@/utils/CommonUtil";
 
 const loading = ref<boolean>(false);
@@ -44,22 +44,35 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
 
 const pageSize = 20;
 
-function reset() {
-  dataList.value = [];
-
-  hasMore = true;
-
-  dataListSessionIdSet.clear();
-}
-
 const dataListSessionIdSet: Set<string> = new Set();
 
-function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
+const dataListRemoveSessionIdSet: Set<string> = new Set();
+
+function handleDataList(
+  tempDataList?: FeBaseImSessionRefUserPageVO[],
+  refreshFlag?: boolean
+) {
   if (!tempDataList || !tempDataList.length) {
     return;
   }
 
   let addFlag = false;
+
+  if (refreshFlag && dataListSessionIdSet.size) {
+    dataListRemoveSessionIdSet.clear();
+
+    const existSessionIdSet: Set<string> = new Set();
+
+    tempDataList.forEach(item => {
+      existSessionIdSet.add(item.sessionId);
+    });
+
+    dataListSessionIdSet.forEach(sessionId => {
+      if (!existSessionIdSet.has(sessionId)) {
+        dataListRemoveSessionIdSet.add(sessionId);
+      }
+    });
+  }
 
   tempDataList.forEach(item => {
     const sessionId = item.sessionId;
@@ -83,7 +96,7 @@ function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
     addFlag = true;
   });
 
-  if (!addFlag) {
+  if (!addFlag && !dataListRemoveSessionIdSet.size) {
     return;
   }
 
@@ -92,6 +105,18 @@ function handleDataList(tempDataList?: FeBaseImSessionRefUserPageVO[]) {
 
 // 排序
 function sortDataList() {
+  if (dataListRemoveSessionIdSet.size) {
+    dataList.value = dataList.value.filter(item => {
+      const removeFlag = dataListRemoveSessionIdSet.has(item.sessionId);
+
+      if (removeFlag) {
+        dataListSessionIdSet.delete(item.sessionId);
+      }
+
+      return !removeFlag;
+    });
+  }
+
   dataList.value.sort((a, b) => {
     const lastReceiveTsOne = Number(a.lastReceiveTs);
 
@@ -109,7 +134,7 @@ const sortDataListThrottle = throttleByKey(
   () => {
     sortDataList();
   },
-  500,
+  2000,
   true,
   true
 );
@@ -155,11 +180,9 @@ function onSearch(
   })
     .then(res => {
       if (scrollFlag || queryNewFlag) {
-        handleDataList(res.data);
+        handleDataList(res.data, false);
       } else {
-        reset();
-
-        handleDataList(res.data);
+        handleDataList(res.data, true);
 
         doSearchNewThrottle();
       }
@@ -253,7 +276,19 @@ const doSearchThrottle = throttle(
   (loadingFlag?: boolean, scrollFlag?: boolean, queryNewFlag?: boolean) => {
     onSearch(loadingFlag, scrollFlag, queryNewFlag);
   },
-  300
+  500
+) as (
+  loadingFlag?: boolean,
+  scrollFlag?: boolean,
+  queryNewFlag?: boolean
+) => void;
+
+const doSearchDebounce = debounce(
+  (loadingFlag?: boolean, scrollFlag?: boolean, queryNewFlag?: boolean) => {
+    onSearch(loadingFlag, scrollFlag, queryNewFlag);
+  },
+  300,
+  true
 ) as (
   loadingFlag?: boolean,
   scrollFlag?: boolean,
@@ -270,7 +305,7 @@ function handleScroll(event: Event) {
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
 
   if (distanceToBottom <= 20 && !loading.value && hasMore) {
-    doSearchThrottle(false, true, false);
+    doSearchDebounce(false, true, false);
   }
 }
 
@@ -278,30 +313,25 @@ defineExpose({ updateLastContent, doSearchThrottle });
 
 const props = defineProps<IImSessionProps>();
 
-const handleLastContentInfo = throttleByKey(
-  sessionId => {
-    const findIndex = dataList.value.findIndex(
-      item => item.sessionId === sessionId
-    );
+function handleLastContentInfoFun(sessionId?: string) {
+  const findIndex = dataList.value.findIndex(
+    item => item.sessionId === sessionId
+  );
 
-    if (findIndex === -1) {
-      doSearchNewThrottle();
+  if (findIndex === -1) {
+    doSearchNewThrottle();
 
-      return;
-    }
+    return;
+  }
 
-    const item: FeBaseImSessionRefUserPageVO = dataList.value[findIndex];
+  const item: FeBaseImSessionRefUserPageVO = dataList.value[findIndex];
 
-    item.unReadCount = item.unReadCountCalc || 0;
-    item.lastContent = item.lastContentCalc;
-    item.lastReceiveTs = item.lastReceiveTsCalc;
+  item.unReadCount = item.unReadCountCalc || 0;
+  item.lastContent = item.lastContentCalc;
+  item.lastReceiveTs = item.lastReceiveTsCalc;
 
-    doSortDataListThrottle();
-  },
-  500,
-  true,
-  true
-);
+  doSortDataListThrottle();
+}
 
 function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
   if (!updateLastContentObjTemp) {
@@ -340,24 +370,7 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
     }
   }
 
-  handleLastContentInfo(
-    updateLastContentObjTemp.sessionId,
-    updateLastContentObjTemp.sessionId
-  );
-}
-
-function scrollToItemBySessionId(sessionId?: string) {
-  if (!sessionId) {
-    return;
-  }
-
-  const findIndex = dataList.value.findIndex(
-    item => item.sessionId === sessionId
-  );
-
-  if (findIndex !== -1) {
-    sessionRecycleScrollerRef.value.scrollToItem(findIndex);
-  }
+  handleLastContentInfoFun(updateLastContentObjTemp.sessionId);
 }
 </script>
 

@@ -30,7 +30,7 @@ import FaPaperPlane from "~icons/fa/paper-plane";
 import EpWarning from "~icons/ep/warning";
 import EpArrowDown from "~icons/ep/arrow-down";
 import { useUserStoreHook } from "@/store/modules/user";
-import { throttle, useResizeObserver } from "@pureadmin/utils";
+import { debounce, throttle, useResizeObserver } from "@pureadmin/utils";
 import {
   baseImSessionContentInsertTxt,
   baseImSessionContentUpdateTargetInputFlag
@@ -47,10 +47,10 @@ import { storageLocal } from "@/store/utils";
 import CommonConstant from "@/model/constant/CommonConstant";
 import LocalStorageKey from "@/model/constant/LocalStorageKey";
 import { baseImSessionRefUserQueryLastContentMap } from "@/api/http/base/BaseImSessionRefUserController";
-import { throttleByKey } from "@/utils/CommonUtil";
+import { debounceByKey, throttleByKey } from "@/utils/CommonUtil";
 
 // import { buildUUID } from "@pureadmin/utils";
-//
+
 // let sendTimer;
 //
 // window.startSend = function () {
@@ -58,20 +58,12 @@ import { throttleByKey } from "@/utils/CommonUtil";
 //     textarea.value = buildUUID();
 //
 //     document.querySelector("#sendBtn")?.click();
-//   }, 100);
+//   }, 500);
 // };
 //
 // window.stopSend = function () {
 //   clearInterval(sendTimer);
 // };
-//
-// onMounted(() => {
-//   window.startSend();
-// });
-//
-// onUnmounted(() => {
-//   window.stopSend();
-// });
 
 const props = defineProps<IImContentProps>();
 
@@ -238,20 +230,6 @@ function textareaInputRefFocus() {
 
 const pageSize = 20;
 
-const searchThrottleByKeyForScroll = throttleByKey(
-  (
-    form?: ScrollListDTO,
-    loadingFlag?: boolean,
-    scrollToItemFlag?: boolean,
-    scrollType?: "up" | "down"
-  ) => {
-    doSearch(form, loadingFlag, scrollToItemFlag, scrollType);
-  },
-  1000,
-  false,
-  true
-);
-
 const searchThrottleByKey = throttleByKey(
   (
     form?: ScrollListDTO,
@@ -274,21 +252,6 @@ function doSearchThrottleByKey(
 ) {
   searchThrottleByKey(
     "search",
-    form,
-    loadingFlag,
-    scrollToItemFlag,
-    scrollType
-  );
-}
-
-function doSearchThrottleByKeyForScroll(
-  form?: ScrollListDTO,
-  loadingFlag?: boolean,
-  scrollToItemFlag?: boolean,
-  scrollType?: "up" | "down"
-) {
-  searchThrottleByKeyForScroll(
-    "searchForScroll",
     form,
     loadingFlag,
     scrollToItemFlag,
@@ -896,7 +859,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
   }
 });
 
-const queryLastContentMap = throttleByKey(
+const queryLastContentMap = debounceByKey(
   sessionId => {
     baseImSessionRefUserQueryLastContentMap({
       idSet: [sessionId]
@@ -921,9 +884,8 @@ const queryLastContentMap = throttleByKey(
       });
     });
   },
-  1000,
-  true,
-  true
+  3000,
+  false
 );
 
 let hasLess: boolean = true;
@@ -949,8 +911,11 @@ function handleScroll(event: Event) {
     hasLess &&
     !scrollStopSearchFlag
   ) {
-    doSearchThrottleByKeyForScroll(
-      { id: getFirstContentId(), backwardFlag: false },
+    doSearchDebounceForScroll(
+      {
+        id: getFirstContentId(),
+        backwardFlag: false
+      },
       false,
       false,
       "up"
@@ -960,7 +925,7 @@ function handleScroll(event: Event) {
     !sessionContentLoading.value &&
     !scrollStopSearchFlag
   ) {
-    doSearchThrottleByKeyForScroll(
+    doSearchDebounceForScroll(
       {
         id: getLastContentId(),
         backwardFlag: true
@@ -975,6 +940,24 @@ function handleScroll(event: Event) {
     scrollStopSearchFlag = false;
   }
 }
+
+const doSearchDebounceForScroll = debounce(
+  (
+    form?: ScrollListDTO,
+    loadingFlag?: boolean,
+    scrollToItemFlag?: boolean,
+    scrollType?: "up" | "down"
+  ) => {
+    doSearch(form, loadingFlag, scrollToItemFlag, scrollType);
+  },
+  300,
+  true
+) as (
+  form?: ScrollListDTO,
+  loadingFlag?: boolean,
+  scrollToItemFlag?: boolean,
+  scrollType?: "up" | "down"
+) => void;
 
 function onlyReset() {
   sessionContentShowList.value = [];

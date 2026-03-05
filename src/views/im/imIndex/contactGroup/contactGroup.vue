@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { throttle, useResizeObserver } from "@pureadmin/utils";
+import { debounce, useResizeObserver } from "@pureadmin/utils";
 import { nextTick, onMounted, onUnmounted, ref } from "vue";
 import { DevFlag } from "@/utils/SysUtil";
 import Avatar from "@/assets/user.png";
@@ -117,11 +117,12 @@ function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
     });
 }
 
-const doSearchThrottle = throttle(
+const doSearchDebounce = debounce(
   (loadingFlag?: boolean, scrollFlag?: boolean) => {
     doSearch(loadingFlag, scrollFlag);
   },
-  300
+  300,
+  true
 ) as (loadingFlag?: boolean, scrollFlag?: boolean) => void;
 
 function handleScroll(event: Event) {
@@ -134,7 +135,7 @@ function handleScroll(event: Event) {
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
 
   if (distanceToBottom <= 20 && !loading.value && hasMore) {
-    doSearchThrottle(false, true);
+    doSearchDebounce(false, true);
   }
 }
 </script>

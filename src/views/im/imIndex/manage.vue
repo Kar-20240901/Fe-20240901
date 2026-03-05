@@ -143,7 +143,7 @@ function execContentSearch() {
   emit("execContentSearch");
 }
 
-const menuIndex = ref<string>(SegmentedOptionArr[1].value);
+const menuIndex = ref<string>(SegmentedOptionArr[0].value);
 
 function menuSelect(index: string) {
   menuIndex.value = index;

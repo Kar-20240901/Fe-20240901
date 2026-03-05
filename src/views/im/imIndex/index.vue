@@ -205,11 +205,13 @@ function doUpdateAvatarAndNickname(idSet?: string[]) {
     return;
   }
 
-  const keyTemp = JSON.stringify(idSet);
+  const sortIdSet = [...idSet].sort();
+
+  const keyTemp = JSON.stringify(sortIdSet);
 
   const key = CryptoJS.MD5(keyTemp).toString();
 
-  throttleUpdateAvatarAndNickname(key, idSet);
+  throttleUpdateAvatarAndNickname(key, sortIdSet);
 }
 
 const throttleUpdateAvatarAndNickname = throttleByKey(
@@ -228,7 +230,7 @@ const throttleUpdateAvatarAndNickname = throttleByKey(
       });
     });
   },
-  10000,
+  30000,
   false,
   true
 );

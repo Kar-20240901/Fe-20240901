@@ -49,9 +49,9 @@ import RiDragMove2Fill from "~icons/ri/drag-move-2-fill";
 import RiFontColor from "~icons/ri/font-color";
 import EpDownload from "~icons/ep/download";
 import { getContentHeight, getMainContentWidth } from "@/utils/MyLayoutUtil";
-import { throttle } from "@pureadmin/utils";
 import { IDialogFormDefineExpose } from "@/model/types/IDialogFormProps";
 import type { R } from "@/model/vo/R";
+import { debounce } from "@pureadmin/utils";
 
 defineOptions({
   name: "BaseFileSystem"
@@ -468,11 +468,12 @@ onMounted(() => {
 
 let hasMore: boolean = true;
 
-const doSearchThrottle = throttle(
+const doSearchDebounce = debounce(
   (sufFun?: () => void, loadingFlag?: boolean, scrollFlag?: boolean) => {
     onSearch(sufFun, loadingFlag, scrollFlag);
   },
-  300
+  300,
+  true
 ) as (sufFun?: () => void, loadingFlag?: boolean, scrollFlag?: boolean) => void;
 
 function handleScroll(event: Event) {
@@ -485,7 +486,7 @@ function handleScroll(event: Event) {
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
 
   if (distanceToBottom <= 80 && !loading.value && hasMore) {
-    doSearchThrottle(undefined, false, true);
+    doSearchDebounce(undefined, false, true);
   }
 }
 

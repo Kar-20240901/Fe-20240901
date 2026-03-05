@@ -10,7 +10,7 @@ import { safeHighlight } from "@/utils/StrUtil";
 import { FormatTsForCurrentDay } from "@/utils/DateUtil";
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { throttle, useResizeObserver } from "@pureadmin/utils";
+import { debounce, useResizeObserver } from "@pureadmin/utils";
 
 const searchContentInfoList = ref<BaseImSessionContentRefUserPageVO[]>([]);
 
@@ -113,11 +113,12 @@ const scrollbarParentDivResizeObserver = useResizeObserver(
 
 let hasMore: boolean = true;
 
-const doSearchThrottle = throttle(
+const doSearchDebounce = debounce(
   (loadingFlag?: boolean, scrollFlag?: boolean) => {
     doSearch(loadingFlag, scrollFlag);
   },
-  300
+  300,
+  true
 ) as (loadingFlag?: boolean, scrollFlag?: boolean) => void;
 
 function handleScroll(event: Event) {
@@ -130,7 +131,7 @@ function handleScroll(event: Event) {
   const distanceToBottom = scrollHeight - clientHeight - scrollTop;
 
   if (distanceToBottom <= 20 && !searchContentInfoLoading.value && hasMore) {
-    doSearchThrottle(false, true);
+    doSearchDebounce(false, true);
   }
 }
 </script>
