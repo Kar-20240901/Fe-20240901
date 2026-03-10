@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@pureadmin/descriptions':
         specifier: ^1.2.1
-        version: 1.2.1(echarts@5.6.0)(element-plus@2.11.2(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)
+        version: 1.2.1(echarts@5.6.0)(element-plus@2.11.3(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)
       '@pureadmin/table':
         specifier: ^3.3.0
-        version: 3.3.0(element-plus@2.11.2(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)
+        version: 3.3.0(element-plus@2.11.3(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)
       '@pureadmin/utils':
         specifier: ^2.6.2
         version: 2.6.2(echarts@5.6.0)(vue@3.5.18(typescript@5.9.2))
@@ -42,8 +42,8 @@ importers:
         specifier: ^5.6.0
         version: 5.6.0
       element-plus:
-        specifier: ^2.11.2
-        version: 2.11.2(vue@3.5.18(typescript@5.9.2))
+        specifier: ^2.11.3
+        version: 2.11.3(vue@3.5.18(typescript@5.9.2))
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -1238,8 +1238,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@sxzz/popperjs-es@2.11.7':
-    resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
+  '@sxzz/popperjs-es@2.11.8':
+    resolution: {integrity: sha512-wOwESXvvED3S8xBmcPWHs2dUuzrE4XiZeFu7e1hROIJkm02a49N120pmOXxY33sBb6hArItm5W5tcg1cBtV+HQ==}
 
   '@tailwindcss/node@4.1.11':
     resolution: {integrity: sha512-yzhzuGRmv5QyU9qLNg4GTlYI6STedBWRE7NjxP45CsFYYq9taI0zJXZBMqIC/c8fViNLhmrbpSFS57EoxUmD6Q==}
@@ -1913,6 +1913,9 @@ packages:
   dayjs@1.11.13:
     resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
 
+  dayjs@1.11.19:
+    resolution: {integrity: sha512-t5EcLVS6QPBNqM2z8fakk/NKel+Xzshgt8FFKAn+qwlD1pzZWxh0nVCrvFK7ZDb6XucZeF9z8C7CBWTRIVApAw==}
+
   de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
 
@@ -1993,8 +1996,8 @@ packages:
   electron-to-chromium@1.5.198:
     resolution: {integrity: sha512-G5COfnp3w+ydVu80yprgWSfmfQaYRh9DOxfhAxstLyetKaLyl55QrNjx8C38Pc/C+RaDmb1M0Lk8wPEMQ+bGgQ==}
 
-  element-plus@2.11.2:
-    resolution: {integrity: sha512-sTMDXtgeqy17TUsBSH/DL3h1/5sqIOVUUgXFoVbdD8lWWYssKrDX50CEYy4k29tYJhPHKZyFSwcLJsIajr+dDA==}
+  element-plus@2.11.3:
+    resolution: {integrity: sha512-769xsjLR4B9Vf9cl5PDXnwTEdmFJvMgAkYtthdJKPhjVjU3hdAwTJ+gXKiO+PUyo2KWFwOYKZd4Ywh6PHfkbJg==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -2686,8 +2689,8 @@ packages:
     resolution: {integrity: sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  lodash-es@4.17.21:
-    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+  lodash-es@4.17.23:
+    resolution: {integrity: sha512-kVI48u3PZr38HdYz98UmfPnXl2DXrpdctLrFLCd3kOx1xUkOmpFPx7gCWWM5MPkL/fD8zb+Ph0QzjGFs4+hHWg==}
 
   lodash-unified@1.0.3:
     resolution: {integrity: sha512-WK9qSozxXOD7ZJQlpSqOT+om2ZfcT4yO+03FuzAHD0wF6S0l0090LRPDx3vhTTLZ8cFKpBn+IOcVXK6qOcIlfQ==}
@@ -2729,8 +2732,8 @@ packages:
   lodash.upperfirst@4.3.1:
     resolution: {integrity: sha512-sReKOYJIJf74dhJONhU4e0/shzi1trVbSWDOhKYE5XV2O+H7Sb2Dihwuc7xWxVl+DgFPyTqIN3zMfT9cq5iWDg==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   log-update@6.1.0:
     resolution: {integrity: sha512-9ie8ItPR6tjY5uYJh8K/Zrv/RMZ5VOlOWvtZdEHYSTFKZfIBPQa9tOAEeAWhd+AnIneLJ22w5fjOYtoutpWq5w==}
@@ -3235,6 +3238,10 @@ packages:
 
   postcss@8.5.6:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  postcss@8.5.8:
+    resolution: {integrity: sha512-OW/rX8O/jXnm82Ey1k44pObPtdblfiuWnrd8X7GJ7emImCOstunGbXUpp7HdBrFQX6rJzn3sPT397Wp5aCwCHg==}
     engines: {node: ^10 || ^12 || >=14}
 
   prelude-ls@1.2.1:
@@ -4728,19 +4735,19 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-  '@pureadmin/descriptions@1.2.1(echarts@5.6.0)(element-plus@2.11.2(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)':
+  '@pureadmin/descriptions@1.2.1(echarts@5.6.0)(element-plus@2.11.3(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)':
     dependencies:
       '@element-plus/icons-vue': 2.3.2(vue@3.5.18(typescript@5.9.2))
       '@pureadmin/utils': 2.6.2(echarts@5.6.0)(vue@3.5.18(typescript@5.9.2))
-      element-plus: 2.11.2(vue@3.5.18(typescript@5.9.2))
+      element-plus: 2.11.3(vue@3.5.18(typescript@5.9.2))
       vue: 3.5.18(typescript@5.9.2)
     transitivePeerDependencies:
       - echarts
       - typescript
 
-  '@pureadmin/table@3.3.0(element-plus@2.11.2(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)':
+  '@pureadmin/table@3.3.0(element-plus@2.11.3(vue@3.5.18(typescript@5.9.2)))(typescript@5.9.2)':
     dependencies:
-      element-plus: 2.11.2(vue@3.5.18(typescript@5.9.2))
+      element-plus: 2.11.3(vue@3.5.18(typescript@5.9.2))
       vue: 3.5.18(typescript@5.9.2)
     transitivePeerDependencies:
       - typescript
@@ -4822,7 +4829,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.46.2':
     optional: true
 
-  '@sxzz/popperjs-es@2.11.7': {}
+  '@sxzz/popperjs-es@2.11.8': {}
 
   '@tailwindcss/node@4.1.11':
     dependencies:
@@ -5612,6 +5619,8 @@ snapshots:
 
   dayjs@1.11.13: {}
 
+  dayjs@1.11.19: {}
+
   de-indent@1.0.2: {}
 
   debug@4.4.1:
@@ -5680,21 +5689,21 @@ snapshots:
 
   electron-to-chromium@1.5.198: {}
 
-  element-plus@2.11.2(vue@3.5.18(typescript@5.9.2)):
+  element-plus@2.11.3(vue@3.5.18(typescript@5.9.2)):
     dependencies:
       '@ctrl/tinycolor': 3.6.1
       '@element-plus/icons-vue': 2.3.2(vue@3.5.18(typescript@5.9.2))
       '@floating-ui/dom': 1.7.3
-      '@popperjs/core': '@sxzz/popperjs-es@2.11.7'
+      '@popperjs/core': '@sxzz/popperjs-es@2.11.8'
       '@types/lodash': 4.17.20
       '@types/lodash-es': 4.17.12
       '@vueuse/core': 9.13.0(vue@3.5.18(typescript@5.9.2))
       async-validator: 4.2.5
-      dayjs: 1.11.13
+      dayjs: 1.11.19
       escape-html: 1.0.3
-      lodash: 4.17.21
-      lodash-es: 4.17.21
-      lodash-unified: 1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.17.21)(lodash@4.17.21)
+      lodash: 4.17.23
+      lodash-es: 4.17.23
+      lodash-unified: 1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.17.23)(lodash@4.17.23)
       memoize-one: 6.0.0
       normalize-wheel-es: 1.2.0
       vue: 3.5.18(typescript@5.9.2)
@@ -6401,13 +6410,13 @@ snapshots:
     dependencies:
       p-locate: 6.0.0
 
-  lodash-es@4.17.21: {}
+  lodash-es@4.17.23: {}
 
-  lodash-unified@1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.17.21)(lodash@4.17.21):
+  lodash-unified@1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.17.23)(lodash@4.17.23):
     dependencies:
       '@types/lodash-es': 4.17.12
-      lodash: 4.17.21
-      lodash-es: 4.17.21
+      lodash: 4.17.23
+      lodash-es: 4.17.23
 
   lodash.camelcase@4.3.0: {}
 
@@ -6431,7 +6440,7 @@ snapshots:
 
   lodash.upperfirst@4.3.1: {}
 
-  lodash@4.17.21: {}
+  lodash@4.17.23: {}
 
   log-update@6.1.0:
     dependencies:
@@ -6860,9 +6869,9 @@ snapshots:
       cssesc: 3.0.0
       util-deprecate: 1.0.2
 
-  postcss-sorting@9.1.0(postcss@8.5.6):
+  postcss-sorting@9.1.0(postcss@8.5.8):
     dependencies:
-      postcss: 8.5.6
+      postcss: 8.5.8
 
   postcss-svgo@7.1.0(postcss@8.5.6):
     dependencies:
@@ -6878,6 +6887,12 @@ snapshots:
   postcss-value-parser@4.2.0: {}
 
   postcss@8.5.6:
+    dependencies:
+      nanoid: 3.3.11
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
+
+  postcss@8.5.8:
     dependencies:
       nanoid: 3.3.11
       picocolors: 1.1.1
@@ -7169,8 +7184,8 @@ snapshots:
 
   stylelint-order@7.0.0(stylelint@16.23.0(typescript@5.9.2)):
     dependencies:
-      postcss: 8.5.6
-      postcss-sorting: 9.1.0(postcss@8.5.6)
+      postcss: 8.5.8
+      postcss-sorting: 9.1.0(postcss@8.5.8)
       stylelint: 16.23.0(typescript@5.9.2)
 
   stylelint-prettier@5.0.3(prettier@3.6.2)(stylelint@16.23.0(typescript@5.9.2)):

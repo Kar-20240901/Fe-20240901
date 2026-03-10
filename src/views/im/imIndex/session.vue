@@ -3,12 +3,12 @@ import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import { nextTick, onMounted, onUnmounted, ref } from "vue";
 import {
+  baseImSessionRefUserHidden,
   BaseImSessionRefUserPageVO,
   baseImSessionRefUserScroll
 } from "@/api/http/base/BaseImSessionRefUserController";
 import { BaseImTypeEnum } from "@/model/enum/im/BaseImTypeEnum";
 import {
-  FeBaseImSessionRefUserPageVO,
   IImSessionProps,
   IImShowInfoMap,
   IUpdateLastContentObj
@@ -18,9 +18,58 @@ import Avatar from "@/assets/user.png";
 import { DevFlag } from "@/utils/SysUtil";
 import { debounce, throttle, useResizeObserver } from "@pureadmin/utils";
 import { throttleByKey } from "@/utils/CommonUtil";
+import type { DropdownInstance } from "element-plus";
+import { ToastSuccess } from "@/utils/ToastUtil";
+
+function hiddenSession() {
+  if (!dropdownItemRef.value.sessionId) {
+    return;
+  }
+
+  baseImSessionRefUserHidden({ idSet: [dropdownItemRef.value.sessionId] }).then(
+    res => {
+      ToastSuccess(res.msg);
+      onSearch(true, false, false);
+    }
+  );
+}
+
+const dropdownRef = ref<DropdownInstance>();
+
+const position = ref<DOMRect>({
+  top: 0,
+  left: 0,
+  bottom: 0,
+  right: 0
+} as DOMRect);
+
+const triggerRef = ref({
+  getBoundingClientRect: () => position.value
+});
+
+const handleClick = () => {
+  dropdownRef.value?.handleClose();
+};
+
+const dropdownItemRef = ref<BaseImSessionRefUserPageVO>({});
+
+const handleContextmenu = (
+  event: MouseEvent,
+  item: BaseImSessionRefUserPageVO
+) => {
+  dropdownItemRef.value = item;
+
+  const { clientX, clientY } = event;
+  position.value = DOMRect.fromRect({
+    x: clientX,
+    y: clientY
+  });
+  event.preventDefault();
+  dropdownRef.value?.handleOpen();
+};
 
 const loading = ref<boolean>(false);
-const dataList = ref<FeBaseImSessionRefUserPageVO[]>([]);
+const dataList = ref<BaseImSessionRefUserPageVO[]>([]);
 
 const emit = defineEmits<{
   (e: "sessionClick", item: BaseImSessionRefUserPageVO): void;
@@ -31,6 +80,8 @@ const emit = defineEmits<{
 }>();
 
 function sessionClick(item: BaseImSessionRefUserPageVO) {
+  handleClick();
+
   emit("sessionClick", item);
 
   updateLastContent({
@@ -50,7 +101,7 @@ const dataListSessionIdSet: Set<string> = new Set();
 const dataListRemoveSessionIdSet: Set<string> = new Set();
 
 function handleDataList(
-  tempDataList?: FeBaseImSessionRefUserPageVO[],
+  tempDataList?: BaseImSessionRefUserPageVO[],
   refreshFlag?: boolean
 ) {
   if (!tempDataList || !tempDataList.length) {
@@ -339,7 +390,7 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
     return;
   }
 
-  const item: FeBaseImSessionRefUserPageVO = dataList.value[findIndex];
+  const item: BaseImSessionRefUserPageVO = dataList.value[findIndex];
 
   if (updateLastContentObjTemp.lastContent) {
     item.lastContent = updateLastContentObjTemp.lastContent;
@@ -388,6 +439,7 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
           <div
             :class="`h-[80px] flex items-center p-2 border-b border-l-4 ${props.session.sessionId === item.sessionId ? 'bg-secondary border-b-secondary  border-l-primary hover:bg-secondary/70 hover:border-b-secondary/70' : 'hover:bg-gray-50 hover:border-l-gray-50 border-l-white border-b-gray-100'} cursor-pointer transition-colors`"
             @click="sessionClick(item)"
+            @contextmenu="e => handleContextmenu(e, item)"
           >
             <div>
               <el-badge
@@ -444,5 +496,22 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
     >
       暂无会话。
     </div>
+
+    <el-dropdown
+      ref="dropdownRef"
+      :virtual-ref="triggerRef"
+      :show-arrow="false"
+      virtual-triggering
+      trigger="contextmenu"
+      placement="bottom-start"
+    >
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item @click="hiddenSession">隐藏会话</el-dropdown-item>
+          <el-dropdown-item>清空聊天记录</el-dropdown-item>
+          <el-dropdown-item>清空聊天记录并隐藏会话</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
   </div>
 </template>

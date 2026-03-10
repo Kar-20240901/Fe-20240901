@@ -1078,7 +1078,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
             :is="
               useRenderIcon(FaSearch, {
                 class:
-                  'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
+                  'text-gray-400 hover:text-gray-800 transition-colors w-4 h-4 cursor-pointer'
               })
             "
           />
@@ -1086,7 +1086,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
             :is="
               useRenderIcon(FaPhone, {
                 class:
-                  'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
+                  'text-gray-400 hover:text-gray-800 transition-colors w-4 h-4 cursor-pointer'
               })
             "
             v-if="false"
@@ -1095,19 +1095,38 @@ const showToBottomBtnFlag = ref<boolean>(false);
             :is="
               useRenderIcon(FaVideoCamera, {
                 class:
-                  'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
+                  'text-gray-400 hover:text-gray-800 transition-colors w-4 h-4 cursor-pointer'
               })
             "
             v-if="false"
           />
-          <component
-            :is="
-              useRenderIcon(FaEllipsisV, {
-                class:
-                  'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
-              })
-            "
-          />
+          <el-dropdown>
+            <div>
+              <component
+                :is="
+                  useRenderIcon(FaEllipsisV, {
+                    class:
+                      'text-gray-400 hover:text-gray-800 transition-colors w-4 h-4 cursor-pointer'
+                  })
+                "
+              />
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item>清空聊天记录</el-dropdown-item>
+                <el-dropdown-item
+                  v-if="props.session.targetType === BaseImTypeEnum.FRIEND.code"
+                >
+                  删除好友
+                </el-dropdown-item>
+                <el-dropdown-item
+                  v-if="props.session.targetType === BaseImTypeEnum.GROUP.code"
+                >
+                  退出群聊
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
       </div>
 
@@ -1226,7 +1245,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
               :is="
                 useRenderIcon(FaSmileO, {
                   class:
-                    'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
+                    'text-gray-400 hover:text-gray-800 transition-colors w-4 h-4 cursor-pointer'
                 })
               "
             />
@@ -1236,7 +1255,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
               :is="
                 useRenderIcon(FaPaperclip, {
                   class:
-                    'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
+                    'text-gray-400 hover:text-gray-800 transition-colors w-4 h-4 cursor-pointer'
                 })
               "
             />
@@ -1246,7 +1265,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
               :is="
                 useRenderIcon(FaPictureO, {
                   class:
-                    'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
+                    'text-gray-400 hover:text-gray-800 transition-colors w-4 h-4 cursor-pointer'
                 })
               "
             />
@@ -1256,7 +1275,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
               :is="
                 useRenderIcon(FaMicrophone, {
                   class:
-                    'text-gray-400 hover:text-gray-800 transition-colors w-[16px] h-[16px] cursor-pointer'
+                    'text-gray-400 hover:text-gray-800 transition-colors w-4 h-4 cursor-pointer'
                 })
               "
             />

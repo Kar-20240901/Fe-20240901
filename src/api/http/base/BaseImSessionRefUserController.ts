@@ -67,13 +67,9 @@ export function baseImSessionRefUserAddNotDisturb(
   );
 }
 
-export interface NotNullId {
-  id?: string; // 主键 id，是否必传：true，格式：int64
-}
-
 // 隐藏
 export function baseImSessionRefUserHidden(
-  form: NotNullId,
+  form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
 ) {
   return http.request<string>(
