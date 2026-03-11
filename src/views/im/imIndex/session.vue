@@ -3,6 +3,8 @@ import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import { nextTick, onMounted, onUnmounted, ref } from "vue";
 import {
+  baseImSessionRefUserAddNotDisturb,
+  baseImSessionRefUserDeleteNotDisturb,
   baseImSessionRefUserHidden,
   BaseImSessionRefUserPageVO,
   baseImSessionRefUserScroll
@@ -20,6 +22,8 @@ import { debounce, throttle, useResizeObserver } from "@pureadmin/utils";
 import { throttleByKey } from "@/utils/CommonUtil";
 import type { DropdownInstance } from "element-plus";
 import { ToastSuccess } from "@/utils/ToastUtil";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import MuteNotification from "~icons/ep/MuteNotification";
 
 function hiddenSession() {
   if (!dropdownItemRef.value.sessionId) {
@@ -32,6 +36,32 @@ function hiddenSession() {
       onSearch(true, false, false);
     }
   );
+}
+
+function addNotDisturb() {
+  if (!dropdownItemRef.value.sessionId) {
+    return;
+  }
+
+  baseImSessionRefUserAddNotDisturb({
+    sessionIdSet: [dropdownItemRef.value.sessionId]
+  }).then(res => {
+    ToastSuccess(res.msg);
+    onSearch(true, false, false);
+  });
+}
+
+function deleteNotDisturb() {
+  if (!dropdownItemRef.value.sessionId) {
+    return;
+  }
+
+  baseImSessionRefUserDeleteNotDisturb({
+    sessionIdSet: [dropdownItemRef.value.sessionId]
+  }).then(res => {
+    ToastSuccess(res.msg);
+    onSearch(true, false, false);
+  });
 }
 
 const dropdownRef = ref<DropdownInstance>();
@@ -100,6 +130,8 @@ const dataListSessionIdSet: Set<string> = new Set();
 
 const dataListRemoveSessionIdSet: Set<string> = new Set();
 
+const dataListIndexMap: Map<string, number> = new Map();
+
 function handleDataList(
   tempDataList?: BaseImSessionRefUserPageVO[],
   refreshFlag?: boolean
@@ -134,6 +166,8 @@ function handleDataList(
     }
 
     if (dataListSessionIdSet.has(sessionId)) {
+      updateDataListItem(sessionId, item);
+
       return;
     }
 
@@ -144,27 +178,67 @@ function handleDataList(
     addFlag = true;
   });
 
-  if (!addFlag && !dataListRemoveSessionIdSet.size) {
+  deleteDataList();
+
+  if (!addFlag) {
     return;
   }
 
   doSortDataListThrottle();
 }
 
-// 排序
-function sortDataList() {
-  if (dataListRemoveSessionIdSet.size) {
-    dataList.value = dataList.value.filter(item => {
-      const removeFlag = dataListRemoveSessionIdSet.has(item.sessionId);
+function updateDataListItem(
+  sessionId: string,
+  item: BaseImSessionRefUserPageVO
+) {
+  const index = dataListIndexMap.get(sessionId);
 
-      if (removeFlag) {
-        dataListSessionIdSet.delete(item.sessionId);
-      }
-
-      return !removeFlag;
-    });
+  if (index === undefined) {
+    return;
   }
 
+  const element = dataList.value[index];
+
+  if (!element) {
+    return;
+  }
+
+  if (element.sessionId !== sessionId) {
+    return;
+  }
+
+  element.notDisturbFlag = item.notDisturbFlag;
+}
+
+// 移除会话
+function deleteDataList() {
+  if (!dataListRemoveSessionIdSet.size) {
+    return;
+  }
+
+  dataList.value = dataList.value.filter(item => {
+    const removeFlag = dataListRemoveSessionIdSet.has(item.sessionId);
+
+    if (removeFlag) {
+      dataListSessionIdSet.delete(item.sessionId);
+    }
+
+    return !removeFlag;
+  });
+
+  handleDataListIndexMap();
+}
+
+function handleDataListIndexMap() {
+  dataListIndexMap.clear();
+
+  dataList.value.forEach((item, index) => {
+    dataListIndexMap.set(item.sessionId, index);
+  });
+}
+
+// 排序
+function sortDataList() {
   dataList.value.sort((a, b) => {
     const lastReceiveTsOne = Number(a.lastReceiveTs);
 
@@ -176,6 +250,8 @@ function sortDataList() {
       return lastReceiveTsOne < lastReceiveTsTwo ? 1 : -1;
     }
   });
+
+  handleDataListIndexMap();
 }
 
 const sortDataListThrottle = throttleByKey(
@@ -362,9 +438,7 @@ defineExpose({ updateLastContent, doSearchThrottle });
 const props = defineProps<IImSessionProps>();
 
 function handleLastContentInfoFun(sessionId?: string) {
-  const findIndex = dataList.value.findIndex(
-    item => item.sessionId === sessionId
-  );
+  const findIndex = dataListIndexMap.get(sessionId);
 
   if (findIndex === -1) {
     doSearchNewThrottle();
@@ -380,9 +454,7 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
     return;
   }
 
-  const findIndex = dataList.value.findIndex(
-    item => item.sessionId === updateLastContentObjTemp.sessionId
-  );
+  const findIndex = dataListIndexMap.get(updateLastContentObjTemp.sessionId);
 
   if (findIndex === -1) {
     doSearchNewThrottle();
@@ -474,15 +546,26 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
                   {{ item.sessionName }}
                 </div>
                 <div class="text-xs text-gray-400 shrink-0">
-                  {{ FormatTsForCurrentDay(item.lastReceiveTs, true) }}
+                  {{ FormatTsForCurrentDay(item.lastReceiveTs, true, true) }}
                 </div>
               </div>
 
-              <div
-                class="text-xs text-gray-400 truncate mt-1"
-                :title="item.lastContent"
-              >
-                {{ item.lastContent }}
+              <div class="flex justify-between items-center mt-1">
+                <div
+                  class="text-xs text-gray-400 truncate flex-1"
+                  :title="item.lastContent"
+                >
+                  {{ item.lastContent }}
+                </div>
+                <div v-if="item.notDisturbFlag" class="shrink-0">
+                  <component
+                    :is="
+                      useRenderIcon(MuteNotification, {
+                        class: 'text-gray-400 w-3 h-3'
+                      })
+                    "
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -507,6 +590,15 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
     >
       <template #dropdown>
         <el-dropdown-menu>
+          <el-dropdown-item
+            v-if="dropdownItemRef.notDisturbFlag"
+            @click="deleteNotDisturb"
+          >
+            取消免打扰
+          </el-dropdown-item>
+          <el-dropdown-item v-else @click="addNotDisturb"
+            >免打扰
+          </el-dropdown-item>
           <el-dropdown-item @click="hiddenSession">隐藏会话</el-dropdown-item>
           <el-dropdown-item>清空聊天记录</el-dropdown-item>
           <el-dropdown-item>清空聊天记录并隐藏会话</el-dropdown-item>

@@ -1113,6 +1113,7 @@ const showToBottomBtnFlag = ref<boolean>(false);
             </div>
             <template #dropdown>
               <el-dropdown-menu>
+                <el-dropdown-item>免打扰</el-dropdown-item>
                 <el-dropdown-item>清空聊天记录</el-dropdown-item>
                 <el-dropdown-item
                   v-if="props.session.targetType === BaseImTypeEnum.FRIEND.code"

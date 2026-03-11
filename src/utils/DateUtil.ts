@@ -15,18 +15,10 @@ export function FormatDateTimeFull(date: Date = new Date()): string {
 }
 
 /**
- * 获取：是否是：1970-01-01 00:00:00
+ * 获取：是否是：1970-01-01 08:00:00，或者小于该时间
  */
 export function getEpochFlag(date: Date) {
-  return (
-    date.getFullYear() === 1970 &&
-    date.getMonth() === 0 &&
-    date.getDate() === 1 &&
-    date.getHours() === 0 &&
-    date.getMinutes() === 0 &&
-    date.getSeconds() === 0 &&
-    date.getMilliseconds() === 0
-  );
+  return date.getTime() <= 0;
 }
 
 /**
@@ -35,7 +27,7 @@ export function getEpochFlag(date: Date) {
 export function FormatStringForCurrentDay(
   dateTimeStr?: string,
   showFullFLag: boolean = true,
-  checkEpochFlag?: boolean
+  checkEpochFlag: boolean = true
 ): string {
   if (!dateTimeStr) {
     return "";
@@ -56,7 +48,7 @@ export function FormatStringForCurrentDay(
 export function FormatTsForCurrentDay(
   ts?: string,
   showFullFLag: boolean = true,
-  checkEpochFlag?: boolean
+  checkEpochFlag: boolean = true
 ): string {
   if (!ts) {
     return "";
@@ -77,7 +69,7 @@ export function FormatTsForCurrentDay(
 export function FormatDateTimeForCurrentDay(
   date: Date = new Date(),
   showFullFlag: boolean = true,
-  checkEpochFlag?: boolean
+  checkEpochFlag: boolean = true
 ): string {
   if (checkEpochFlag && getEpochFlag(date)) {
     return "-";
