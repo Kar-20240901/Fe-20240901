@@ -126,10 +126,9 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
 
 const pageSize = 20;
 
-const dataListSessionIdSet: Set<string> = new Set();
-
 const dataListRemoveSessionIdSet: Set<string> = new Set();
 
+// key：sessionId，value：index
 const dataListIndexMap: Map<string, number> = new Map();
 
 function handleDataList(
@@ -142,7 +141,7 @@ function handleDataList(
 
   let addFlag = false;
 
-  if (refreshFlag && dataListSessionIdSet.size) {
+  if (refreshFlag && dataListIndexMap.size) {
     dataListRemoveSessionIdSet.clear();
 
     const existSessionIdSet: Set<string> = new Set();
@@ -151,9 +150,9 @@ function handleDataList(
       existSessionIdSet.add(item.sessionId);
     });
 
-    dataListSessionIdSet.forEach(sessionId => {
-      if (!existSessionIdSet.has(sessionId)) {
-        dataListRemoveSessionIdSet.add(sessionId);
+    dataListIndexMap.forEach((value, key) => {
+      if (!existSessionIdSet.has(key)) {
+        dataListRemoveSessionIdSet.add(key);
       }
     });
   }
@@ -165,13 +164,13 @@ function handleDataList(
       return;
     }
 
-    if (dataListSessionIdSet.has(sessionId)) {
+    if (dataListIndexMap.has(sessionId)) {
       updateDataListItem(sessionId, item);
 
       return;
     }
 
-    dataListSessionIdSet.add(sessionId);
+    dataListIndexMap.set(sessionId, dataList.value.length);
 
     dataList.value.push(item);
 
@@ -220,7 +219,8 @@ function deleteDataList() {
     const removeFlag = dataListRemoveSessionIdSet.has(item.sessionId);
 
     if (removeFlag) {
-      dataListSessionIdSet.delete(item.sessionId);
+      console.log("移除会话", item.sessionId);
+      dataListIndexMap.delete(item.sessionId);
     }
 
     return !removeFlag;
@@ -293,7 +293,7 @@ function onSearch(
     }
   } else if (queryNewFlag) {
   } else {
-    refIdSet = [...dataListSessionIdSet];
+    refIdSet = [...dataListIndexMap.keys()];
   }
 
   baseImSessionRefUserScroll({
@@ -440,7 +440,7 @@ const props = defineProps<IImSessionProps>();
 function handleLastContentInfoFun(sessionId?: string) {
   const findIndex = dataListIndexMap.get(sessionId);
 
-  if (findIndex === -1) {
+  if (findIndex === undefined) {
     doSearchNewThrottle();
 
     return;
@@ -456,7 +456,7 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
 
   const findIndex = dataListIndexMap.get(updateLastContentObjTemp.sessionId);
 
-  if (findIndex === -1) {
+  if (findIndex === undefined) {
     doSearchNewThrottle();
 
     return;
