@@ -20,7 +20,6 @@ function handleArrayBuffer(data: ArrayBuffer, res: IWebSocketMessage<any>) {
 
   try {
     res = JSON.parse(utf8String);
-    // console.log("res", res);
 
     res.arrayBuffer = binaryArray;
   } catch (e) {

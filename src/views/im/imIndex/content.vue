@@ -209,14 +209,6 @@ function setTodoSendMap(
   if (!currentFlag) {
     todoSendObj = getTodoSendObj(item.sessionId);
 
-    console.log({
-      todoSendObj,
-      removeFlag,
-      sendErrorFlag,
-      objId: item.objId,
-      sessionId: item.sessionId
-    });
-
     if (todoSendObj === undefined) {
       return;
     }

@@ -213,6 +213,7 @@ function onlySessionSearch() {
         @sessionClick="sessionClick"
         @updateSessionUserMap="updateSessionUserMap"
         @doUpdateAvatarAndNickname="doUpdateAvatarAndNickname"
+        @refreshSearchContent="refreshSearchContent"
       />
 
       <search-overview-pre

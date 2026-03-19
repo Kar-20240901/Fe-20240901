@@ -21,9 +21,13 @@ import { DevFlag } from "@/utils/SysUtil";
 import { debounce, throttle, useResizeObserver } from "@pureadmin/utils";
 import { throttleByKey } from "@/utils/CommonUtil";
 import type { DropdownInstance } from "element-plus";
-import { ToastSuccess } from "@/utils/ToastUtil";
+import { ExecConfirm, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import MuteNotification from "~icons/ep/MuteNotification";
+import {
+  baseImSessionContentRefUserDeleteSessionContentRefUser,
+  baseImSessionContentRefUserDeleteSessionContentRefUserAndHiddenSession
+} from "@/api/http/base/BaseImSessionContentRefUserController";
 
 function hiddenSession() {
   if (!dropdownItemRef.value.sessionId) {
@@ -32,6 +36,7 @@ function hiddenSession() {
 
   baseImSessionRefUserHidden({ idSet: [dropdownItemRef.value.sessionId] }).then(
     res => {
+      refreshSearchContent([dropdownItemRef.value.sessionId], true);
       ToastSuccess(res.msg);
       onSearch(true, false, false);
     }
@@ -107,7 +112,20 @@ const emit = defineEmits<{
   (e: "updateSessionUserMap", item: IImShowInfoMap): void;
 
   (e: "doUpdateAvatarAndNickname", sessionIdArr: string[]): void;
+
+  (
+    e: "refreshSearchContent",
+    sessionIdArr: string[],
+    removeSessionFlag?: boolean
+  ): void;
 }>();
+
+function refreshSearchContent(
+  sessionIdArr?: string[],
+  removeSessionFlag?: boolean
+) {
+  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
+}
 
 function sessionClick(item: BaseImSessionRefUserPageVO) {
   handleClick();
@@ -219,7 +237,6 @@ function deleteDataList() {
     const removeFlag = dataListRemoveSessionIdSet.has(item.sessionId);
 
     if (removeFlag) {
-      console.log("移除会话", item.sessionId);
       dataListIndexMap.delete(item.sessionId);
     }
 
@@ -488,6 +505,48 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
 
   handleLastContentInfoFun(updateLastContentObjTemp.sessionId);
 }
+
+function deleteSessionContentRefUserClick() {
+  if (!dropdownItemRef.value.sessionId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImSessionContentRefUserDeleteSessionContentRefUser({
+        idSet: [dropdownItemRef.value.sessionId]
+      }).then(res => {
+        refreshSearchContent([dropdownItemRef.value.sessionId]);
+        ToastSuccess(res.msg);
+        onSearch(true, false, false);
+      });
+    },
+    undefined,
+    `确定清空【${dropdownItemRef.value.sessionName}】的聊天记录吗？`
+  );
+}
+
+function deleteSessionContentRefUserAndHiddenSessionClick() {
+  if (!dropdownItemRef.value.sessionId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImSessionContentRefUserDeleteSessionContentRefUserAndHiddenSession(
+        {
+          idSet: [dropdownItemRef.value.sessionId]
+        }
+      ).then(res => {
+        refreshSearchContent([dropdownItemRef.value.sessionId], true);
+        ToastSuccess(res.msg);
+        onSearch(true, false, false);
+      });
+    },
+    undefined,
+    `确定清空【${dropdownItemRef.value.sessionName}】的聊天记录并隐藏会话吗？`
+  );
+}
 </script>
 
 <template>
@@ -600,8 +659,14 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
             >免打扰
           </el-dropdown-item>
           <el-dropdown-item @click="hiddenSession">隐藏会话</el-dropdown-item>
-          <el-dropdown-item>清空聊天记录</el-dropdown-item>
-          <el-dropdown-item>清空聊天记录并隐藏会话</el-dropdown-item>
+          <el-dropdown-item @click="deleteSessionContentRefUserClick"
+            >清空聊天记录
+          </el-dropdown-item>
+          <el-dropdown-item
+            @click="deleteSessionContentRefUserAndHiddenSessionClick"
+          >
+            清空聊天记录并隐藏会话
+          </el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>

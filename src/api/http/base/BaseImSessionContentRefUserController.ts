@@ -91,3 +91,18 @@ export function baseImSessionContentRefUserDeleteSessionContentRefUser(
     config
   );
 }
+
+// 清空聊天记录并隐藏会话
+export function baseImSessionContentRefUserDeleteSessionContentRefUserAndHiddenSession(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi(
+      "/base/imSessionContentRefUser/deleteSessionContentRefUserAndHiddenSession"
+    ),
+    form,
+    config
+  );
+}
