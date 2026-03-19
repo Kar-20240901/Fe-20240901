@@ -243,6 +243,8 @@ function deleteDataList() {
     return !removeFlag;
   });
 
+  dataListRemoveSessionIdSet.clear();
+
   handleDataListIndexMap();
 }
 
