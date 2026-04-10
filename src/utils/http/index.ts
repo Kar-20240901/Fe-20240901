@@ -10,7 +10,6 @@ import type {
   RequestMethods
 } from "./types.d";
 import { stringify } from "qs";
-import NProgress from "../progress";
 import { formatToken, getToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
 import { GetBrowserCategory } from "@/utils/BrowserCategoryUtil";
@@ -69,9 +68,6 @@ class PureHttp {
   private httpInterceptorsRequest(): void {
     PureHttp.axiosInstance.interceptors.request.use(
       async (config: PureHttpRequestConfig): Promise<any> => {
-        if (!config.headers?.hiddenErrorMsg) {
-          NProgress.start(); // 开启进度条动画
-        }
         // 优先判断post/get等方法是否传入回调，否则执行初始化设置等回调
         if (typeof config.beforeRequestCallback === "function") {
           config.beforeRequestCallback(config);
@@ -131,9 +127,6 @@ class PureHttp {
     instance.interceptors.response.use(
       (response: PureHttpResponse) => {
         const $config = response.config;
-        if (!$config.headers?.hiddenErrorMsg) {
-          NProgress.done(); // 关闭进度条动画
-        }
         // 优先判断post/get等方法是否传入回调，否则执行初始化设置等回调
         if (typeof $config.beforeResponseCallback === "function") {
           $config.beforeResponseCallback(response);
@@ -151,9 +144,6 @@ class PureHttp {
       (error: PureHttpError) => {
         const $error = error;
         $error.isCancelRequest = Axios.isCancel($error);
-        if (!$error.config.headers?.hiddenErrorMsg) {
-          NProgress.done(); // 关闭进度条动画
-        }
         // 所有的响应异常 区分来源为取消请求/非取消请求
         return Promise.reject($error);
       }
