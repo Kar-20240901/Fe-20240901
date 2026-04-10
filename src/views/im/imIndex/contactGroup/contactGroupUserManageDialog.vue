@@ -574,6 +574,7 @@ function groupIdChange(groupId?: string) {
               clearable
               filterable
               :options="groupDictList"
+              :fit-input-width="false"
               :props="{
                 label: 'name',
                 value: 'id'

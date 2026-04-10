@@ -484,6 +484,7 @@ function handleChangeGroupId(groupId?: string, nullSearchFlag?: boolean) {
               clearable
               filterable
               :options="groupDictList"
+              :fit-input-width="false"
               :props="{
                 label: 'name',
                 value: 'id'
