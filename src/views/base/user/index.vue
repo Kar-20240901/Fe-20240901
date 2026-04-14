@@ -293,8 +293,6 @@ function batchInsertClick() {
   batchInsertDialogVisible.value = true;
 }
 
-function batchInsertDialogUploadClick() {}
-
 function batchInsertDialogDownloadClick() {
   ExecFileDownload(baseApi("/base/user/insertBatchByExcel/downloadTemplate"));
 }
@@ -314,6 +312,11 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
   const formData = new FormData();
 
   formData.append("file", uploadFile.raw);
+
+  ToastSuccess(
+    "批量导入已开始，您可以关闭弹窗或刷新页面（不影响导入的执行）",
+    10000
+  );
 
   FileUpload(formData, baseApi("/base/user/insertBatchByExcel"))
     .then(res => {
@@ -502,7 +505,7 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
         >
           {{ FormatStringForCurrentDay(scope.row.lastActiveTime) }}
         </el-table-column>
-        <el-table-column #default="scope" label="操作" width="150">
+        <el-table-column #default="scope" label="操作" width="140">
           <el-button link type="primary" @click="editClick(scope.row)">
             修改
           </el-button>
@@ -571,7 +574,6 @@ function onChangeFun(uploadFile: UploadFile, uploadFiles: UploadFiles) {
               type="primary"
               :loading="batchInsertLoading"
               :icon="useRenderIcon(EpUpload)"
-              @click="batchInsertDialogUploadClick()"
               >批量导入
             </el-button>
           </el-upload>
