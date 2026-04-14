@@ -38,6 +38,8 @@ const sessionUserMap = ref<Record<string, IImShowInfoMap>>({});
 
 function updateSessionUserMap(item: IImShowInfoMap) {
   sessionUserMap.value[item.targetId] = item;
+
+  console.log("sessionUserMap", sessionUserMap.value);
 }
 
 const session = ref<IImSession>({});
@@ -230,7 +232,7 @@ const throttleUpdateAvatarAndNickname = throttleByKey(
       });
     });
   },
-  30000,
+  5000,
   false,
   true
 );

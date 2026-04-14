@@ -57,6 +57,7 @@ export interface IImContentSession {
 
 export interface IImSessionProps {
   session?: IImContentSession;
+  sessionUserMap?: Record<string, IImShowInfoMap>;
 }
 
 export interface IImContentProps {

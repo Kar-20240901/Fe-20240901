@@ -225,6 +225,8 @@ function updateDataListItem(
   }
 
   element.notDisturbFlag = item.notDisturbFlag;
+  element.avatarUrl = item.avatarUrl;
+  element.sessionName = item.sessionName;
 }
 
 // 移除会话
@@ -587,7 +589,7 @@ function deleteSessionContentRefUserAndHiddenSessionClick() {
                 :is-dot="item.notDisturbFlag"
               >
                 <el-image
-                  :src="item.avatarUrl"
+                  :src="props.sessionUserMap[item.targetId]?.avatarUrl"
                   fit="cover"
                   class="w-12 h-12 rounded-full"
                 >

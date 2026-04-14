@@ -209,6 +209,7 @@ function onlySessionSearch() {
         "
         ref="sessionRef"
         :session="props.session"
+        :sessionUserMap="props.sessionUserMap"
         @searchClick="searchClick"
         @sessionClick="sessionClick"
         @updateSessionUserMap="updateSessionUserMap"
