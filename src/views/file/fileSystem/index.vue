@@ -37,8 +37,9 @@ import RenameFormEdit from "@/views/file/fileSystem/renameFormEdit.vue";
 import UploadDialog from "@/views/file/fileSystem/uploadDialog.vue";
 import { FormatStringForCurrentDay } from "@/utils/DateUtil";
 import { getToken } from "@/utils/auth";
-import RiFile2Line from "~icons/ri/file-2-line";
 import RiFolderOpenFill from "~icons/ri/folder-open-fill";
+import FileFill from "~icons/ri/FileFill";
+import Picture from "~icons/ri/FileImageFill";
 import EpUpload from "~icons/ep/upload";
 import RiSearchLine from "~icons/ri/search-line";
 import RiArrowGoBackFill from "~icons/ri/arrow-go-back-fill";
@@ -322,7 +323,13 @@ function itemDblClick(row: BaseFileDO) {
   if ((row.type as any) === BaseFileTypeEnum.FOLDER.code) {
     search.value.pid = row.id;
     search.value.globalFlag = false;
-    onSearch();
+
+    dataList.value = [];
+
+    pidList.value = [...pidList.value, row.id];
+    pathList.value = [...pathList.value, row.showFileName];
+
+    onSearch(undefined, true);
   } else if ((row.type as any) === BaseFileTypeEnum.FILE.code) {
     if (ImagePreviewTypeSet.has(row.fileExtName)) {
       const index = previewImageMap.get(row.id);
@@ -677,7 +684,10 @@ const imagePreviewInitialIndex = ref<number>(0);
                       >
                         <div class="flex flex-col items-center">
                           <el-image
-                            v-if="subItem.type === BaseFileTypeEnum.FILE.code"
+                            v-if="
+                              subItem.type === BaseFileTypeEnum.FILE.code &&
+                              ImagePreviewTypeSet.has(subItem.fileExtName)
+                            "
                             :src="getThumbnailImage(subItem.id)"
                             fit="cover"
                             class="w-[45px] h-[45px] mb-[5px]"
@@ -685,7 +695,7 @@ const imagePreviewInitialIndex = ref<number>(0);
                             <template #error>
                               <component
                                 :is="
-                                  useRenderIcon(RiFile2Line, {
+                                  useRenderIcon(Picture, {
                                     width: '45px',
                                     height: '45px'
                                   })
@@ -693,6 +703,17 @@ const imagePreviewInitialIndex = ref<number>(0);
                               />
                             </template>
                           </el-image>
+                          <component
+                            :is="
+                              useRenderIcon(FileFill, {
+                                width: '45px',
+                                height: '45px'
+                              })
+                            "
+                            v-else-if="
+                              subItem.type === BaseFileTypeEnum.FILE.code
+                            "
+                          />
                           <component
                             :is="
                               useRenderIcon(RiFolderOpenFill, {
