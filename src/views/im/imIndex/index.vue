@@ -37,6 +37,12 @@ defineOptions({
 const sessionUserMap = ref<Record<string, IImShowInfoMap>>({});
 
 function updateSessionUserMap(item: IImShowInfoMap) {
+  const element = sessionUserMap.value[item.targetId];
+
+  if (element && element.lastUpdateTime > new Date().getTime()) {
+    return;
+  }
+
   sessionUserMap.value[item.targetId] = item;
 }
 
@@ -241,6 +247,7 @@ const throttleImGroupRefUserPage = throttleByKey(
         sessionUserMapItem.targetId = item.userId;
         sessionUserMapItem.avatarUrl = item.avatarUrl;
         sessionUserMapItem.showName = item.nickname;
+        sessionUserMapItem.lastUpdateTime = new Date().getTime() + 10 * 1000;
 
         updateSessionUserMap(sessionUserMapItem);
       });

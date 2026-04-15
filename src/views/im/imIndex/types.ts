@@ -41,6 +41,7 @@ export interface IImShowInfoMap {
   targetId?: string; // 用户主键 id或者 群组主键 id
   avatarUrl?: string;
   showName?: string;
+  lastUpdateTime?: number; // 下次允许更新的时间，默认为 0，一般为当前时间 + 10秒
 }
 
 export interface IImSession {
