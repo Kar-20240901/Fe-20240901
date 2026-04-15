@@ -59,6 +59,7 @@ export interface IImContentSession {
 export interface IImSessionProps {
   session?: IImContentSession;
   sessionUserMap?: Record<string, IImShowInfoMap>;
+  sessionGroupMap?: Record<string, IImShowInfoMap>;
 }
 
 export interface IImContentProps {
@@ -74,6 +75,7 @@ export interface IImManageProps {
   session?: IImContentSession;
   searchBaseContentVO?: BaseImSearchBaseContentVO;
   sessionUserMap?: Record<string, IImShowInfoMap>;
+  sessionGroupMap?: Record<string, IImShowInfoMap>;
 }
 
 export interface IImSearchOverviewPreProps {

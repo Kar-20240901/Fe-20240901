@@ -33,6 +33,19 @@ defineOptions({
   name: "ImIndex"
 });
 
+// key：group主键 id，备注：key 不包含用户
+const sessionGroupMap = ref<Record<string, IImShowInfoMap>>({});
+
+function updateSessionGroupMap(item: IImShowInfoMap) {
+  const element = sessionGroupMap.value[item.targetId];
+
+  if (element && element.lastUpdateTime > new Date().getTime()) {
+    return;
+  }
+
+  sessionGroupMap.value[item.targetId] = item;
+}
+
 // key：user主键 id，备注：key 不包含群组
 const sessionUserMap = ref<Record<string, IImShowInfoMap>>({});
 
@@ -226,6 +239,7 @@ const throttleUpdateAvatarAndNickname = throttleByKey(
         if (item.targetType === BaseImTypeEnum.FRIEND.code) {
           updateSessionUserMap(sessionUserMapItem);
         } else if (item.targetType === BaseImTypeEnum.GROUP.code) {
+          updateSessionGroupMap(sessionUserMapItem);
         }
       });
     });
@@ -289,8 +303,10 @@ function sessionRefUpdateLastContent(
           ref="manageRef"
           :searchBaseContentVO="searchBaseContentVO"
           :sessionUserMap="sessionUserMap"
+          :sessionGroupMap="sessionGroupMap"
           :session="session"
           @updateSessionUserMap="updateSessionUserMap"
+          @updateSessionGroupMap="updateSessionGroupMap"
           @sessionClick="sessionClick"
           @searchFriendClick="searchFriendClick"
           @searchGroupClick="searchGroupClick"

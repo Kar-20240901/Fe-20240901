@@ -41,6 +41,7 @@ const emit = defineEmits<{
   (e: "searchContentInfoClick", item: BaseImSessionContentRefUserPageVO): void;
 
   (e: "updateSessionUserMap", item: IImShowInfoMap): void;
+  (e: "updateSessionGroupMap", item: IImShowInfoMap): void;
 
   (e: "doUpdateAvatarAndNickname", idSet: string[]): void;
   (e: "doBaseImGroupRefUserPage", groupId: string): void;
@@ -127,6 +128,10 @@ function updateSessionUserMap(item: IImShowInfoMap) {
   emit("updateSessionUserMap", item);
 }
 
+function updateSessionGroupMap(item: IImShowInfoMap) {
+  emit("updateSessionGroupMap", item);
+}
+
 function doBaseImGroupRefUserPage(groupId: string) {
   emit("doBaseImGroupRefUserPage", groupId);
 }
@@ -210,9 +215,11 @@ function onlySessionSearch() {
         ref="sessionRef"
         :session="props.session"
         :sessionUserMap="props.sessionUserMap"
+        :sessionGroupMap="props.sessionGroupMap"
         @searchClick="searchClick"
         @sessionClick="sessionClick"
         @updateSessionUserMap="updateSessionUserMap"
+        @updateSessionGroupMap="updateSessionGroupMap"
         @doUpdateAvatarAndNickname="doUpdateAvatarAndNickname"
         @refreshSearchContent="refreshSearchContent"
       />

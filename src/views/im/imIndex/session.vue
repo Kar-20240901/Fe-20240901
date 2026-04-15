@@ -110,6 +110,7 @@ const emit = defineEmits<{
   (e: "sessionClick", item: BaseImSessionRefUserPageVO): void;
 
   (e: "updateSessionUserMap", item: IImShowInfoMap): void;
+  (e: "updateSessionGroupMap", item: IImShowInfoMap): void;
 
   (e: "doUpdateAvatarAndNickname", sessionIdArr: string[]): void;
 
@@ -351,6 +352,7 @@ function onSearch(
         if (item.targetType === BaseImTypeEnum.FRIEND.code) {
           emit("updateSessionUserMap", sessionUserMapItem);
         } else if (item.targetType === BaseImTypeEnum.GROUP.code) {
+          emit("updateSessionGroupMap", sessionUserMapItem);
         }
       });
 
@@ -589,7 +591,11 @@ function deleteSessionContentRefUserAndHiddenSessionClick() {
                 :is-dot="item.notDisturbFlag"
               >
                 <el-image
-                  :src="props.sessionUserMap[item.targetId]?.avatarUrl"
+                  :src="
+                    item.targetType === BaseImTypeEnum.FRIEND.code
+                      ? props.sessionUserMap[item.targetId]?.avatarUrl
+                      : props.sessionGroupMap[item.targetId]?.avatarUrl
+                  "
                   fit="cover"
                   class="w-12 h-12 rounded-full"
                 >
