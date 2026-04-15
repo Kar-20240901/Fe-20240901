@@ -127,12 +127,6 @@ function searchContentClick(
   emit("searchContentClick", item);
 
   if (item.targetType === BaseImTypeEnum.FRIEND.code) {
-    const sessionUserMapItem: IImShowInfoMap = {};
-    sessionUserMapItem.targetId = item.targetId;
-    sessionUserMapItem.avatarUrl = item.avatarUrl;
-    sessionUserMapItem.showName = item.showName;
-
-    emit("updateSessionUserMap", sessionUserMapItem);
   } else if (item.targetType === BaseImTypeEnum.GROUP.code) {
     emit("doBaseImGroupRefUserPage", item.targetId);
   }

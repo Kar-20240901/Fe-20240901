@@ -38,8 +38,6 @@ const sessionUserMap = ref<Record<string, IImShowInfoMap>>({});
 
 function updateSessionUserMap(item: IImShowInfoMap) {
   sessionUserMap.value[item.targetId] = item;
-
-  console.log("sessionUserMap", sessionUserMap.value);
 }
 
 const session = ref<IImSession>({});
@@ -110,12 +108,6 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   doUpdateAvatarAndNickname([item.sessionId]);
 
   if (item.targetType === BaseImTypeEnum.FRIEND.code) {
-    const sessionUserMapItem: IImShowInfoMap = {};
-    sessionUserMapItem.targetId = item.targetId;
-    sessionUserMapItem.avatarUrl = item.avatarUrl;
-    sessionUserMapItem.showName = item.sessionName;
-
-    updateSessionUserMap(sessionUserMapItem);
   } else if (item.targetType === BaseImTypeEnum.GROUP.code) {
     doBaseImGroupRefUserPage(item.targetId);
   }
@@ -238,17 +230,26 @@ const throttleUpdateAvatarAndNickname = throttleByKey(
 );
 
 function doBaseImGroupRefUserPage(groupId: string) {
-  baseImGroupRefUserPage({ groupId, pageSize: "-1" }).then(res => {
-    res.data.records.forEach(item => {
-      const sessionUserMapItem: IImShowInfoMap = {};
-      sessionUserMapItem.targetId = item.userId;
-      sessionUserMapItem.avatarUrl = item.avatarUrl;
-      sessionUserMapItem.showName = item.nickname;
-
-      updateSessionUserMap(sessionUserMapItem);
-    });
-  });
+  throttleImGroupRefUserPage(groupId, groupId);
 }
+
+const throttleImGroupRefUserPage = throttleByKey(
+  groupId => {
+    baseImGroupRefUserPage({ groupId, pageSize: "-1" }).then(res => {
+      res.data.records.forEach(item => {
+        const sessionUserMapItem: IImShowInfoMap = {};
+        sessionUserMapItem.targetId = item.userId;
+        sessionUserMapItem.avatarUrl = item.avatarUrl;
+        sessionUserMapItem.showName = item.nickname;
+
+        updateSessionUserMap(sessionUserMapItem);
+      });
+    });
+  },
+  5000,
+  true,
+  true
+);
 
 const parentHeight = ref<number>(0);
 
