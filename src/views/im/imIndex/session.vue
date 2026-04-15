@@ -626,6 +626,16 @@ function deleteSessionContentRefUserAndHiddenSessionClick() {
                 >
                   {{ item.lastContent }}
                 </div>
+                <div
+                  v-if="item.targetType === BaseImTypeEnum.GROUP.code"
+                  class="shrink-0 mr-0.5"
+                >
+                  <div
+                    class="text-xs bg-gray-50 text-gray-400 px-0.5 py-0.5 rounded-full items-center justify-center"
+                  >
+                    群
+                  </div>
+                </div>
                 <div v-if="item.notDisturbFlag" class="shrink-0">
                   <component
                     :is="
