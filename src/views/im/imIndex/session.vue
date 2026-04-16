@@ -263,14 +263,22 @@ function handleDataListIndexMap() {
 // 排序
 function sortDataList() {
   dataList.value.sort((a, b) => {
-    const lastReceiveTsOne = Number(a.lastReceiveTs);
+    const orderNoOne = Number(a.orderNo);
 
-    const lastReceiveTsTwo = Number(b.lastReceiveTs);
+    const orderNoTwo = Number(b.orderNo);
 
-    if (lastReceiveTsOne === lastReceiveTsTwo) {
-      return a.sessionId < b.sessionId ? 1 : -1;
+    if (orderNoOne === orderNoTwo) {
+      const lastReceiveTsOne = Number(a.lastReceiveTs);
+
+      const lastReceiveTsTwo = Number(b.lastReceiveTs);
+
+      if (lastReceiveTsOne === lastReceiveTsTwo) {
+        return a.sessionId < b.sessionId ? 1 : -1;
+      } else {
+        return lastReceiveTsOne < lastReceiveTsTwo ? 1 : -1;
+      }
     } else {
-      return lastReceiveTsOne < lastReceiveTsTwo ? 1 : -1;
+      return orderNoOne < orderNoTwo ? 1 : -1;
     }
   });
 
@@ -305,6 +313,7 @@ function onSearch(
 
   let sessionId = undefined;
   let lastReceiveTs = undefined;
+  let orderNo = undefined;
   let refIdSet: string[] = undefined;
 
   if (scrollFlag) {
@@ -313,6 +322,7 @@ function onSearch(
 
       sessionId = lastItem.sessionId;
       lastReceiveTs = lastItem.lastReceiveTs;
+      orderNo = lastItem.orderNo;
     }
   } else if (queryNewFlag) {
   } else {
@@ -323,7 +333,8 @@ function onSearch(
     id: sessionId,
     pageSize: String(pageSize),
     refId: lastReceiveTs,
-    refIdSet
+    refIdSet,
+    orderNo
   })
     .then(res => {
       if (scrollFlag || queryNewFlag) {

@@ -11,6 +11,7 @@ import {
   IUpdateLastContentObj
 } from "@/views/im/imIndex/types";
 import {
+  baseImSessionContentRefUserDeleteSessionContentRefUser,
   BaseImSessionContentRefUserPageVO,
   baseImSessionContentRefUserScroll,
   ScrollListDTO
@@ -48,6 +49,7 @@ import CommonConstant from "@/model/constant/CommonConstant";
 import LocalStorageKey from "@/model/constant/LocalStorageKey";
 import { baseImSessionRefUserQueryLastContentMap } from "@/api/http/base/BaseImSessionRefUserController";
 import { throttleByKey } from "@/utils/CommonUtil";
+import { ExecConfirm, ToastSuccess } from "@/utils/ToastUtil";
 
 // import { buildUUID } from "@pureadmin/utils";
 
@@ -1057,6 +1059,35 @@ watch(
 );
 
 const showToBottomBtnFlag = ref<boolean>(false);
+
+function deleteSessionContentRefUserClick() {
+  if (!props.session.sessionId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImSessionContentRefUserDeleteSessionContentRefUser({
+        idSet: [props.session.sessionId]
+      }).then(res => {
+        onlyReset();
+        doSearch(
+          {
+            refId: props.session.sessionId,
+            backwardFlag: false,
+            boolean1: true
+          },
+          false,
+          false,
+          undefined
+        );
+        ToastSuccess(res.msg);
+      });
+    },
+    undefined,
+    `确定清空【${props.session.showName}】的聊天记录吗？`
+  );
+}
 </script>
 
 <template>
@@ -1067,8 +1098,19 @@ const showToBottomBtnFlag = ref<boolean>(false);
       >
         <div class="flex items-center">
           <div>
-            <div class="text-sm">
-              {{ props.session.showName }}
+            <div class="flex items-center space-x-2">
+              <div class="text-sm">
+                {{ props.session.showName }}
+              </div>
+              <div
+                v-if="props.session.targetType === BaseImTypeEnum.GROUP.code"
+              >
+                <div
+                  class="text-xs bg-gray-50 text-gray-400 px-0.5 py-0.5 rounded-full items-center justify-center"
+                >
+                  群
+                </div>
+              </div>
             </div>
             <div v-show="targetInputFlag" class="text-xs text-gray-400 h-4">
               正在输入...
@@ -1116,7 +1158,9 @@ const showToBottomBtnFlag = ref<boolean>(false);
             </div>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>清空聊天记录</el-dropdown-item>
+                <el-dropdown-item @click="deleteSessionContentRefUserClick"
+                  >清空聊天记录
+                </el-dropdown-item>
                 <el-dropdown-item
                   v-if="props.session.targetType === BaseImTypeEnum.FRIEND.code"
                 >

@@ -103,6 +103,7 @@ export interface ScrollListDTO {
   boolean1?: boolean; // 布尔值1
   containsCurrentIdFlag?: boolean; // 是否包含当前主键 id，默认：false
   queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往前多查询几条数据，为 false时，往后多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
+  orderNo?: number; // 排序号（值越大越前面，默认为 0）
 }
 
 export interface BaseImSessionRefUserPageVO {
@@ -117,6 +118,7 @@ export interface BaseImSessionRefUserPageVO {
   targetType?: number; // 目标类型：101 好友 201 群组，一定有值，格式：int32
   sessionId?: string; // 会话主键 id，一定有值，格式：int64
   unReadCount?: number; // 未读数量，格式：int32
+  orderNo?: number; // 排序号（值越大越前面，默认为 0） 901 置顶，格式：int32
 }
 
 // 滚动加载
