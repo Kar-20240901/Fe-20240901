@@ -323,6 +323,8 @@ function doSearchThrottleByKey(
   );
 }
 
+let abortController = null;
+
 async function doSearch(
   form?: ScrollListDTO,
   loadingFlag?: boolean,
@@ -339,15 +341,24 @@ async function doSearch(
     return;
   }
 
-  await baseImSessionContentRefUserScroll({
-    refId: sessionId,
-    backwardFlag: form?.backwardFlag ?? false,
-    containsCurrentIdFlag: form?.containsCurrentIdFlag ?? false,
-    id: form?.id,
-    pageSize: String(pageSize),
-    queryMoreFlag: form.queryMoreFlag ?? false,
-    boolean1: form.boolean1 ?? false
-  })
+  if (abortController) {
+    abortController.abort();
+  }
+
+  abortController = new AbortController();
+
+  await baseImSessionContentRefUserScroll(
+    {
+      refId: sessionId,
+      backwardFlag: form?.backwardFlag ?? false,
+      containsCurrentIdFlag: form?.containsCurrentIdFlag ?? false,
+      id: form?.id,
+      pageSize: String(pageSize),
+      queryMoreFlag: form.queryMoreFlag ?? false,
+      boolean1: form.boolean1 ?? false
+    },
+    { signal: abortController.signal }
+  )
     .then(res => {
       const oldListLength = sessionContentShowList.value.length - 1;
 

@@ -230,9 +230,11 @@ class PureHttp {
       msg = "接口【" + substring + "】异常，请联系管理员";
     }
 
-    ToastError(msg || "请求错误：" + err.message);
+    if (!err.isCancelRequest) {
+      ToastError(msg || "请求错误：" + err.message);
+    }
 
-    return err; // 这里会触发 catch，备注：如果没有 catch，则会报错
+    return err; // 这里会触发 catch，备注：如果没有 catch，则会在控制台报错
   }
 
   /** 单独抽离的`post`工具函数 */
