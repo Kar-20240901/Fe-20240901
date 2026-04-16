@@ -28,6 +28,7 @@ import {
   baseImSessionContentRefUserDeleteSessionContentRefUser,
   baseImSessionContentRefUserDeleteSessionContentRefUserAndHiddenSession
 } from "@/api/http/base/BaseImSessionContentRefUserController";
+import CommonConstant from "@/model/constant/CommonConstant";
 
 function hiddenSession() {
   if (!dropdownItemRef.value.sessionId) {
@@ -373,6 +374,10 @@ onMounted(() => {
       onSearch(false, false, false);
     }, 20000);
   }
+
+  setTimeout(() => {
+    syncHeight();
+  }, CommonConstant.MEDIUM_DELAY);
 });
 
 onUnmounted(() => {
