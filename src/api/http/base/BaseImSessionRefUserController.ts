@@ -111,6 +111,7 @@ export interface BaseImSessionRefUserPageVO {
   lastContentType?: number; // 最新消息类型，格式：int32
   notDisturbFlag?: boolean; // 是否是免打扰：true 是 false 否
   lastReceiveTs?: string; // 最后一次接受到消息时的时间戳，默认为：当前时间，备注：该字段用于：排序，格式：int64
+  orderNo?: number; // 排序号（值越大越前面，默认为 0） 901 置顶，格式：int32
   targetId?: string; // 目标 id，可以查询到好友用户主键 id，或者群组主键 id，一定有值，格式：int64
   avatarUrl?: string; // 冗余字段：头像 url，一定有值
   lastContent?: string; // 最新消息，备注：会截断或者处理
