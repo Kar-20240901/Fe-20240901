@@ -388,6 +388,14 @@ onMounted(() => {
 
   setTimeout(() => {
     syncHeight();
+
+    setTimeout(() => {
+      syncHeight();
+
+      setTimeout(() => {
+        syncHeight();
+      }, CommonConstant.MEDIUM_DELAY);
+    }, CommonConstant.MEDIUM_DELAY);
   }, CommonConstant.MEDIUM_DELAY);
 });
 
