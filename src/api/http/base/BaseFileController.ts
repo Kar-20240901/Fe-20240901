@@ -94,6 +94,7 @@ export function baseFileCreateFolderSelf(
 }
 
 export interface BaseFileScrollSelfDTO {
+  orderNo?: number; // 排序号（值越大越前面，默认为 0），格式：int32
   originFileName?: string; // 文件原始名（包含文件类型）
   globalFlag?: boolean; // 全局搜索
   queryTotalFlag?: boolean; // 是否查询：总文件数和总文件大小，默认：false
@@ -106,6 +107,7 @@ export interface BaseFileScrollSelfDTO {
   containsCurrentIdFlag?: boolean; // 是否包含当前主键 id，默认：false
   type?: string; // 类型，枚举值：101;201
   backwardFlag?: boolean; // 是否向后查询，默认：false 根据 id，往前查询 true 根据 id，往后查询
+  long1?: string; // long值1，格式：int64
   storageType?: number; // 存放文件的服务器类型，格式：int32
   showFileName?: string; // 展示用的文件名，默认为：原始文件名（包含文件类型）
   id?: string; // 主键 id，如果为 null，则根据 backwardFlag，来查询最大 id或者最小 id，注意：不会查询该 id的数据，格式：int64

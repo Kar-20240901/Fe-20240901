@@ -357,7 +357,9 @@ async function doSearch(
       id: form?.id,
       pageSize: String(pageSize),
       queryMoreFlag: form.queryMoreFlag ?? false,
-      boolean1: form.boolean1 ?? false
+      boolean1: form.boolean1 ?? false,
+      long1: form.long1,
+      orderNo: form.orderNo
     },
     { signal: abortController.signal }
   )
@@ -752,30 +754,30 @@ function doSendClick(
   doSendToServer(form);
 }
 
-function getLastContentId() {
-  let lastContentId = undefined;
+function getLastContentItem(): ISessionContentBO | undefined {
+  let lastContentItem = undefined;
   for (let i = sessionContentShowList.value.length - 1; i >= 0; i--) {
     const item = sessionContentShowList.value[i];
     if (item.contentId) {
-      lastContentId = item.contentId;
+      lastContentItem = item;
       break;
     }
   }
 
-  return lastContentId;
+  return lastContentItem;
 }
 
-function getFirstContentId() {
-  let firstContentId = undefined;
+function getFirstContentItem(): ISessionContentBO | undefined {
+  let firstContentItem = undefined;
   for (let i = 0; i < sessionContentShowList.value.length; i++) {
     const item = sessionContentShowList.value[i];
     if (item.contentId) {
-      firstContentId = item.contentId;
+      firstContentItem = item;
       break;
     }
   }
 
-  return firstContentId;
+  return firstContentItem;
 }
 
 function resendToServerClick(item: ISessionContentBO) {
@@ -833,7 +835,9 @@ function doSendToServer(form: BaseImSessionContentInsertTxtForFeDTO) {
 
     doSearchThrottleByKey(
       {
-        id: res.data,
+        id: res.data.contentId,
+        long1: res.data.createTs,
+        orderNo: res.data.orderNo,
         backwardFlag: true,
         refId: form.sessionId,
         containsCurrentIdFlag: true
@@ -895,6 +899,8 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       doSearchThrottleByKey(
         {
           id: baseImSessionContentInsertTxtVO.contentId,
+          long1: baseImSessionContentInsertTxtVO.createTs,
+          orderNo: baseImSessionContentInsertTxtVO.orderNo,
           backwardFlag: true,
           refId: baseImSessionContentInsertTxtVO.sessionId,
           containsCurrentIdFlag: true
@@ -987,10 +993,18 @@ function handleScroll(event: Event) {
     hasLess &&
     !scrollStopSearchFlag
   ) {
+    const firstContentItem = getFirstContentItem();
+
+    if (!firstContentItem) {
+      return;
+    }
+
     doSearchDebounceForScroll(
       {
-        id: getFirstContentId(),
-        backwardFlag: false
+        backwardFlag: false,
+        id: firstContentItem.contentId,
+        long1: firstContentItem.createTs,
+        orderNo: firstContentItem.orderNo
       },
       false,
       false,
@@ -1001,10 +1015,18 @@ function handleScroll(event: Event) {
     !sessionContentLoading.value &&
     !scrollStopSearchFlag
   ) {
+    const lastContentItem = getLastContentItem();
+
+    if (!lastContentItem) {
+      return;
+    }
+
     doSearchDebounceForScroll(
       {
-        id: getLastContentId(),
-        backwardFlag: true
+        backwardFlag: true,
+        id: lastContentItem.contentId,
+        long1: lastContentItem.createTs,
+        orderNo: lastContentItem.orderNo
       },
       false,
       false,
@@ -1074,8 +1096,7 @@ function deleteSessionContentRefUserClick() {
         doSearch(
           {
             refId: props.session.sessionId,
-            backwardFlag: false,
-            boolean1: true
+            backwardFlag: false
           },
           false,
           false,

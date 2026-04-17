@@ -34,12 +34,18 @@ function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   }
 
   let contentId = undefined;
+  let contentCreateTs = undefined;
+  let orderNo = undefined;
 
   if (scrollFlag) {
-    contentId = searchContentInfoList.value.length
-      ? searchContentInfoList.value[searchContentInfoList.value.length - 1]
-          .contentId
-      : undefined;
+    if (searchContentInfoList.value.length) {
+      const lastItem =
+        searchContentInfoList.value[searchContentInfoList.value.length - 1];
+
+      contentId = lastItem.contentId;
+      contentCreateTs = lastItem.createTs;
+      orderNo = lastItem.orderNo;
+    }
   }
 
   baseImSessionContentRefUserScroll({
@@ -47,8 +53,10 @@ function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
     searchKey: props.searchKey,
     pageSize: String(pageSize),
     id: contentId,
-    backwardFlag: true,
-    containsCurrentIdFlag: false
+    backwardFlag: false,
+    containsCurrentIdFlag: false,
+    long1: contentCreateTs,
+    orderNo
   })
     .then(res => {
       if (scrollFlag) {

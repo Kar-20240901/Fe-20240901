@@ -95,6 +95,8 @@ export function baseImSessionRefUserQueryLastContentMap(
 
 export interface ScrollListDTO {
   backwardFlag?: boolean; // 是否向后查询，默认：false 根据 id，往前查询 true 根据 id，往后查询
+  long1?: string; // long值1，格式：int64
+  orderNo?: number; // 排序号（值越大越前面，默认为 0），格式：int32
   pageSize?: string; // 本次查询的长度，默认：20，格式：int64
   refIdSet?: string[]; // 关联的 id集合，格式：int64
   id?: string; // 主键 id，如果为 null，则根据 backwardFlag，来查询最大 id或者最小 id，注意：不会查询该 id的数据，格式：int64
@@ -103,7 +105,6 @@ export interface ScrollListDTO {
   boolean1?: boolean; // 布尔值1
   containsCurrentIdFlag?: boolean; // 是否包含当前主键 id，默认：false
   queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往前多查询几条数据，为 false时，往后多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
-  orderNo?: number; // 排序号（值越大越前面，默认为 0）
 }
 
 export interface BaseImSessionRefUserPageVO {
@@ -118,7 +119,6 @@ export interface BaseImSessionRefUserPageVO {
   targetType?: number; // 目标类型：101 好友 201 群组，一定有值，格式：int32
   sessionId?: string; // 会话主键 id，一定有值，格式：int64
   unReadCount?: number; // 未读数量，格式：int32
-  orderNo?: number; // 排序号（值越大越前面，默认为 0） 901 置顶，格式：int32
 }
 
 // 滚动加载
@@ -137,6 +137,7 @@ export function baseImSessionRefUserScroll(
 export interface BaseImSessionRefUserPageDTO {
   queryContentFlag?: boolean; // 是否查询：未读消息数量，最新一条消息，默认：false
   current?: string; // 第几页，格式：int64
+  orderNo?: number; // 排序号（值越大越前面，默认为 0） 901 置顶，格式：int32
   pageSize?: string; // 每页显示条数，不能小于 1，并且不能大于 100，格式：int64
   sessionIdSet?: string[]; // 会话主键 id集合，格式：int64
   sessionId?: string; // 会话主键 id，格式：int64

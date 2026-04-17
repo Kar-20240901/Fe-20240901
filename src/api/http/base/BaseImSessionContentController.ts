@@ -28,12 +28,23 @@ export interface BaseImSessionContentInsertTxtDTO {
   type?: number; // 消息类型，是否必传：true，格式：int32
 }
 
+export interface BaseImSessionContentRefUserPageVO {
+  orderNo?: number; // 排序号（值越大越前面，默认为 0），格式：int32
+  createId?: string; // 创建人id，格式：int64
+  contentId?: string; // 主键 id，格式：int64
+  createTs?: string; // 创建时间的时间戳，UTC+8，格式：int64
+  refId?: string; // 引用的内容主键 id，不引用时为 -1，格式：int64
+  sessionId?: string; // 会话主键 id，格式：int64
+  type?: number; // 内容类型，格式：int32
+  content?: string; // 会话内容
+}
+
 // 新增文字消息
 export function baseImSessionContentInsertTxt(
   form: BaseImSessionContentInsertTxtDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<string>(
+  return http.request<BaseImSessionContentRefUserPageVO>(
     "post",
     baseApi("/base/imSessionContent/insertTxt"),
     form,

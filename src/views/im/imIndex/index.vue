@@ -200,6 +200,8 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
       {
         backwardFlag: true,
         containsCurrentIdFlag: true,
+        long1: item.createTs,
+        orderNo: item.orderNo,
         id: item.contentId,
         refId: session.value.sessionId,
         queryMoreFlag: true
