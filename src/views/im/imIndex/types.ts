@@ -2,6 +2,18 @@ import type { BaseImSearchBaseContentVO } from "@/api/http/base/BaseImSearchCont
 import type { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import type { BaseImSessionContentInsertTxtDTO } from "@/api/http/base/BaseImSessionContentController";
 
+export interface IImBaseContentProps {
+  searchKey?: string;
+}
+
+export interface IImContactFriendProps {
+  searchKey?: string;
+}
+
+export interface IImContactGroupProps {
+  searchKey?: string;
+}
+
 export interface IUpdateLastContentObj {
   sessionId?: string;
   lastContent?: string;

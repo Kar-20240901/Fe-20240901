@@ -1,23 +1,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import Avatar from "@/assets/user.png";
 import {
-  baseImSearchBase,
   BaseImSearchBaseContentVO,
-  BaseImSearchBaseDTO,
   BaseImSearchBaseFriendVO,
   BaseImSearchBaseGroupVO
 } from "@/api/http/base/BaseImSearchController";
 import { IImSearchOverviewMoreProps } from "@/views/im/imIndex/types";
-import { safeHighlight } from "@/utils/StrUtil";
-
-const searchFriendList = ref<BaseImSearchBaseFriendVO[]>([]);
-
-const searchGroupList = ref<BaseImSearchBaseGroupVO[]>([]);
-
-const searchContentList = ref<BaseImSearchBaseContentVO[]>([]);
-
-const searchContentInfoLoading = ref<boolean>(false);
+import ContactFriend from "@/views/im/imIndex/contactFriend/contactFriend.vue";
+import ContactGroup from "@/views/im/imIndex/contactGroup/contactGroup.vue";
+import SearchOverviewMoreContent from "@/views/im/imIndex/search/searchOverviewMoreContent.vue";
 
 const props = defineProps<IImSearchOverviewMoreProps>();
 
@@ -39,32 +30,18 @@ function searchGroupClick(item: BaseImSearchBaseGroupVO) {
   emit("searchGroupClick", item);
 }
 
+const contactFriendRef = ref();
+const contactGroupRef = ref();
+const baseContentRef = ref();
+
 function doSearch() {
-  searchFriendList.value = [];
-  searchGroupList.value = [];
-  searchContentList.value = [];
-
-  const reqBody: BaseImSearchBaseDTO = { searchKey: props.searchKey };
-
   if (props.showSearchOverviewMoreFriendFlag) {
-    reqBody.searchFriendFlag = true;
-    reqBody.searchGroupFlag = false;
-    reqBody.searchContentFlag = false;
+    contactFriendRef.value?.doSearch(true, false);
   } else if (props.showSearchOverviewMoreGroupFlag) {
-    reqBody.searchFriendFlag = false;
-    reqBody.searchGroupFlag = true;
-    reqBody.searchContentFlag = false;
+    contactGroupRef.value?.doSearch(true, false);
   } else if (props.showSearchOverviewMoreContentFlag) {
-    reqBody.searchFriendFlag = false;
-    reqBody.searchGroupFlag = false;
-    reqBody.searchContentFlag = true;
+    baseContentRef.value?.doSearch(true, false);
   }
-
-  baseImSearchBase(reqBody).then(res => {
-    searchFriendList.value = res.data.friendList || [];
-    searchGroupList.value = res.data.groupList || [];
-    searchContentList.value = res.data.contentList || [];
-  });
 }
 
 defineExpose({
@@ -73,168 +50,26 @@ defineExpose({
 </script>
 
 <template>
-  <div
-    v-loading="searchContentInfoLoading"
-    class="flex flex-col cursor-default bg-gray-100 space-y-1"
-  >
-    <div
+  <div class="flex flex-col cursor-default h-full w-full">
+    <contact-friend
       v-if="props.showSearchOverviewMoreFriendFlag"
-      class="flex flex-col bg-white pt-3"
-    >
-      <div class="text-sm text-gray-400 mb-1">联系人</div>
-      <template v-for="item in searchFriendList" :key="item.sessionId">
-        <div
-          class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
-          @click="searchFriendClick(item)"
-        >
-          <div class="shrink-0">
-            <el-image
-              :src="item.avatarUrl"
-              fit="cover"
-              class="w-12 h-12 rounded-full"
-            >
-              <template #error>
-                <el-image
-                  :src="Avatar"
-                  fit="cover"
-                  class="w-12 h-12 rounded-full"
-                />
-              </template>
-            </el-image>
-          </div>
+      ref="contactFriendRef"
+      :searchKey="props.searchKey"
+      @contactFriendClick="searchFriendClick"
+    />
 
-          <div class="ml-2 flex flex-col truncate">
-            <div class="text-sm shrink-0 flex truncate">
-              <div
-                v-for="(part, index) in safeHighlight(
-                  item.friendShowName,
-                  props.searchKey
-                )"
-                :key="index"
-                :class="
-                  part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
-                "
-                :title="item.friendShowName"
-              >
-                {{ part.text }}
-              </div>
-            </div>
+    <contact-group
+      v-else-if="props.showSearchOverviewMoreGroupFlag"
+      ref="contactGroupRef"
+      :searchKey="props.searchKey"
+      @contactGroupClick="searchGroupClick"
+    />
 
-            <div class="truncate text-sm text-gray-400 flex">
-              <div
-                v-for="(part, index) in safeHighlight(
-                  item.friendShowId,
-                  props.searchKey
-                )"
-                :key="index"
-                :class="
-                  part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
-                "
-                :title="item.friendShowId"
-              >
-                {{ part.text }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-    </div>
-    <div
-      v-if="props.showSearchOverviewMoreGroupFlag"
-      class="flex flex-col bg-white pt-3"
-    >
-      <div class="text-sm text-gray-400 mb-1">群聊</div>
-      <template v-for="item in searchGroupList" :key="item.sessionId">
-        <div
-          class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
-          @click="searchGroupClick(item)"
-        >
-          <div class="shrink-0">
-            <el-image
-              :src="item.avatarUrl"
-              fit="cover"
-              class="w-12 h-12 rounded-full"
-            >
-              <template #error>
-                <el-image
-                  :src="Avatar"
-                  fit="cover"
-                  class="w-12 h-12 rounded-full"
-                />
-              </template>
-            </el-image>
-          </div>
-
-          <div class="ml-2 flex flex-col truncate">
-            <div class="text-sm shrink-0 flex truncate">
-              <div
-                v-for="(part, index) in safeHighlight(
-                  item.groupShowName,
-                  props.searchKey
-                )"
-                :key="index"
-                :class="
-                  part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
-                "
-                :title="item.groupShowName"
-              >
-                {{ part.text }}
-              </div>
-            </div>
-
-            <div class="truncate text-sm text-gray-400 flex">
-              <div
-                v-for="(part, index) in safeHighlight(
-                  item.groupUuid,
-                  props.searchKey
-                )"
-                :key="index"
-                :class="
-                  part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
-                "
-                :title="item.groupUuid"
-              >
-                {{ part.text }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-    </div>
-    <div
-      v-if="props.showSearchOverviewMoreContentFlag"
-      class="flex flex-col bg-white pt-3"
-    >
-      <div class="text-sm text-gray-400 mb-1">聊天记录</div>
-      <template v-for="item in searchContentList" :key="item.sessionId">
-        <div
-          class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
-          @click="searchContentClick(item)"
-        >
-          <el-image
-            :src="item.avatarUrl"
-            fit="cover"
-            class="w-12 h-12 rounded-full"
-          >
-            <template #error>
-              <el-image
-                :src="Avatar"
-                fit="cover"
-                class="w-12 h-12 rounded-full"
-              />
-            </template>
-          </el-image>
-          <div class="flex flex-col text-sm ml-2 truncate">
-            <div class="truncate" :title="item.showName">
-              {{ item.showName }}
-            </div>
-            <div class="flex text-gray-400">
-              <div>{{ item.searchCount }}</div>
-              <div>条相关聊天记录</div>
-            </div>
-          </div>
-        </div>
-      </template>
-    </div>
+    <search-overview-more-content
+      v-else-if="props.showSearchOverviewMoreContentFlag"
+      ref="baseContentRef"
+      :searchKey="props.searchKey"
+      @searchContentClick="searchContentClick"
+    />
   </div>
 </template>

@@ -153,7 +153,7 @@ function applyOperateClick(value?: string) {
       />
     </div>
 
-    <div class="flex-1">
+    <div class="flex-1 px-3 py-1">
       <contact-friend
         v-show="menuIndex === BaseImContactSegmentedEnum.FRIEND.code"
         ref="contactFriendRef"

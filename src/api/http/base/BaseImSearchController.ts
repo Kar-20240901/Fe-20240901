@@ -84,6 +84,7 @@ export interface BaseImSearchBaseFriendVO {
 export interface BaseImSearchBaseContentVO {
   showName?: string; // 显示名称
   targetId?: string; // 来源 id，格式：int64
+  maxContentCreateTs?: string; // 最大的消息创建时间戳，备注：排序用，格式：int64
   avatarUrl?: string; // 头像地址
   searchCount?: string; // 搜索的消息内容总数，格式：int64
   targetType?: number; // 来源类型，格式：int32
@@ -104,6 +105,33 @@ export function baseImSearchBase(
   return http.request<BaseImSearchBaseVO>(
     "post",
     baseApi("/base/imSearch/base"),
+    form,
+    config
+  );
+}
+
+export interface ScrollListDTO {
+  backwardFlag?: boolean; // 是否向后查询，默认：false 根据 id，往前查询 true 根据 id，往后查询
+  long1?: string; // long值1，格式：int64
+  orderNo?: number; // 排序号（值越大越前面，默认为 0），格式：int32
+  pageSize?: string; // 本次查询的长度，默认：20，格式：int64
+  refIdSet?: string[]; // 关联的 id集合，格式：int64
+  id?: string; // 主键 id，如果为 null，则根据 backwardFlag，来查询最大 id或者最小 id，注意：不会查询该 id的数据，格式：int64
+  searchKey?: string; // 搜索内容
+  refId?: string; // 关联其他主键 id，格式：int64
+  boolean1?: boolean; // 布尔值1
+  containsCurrentIdFlag?: boolean; // 是否包含当前主键 id，默认：false
+  queryMoreFlag?: boolean; // 是否多查询一些数据，backwardFlag 为 true时，往前多查询几条数据，为 false时，往后多查询几条数据，如果不足 pageSize，会补齐并且会额外多查询几条数据
+}
+
+// 滚动加载聊天记录
+export function baseImSearchBaseContentScroll(
+  form: ScrollListDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<BaseImSearchBaseContentVO[]>(
+    "post",
+    baseApi("/base/imSearch/baseContentScroll"),
     form,
     config
   );

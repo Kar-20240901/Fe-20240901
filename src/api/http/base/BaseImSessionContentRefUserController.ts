@@ -44,6 +44,7 @@ export function baseImSessionContentRefUserScroll(
 
 export interface BaseImSessionContentRefUserPageDTO {
   current?: string; // 第几页，格式：int64
+  backwardFlag?: boolean; // 是否向后查询，默认：false 根据 id，往前查询 true 根据 id，往后查询
   contentCreateTs?: string; // 消息的创建时间戳，UTC+8，格式：int64
   orderNo?: number; // 排序号（值越大越前面，默认为 0），格式：int32
   contentId?: string; // 消息内容主键 id，格式：int64

@@ -9,6 +9,7 @@ import {
   BaseImGroupPageVO,
   baseImGroupScroll
 } from "@/api/http/base/BaseImGroupController";
+import { IImContactGroupProps } from "@/views/im/imIndex/types";
 
 const loading = ref<boolean>(false);
 
@@ -65,8 +66,6 @@ function contactGroupClick(item: BaseImGroupPageVO) {
 let timer: number | null = null;
 
 onMounted(() => {
-  doSearch(true, false);
-
   if (!DevFlag()) {
     timer = window.setInterval(() => {
       doSearch(false, false);
@@ -92,16 +91,19 @@ function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
   let groupId = undefined;
 
   if (scrollFlag) {
-    groupId = groupList.value.length
-      ? groupList.value[groupList.value.length - 1].groupId
-      : undefined;
+    if (groupList.value.length) {
+      const lastItem = groupList.value[groupList.value.length - 1];
+
+      groupId = lastItem.groupId;
+    }
   }
 
   baseImGroupScroll({
     pageSize: String(pageSize),
     id: groupId,
     backwardFlag: false,
-    containsCurrentIdFlag: false
+    containsCurrentIdFlag: false,
+    searchKey: props.searchKey
   })
     .then(res => {
       if (scrollFlag) {
@@ -138,10 +140,12 @@ function handleScroll(event: Event) {
     doSearchDebounce(false, true);
   }
 }
+
+const props = defineProps<IImContactGroupProps>();
 </script>
 
 <template>
-  <div v-loading="loading" class="flex flex-col h-full px-3 py-1">
+  <div v-loading="loading" class="flex flex-col h-full">
     <div ref="scrollbarParentDiv" class="flex-1 h-full">
       <DynamicScroller
         v-show="groupList.length"

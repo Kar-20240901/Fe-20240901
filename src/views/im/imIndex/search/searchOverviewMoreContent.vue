@@ -2,14 +2,13 @@
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import { debounce, useResizeObserver } from "@pureadmin/utils";
-import { nextTick, onMounted, onUnmounted, ref } from "vue";
-import {
-  BaseImFriendPageVO,
-  baseImFriendScroll
-} from "@/api/http/base/BaseImFriendController";
-import { DevFlag } from "@/utils/SysUtil";
+import { nextTick, ref } from "vue";
 import Avatar from "@/assets/user.png";
-import { IImContactFriendProps } from "@/views/im/imIndex/types";
+import { IImBaseContentProps } from "@/views/im/imIndex/types";
+import {
+  baseImSearchBaseContentScroll,
+  BaseImSearchBaseContentVO
+} from "@/api/http/base/BaseImSearchController";
 
 const loading = ref<boolean>(false);
 
@@ -23,7 +22,7 @@ const scrollbarHeight = ref<number>(0);
 
 const scrollbarClass = ref<string>("");
 
-const contactFriendRecycleScrollerRef = ref();
+const baseContentRecycleScrollerRef = ref();
 
 const syncHeight = () => {
   if (!scrollbarParentDiv.value) {
@@ -37,8 +36,8 @@ const syncHeight = () => {
 
     nextTick(() => {
       if (
-        contactFriendRecycleScrollerRef.value.offsetHeight >
-        contactFriendRecycleScrollerRef.value.clientHeight
+        baseContentRecycleScrollerRef.value.offsetHeight >
+        baseContentRecycleScrollerRef.value.clientHeight
       ) {
         scrollbarClass.value = "scrollbar-hide";
       }
@@ -53,31 +52,15 @@ const scrollbarParentDivResizeObserver = useResizeObserver(
   }
 );
 
-const friendList = ref<BaseImFriendPageVO[]>([]);
+const baseContentList = ref<BaseImSearchBaseContentVO[]>([]);
 
 const emit = defineEmits<{
-  (e: "contactFriendClick", item: BaseImFriendPageVO): void;
+  (e: "searchContentClick", item: BaseImSearchBaseContentVO): void;
 }>();
 
-function contactFriendClick(item: BaseImFriendPageVO) {
-  emit("contactFriendClick", item);
+function searchContentClick(item: BaseImSearchBaseContentVO) {
+  emit("searchContentClick", item);
 }
-
-let timer: number | null = null;
-
-onMounted(() => {
-  if (!DevFlag()) {
-    timer = window.setInterval(() => {
-      doSearch(false, false);
-    }, 10000);
-  }
-});
-
-onUnmounted(() => {
-  if (timer) {
-    window.clearInterval(timer);
-  }
-});
 
 defineExpose({
   doSearch
@@ -88,28 +71,30 @@ function doSearch(loadingFlag?: boolean, scrollFlag?: boolean) {
     loading.value = true;
   }
 
-  let imFriendId = undefined;
+  let sessionId = undefined;
+  let maxContentCreateTs = undefined;
 
   if (scrollFlag) {
-    if (friendList.value.length) {
-      const lastItem = friendList.value[friendList.value.length - 1];
+    if (baseContentList.value.length) {
+      const lastItem = baseContentList.value[baseContentList.value.length - 1];
 
-      imFriendId = lastItem.imFriendId;
+      sessionId = lastItem.sessionId;
+      maxContentCreateTs = lastItem.maxContentCreateTs;
     }
   }
 
-  baseImFriendScroll({
+  baseImSearchBaseContentScroll({
     pageSize: String(pageSize),
-    id: imFriendId,
     backwardFlag: false,
-    containsCurrentIdFlag: false,
-    searchKey: props.searchKey
+    searchKey: props.searchKey,
+    long1: maxContentCreateTs,
+    id: sessionId
   })
     .then(res => {
       if (scrollFlag) {
-        friendList.value = friendList.value.concat(res.data);
+        baseContentList.value = baseContentList.value.concat(res.data);
       } else {
-        friendList.value = res.data;
+        baseContentList.value = res.data;
       }
 
       hasMore = res.data.length >= pageSize;
@@ -141,18 +126,18 @@ function handleScroll(event: Event) {
   }
 }
 
-const props = defineProps<IImContactFriendProps>();
+const props = defineProps<IImBaseContentProps>();
 </script>
 
 <template>
   <div v-loading="loading" class="flex flex-col h-full">
     <div ref="scrollbarParentDiv" class="flex-1 h-full">
       <DynamicScroller
-        v-show="friendList.length"
-        ref="contactFriendRecycleScrollerRef"
-        :items="friendList"
+        v-show="baseContentList.length"
+        ref="baseContentRecycleScrollerRef"
+        :items="baseContentList"
         :min-item-size="56"
-        key-field="friendUserId"
+        key-field="sessionId"
         :style="`height: ${scrollbarHeight}px`"
         :class="`${scrollbarClass}`"
         @scroll="handleScroll"
@@ -161,7 +146,7 @@ const props = defineProps<IImContactFriendProps>();
           <DynamicScrollerItem :item="item" :active="active" :index="index">
             <div
               :class="`flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50`"
-              @click="contactFriendClick(item)"
+              @click="searchContentClick(item)"
             >
               <el-image
                 :src="item.avatarUrl"
@@ -178,7 +163,7 @@ const props = defineProps<IImContactFriendProps>();
               </el-image>
 
               <div class="ml-4 flex-1 text-sm truncate pr-1">
-                {{ item.friendShowName }}
+                {{ item.showName }}
               </div>
             </div>
           </DynamicScrollerItem>
@@ -186,10 +171,10 @@ const props = defineProps<IImContactFriendProps>();
       </DynamicScroller>
 
       <div
-        v-if="!friendList.length && !loading"
+        v-if="!baseContentList.length && !loading"
         class="flex text-[15px] w-full h-full justify-center items-center text-gray-400"
       >
-        暂无好友。
+        暂无聊天记录。
       </div>
     </div>
   </div>
