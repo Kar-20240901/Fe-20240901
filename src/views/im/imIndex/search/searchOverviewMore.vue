@@ -55,6 +55,7 @@ defineExpose({
       v-if="props.showSearchOverviewMoreFriendFlag"
       ref="contactFriendRef"
       :searchKey="props.searchKey"
+      item-class="px-4"
       @contactFriendClick="searchFriendClick"
     />
 
@@ -62,6 +63,7 @@ defineExpose({
       v-else-if="props.showSearchOverviewMoreGroupFlag"
       ref="contactGroupRef"
       :searchKey="props.searchKey"
+      item-class="px-4"
       @contactGroupClick="searchGroupClick"
     />
 

@@ -160,7 +160,7 @@ const props = defineProps<IImContactGroupProps>();
         <template #default="{ item, index, active }">
           <DynamicScrollerItem :item="item" :active="active" :index="index">
             <div
-              :class="`flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50`"
+              :class="`flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50 ${props.itemClass}`"
               @click="contactGroupClick(item)"
             >
               <el-image
@@ -177,7 +177,7 @@ const props = defineProps<IImContactGroupProps>();
                 </template>
               </el-image>
 
-              <div class="ml-4 flex-1 text-sm truncate pr-1">
+              <div class="ml-4 flex-1 text-sm truncate">
                 {{ item.groupShowName }}
               </div>
             </div>

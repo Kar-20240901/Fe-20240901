@@ -268,8 +268,10 @@ const getShowContentInfoFlag = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col p-4 cursor-default h-full">
-    <div class="flex justify-between items-center mt-1">
+  <div class="flex flex-col cursor-default h-full">
+    <div
+      :class="`flex justify-between items-center pt-5 pb-4 pr-4 ${getShowSearchOverviewMoreFlag || showSearchOverviewContentInfoFlag ? 'pl-3' : 'pl-4'}`"
+    >
       <div
         v-show="
           getShowSearchOverviewMoreFlag || showSearchOverviewContentInfoFlag
@@ -355,8 +357,9 @@ const getShowContentInfoFlag = computed(() => {
           !showSearchOverviewContentInfoFlag &&
           !searchKey.trim()
         "
+        class="px-4 pb-4"
       >
-        <div class="flex justify-between text-sm mt-4 mb-4">
+        <div class="flex justify-between text-sm mb-4">
           <div class="text-gray-400">最近搜索</div>
           <div>
             <div

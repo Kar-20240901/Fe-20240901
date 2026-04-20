@@ -83,8 +83,8 @@ const showMoreLength = 3;
 </script>
 
 <template>
-  <div class="flex flex-col cursor-default bg-gray-100 space-y-1">
-    <div v-show="searchFriendList.length" class="flex flex-col bg-white pt-3">
+  <div class="flex flex-col cursor-default space-y-1 px-4">
+    <div v-show="searchFriendList.length" class="flex flex-col bg-white">
       <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
         <div>联系人</div>
         <div
@@ -154,9 +154,14 @@ const showMoreLength = 3;
           </div>
         </div>
       </template>
+
+      <div class="bg-gray-100 pt-1" />
     </div>
 
-    <div v-show="searchGroupList.length" class="flex flex-col bg-white pt-3">
+    <div
+      v-show="searchGroupList.length"
+      :class="`flex flex-col bg-white ${searchFriendList.length ? 'pt-3' : ''}`"
+    >
       <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
         <div>群聊</div>
         <div
@@ -226,9 +231,14 @@ const showMoreLength = 3;
           </div>
         </div>
       </template>
+
+      <div class="bg-gray-100 pt-1" />
     </div>
 
-    <div v-show="searchContentList.length" class="flex flex-col bg-white pt-3">
+    <div
+      v-show="searchContentList.length"
+      :class="`flex flex-col bg-white ${searchFriendList.length || searchGroupList.length ? 'pt-3' : ''}`"
+    >
       <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
         <div>聊天记录</div>
         <div

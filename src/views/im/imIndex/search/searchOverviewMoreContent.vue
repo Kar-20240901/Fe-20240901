@@ -145,7 +145,7 @@ const props = defineProps<IImBaseContentProps>();
         <template #default="{ item, index, active }">
           <DynamicScrollerItem :item="item" :active="active" :index="index">
             <div
-              :class="`flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50`"
+              :class="`flex items-center cursor-pointer py-1 px-4 hover:bg-gray-50`"
               @click="searchContentClick(item)"
             >
               <el-image
@@ -162,8 +162,14 @@ const props = defineProps<IImBaseContentProps>();
                 </template>
               </el-image>
 
-              <div class="ml-4 flex-1 text-sm truncate pr-1">
-                {{ item.showName }}
+              <div class="flex flex-col text-sm ml-2 truncate">
+                <div class="truncate" :title="item.showName">
+                  {{ item.showName }}
+                </div>
+                <div class="flex text-gray-400">
+                  <div>{{ item.searchCount }}</div>
+                  <div>条相关聊天记录</div>
+                </div>
               </div>
             </div>
           </DynamicScrollerItem>

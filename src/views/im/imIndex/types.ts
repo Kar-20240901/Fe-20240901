@@ -8,10 +8,12 @@ export interface IImBaseContentProps {
 
 export interface IImContactFriendProps {
   searchKey?: string;
+  itemClass?: string;
 }
 
 export interface IImContactGroupProps {
   searchKey?: string;
+  itemClass?: string;
 }
 
 export interface IUpdateLastContentObj {
