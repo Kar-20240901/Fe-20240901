@@ -125,7 +125,7 @@ const showMoreLength = 3;
           class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
           @click="searchFriendClick(item)"
         >
-          <div class="shrink-0">
+          <div class="shrink-0 flex items-center">
             <el-image
               :src="item.avatarUrl"
               fit="cover"
@@ -177,12 +177,12 @@ const showMoreLength = 3;
         </div>
       </template>
 
-      <div class="bg-gray-100 pt-1" />
+      <div class="bg-gray-100 pt-1 mt-1" />
     </div>
 
     <div
       v-show="searchGroupList.length"
-      :class="`flex flex-col bg-white ${searchFriendList.length ? 'pt-3' : ''}`"
+      :class="`flex flex-col bg-white ${searchFriendList.length ? 'pt-2' : ''}`"
     >
       <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
         <div>群聊</div>
@@ -202,7 +202,7 @@ const showMoreLength = 3;
           class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
           @click="searchGroupClick(item)"
         >
-          <div class="shrink-0">
+          <div class="shrink-0 flex items-center">
             <el-image
               :src="item.avatarUrl"
               fit="cover"
@@ -254,12 +254,12 @@ const showMoreLength = 3;
         </div>
       </template>
 
-      <div class="bg-gray-100 pt-1" />
+      <div class="bg-gray-100 pt-1 mt-1" />
     </div>
 
     <div
       v-show="searchContentList.length"
-      :class="`flex flex-col bg-white ${searchFriendList.length || searchGroupList.length ? 'pt-3' : ''}`"
+      :class="`flex flex-col bg-white ${searchFriendList.length || searchGroupList.length ? 'pt-2' : ''}`"
     >
       <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
         <div>聊天记录</div>
@@ -279,7 +279,7 @@ const showMoreLength = 3;
           class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
           @click="searchContentClick(item)"
         >
-          <div class="shrink-0">
+          <div class="shrink-0 flex items-center">
             <el-image
               :src="item.avatarUrl"
               fit="cover"

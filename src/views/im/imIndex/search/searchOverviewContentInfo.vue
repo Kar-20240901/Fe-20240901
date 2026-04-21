@@ -169,7 +169,7 @@ function handleScroll(event: Event) {
               class="flex items-center cursor-pointer py-1 px-4 hover:bg-gray-50"
               @click="searchContentInfoClick(item)"
             >
-              <div class="shrink-0">
+              <div class="shrink-0 flex items-center">
                 <el-image
                   :src="props.sessionUserMap[item.createId]?.avatarUrl"
                   fit="cover"

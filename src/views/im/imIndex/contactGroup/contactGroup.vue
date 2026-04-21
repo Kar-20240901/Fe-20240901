@@ -171,7 +171,7 @@ const props = defineProps<IImContactGroupProps>();
               :class="`flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50 ${props.itemClass}`"
               @click="contactGroupClick(item)"
             >
-              <div class="shrink-0">
+              <div class="shrink-0 flex items-center">
                 <el-image
                   :src="item.avatarUrl"
                   fit="cover"
