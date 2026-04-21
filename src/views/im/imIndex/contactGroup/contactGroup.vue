@@ -10,6 +10,7 @@ import {
   baseImGroupScroll
 } from "@/api/http/base/BaseImGroupController";
 import { IImContactGroupProps } from "@/views/im/imIndex/types";
+import { safeHighlight } from "@/utils/StrUtil";
 
 const loading = ref<boolean>(false);
 
@@ -146,6 +147,13 @@ const props = defineProps<IImContactGroupProps>();
 
 <template>
   <div v-loading="loading" class="flex flex-col h-full">
+    <div
+      v-if="props.showTitleFlag"
+      class="shrink-0 text-sm text-gray-400 mb-1 px-4"
+    >
+      群聊
+    </div>
+
     <div ref="scrollbarParentDiv" class="flex-1 h-full">
       <DynamicScroller
         v-show="groupList.length"
@@ -163,21 +171,60 @@ const props = defineProps<IImContactGroupProps>();
               :class="`flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50 ${props.itemClass}`"
               @click="contactGroupClick(item)"
             >
-              <el-image
-                :src="item.avatarUrl"
-                fit="cover"
-                class="w-12 h-12 rounded-full"
-              >
-                <template #error>
-                  <el-image
-                    :src="Avatar"
-                    fit="cover"
-                    class="w-12 h-12 rounded-full"
-                  />
-                </template>
-              </el-image>
+              <div class="shrink-0">
+                <el-image
+                  :src="item.avatarUrl"
+                  fit="cover"
+                  class="w-12 h-12 rounded-full"
+                >
+                  <template #error>
+                    <el-image
+                      :src="Avatar"
+                      fit="cover"
+                      class="w-12 h-12 rounded-full"
+                    />
+                  </template>
+                </el-image>
+              </div>
 
-              <div class="ml-4 flex-1 text-sm truncate">
+              <div
+                v-if="props.safeHighlightFlag"
+                class="ml-2 flex flex-col truncate"
+              >
+                <div class="text-sm shrink-0 flex truncate">
+                  <div
+                    v-for="(part, index) in safeHighlight(
+                      item.groupShowName,
+                      props.searchKey
+                    )"
+                    :key="index"
+                    :class="
+                      part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
+                    "
+                    :title="item.groupShowName"
+                  >
+                    {{ part.text }}
+                  </div>
+                </div>
+
+                <div class="truncate text-sm text-gray-400 flex">
+                  <div
+                    v-for="(part, index) in safeHighlight(
+                      item.groupUuid,
+                      props.searchKey
+                    )"
+                    :key="index"
+                    :class="
+                      part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
+                    "
+                    :title="item.groupUuid"
+                  >
+                    {{ part.text }}
+                  </div>
+                </div>
+              </div>
+
+              <div v-else class="ml-4 flex-1 text-sm truncate">
                 {{ item.groupShowName }}
               </div>
             </div>

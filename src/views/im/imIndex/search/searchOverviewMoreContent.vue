@@ -131,6 +131,8 @@ const props = defineProps<IImBaseContentProps>();
 
 <template>
   <div v-loading="loading" class="flex flex-col h-full">
+    <div class="shrink-0 text-sm text-gray-400 mb-1 px-4">聊天记录</div>
+
     <div ref="scrollbarParentDiv" class="flex-1 h-full">
       <DynamicScroller
         v-show="baseContentList.length"

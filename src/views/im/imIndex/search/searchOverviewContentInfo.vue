@@ -145,76 +145,74 @@ function handleScroll(event: Event) {
 </script>
 
 <template>
-  <div class="flex flex-col cursor-default bg-gray-100 space-y-1 h-full">
-    <div class="flex flex-col bg-white pt-3 h-full">
-      <div class="shrink-0 text-sm text-gray-400 mb-1">聊天记录</div>
+  <div class="flex flex-col cursor-default bg-white h-full">
+    <div class="shrink-0 text-sm text-gray-400 mb-1 px-4">聊天记录</div>
 
-      <div
-        ref="scrollbarParentDiv"
-        v-loading="searchContentInfoLoading"
-        class="flex-1"
+    <div
+      ref="scrollbarParentDiv"
+      v-loading="searchContentInfoLoading"
+      class="flex-1"
+    >
+      <DynamicScroller
+        v-show="searchContentInfoList.length"
+        ref="searchOverviewContentInfoRecycleScrollerRef"
+        :items="searchContentInfoList"
+        :min-item-size="56"
+        key-field="contentId"
+        :style="`height: ${scrollbarHeight}px`"
+        :class="`${scrollbarClass}`"
+        @scroll="handleScroll"
       >
-        <DynamicScroller
-          v-show="searchContentInfoList.length"
-          ref="searchOverviewContentInfoRecycleScrollerRef"
-          :items="searchContentInfoList"
-          :min-item-size="56"
-          key-field="contentId"
-          :style="`height: ${scrollbarHeight}px`"
-          :class="`${scrollbarClass}`"
-          @scroll="handleScroll"
-        >
-          <template #default="{ item, index, active }">
-            <DynamicScrollerItem :item="item" :active="active" :index="index">
-              <div
-                class="flex items-center cursor-pointer py-1 px-1 hover:bg-gray-50"
-                @click="searchContentInfoClick(item)"
-              >
-                <div class="shrink-0">
-                  <el-image
-                    :src="props.sessionUserMap[item.createId]?.avatarUrl"
-                    fit="cover"
-                    class="w-12 h-12 rounded-full"
-                  >
-                    <template #error>
-                      <el-image
-                        :src="Avatar"
-                        fit="cover"
-                        class="w-12 h-12 rounded-full"
-                      />
-                    </template>
-                  </el-image>
+        <template #default="{ item, index, active }">
+          <DynamicScrollerItem :item="item" :active="active" :index="index">
+            <div
+              class="flex items-center cursor-pointer py-1 px-4 hover:bg-gray-50"
+              @click="searchContentInfoClick(item)"
+            >
+              <div class="shrink-0">
+                <el-image
+                  :src="props.sessionUserMap[item.createId]?.avatarUrl"
+                  fit="cover"
+                  class="w-12 h-12 rounded-full"
+                >
+                  <template #error>
+                    <el-image
+                      :src="Avatar"
+                      fit="cover"
+                      class="w-12 h-12 rounded-full"
+                    />
+                  </template>
+                </el-image>
+              </div>
+
+              <div class="flex flex-col text-sm ml-2">
+                <div class="truncate">
+                  {{ props.sessionUserMap[item.createId]?.showName }}
                 </div>
 
-                <div class="flex flex-col text-sm ml-2">
-                  <div class="truncate">
-                    {{ props.sessionUserMap[item.createId]?.showName }}
+                <div class="flex truncate">
+                  <div
+                    v-for="(part, index) in safeHighlight(
+                      item.content,
+                      props.searchKey
+                    )"
+                    :key="index"
+                    :class="
+                      part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
+                    "
+                  >
+                    {{ part.text }}
                   </div>
+                </div>
 
-                  <div class="flex truncate">
-                    <div
-                      v-for="(part, index) in safeHighlight(
-                        item.content,
-                        props.searchKey
-                      )"
-                      :key="index"
-                      :class="
-                        part.highlightedFlag ? 'text-blue-800' : 'text-gray-400'
-                      "
-                    >
-                      {{ part.text }}
-                    </div>
-                  </div>
-
-                  <div class="text-xs text-gray-400">
-                    {{ FormatTsForCurrentDay(item.createTs, true) }}
-                  </div>
+                <div class="text-xs text-gray-400">
+                  {{ FormatTsForCurrentDay(item.createTs, true) }}
                 </div>
               </div>
-            </DynamicScrollerItem>
-          </template>
-        </DynamicScroller>
-      </div>
+            </div>
+          </DynamicScrollerItem>
+        </template>
+      </DynamicScroller>
     </div>
   </div>
 </template>

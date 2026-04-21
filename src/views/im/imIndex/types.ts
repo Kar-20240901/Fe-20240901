@@ -9,11 +9,15 @@ export interface IImBaseContentProps {
 export interface IImContactFriendProps {
   searchKey?: string;
   itemClass?: string;
+  safeHighlightFlag?: boolean;
+  showTitleFlag?: boolean;
 }
 
 export interface IImContactGroupProps {
   searchKey?: string;
   itemClass?: string;
+  safeHighlightFlag?: boolean;
+  showTitleFlag?: boolean;
 }
 
 export interface IUpdateLastContentObj {

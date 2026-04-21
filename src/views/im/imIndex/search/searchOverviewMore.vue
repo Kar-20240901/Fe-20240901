@@ -56,6 +56,8 @@ defineExpose({
       ref="contactFriendRef"
       :searchKey="props.searchKey"
       item-class="px-4"
+      :safe-highlight-flag="true"
+      :show-title-flag="true"
       @contactFriendClick="searchFriendClick"
     />
 
@@ -64,11 +66,13 @@ defineExpose({
       ref="contactGroupRef"
       :searchKey="props.searchKey"
       item-class="px-4"
+      :safe-highlight-flag="true"
+      :show-title-flag="true"
       @contactGroupClick="searchGroupClick"
     />
 
     <search-overview-more-content
-      v-else-if="props.showSearchOverviewMoreContentFlag"
+      v-show="props.showSearchOverviewMoreContentFlag"
       ref="baseContentRef"
       :searchKey="props.searchKey"
       @searchContentClick="searchContentClick"

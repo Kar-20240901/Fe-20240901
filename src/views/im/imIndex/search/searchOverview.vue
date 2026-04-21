@@ -18,7 +18,13 @@ const searchContentList = ref<BaseImSearchBaseContentVO[]>([]);
 
 const props = defineProps<IImSearchOverviewProps>();
 
+const loadingDataFlag = ref<boolean>(false);
+
+let abortController = null;
+
 function doBaseImSearchBase() {
+  loadingDataFlag.value = true;
+
   searchFriendList.value = [];
   searchGroupList.value = [];
   searchContentList.value = [];
@@ -27,11 +33,24 @@ function doBaseImSearchBase() {
     return;
   }
 
-  baseImSearchBase({ searchKey: props.searchKey }).then(res => {
-    searchFriendList.value = res.data.friendList || [];
-    searchGroupList.value = res.data.groupList || [];
-    searchContentList.value = res.data.contentList || [];
-  });
+  if (abortController) {
+    abortController.abort();
+  }
+
+  abortController = new AbortController();
+
+  baseImSearchBase(
+    { searchKey: props.searchKey },
+    { signal: abortController.signal }
+  )
+    .then(res => {
+      searchFriendList.value = res.data.friendList || [];
+      searchGroupList.value = res.data.groupList || [];
+      searchContentList.value = res.data.contentList || [];
+    })
+    .finally(() => {
+      loadingDataFlag.value = false;
+    });
 }
 
 function reset() {
@@ -83,7 +102,10 @@ const showMoreLength = 3;
 </script>
 
 <template>
-  <div class="flex flex-col cursor-default space-y-1 px-4">
+  <div
+    v-loading="loadingDataFlag"
+    class="flex flex-col cursor-default space-y-1 px-4 w-full h-full"
+  >
     <div v-show="searchFriendList.length" class="flex flex-col bg-white">
       <div class="flex justify-between items-center text-sm text-gray-400 mb-1">
         <div>联系人</div>
