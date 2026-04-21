@@ -393,12 +393,12 @@ function handleShouldAutoScroll() {
   }
 
   setTimeout(() => {
-    scrollToBottom();
+    scrollToBottom(false);
 
     nextTick(() => {
       setTimeout(() => {
-        scrollToBottom();
-      }, CommonConstant.SHORT_DELAY);
+        scrollToBottom(false);
+      }, CommonConstant.MEDIUM_DELAY);
     });
   }, CommonConstant.SHORT_DELAY);
 }
@@ -451,7 +451,7 @@ function scrollToItemByContentId(contentId?: string) {
 
 let scrollStopSearchFlag = false;
 
-function scrollToBottom() {
+function scrollToBottom(againFlag?: boolean) {
   if (!sessionContentRecycleScrollerRef.value) {
     return;
   }
@@ -461,6 +461,14 @@ function scrollToBottom() {
   );
 
   scrollStopSearchFlag = true;
+
+  if (againFlag) {
+    nextTick(() => {
+      setTimeout(() => {
+        scrollToBottom(false);
+      }, CommonConstant.MEDIUM_DELAY);
+    });
+  }
 }
 
 function setShouldAutoScroll(shouldAutoScrollTemp?: boolean) {
@@ -748,7 +756,7 @@ function doSendClick(
   };
 
   nextTick(() => {
-    scrollToBottom();
+    scrollToBottom(true);
   });
 
   doSendToServer(form);
@@ -1275,7 +1283,7 @@ function deleteSessionContentRefUserClick() {
                     </div>
                   </div>
 
-                  <div class="text-xs text-gray-400 self-end shrink-0">
+                  <div class="text-xs text-gray-400 self-end shrink-0 pr-1">
                     {{ FormatTsForCurrentDay(item.createTs, true) }}
                   </div>
                 </div>
@@ -1294,7 +1302,7 @@ function deleteSessionContentRefUserClick() {
         <div
           v-show="showToBottomBtnFlag"
           class="absolute bottom-3 right-[2px] z-50 p-2 rounded-full transition-all duration-300 bg-white transform hover:scale-105 active:scale-95 shrink-0 cursor-pointer shadow-lg"
-          @click="scrollToBottom()"
+          @click="scrollToBottom(true)"
         >
           <component
             :is="
