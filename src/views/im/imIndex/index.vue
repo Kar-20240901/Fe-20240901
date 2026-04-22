@@ -295,6 +295,14 @@ function sessionRefUpdateLastContent(
 ) {
   manageRef.value?.sessionRefUpdateLastContent(updateLastContentObjTemp);
 }
+
+function sessionRefDoSearch(
+  loadingFlag?: boolean,
+  scrollFlag?: boolean,
+  queryNewFlag?: boolean
+) {
+  manageRef.value?.sessionRefDoSearch(loadingFlag, scrollFlag, queryNewFlag);
+}
 </script>
 
 <template>
@@ -328,6 +336,7 @@ function sessionRefUpdateLastContent(
           :sessionUserMap="sessionUserMap"
           :session="session"
           @sessionRefUpdateLastContent="sessionRefUpdateLastContent"
+          @sessionRefDoSearch="sessionRefDoSearch"
         />
       </el-splitter-panel>
     </el-splitter>

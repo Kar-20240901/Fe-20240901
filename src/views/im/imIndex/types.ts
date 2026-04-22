@@ -24,6 +24,7 @@ export interface IUpdateLastContentObj {
   sessionId?: string;
   lastContent?: string;
   lastReceiveTs?: string;
+  updateLastFlag?: boolean;
   unReadCountAddNumber?: number;
   unReadCountAddNumberUpdateFlag?: boolean;
   unReadCountAddNumberUpdateMustFlag?: boolean;

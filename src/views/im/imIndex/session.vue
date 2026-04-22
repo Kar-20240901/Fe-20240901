@@ -511,7 +511,10 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
 
   const item: BaseImSessionRefUserPageVO = dataList.value[findIndex];
 
-  if (updateLastContentObjTemp.lastContent) {
+  if (
+    updateLastContentObjTemp.lastContent ||
+    updateLastContentObjTemp.updateLastFlag
+  ) {
     item.lastContent = updateLastContentObjTemp.lastContent;
   }
 
@@ -638,7 +641,10 @@ function deleteSessionContentRefUserAndHiddenSessionClick() {
                 <div class="text-sm truncate pr-1" :title="item.sessionName">
                   {{ item.sessionName }}
                 </div>
-                <div class="text-xs text-gray-400 shrink-0">
+                <div
+                  v-if="item.lastContent"
+                  class="text-xs text-gray-400 shrink-0"
+                >
                   {{ FormatTsForCurrentDay(item.lastReceiveTs, true, true) }}
                 </div>
               </div>

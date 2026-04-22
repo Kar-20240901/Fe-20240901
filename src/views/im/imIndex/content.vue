@@ -163,7 +163,26 @@ const emit = defineEmits<{
     e: "sessionRefUpdateLastContent",
     updateLastContentObjTemp: IUpdateLastContentObj
   ): void;
+
+  (
+    e: "sessionRefDoSearch",
+    loadingFlag?: boolean,
+    scrollFlag?: boolean,
+    queryNewFlag?: boolean
+  ): void;
 }>();
+
+function sessionRefDoSearch(
+  loadingFlag?: boolean,
+  scrollFlag?: boolean,
+  queryNewFlag?: boolean
+) {
+  emit("sessionRefDoSearch", loadingFlag, scrollFlag, queryNewFlag);
+}
+
+function onlySessionSearch() {
+  sessionRefDoSearch(false, false, false);
+}
 
 function getTodoSendObj(
   sessionId?: string
@@ -1104,13 +1123,15 @@ function deleteSessionContentRefUserClick() {
         doSearch(
           {
             refId: props.session.sessionId,
-            backwardFlag: false
+            backwardFlag: false,
+            boolean1: true
           },
           false,
           false,
           undefined
         );
         ToastSuccess(res.msg);
+        onlySessionSearch();
       });
     },
     undefined,
