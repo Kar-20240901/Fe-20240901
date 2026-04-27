@@ -1125,20 +1125,22 @@ watch(
 const showToBottomBtnFlag = ref<boolean>(false);
 
 function deleteSessionContentRefUserClick() {
-  if (!props.session.sessionId) {
+  const sessionId = props.session.sessionId;
+
+  if (!sessionId) {
     return;
   }
 
   ExecConfirm(
     async () => {
       await baseImSessionContentRefUserDeleteSessionContentRefUser({
-        idSet: [props.session.sessionId]
+        idSet: [sessionId]
       }).then(res => {
         onlyReset();
 
         doSearch(
           {
-            refId: props.session.sessionId,
+            refId: sessionId,
             backwardFlag: false,
             boolean1: true
           },
@@ -1150,8 +1152,9 @@ function deleteSessionContentRefUserClick() {
         ToastSuccess(res.msg);
 
         sessionRefUpdateLastContent({
-          sessionId: props.session.sessionId,
+          sessionId: sessionId,
           lastContent: "",
+          updateLastFlag: true,
           unReadCountAddNumber: 0,
           unReadCountAddNumberUpdateFlag: true,
           unReadCountAddNumberUpdateMustFlag: true
@@ -1180,6 +1183,15 @@ function removeFriendClick() {
         onlyReset();
 
         ToastSuccess(res.msg);
+
+        sessionRefUpdateLastContent({
+          sessionId: sessionId,
+          lastContent: "",
+          updateLastFlag: true,
+          unReadCountAddNumber: 0,
+          unReadCountAddNumberUpdateFlag: true,
+          unReadCountAddNumberUpdateMustFlag: true
+        });
 
         doSearch(
           {

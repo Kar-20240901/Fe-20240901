@@ -556,6 +556,7 @@ function deleteSessionContentRefUserClick() {
         updateLastContent({
           sessionId: dropdownItemRef.value.sessionId,
           lastContent: "",
+          updateLastFlag: true,
           unReadCountAddNumber: 0,
           unReadCountAddNumberUpdateFlag: true,
           unReadCountAddNumberUpdateMustFlag: true
