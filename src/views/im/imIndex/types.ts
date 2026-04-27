@@ -73,6 +73,7 @@ export interface IImContentSession {
   sessionId?: string;
   showName?: string;
   targetType?: number;
+  targetId?: string;
 }
 
 export interface IImSessionProps {

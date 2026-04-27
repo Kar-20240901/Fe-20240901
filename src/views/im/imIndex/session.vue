@@ -550,7 +550,17 @@ function deleteSessionContentRefUserClick() {
         idSet: [dropdownItemRef.value.sessionId]
       }).then(res => {
         refreshSearchContent([dropdownItemRef.value.sessionId]);
+
         ToastSuccess(res.msg);
+
+        updateLastContent({
+          sessionId: dropdownItemRef.value.sessionId,
+          lastContent: "",
+          unReadCountAddNumber: 0,
+          unReadCountAddNumberUpdateFlag: true,
+          unReadCountAddNumberUpdateMustFlag: true
+        });
+
         onSearch(true, false, false);
       });
     },

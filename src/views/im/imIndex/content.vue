@@ -50,6 +50,8 @@ import LocalStorageKey from "@/model/constant/LocalStorageKey";
 import { baseImSessionRefUserQueryLastContentMap } from "@/api/http/base/BaseImSessionRefUserController";
 import { throttleByKey } from "@/utils/CommonUtil";
 import { ExecConfirm, ToastSuccess } from "@/utils/ToastUtil";
+import { baseImFriendRemoveFriend } from "@/api/http/base/BaseImFriendController";
+import { baseImGroupRefUserLeaveSelf } from "@/api/http/base/BaseImGroupRefUserController";
 
 // import { buildUUID } from "@pureadmin/utils";
 //
@@ -170,7 +172,20 @@ const emit = defineEmits<{
     scrollFlag?: boolean,
     queryNewFlag?: boolean
   ): void;
+
+  (
+    e: "refreshSearchContent",
+    sessionIdArr: string[],
+    removeSessionFlag?: boolean
+  ): void;
 }>();
+
+function refreshSearchContent(
+  sessionIdArr?: string[],
+  removeSessionFlag?: boolean
+) {
+  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
+}
 
 function sessionRefDoSearch(
   loadingFlag?: boolean,
@@ -1120,6 +1135,7 @@ function deleteSessionContentRefUserClick() {
         idSet: [props.session.sessionId]
       }).then(res => {
         onlyReset();
+
         doSearch(
           {
             refId: props.session.sessionId,
@@ -1130,12 +1146,96 @@ function deleteSessionContentRefUserClick() {
           false,
           undefined
         );
+
         ToastSuccess(res.msg);
+
+        sessionRefUpdateLastContent({
+          sessionId: props.session.sessionId,
+          lastContent: "",
+          unReadCountAddNumber: 0,
+          unReadCountAddNumberUpdateFlag: true,
+          unReadCountAddNumberUpdateMustFlag: true
+        });
+
         onlySessionSearch();
       });
     },
     undefined,
     `确定清空【${props.session.showName}】的聊天记录吗？`
+  );
+}
+
+function removeFriendClick() {
+  const sessionId = props.session.sessionId;
+
+  if (!sessionId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImFriendRemoveFriend({
+        idSet: [props.session.targetId]
+      }).then(res => {
+        onlyReset();
+
+        ToastSuccess(res.msg);
+
+        doSearch(
+          {
+            refId: sessionId,
+            backwardFlag: false,
+            boolean1: true
+          },
+          false,
+          false,
+          undefined
+        );
+
+        refreshSearchContent([sessionId], true);
+
+        onlySessionSearch();
+      });
+    },
+    undefined,
+    `确定删除好友【${props.session.showName}】吗？`
+  );
+}
+
+function leaveSelfGroupClick() {
+  const sessionId = props.session.sessionId;
+
+  if (!sessionId) {
+    return;
+  }
+
+  ExecConfirm(
+    async () => {
+      await baseImGroupRefUserLeaveSelf({
+        idSet: [props.session.targetId]
+      }).then(res => {
+        onlyReset();
+
+        ToastSuccess(res.msg);
+
+        doSearch(
+          {
+            refId: sessionId,
+            backwardFlag: false,
+            boolean1: true
+          },
+          false,
+          false,
+          undefined
+        );
+
+        refreshSearchContent([sessionId], true);
+
+        onlySessionSearch();
+      });
+    },
+    undefined,
+    `确定退出群聊【${props.session.showName}】吗？`
   );
 }
 </script>
@@ -1213,11 +1313,13 @@ function deleteSessionContentRefUserClick() {
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="props.session.targetType === BaseImTypeEnum.FRIEND.code"
+                  @click="removeFriendClick"
                 >
                   删除好友
                 </el-dropdown-item>
                 <el-dropdown-item
                   v-if="props.session.targetType === BaseImTypeEnum.GROUP.code"
+                  @click="leaveSelfGroupClick"
                 >
                   退出群聊
                 </el-dropdown-item>

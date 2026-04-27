@@ -136,6 +136,7 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   sessionTemp.sessionId = item.sessionId;
   sessionTemp.showName = item.sessionName;
   sessionTemp.targetType = item.targetType;
+  sessionTemp.targetId = item.targetId;
 
   session.value = sessionTemp;
 
@@ -188,6 +189,7 @@ function searchContentInfoClick(item: BaseImSessionContentRefUserPageVO) {
   sessionTemp.sessionId = searchBaseContentVO.value.sessionId;
   sessionTemp.showName = searchBaseContentVO.value.showName;
   sessionTemp.targetType = searchBaseContentVO.value.targetType;
+  sessionTemp.targetId = searchBaseContentVO.value.targetId;
 
   session.value = sessionTemp;
 
@@ -337,6 +339,7 @@ function sessionRefDoSearch(
           :session="session"
           @sessionRefUpdateLastContent="sessionRefUpdateLastContent"
           @sessionRefDoSearch="sessionRefDoSearch"
+          @refreshSearchContent="refreshSearchContent"
         />
       </el-splitter-panel>
     </el-splitter>
