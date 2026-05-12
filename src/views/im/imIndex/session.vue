@@ -660,7 +660,7 @@ function deleteSessionContentRefUserAndHiddenSessionClick() {
                 </div>
               </div>
 
-              <div class="flex justify-between items-center mt-1">
+              <div class="flex justify-between items-center">
                 <div
                   class="text-xs text-gray-400 truncate flex-1"
                   :title="item.lastContent"

@@ -4,6 +4,23 @@ import { http } from "@/utils/http";
 import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
+export interface NotEmptyIdSet {
+  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
+}
+
+// 删除聊天记录
+export function baseImSessionContentRefUserRemoveSessionContentRefUser(
+  form: NotEmptyIdSet,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/imSessionContentRefUser/removeSessionContentRefUser"),
+    form,
+    config
+  );
+}
+
 export interface ScrollListDTO {
   backwardFlag?: boolean; // 是否向后查询，默认：false 根据 id，往前查询 true 根据 id，往后查询
   long1?: string; // long值1，格式：int64
@@ -67,10 +84,6 @@ export function baseImSessionContentRefUserMyPage(
   );
 }
 
-export interface NotEmptyIdSet {
-  idSet?: string[]; // 主键 idSet，是否必传：true，格式：int64
-}
-
 // 隐藏消息内容
 export function baseImSessionContentRefUserHideSessionContentRefUser(
   form: NotEmptyIdSet,
@@ -92,6 +105,23 @@ export function baseImSessionContentRefUserDeleteSessionContentRefUser(
   return http.request<string>(
     "post",
     baseApi("/base/imSessionContentRefUser/deleteSessionContentRefUser"),
+    form,
+    config
+  );
+}
+
+export interface NotNullId {
+  id?: string; // 主键 id，是否必传：true，格式：int64
+}
+
+// 撤回聊天记录
+export function baseImSessionContentRefUserRevokeSessionContentRefUser(
+  form: NotNullId,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/imSessionContentRefUser/revokeSessionContentRefUser"),
     form,
     config
   );
