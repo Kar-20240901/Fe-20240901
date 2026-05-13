@@ -286,7 +286,7 @@ onMounted(() => {
   nextTick(() => {
     setTimeout(() => {
       if (getMobileFlag()) {
-        splitterSize.value = "32%";
+        splitterSize.value = "35%";
       }
     }, CommonConstant.MEDIUM_DELAY);
   });
