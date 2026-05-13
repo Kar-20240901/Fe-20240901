@@ -29,6 +29,7 @@ import {
   baseImSessionContentRefUserDeleteSessionContentRefUserAndHiddenSession
 } from "@/api/http/base/BaseImSessionContentRefUserController";
 import CommonConstant from "@/model/constant/CommonConstant";
+import { getImSessionLastContent } from "@/utils/im/ImUtil";
 
 function hiddenSession() {
   if (!dropdownItemRef.value.sessionId) {
@@ -653,7 +654,7 @@ function deleteSessionContentRefUserAndHiddenSessionClick() {
                   {{ item.sessionName }}
                 </div>
                 <div
-                  v-if="item.lastContent"
+                  v-if="getImSessionLastContent(item)"
                   class="text-xs text-gray-400 shrink-0"
                 >
                   {{ FormatTsForCurrentDay(item.lastReceiveTs, true, true) }}
@@ -663,9 +664,9 @@ function deleteSessionContentRefUserAndHiddenSessionClick() {
               <div class="flex justify-between items-center">
                 <div
                   class="text-xs text-gray-400 truncate flex-1"
-                  :title="item.lastContent"
+                  :title="getImSessionLastContent(item)"
                 >
-                  {{ item.lastContent }}
+                  {{ getImSessionLastContent(item) }}
                 </div>
                 <div
                   v-if="item.targetType === BaseImTypeEnum.GROUP.code"

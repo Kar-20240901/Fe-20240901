@@ -52,6 +52,7 @@ import { throttleByKey } from "@/utils/CommonUtil";
 import { ExecConfirm, ToastSuccess } from "@/utils/ToastUtil";
 import { baseImFriendRemoveFriend } from "@/api/http/base/BaseImFriendController";
 import { baseImGroupRefUserLeaveSelf } from "@/api/http/base/BaseImGroupRefUserController";
+import { getImSessionContent } from "@/utils/im/ImUtil";
 
 // import { buildUUID } from "@pureadmin/utils";
 //
@@ -1385,7 +1386,7 @@ function leaveSelfGroupClick() {
                     class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
                   >
                     <div class="text-sm break-all whitespace-pre-wrap">
-                      {{ item.content }}
+                      {{ getImSessionContent(item) }}
                     </div>
                   </div>
                 </div>
@@ -1414,7 +1415,7 @@ function leaveSelfGroupClick() {
                     class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
                   >
                     <div class="text-sm break-all whitespace-pre-wrap">
-                      {{ item.content }}
+                      {{ getImSessionContent(item) }}
                     </div>
                   </div>
 
