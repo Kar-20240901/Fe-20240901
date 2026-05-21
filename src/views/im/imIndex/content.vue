@@ -52,7 +52,7 @@ import { throttleByKey } from "@/utils/CommonUtil";
 import { ExecConfirm, ToastSuccess } from "@/utils/ToastUtil";
 import { baseImFriendRemoveFriend } from "@/api/http/base/BaseImFriendController";
 import { baseImGroupRefUserLeaveSelf } from "@/api/http/base/BaseImGroupRefUserController";
-import { getImSessionContent } from "@/utils/im/ImUtil";
+import { DoGetImSessionContent } from "@/utils/im/ImUtil";
 
 // import { buildUUID } from "@pureadmin/utils";
 //
@@ -149,6 +149,7 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
   sessionRefUpdateLastContent({
     sessionId: props.session.sessionId,
     lastContent: lastContent.content,
+    lastContentType: lastContent.type,
     lastReceiveTs: lastContent.createTs,
     unReadCountAddNumber: undefined,
     unReadCountAddNumberUpdateFlag: undefined
@@ -962,6 +963,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       sessionRefUpdateLastContent({
         sessionId: baseImSessionContentInsertTxtVO.sessionId,
         lastContent: baseImSessionContentInsertTxtVO.txt,
+        lastContentType: baseImSessionContentInsertTxtVO.type,
         lastReceiveTs: baseImSessionContentInsertTxtVO.createTs,
         unReadCountAddNumber: unReadCountAddNumber,
         unReadCountAddNumberUpdateFlag: false
@@ -1002,6 +1004,7 @@ const queryLastContentMap = throttleByKey(
       sessionRefUpdateLastContent({
         sessionId: obj.sessionId,
         lastContent: obj.lastContent,
+        lastContentType: obj.lastContentType,
         lastReceiveTs: obj.lastContentCreateTs,
         unReadCountAddNumber: obj.unReadCount,
         unReadCountAddNumberUpdateFlag: true
@@ -1155,6 +1158,7 @@ function deleteSessionContentRefUserClick() {
         sessionRefUpdateLastContent({
           sessionId: sessionId,
           lastContent: "",
+          lastContentType: BaseImSessionContentTypeEnum.TEXT.code,
           updateLastFlag: true,
           unReadCountAddNumber: 0,
           unReadCountAddNumberUpdateFlag: true,
@@ -1188,6 +1192,7 @@ function removeFriendClick() {
         sessionRefUpdateLastContent({
           sessionId: sessionId,
           lastContent: "",
+          lastContentType: BaseImSessionContentTypeEnum.TEXT.code,
           updateLastFlag: true,
           unReadCountAddNumber: 0,
           unReadCountAddNumberUpdateFlag: true,
@@ -1386,14 +1391,14 @@ function leaveSelfGroupClick() {
                     class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
                   >
                     <div class="text-sm break-all whitespace-pre-wrap">
-                      {{ getImSessionContent(item) }}
+                      {{ DoGetImSessionContent(item.type, item.content) }}
                     </div>
                   </div>
                 </div>
 
                 <div
                   v-else
-                  class="w-full min-h-11 flex items-end space-x-2 animate-fadeIn"
+                  class="w-full min-h-11 flex items-start space-x-2 animate-fadeIn"
                 >
                   <div class="shrink-0">
                     <el-image
@@ -1411,11 +1416,22 @@ function leaveSelfGroupClick() {
                     </el-image>
                   </div>
 
-                  <div
-                    class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
-                  >
-                    <div class="text-sm break-all whitespace-pre-wrap">
-                      {{ getImSessionContent(item) }}
+                  <div class="flex-col">
+                    <div
+                      v-if="
+                        props.session.targetType === BaseImTypeEnum.GROUP.code
+                      "
+                      class="text-xs text-gray-400 mb-1"
+                    >
+                      {{ props.sessionUserMap[item.createId]?.showName }}
+                    </div>
+
+                    <div
+                      class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
+                    >
+                      <div class="text-sm break-all whitespace-pre-wrap">
+                        {{ DoGetImSessionContent(item.type, item.content) }}
+                      </div>
                     </div>
                   </div>
 

@@ -23,6 +23,7 @@ export interface IImContactGroupProps {
 export interface IUpdateLastContentObj {
   sessionId?: string;
   lastContent?: string;
+  lastContentType?: number;
   lastReceiveTs?: string;
   updateLastFlag?: boolean;
   unReadCountAddNumber?: number;

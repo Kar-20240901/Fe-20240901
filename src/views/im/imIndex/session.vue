@@ -29,7 +29,8 @@ import {
   baseImSessionContentRefUserDeleteSessionContentRefUserAndHiddenSession
 } from "@/api/http/base/BaseImSessionContentRefUserController";
 import CommonConstant from "@/model/constant/CommonConstant";
-import { getImSessionLastContent } from "@/utils/im/ImUtil";
+import { DoGetImSessionContent } from "@/utils/im/ImUtil";
+import { BaseImSessionContentTypeEnum } from "@/model/enum/im/BaseImSessionContentTypeEnum";
 
 function hiddenSession() {
   if (!dropdownItemRef.value.sessionId) {
@@ -138,6 +139,7 @@ function sessionClick(item: BaseImSessionRefUserPageVO) {
   updateLastContent({
     sessionId: item.sessionId,
     lastContent: undefined,
+    lastContentType: undefined,
     lastReceiveTs: undefined,
     unReadCountAddNumber: 0,
     unReadCountAddNumberUpdateFlag: true,
@@ -519,6 +521,10 @@ function updateLastContent(updateLastContentObjTemp: IUpdateLastContentObj) {
     item.lastContent = updateLastContentObjTemp.lastContent;
   }
 
+  if (updateLastContentObjTemp.lastContentType) {
+    item.lastContentType = updateLastContentObjTemp.lastContentType;
+  }
+
   if (updateLastContentObjTemp.lastReceiveTs) {
     item.lastReceiveTs = updateLastContentObjTemp.lastReceiveTs;
   }
@@ -557,6 +563,7 @@ function deleteSessionContentRefUserClick() {
         updateLastContent({
           sessionId: dropdownItemRef.value.sessionId,
           lastContent: "",
+          lastContentType: BaseImSessionContentTypeEnum.TEXT.code,
           updateLastFlag: true,
           unReadCountAddNumber: 0,
           unReadCountAddNumberUpdateFlag: true,
@@ -654,7 +661,12 @@ function deleteSessionContentRefUserAndHiddenSessionClick() {
                   {{ item.sessionName }}
                 </div>
                 <div
-                  v-if="getImSessionLastContent(item)"
+                  v-if="
+                    DoGetImSessionContent(
+                      item.lastContentType,
+                      item.lastContent
+                    )
+                  "
                   class="text-xs text-gray-400 shrink-0"
                 >
                   {{ FormatTsForCurrentDay(item.lastReceiveTs, true, true) }}
@@ -664,9 +676,19 @@ function deleteSessionContentRefUserAndHiddenSessionClick() {
               <div class="flex justify-between items-center">
                 <div
                   class="text-xs text-gray-400 truncate flex-1"
-                  :title="getImSessionLastContent(item)"
+                  :title="
+                    DoGetImSessionContent(
+                      item.lastContentType,
+                      item.lastContent
+                    )
+                  "
                 >
-                  {{ getImSessionLastContent(item) }}
+                  {{
+                    DoGetImSessionContent(
+                      item.lastContentType,
+                      item.lastContent
+                    )
+                  }}
                 </div>
                 <div
                   v-if="item.targetType === BaseImTypeEnum.GROUP.code"
