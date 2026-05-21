@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BaseImLeftSegmentedEnum } from "@/model/enum/im/BaseImLeftSegmentedEnum";
-import { nextTick, ref } from "vue";
+import { nextTick, provide, ref } from "vue";
 import Session from "@/views/im/imIndex/session.vue";
 import Contact from "@/views/im/imIndex/contact.vue";
 import { BaseImSessionRefUserPageVO } from "@/api/http/base/BaseImSessionRefUserController";
@@ -12,6 +12,7 @@ import {
 } from "@/api/http/base/BaseImSearchController";
 import {
   IImManageProps,
+  IImManagerInjectionKey,
   IImShowInfoMap,
   IUpdateLastContentObj
 } from "@/views/im/imIndex/types";
@@ -85,6 +86,10 @@ function sessionRefUpdateLastContent(
 ) {
   sessionRef.value?.updateLastContent(updateLastContentObjTemp);
 }
+
+provide(IImManagerInjectionKey, {
+  sessionRefUpdateLastContent
+});
 
 function searchClick() {
   showSearchOverviewPre.value = true;

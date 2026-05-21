@@ -1185,30 +1185,7 @@ function removeFriendClick() {
       await baseImFriendRemoveFriend({
         idSet: [props.session.targetId]
       }).then(res => {
-        onlyReset();
-
         ToastSuccess(res.msg);
-
-        sessionRefUpdateLastContent({
-          sessionId: sessionId,
-          lastContent: "",
-          lastContentType: BaseImSessionContentTypeEnum.TEXT.code,
-          updateLastFlag: true,
-          unReadCountAddNumber: 0,
-          unReadCountAddNumberUpdateFlag: true,
-          unReadCountAddNumberUpdateMustFlag: true
-        });
-
-        doSearch(
-          {
-            refId: sessionId,
-            backwardFlag: false,
-            boolean1: true
-          },
-          false,
-          false,
-          undefined
-        );
 
         refreshSearchContent([sessionId], true);
 
