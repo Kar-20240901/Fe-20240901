@@ -1324,7 +1324,7 @@ function leaveSelfGroupClick() {
               <div class="w-full pl-4 py-5">
                 <div
                   v-if="item.createId === selfUserId"
-                  class="flex items-end justify-end pr-7 space-x-2 animate-fadeIn"
+                  class="flex items-end justify-end pr-7 gap-2"
                 >
                   <div
                     v-if="showSendFailFlag(item)"
@@ -1353,10 +1353,7 @@ function leaveSelfGroupClick() {
                   </div>
                 </div>
 
-                <div
-                  v-else
-                  class="w-full min-h-11 flex items-start space-x-2 animate-fadeIn"
-                >
+                <div v-else class="w-full flex gap-1 items-start">
                   <div class="shrink-0">
                     <el-image
                       :src="props.sessionUserMap[item.createId]?.avatarUrl"
@@ -1383,17 +1380,19 @@ function leaveSelfGroupClick() {
                       {{ props.sessionUserMap[item.createId]?.showName }}
                     </div>
 
-                    <div
-                      class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
-                    >
-                      <div class="text-sm break-all whitespace-pre-wrap">
-                        {{ DoGetImSessionContent(item.type, item.content) }}
+                    <div class="flex gap-2">
+                      <div
+                        class="bg-white min-h-11 p-3 message-bubble-left shadow-sm w-fit flex"
+                      >
+                        <div class="text-sm break-all whitespace-pre-wrap">
+                          {{ DoGetImSessionContent(item.type, item.content) }}
+                        </div>
+                      </div>
+
+                      <div class="text-xs text-gray-400 self-end shrink-0 pr-1">
+                        {{ FormatTsForCurrentDay(item.createTs, true) }}
                       </div>
                     </div>
-                  </div>
-
-                  <div class="text-xs text-gray-400 self-end shrink-0 pr-1">
-                    {{ FormatTsForCurrentDay(item.createTs, true) }}
                   </div>
                 </div>
               </div>
