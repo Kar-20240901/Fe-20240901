@@ -3,6 +3,17 @@ import type { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSe
 import type { BaseImSessionContentInsertTxtDTO } from "@/api/http/base/BaseImSessionContentController";
 import type { InjectionKey } from "vue";
 
+export const IImIndexInjectionKey: InjectionKey<IImIndexInjection> = Symbol(
+  "IImIndexInjectionKey"
+);
+
+export interface IImIndexInjection {
+  refreshSearchContent: (
+    sessionIdArr?: string[],
+    removeSessionFlag?: boolean
+  ) => void;
+}
+
 export const IImManagerInjectionKey: InjectionKey<IImManagerInjection> = Symbol(
   "IImManagerInjectionKey"
 );

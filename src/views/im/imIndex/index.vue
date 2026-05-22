@@ -2,11 +2,12 @@
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import {
   IImContentSession,
+  IImIndexInjectionKey,
   IImSession,
   IImShowInfoMap,
   IUpdateLastContentObj
 } from "@/views/im/imIndex/types";
-import { nextTick, onMounted, ref } from "vue";
+import { nextTick, onMounted, provide, ref } from "vue";
 import {
   BaseImSessionRefUserPageVO,
   baseImSessionRefUserUpdateAvatarAndNickname
@@ -66,6 +67,10 @@ const searchBaseContentVO = ref<BaseImSearchBaseContentVO>({});
 const contentRef = ref();
 
 const manageRef = ref();
+
+provide(IImIndexInjectionKey, {
+  refreshSearchContent
+});
 
 function refreshSearchContent(
   sessionIdArr?: string[],
@@ -339,7 +344,6 @@ function sessionRefDoSearch(
           :session="session"
           @sessionRefUpdateLastContent="sessionRefUpdateLastContent"
           @sessionRefDoSearch="sessionRefDoSearch"
-          @refreshSearchContent="refreshSearchContent"
         />
       </el-splitter-panel>
     </el-splitter>

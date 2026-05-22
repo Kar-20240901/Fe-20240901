@@ -15,7 +15,6 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { GetBrowserCategory } from "@/utils/BrowserCategoryUtil";
 import type { R } from "@/model/vo/R";
 import CommonConstant from "@/model/constant/CommonConstant";
-import { router, signPath } from "@/router";
 import { ToastError } from "@/utils/ToastUtil";
 
 export const AUTHORIZATION = "Authorization";
@@ -174,10 +173,9 @@ class PureHttp {
           if (res.code !== CommonConstant.API_OK_CODE || !res.receive) {
             if (res.code === 100111) {
               // 这个代码需要跳转到：登录页面
-              if (!hiddenErrorMsgFlag) {
-                const fullPath = router.currentRoute.value.fullPath;
 
-                if (fullPath === signPath || getToken()?.jwt) {
+              if (!hiddenErrorMsgFlag) {
+                if (getToken()?.jwt) {
                   ToastError(res.msg); // 存在 jwt才提示错误消息
                 }
               }
@@ -194,7 +192,7 @@ class PureHttp {
                 return;
               }
 
-              reject(new Error("请求错误：" + JSON.stringify(config)));
+              reject(new Error("请求错误：" + config));
             }
           } else {
             resolve(res);

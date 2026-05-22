@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { inject, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import {
   BaseImSessionContentInsertTxtForFeDTO,
   BaseImSessionContentInsertTxtVO,
   BaseImSessionRefUserQueryLastContentVO,
   IImContentProps,
+  IImIndexInjection,
+  IImIndexInjectionKey,
   ISessionContentBO,
   IUpdateLastContentObj
 } from "@/views/im/imIndex/types";
@@ -75,6 +77,10 @@ const props = defineProps<IImContentProps>();
 const sessionContentLoading = ref<boolean>(false);
 
 const sessionContentShowList = ref<ISessionContentBO[]>([]);
+
+const IImIndexInjection = inject(IImIndexInjectionKey) as
+  | IImIndexInjection
+  | undefined;
 
 function getObjId(item?: BaseImSessionContentRefUserPageVO) {
   return `${item.createId}-${item.createTs}-${item.orderNo}`;
@@ -174,20 +180,7 @@ const emit = defineEmits<{
     scrollFlag?: boolean,
     queryNewFlag?: boolean
   ): void;
-
-  (
-    e: "refreshSearchContent",
-    sessionIdArr: string[],
-    removeSessionFlag?: boolean
-  ): void;
 }>();
-
-function refreshSearchContent(
-  sessionIdArr?: string[],
-  removeSessionFlag?: boolean
-) {
-  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
-}
 
 function sessionRefDoSearch(
   loadingFlag?: boolean,
@@ -1187,7 +1180,7 @@ function removeFriendClick() {
       }).then(res => {
         ToastSuccess(res.msg);
 
-        refreshSearchContent([sessionId], true);
+        IImIndexInjection?.refreshSearchContent([sessionId], true);
 
         onlySessionSearch();
       });
@@ -1209,22 +1202,9 @@ function leaveSelfGroupClick() {
       await baseImGroupRefUserLeaveSelf({
         idSet: [props.session.targetId]
       }).then(res => {
-        onlyReset();
-
         ToastSuccess(res.msg);
 
-        doSearch(
-          {
-            refId: sessionId,
-            backwardFlag: false,
-            boolean1: true
-          },
-          false,
-          false,
-          undefined
-        );
-
-        refreshSearchContent([sessionId], true);
+        IImIndexInjection?.refreshSearchContent([sessionId], true);
 
         onlySessionSearch();
       });
