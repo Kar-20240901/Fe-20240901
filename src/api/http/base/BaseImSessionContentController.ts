@@ -24,7 +24,7 @@ export interface BaseImSessionContentInsertTxtDTO {
   orderNo?: number; // 排序号（值越大越前面，默认为 0），格式：int32
   createTs?: string; // 创建时间的时间戳，UTC+8，是否必传：true，格式：int64
   sessionId?: string; // 会话主键 id，是否必传：true，格式：int64
-  refId?: string; // 引用的内容主键 id，不引用时为 -1，格式：int64
+  refId?: string; // 引用的内容主键 id，不引用时为 -1，也可以引用用户主键 id等，格式：int64
   type?: number; // 消息类型，是否必传：true，格式：int32
 }
 

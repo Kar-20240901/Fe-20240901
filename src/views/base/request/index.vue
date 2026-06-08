@@ -20,6 +20,7 @@ import FormEdit from "@/views/base/request/formEdit.vue";
 import { baseRequestInfoInfoById } from "@/api/http/base/BaseRequestInfoController";
 import { IBaseRequestFullInfoDO } from "@/views/base/request/types";
 import RiSearchLine from "~icons/ri/search-line";
+import { yesOrNoOptions } from "@/model/enum/base/yesOrNoEnum";
 
 defineOptions({
   name: "BaseRequest"
@@ -143,6 +144,39 @@ function viewClick(row: BaseRequestDO) {
               label: 'name',
               value: 'id'
             }"
+          />
+        </el-form-item>
+        <el-form-item label="路径：" prop="uri">
+          <el-input
+            v-model="search.uri"
+            class="!w-[180px]"
+            placeholder="请输入路径"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="是否成功" prop="successFlag">
+          <el-select
+            v-model="search.successFlag"
+            placeholder="请选择"
+            class="!w-[180px]"
+            clearable
+            :options="yesOrNoOptions"
+          />
+        </el-form-item>
+        <el-form-item label="ip：" prop="ip">
+          <el-input
+            v-model="search.ip"
+            class="!w-[180px]"
+            placeholder="请输入ip"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="区域：" prop="region">
+          <el-input
+            v-model="search.region"
+            class="!w-[180px]"
+            placeholder="请输入区域"
+            clearable
           />
         </el-form-item>
         <el-form-item>

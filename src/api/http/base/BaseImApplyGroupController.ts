@@ -104,7 +104,9 @@ export interface BaseImApplyGroupSearchApplyGroupVO {
   groupId?: string; // 群组主键 id，格式：int64
   name?: string; // 群组名称
   bio?: string; // 群组简介
+  groupBelongNickname?: string; // 群主用户昵称
   uuid?: string; // 群聊的 uuid
+  groupBelongAvatarUrl?: string; // 群主用户头像url
 }
 
 // 搜索要添加的群组

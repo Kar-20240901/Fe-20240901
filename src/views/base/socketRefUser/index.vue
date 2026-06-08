@@ -210,7 +210,7 @@ function onSelectChange(rowArr?: BaseSocketRefUserDO[]) {
         <el-table-column prop="region" label="地点" />
         <el-table-column #default="scope" prop="type" label="终端">
           {{
-            TempRequestCategoryMap.get(scope.row.type) ||
+            TempRequestCategoryMap.get(scope.row.category) ||
             TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
           }}
         </el-table-column>

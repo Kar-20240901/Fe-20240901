@@ -67,6 +67,8 @@ function onBack() {
           clearable
           placeholder="邮箱"
           :prefix-icon="useRenderIcon(RiEmail)"
+          autocomplete="email"
+          name="email"
         />
       </el-form-item>
     </Motion>
@@ -88,6 +90,8 @@ function onBack() {
           show-password
           placeholder="密码"
           :prefix-icon="useRenderIcon(Lock)"
+          autocomplete="new-password"
+          name="password"
         />
       </el-form-item>
     </Motion>

@@ -642,7 +642,7 @@ function groupIdChange(groupId?: string) {
       ref="tableRef"
       v-loading="loading"
       :data="dataList"
-      row-key="friendUserId"
+      row-key="userId"
       :header-cell-style="{
         background: 'var(--el-fill-color-light)',
         color: 'var(--el-text-color-primary)'

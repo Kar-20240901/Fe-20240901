@@ -165,6 +165,8 @@ const currentPage = computed(() => {
                   clearable
                   :placeholder="t('login.pureUsername')"
                   :prefix-icon="useRenderIcon(User)"
+                  autocomplete="username"
+                  name="username"
                 />
               </el-form-item>
             </Motion>
@@ -186,6 +188,8 @@ const currentPage = computed(() => {
                   show-password
                   :placeholder="t('login.purePassword')"
                   :prefix-icon="useRenderIcon(Lock)"
+                  autocomplete="current-password"
+                  name="password"
                 />
               </el-form-item>
             </Motion>

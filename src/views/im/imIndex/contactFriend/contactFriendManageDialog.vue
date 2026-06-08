@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { onMounted, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import Avatar from "@/assets/user.png";
 import RiSearchLine from "~icons/ri/search-line";
 import {
@@ -26,6 +26,11 @@ import {
   baseImSessionRefUserDeleteNotDisturb
 } from "@/api/http/base/BaseImSessionRefUserController";
 import { baseImSessionContentRefUserDeleteSessionContentRefUser } from "@/api/http/base/BaseImSessionContentRefUserController";
+import {
+  IImManagerInjection,
+  IImManagerInjectionKey
+} from "@/views/im/imIndex/types";
+import { BaseImSessionContentTypeEnum } from "@/model/enum/im/BaseImSessionContentTypeEnum";
 
 const search = ref<BaseImFriendPageDTO>({});
 
@@ -39,6 +44,10 @@ const selectIdArr = ref<string[]>([]);
 const selectSessionIdArr = ref<string[]>([]);
 
 const tableRef = ref();
+
+const ImManagerInjection = inject(IImManagerInjectionKey) as
+  | IImManagerInjection
+  | undefined;
 
 function onSearch() {
   loading.value = true;
@@ -162,6 +171,18 @@ function deleteSessionContentRefUserBySelectIdArr() {
       await baseImSessionContentRefUserDeleteSessionContentRefUser({
         idSet: [...selectSessionIdArr.value]
       }).then(res => {
+        selectSessionIdArr.value.forEach(it => {
+          ImManagerInjection?.sessionRefUpdateLastContent({
+            sessionId: it,
+            lastContent: "",
+            lastContentType: BaseImSessionContentTypeEnum.TEXT.code,
+            updateLastFlag: true,
+            unReadCountAddNumber: 0,
+            unReadCountAddNumberUpdateFlag: true,
+            unReadCountAddNumberUpdateMustFlag: true
+          });
+        });
+
         refreshSearchContent([...selectSessionIdArr.value]);
         resetSelectIdArr();
         ToastSuccess(res.msg);

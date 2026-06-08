@@ -62,6 +62,8 @@ function onBack() {
           clearable
           placeholder="用户名"
           :prefix-icon="useRenderIcon(User)"
+          autocomplete="username"
+          name="username"
         />
       </el-form-item>
     </Motion>
@@ -83,6 +85,8 @@ function onBack() {
           show-password
           placeholder="密码"
           :prefix-icon="useRenderIcon(Lock)"
+          autocomplete="new-password"
+          name="password"
         />
       </el-form-item>
     </Motion>

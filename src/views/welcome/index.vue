@@ -2,12 +2,36 @@
 import dayjs from "dayjs";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import FaCheckCircle from "~icons/fa/check-circle";
+import { FormatTimeDiff } from "@/utils/DateUtil";
+import { onMounted, ref } from "vue";
+import {
+  baseServerWorkInfo,
+  BaseServerWorkInfoVO
+} from "@/api/http/base/BaseServerController";
 
 defineOptions({
   name: "Welcome"
 });
 
 const today = dayjs();
+
+const loading = ref<boolean>(false);
+const serverWorkInfoVO = ref<BaseServerWorkInfoVO>({});
+
+onMounted(() => {
+  onSearch();
+});
+
+function onSearch() {
+  loading.value = true;
+  baseServerWorkInfo()
+    .then(res => {
+      serverWorkInfoVO.value = res.data;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
 </script>
 
 <template>
@@ -22,6 +46,7 @@ const today = dayjs();
     </div>
 
     <div
+      v-loading="loading"
       class="bg-light-card rounded-xl p-6 shadow-soft card-hover gradient-bg"
     >
       <div class="flex items-center justify-between mb-6">
@@ -38,36 +63,53 @@ const today = dayjs();
         <div>
           <div class="flex items-center justify-between mb-2">
             <div class="text-sm text-gray-600">CPU 使用率</div>
-            <div class="text-sm font-medium">28%</div>
+            <div class="text-sm font-medium">
+              {{ serverWorkInfoVO.cpuUsage || "-" }}
+            </div>
           </div>
           <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div class="h-full bg-cpu rounded-full" style="width: 28%" />
+            <div
+              class="h-full bg-cpu rounded-full"
+              :style="{ width: serverWorkInfoVO.cpuUsage || '0%' }"
+            />
           </div>
         </div>
 
         <div>
           <div class="flex items-center justify-between mb-2">
             <div class="text-sm text-gray-600">内存使用率</div>
-            <div class="text-sm font-medium">64%</div>
+            <div class="text-sm font-medium">
+              {{ serverWorkInfoVO.memoryUsage || "-" }}
+            </div>
           </div>
           <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div class="h-full bg-mem rounded-full" style="width: 64%" />
+            <div
+              class="h-full bg-mem rounded-full"
+              :style="{ width: serverWorkInfoVO.memoryUsage || '0%' }"
+            />
           </div>
         </div>
 
         <div>
           <div class="flex items-center justify-between mb-2">
             <div class="text-sm text-gray-600">磁盘使用率</div>
-            <div class="text-sm font-medium">42%</div>
+            <div class="text-sm font-medium">
+              {{ serverWorkInfoVO.diskUsage || "-" }}
+            </div>
           </div>
           <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div class="h-full bg-disk rounded-full" style="width: 42%" />
+            <div
+              class="h-full bg-disk rounded-full"
+              :style="{ width: serverWorkInfoVO.diskUsage || '0%' }"
+            />
           </div>
         </div>
 
         <div class="pt-4 flex items-center justify-between">
           <div class="text-sm text-gray-600">正常运行时间</div>
-          <div class="text-sm font-medium">16 天 8 小时</div>
+          <div class="text-sm font-medium">
+            {{ FormatTimeDiff("2026-06-07 00:00:00") }}
+          </div>
         </div>
       </div>
     </div>

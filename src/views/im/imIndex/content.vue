@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { inject, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import {
   BaseImSessionContentInsertTxtForFeDTO,
   BaseImSessionContentInsertTxtVO,
   BaseImSessionRefUserQueryLastContentVO,
   IImContentProps,
+  IImIndexInjection,
+  IImIndexInjectionKey,
   ISessionContentBO,
   IUpdateLastContentObj
 } from "@/views/im/imIndex/types";
@@ -52,7 +54,7 @@ import { throttleByKey } from "@/utils/CommonUtil";
 import { ExecConfirm, ToastSuccess } from "@/utils/ToastUtil";
 import { baseImFriendRemoveFriend } from "@/api/http/base/BaseImFriendController";
 import { baseImGroupRefUserLeaveSelf } from "@/api/http/base/BaseImGroupRefUserController";
-import { getImSessionContent } from "@/utils/im/ImUtil";
+import { DoGetImSessionContent } from "@/utils/im/ImUtil";
 
 // import { buildUUID } from "@pureadmin/utils";
 //
@@ -75,6 +77,10 @@ const props = defineProps<IImContentProps>();
 const sessionContentLoading = ref<boolean>(false);
 
 const sessionContentShowList = ref<ISessionContentBO[]>([]);
+
+const IImIndexInjection = inject(IImIndexInjectionKey) as
+  | IImIndexInjection
+  | undefined;
 
 function getObjId(item?: BaseImSessionContentRefUserPageVO) {
   return `${item.createId}-${item.createTs}-${item.orderNo}`;
@@ -149,6 +155,7 @@ function setSessionContentList(sessionContentListTemp?: ISessionContentBO[]) {
   sessionRefUpdateLastContent({
     sessionId: props.session.sessionId,
     lastContent: lastContent.content,
+    lastContentType: lastContent.type,
     lastReceiveTs: lastContent.createTs,
     unReadCountAddNumber: undefined,
     unReadCountAddNumberUpdateFlag: undefined
@@ -173,20 +180,7 @@ const emit = defineEmits<{
     scrollFlag?: boolean,
     queryNewFlag?: boolean
   ): void;
-
-  (
-    e: "refreshSearchContent",
-    sessionIdArr: string[],
-    removeSessionFlag?: boolean
-  ): void;
 }>();
-
-function refreshSearchContent(
-  sessionIdArr?: string[],
-  removeSessionFlag?: boolean
-) {
-  emit("refreshSearchContent", sessionIdArr, removeSessionFlag);
-}
 
 function sessionRefDoSearch(
   loadingFlag?: boolean,
@@ -962,6 +956,7 @@ useWebSocketStoreHook().$subscribe((mutation, state) => {
       sessionRefUpdateLastContent({
         sessionId: baseImSessionContentInsertTxtVO.sessionId,
         lastContent: baseImSessionContentInsertTxtVO.txt,
+        lastContentType: baseImSessionContentInsertTxtVO.type,
         lastReceiveTs: baseImSessionContentInsertTxtVO.createTs,
         unReadCountAddNumber: unReadCountAddNumber,
         unReadCountAddNumberUpdateFlag: false
@@ -1002,6 +997,7 @@ const queryLastContentMap = throttleByKey(
       sessionRefUpdateLastContent({
         sessionId: obj.sessionId,
         lastContent: obj.lastContent,
+        lastContentType: obj.lastContentType,
         lastReceiveTs: obj.lastContentCreateTs,
         unReadCountAddNumber: obj.unReadCount,
         unReadCountAddNumberUpdateFlag: true
@@ -1155,6 +1151,7 @@ function deleteSessionContentRefUserClick() {
         sessionRefUpdateLastContent({
           sessionId: sessionId,
           lastContent: "",
+          lastContentType: BaseImSessionContentTypeEnum.TEXT.code,
           updateLastFlag: true,
           unReadCountAddNumber: 0,
           unReadCountAddNumberUpdateFlag: true,
@@ -1181,31 +1178,9 @@ function removeFriendClick() {
       await baseImFriendRemoveFriend({
         idSet: [props.session.targetId]
       }).then(res => {
-        onlyReset();
-
         ToastSuccess(res.msg);
 
-        sessionRefUpdateLastContent({
-          sessionId: sessionId,
-          lastContent: "",
-          updateLastFlag: true,
-          unReadCountAddNumber: 0,
-          unReadCountAddNumberUpdateFlag: true,
-          unReadCountAddNumberUpdateMustFlag: true
-        });
-
-        doSearch(
-          {
-            refId: sessionId,
-            backwardFlag: false,
-            boolean1: true
-          },
-          false,
-          false,
-          undefined
-        );
-
-        refreshSearchContent([sessionId], true);
+        IImIndexInjection?.refreshSearchContent([sessionId], true);
 
         onlySessionSearch();
       });
@@ -1227,22 +1202,9 @@ function leaveSelfGroupClick() {
       await baseImGroupRefUserLeaveSelf({
         idSet: [props.session.targetId]
       }).then(res => {
-        onlyReset();
-
         ToastSuccess(res.msg);
 
-        doSearch(
-          {
-            refId: sessionId,
-            backwardFlag: false,
-            boolean1: true
-          },
-          false,
-          false,
-          undefined
-        );
-
-        refreshSearchContent([sessionId], true);
+        IImIndexInjection?.refreshSearchContent([sessionId], true);
 
         onlySessionSearch();
       });
@@ -1362,7 +1324,7 @@ function leaveSelfGroupClick() {
               <div class="w-full pl-4 py-5">
                 <div
                   v-if="item.createId === selfUserId"
-                  class="flex items-end justify-end pr-7 space-x-2 animate-fadeIn"
+                  class="flex items-end justify-end pr-7 gap-2"
                 >
                   <div
                     v-if="showSendFailFlag(item)"
@@ -1386,15 +1348,12 @@ function leaveSelfGroupClick() {
                     class="bg-primary min-h-11 text-white p-3 message-bubble-right shadow-sm"
                   >
                     <div class="text-sm break-all whitespace-pre-wrap">
-                      {{ getImSessionContent(item) }}
+                      {{ DoGetImSessionContent(item.type, item.content) }}
                     </div>
                   </div>
                 </div>
 
-                <div
-                  v-else
-                  class="w-full min-h-11 flex items-end space-x-2 animate-fadeIn"
-                >
+                <div v-else class="w-full flex gap-1 items-start">
                   <div class="shrink-0">
                     <el-image
                       :src="props.sessionUserMap[item.createId]?.avatarUrl"
@@ -1411,16 +1370,29 @@ function leaveSelfGroupClick() {
                     </el-image>
                   </div>
 
-                  <div
-                    class="bg-white min-h-11 p-3 message-bubble-left shadow-sm"
-                  >
-                    <div class="text-sm break-all whitespace-pre-wrap">
-                      {{ getImSessionContent(item) }}
+                  <div class="flex-col">
+                    <div
+                      v-if="
+                        props.session.targetType === BaseImTypeEnum.GROUP.code
+                      "
+                      class="text-xs text-gray-400 mb-1"
+                    >
+                      {{ props.sessionUserMap[item.createId]?.showName }}
                     </div>
-                  </div>
 
-                  <div class="text-xs text-gray-400 self-end shrink-0 pr-1">
-                    {{ FormatTsForCurrentDay(item.createTs, true) }}
+                    <div class="flex gap-2">
+                      <div
+                        class="bg-white min-h-11 p-3 message-bubble-left shadow-sm w-fit flex"
+                      >
+                        <div class="text-sm break-all whitespace-pre-wrap">
+                          {{ DoGetImSessionContent(item.type, item.content) }}
+                        </div>
+                      </div>
+
+                      <div class="text-xs text-gray-400 self-end shrink-0 pr-1">
+                        {{ FormatTsForCurrentDay(item.createTs, true) }}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

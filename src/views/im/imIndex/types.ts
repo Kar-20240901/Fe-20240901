@@ -1,6 +1,28 @@
 import type { BaseImSearchBaseContentVO } from "@/api/http/base/BaseImSearchController";
 import type { BaseImSessionContentRefUserPageVO } from "@/api/http/base/BaseImSessionContentRefUserController";
 import type { BaseImSessionContentInsertTxtDTO } from "@/api/http/base/BaseImSessionContentController";
+import type { InjectionKey } from "vue";
+
+export const IImIndexInjectionKey: InjectionKey<IImIndexInjection> = Symbol(
+  "IImIndexInjectionKey"
+);
+
+export interface IImIndexInjection {
+  refreshSearchContent: (
+    sessionIdArr?: string[],
+    removeSessionFlag?: boolean
+  ) => void;
+}
+
+export const IImManagerInjectionKey: InjectionKey<IImManagerInjection> = Symbol(
+  "IImManagerInjectionKey"
+);
+
+export interface IImManagerInjection {
+  sessionRefUpdateLastContent: (
+    updateLastContentObjTemp: IUpdateLastContentObj
+  ) => void;
+}
 
 export interface IImBaseContentProps {
   searchKey?: string;
@@ -23,6 +45,7 @@ export interface IImContactGroupProps {
 export interface IUpdateLastContentObj {
   sessionId?: string;
   lastContent?: string;
+  lastContentType?: number;
   lastReceiveTs?: string;
   updateLastFlag?: boolean;
   unReadCountAddNumber?: number;

@@ -76,6 +76,8 @@ function onBack() {
           clearable
           placeholder="邮箱"
           :prefix-icon="useRenderIcon(RiEmail)"
+          autocomplete="email"
+          name="email"
         />
       </el-form-item>
     </Motion>
