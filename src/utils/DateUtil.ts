@@ -105,9 +105,56 @@ export function GetServerTimestamp(
 
   const nowDate = date.getTime(); // 本地时间距 1970 年 1 月 1 日午夜（GMT 时间）之间的毫秒数
 
-  const targetDate = new Date(
-    nowDate + offsetGmt * 60 * 1000 + timezone * 60 * 60 * 1000
-  );
+  return nowDate + offsetGmt * 60 * 1000 + timezone * 60 * 60 * 1000;
+}
 
-  return targetDate.getTime();
+/**
+ * 目标时间和当前时间的相差时间
+ * type === 1：当前时间 - 目标时间
+ * type === 2：目标时间 - 当前时间
+ */
+export function FormatTimeDiff(targetDateStr: string, type: 1 | 2 = 1) {
+  const nowTimestamp = GetServerTimestamp();
+
+  const targetDate = new Date(targetDateStr + "+08:00");
+  const targetTimestamp = targetDate.getTime();
+
+  let diffMs: number;
+
+  if (type === 1) {
+    diffMs = nowTimestamp - targetTimestamp;
+  } else {
+    diffMs = targetTimestamp - nowTimestamp;
+  }
+
+  if (diffMs <= 0) {
+    return "-";
+  }
+
+  // 4. 换算单位
+  const second = 1000;
+  const minute = 60 * second;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const year = 365 * day;
+
+  const years = Math.floor(diffMs / year);
+  diffMs %= year;
+
+  const days = Math.floor(diffMs / day);
+  diffMs %= day;
+
+  const hours = Math.floor(diffMs / hour);
+
+  const parts = [];
+
+  if (years > 0) parts.push(`${years} 年`);
+
+  if (days > 0) parts.push(`${days} 天`);
+
+  if (hours > 0) parts.push(`${hours} 小时`);
+
+  if (parts.length === 0) return "不足1小时";
+
+  return parts.join(" ");
 }
