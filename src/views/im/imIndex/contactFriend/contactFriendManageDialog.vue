@@ -45,7 +45,7 @@ const selectSessionIdArr = ref<string[]>([]);
 
 const tableRef = ref();
 
-const ImManagerInjection = inject(IImManagerInjectionKey) as
+const imManagerInjection = inject(IImManagerInjectionKey) as
   | IImManagerInjection
   | undefined;
 
@@ -172,7 +172,7 @@ function deleteSessionContentRefUserBySelectIdArr() {
         idSet: [...selectSessionIdArr.value]
       }).then(res => {
         selectSessionIdArr.value.forEach(it => {
-          ImManagerInjection?.sessionRefUpdateLastContent({
+          imManagerInjection?.sessionRefUpdateLastContent({
             sessionId: it,
             lastContent: "",
             lastContentType: BaseImSessionContentTypeEnum.TEXT.code,

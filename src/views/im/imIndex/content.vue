@@ -78,7 +78,7 @@ const sessionContentLoading = ref<boolean>(false);
 
 const sessionContentShowList = ref<ISessionContentBO[]>([]);
 
-const IImIndexInjection = inject(IImIndexInjectionKey) as
+const imIndexInjection = inject(IImIndexInjectionKey) as
   | IImIndexInjection
   | undefined;
 
@@ -1180,7 +1180,7 @@ function removeFriendClick() {
       }).then(res => {
         ToastSuccess(res.msg);
 
-        IImIndexInjection?.refreshSearchContent([sessionId], true);
+        imIndexInjection?.refreshSearchContent([sessionId], true);
 
         onlySessionSearch();
       });
@@ -1204,7 +1204,7 @@ function leaveSelfGroupClick() {
       }).then(res => {
         ToastSuccess(res.msg);
 
-        IImIndexInjection?.refreshSearchContent([sessionId], true);
+        imIndexInjection?.refreshSearchContent([sessionId], true);
 
         onlySessionSearch();
       });
